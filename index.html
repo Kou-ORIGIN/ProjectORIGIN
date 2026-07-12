@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectORIGIN - AI OS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-grid"></div>
+        <div class="bg-glow"></div>
+        <div class="particle" style="--delay: 0s"></div>
+        <div class="particle" style="--delay: 0.5s"></div>
+        <div class="particle" style="--delay: 1s"></div>
+        <div class="particle" style="--delay: 1.5s"></div>
+    </div>
+
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-panel">
+            <div class="hologram-border"></div>
+            <div class="login-content">
+                <div class="login-logo">
+                    <h1>ProjectORIGIN</h1>
+                    <p>AI OS v2.0</p>
+                </div>
+                <form class="login-form" id="loginForm">
+                    <div id="errorMessage" class="error-message" style="display: none;"></div>
+                    <div class="input-group">
+                        <label>ユーザー名</label>
+                        <input type="text" id="username" placeholder="ユーザー名を入力">
+                        <div class="input-glow"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>パスワード</label>
+                        <input type="password" id="password" placeholder="パスワードを入力">
+                        <div class="input-glow"></div>
+                    </div>
+                    <button type="submit" class="login-btn">ログイン</button>
+                </form>
+                <div class="login-info">
+                    <span class="status-indicator"></span>
+                    <p>システム稼働中</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard" id="dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1 class="system-title">ProjectORIGIN</h1>
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    <span id="systemStatus">オンライン</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="logout-btn" id="logoutBtn">ログアウト</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Left Sidebar -->
+            <aside class="chat-sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">メニュー</h3>
+                    <nav class="sidebar-nav">
+                        <button class="chat-nav-item active" data-section="chat">チャット</button>
+                        <button class="chat-nav-item" data-section="info">情報</button>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Chat Area -->
+            <div class="chat-container">
+                <!-- Chat Section -->
+                <section class="chat-section active" data-section="chat">
+                    <div class="chat-header">
+                        <h2>AIアシスタント - ORIGIN</h2>
+                    </div>
+                    <div class="chat-messages-wrapper" id="chatMessagesWrapper">
+                        <div class="message ai-message">
+                            <p>こんにちは！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-section">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="メッセージを入力...">
+                        <button id="sendBtn" class="send-btn">送信</button>
+                    </div>
+                </section>
+
+                <!-- Info Section -->
+                <section class="chat-section" data-section="info">
+                    <div class="chat-header">
+                        <h2>システム情報</h2>
+                    </div>
+                    <div class="info-panel hologram">
+                        <div class="info-item">
+                            <span class="info-label">システム名</span>
+                            <span class="info-value">ProjectORIGIN AI OS v2.0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">ステータス</span>
+                            <span class="info-value">稼働中</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">バージョン</span>
+                            <span class="info-value">2.0.1</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- AI Avatar Panel -->
+            <aside class="avatar-panel">
+                <div class="avatar-section">
+                    <div class="ai-avatar">
+                        <div class="avatar-core"></div>
+                        <div class="avatar-orbit"></div>
+                    </div>
+                    <div class="avatar-info">
+                        <h3>ORIGIN</h3>
+                        <p>AI Assistant</p>
+                    </div>
+                    <div class="avatar-status">
+                        <span class="status-indicator"></span>
+                        <span>準備完了</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
