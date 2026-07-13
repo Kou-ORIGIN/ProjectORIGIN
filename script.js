@@ -122,21 +122,38 @@ function sendMessage() {
     chatInput.value = '';
     chatInput.focus();
     
-    // Simulate AI response
+    // Respond based on input intent
     setTimeout(() => {
-        const responses = [
-            'メッセージを受け取りました。処理中です...',
-            'ご質問ありがとうございます。了解しました。',
-            'その情報を記録しました。',
-            'システムで確認しています...',
-            'リクエストを処理中です。',
-            'データを分析しています...',
-            '確認いたしました。'
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        addMessage(randomResponse, 'ai');
+        const response = getAiResponse(message);
+        addMessage(response, 'ai');
     }, 500);
+}
+
+function getAiResponse(message) {
+    const text = message.trim().toLowerCase();
+
+    if (text === 'こんにちは') {
+        return 'こんにちは！本日はどのようなご用件でしょうか？';
+    }
+    if (text === 'おはよう') {
+        return 'おはようございます！今日もよろしくお願いいたします。';
+    }
+    if (text === 'こんばんは') {
+        return 'こんばんは！本日のご相談をどうぞ。';
+    }
+    if (text === '時間') {
+        const now = new Date();
+        return `現在の時刻は ${now.toLocaleTimeString('ja-JP', { hour12: false })} です。`;
+    }
+    if (text === '日付') {
+        const today = new Date();
+        return `今日の日付は ${today.toLocaleDateString('ja-JP')} です。`;
+    }
+    if (text === 'projectoriginとは' || text === 'projectoriginとは？' || text === 'projectoriginとは。') {
+        return 'ProjectORIGINは、AIアシスタントと未来的なインターフェースを備えた次世代のAI OSです。';
+    }
+
+    return '内容を確認しました。もう少し詳しく教えてください。';
 }
 
 function addMessage(text, type) {
