@@ -73,19 +73,27 @@ logoutBtn.addEventListener('click', () => {
 const chatNavItems = document.querySelectorAll('.chat-nav-item');
 const chatSections = document.querySelectorAll('.chat-section');
 
-chatNavItems.forEach(item => {
+function setActiveSection(sectionName) {
+    chatNavItems.forEach((nav) => {
+        const isActive = nav.dataset.section === sectionName;
+        nav.classList.toggle('active', isActive);
+        nav.setAttribute('aria-pressed', String(isActive));
+    });
+
+    chatSections.forEach((section) => {
+        const isActive = section.dataset.section === sectionName;
+        section.classList.toggle('active', isActive);
+        section.hidden = !isActive;
+    });
+}
+
+chatNavItems.forEach((item) => {
     item.addEventListener('click', () => {
-        const section = item.dataset.section;
-        
-        // Update active state
-        chatNavItems.forEach(nav => nav.classList.remove('active'));
-        item.classList.add('active');
-        
-        // Show section
-        chatSections.forEach(content => content.classList.remove('active'));
-        document.querySelector(`[data-section="${section}"]`).classList.add('active');
+        setActiveSection(item.dataset.section);
     });
 });
+
+setActiveSection('chat');
 
 // ============================================================
 // CHAT FUNCTIONALITY
@@ -155,10 +163,7 @@ function initializeChatScreen() {
     addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai');
     
     // Set default tab to chat
-    chatNavItems.forEach(item => item.classList.remove('active'));
-    chatSections.forEach(section => section.classList.remove('active'));
-    document.querySelector('[data-section="chat"]').classList.add('active');
-    document.querySelector('.chat-nav-item[data-section="chat"]').classList.add('active');
+    setActiveSection('chat');
     
     // Focus on input
     chatInput.focus();
