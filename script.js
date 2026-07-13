@@ -101,14 +101,64 @@ setActiveSection('chat');
 
 const chatInput = document.getElementById('chatInput');
 const sendBtn = document.getElementById('sendBtn');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 const chatMessagesWrapper = document.getElementById('chatMessagesWrapper');
 
 sendBtn.addEventListener('click', sendMessage);
+clearHistoryBtn.addEventListener('click', clearChatHistory);
 chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage();
     }
 });
+
+let chatHistory = [];
+
+function getChatHistoryKey() {
+    const username = localStorage.getItem('username') || 'guest';
+    return `ProjectORIGIN_chat_history_${username}`;
+}
+
+function loadChatHistory() {
+    const historyJson = localStorage.getItem(getChatHistoryKey());
+    if (!historyJson) {
+        return false;
+    }
+
+    try {
+        const storedHistory = JSON.parse(historyJson);
+        if (!Array.isArray(storedHistory)) {
+            return false;
+        }
+
+        chatHistory = storedHistory;
+        chatMessagesWrapper.innerHTML = '';
+        chatHistory.forEach((item) => {
+            createMessageElement(item.text, item.sender === 'user' ? 'user' : 'ai');
+        });
+        return true;
+    } catch (error) {
+        console.error('チャット履歴の読み込みに失敗しました', error);
+        return false;
+    }
+}
+
+function saveChatHistory() {
+    localStorage.setItem(getChatHistoryKey(), JSON.stringify(chatHistory));
+}
+
+function clearChatHistory() {
+    if (!confirm('本当にチャット履歴を削除しますか？')) {
+        return;
+    }
+
+    localStorage.removeItem(getChatHistoryKey());
+    chatHistory = [];
+    chatMessagesWrapper.innerHTML = '';
+
+    const username = localStorage.getItem('username') || 'ゲスト';
+    addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai');
+}
 
 function sendMessage() {
     const message = chatInput.value.trim();
@@ -156,13 +206,21 @@ function getAiResponse(message) {
     return '内容を確認しました。もう少し詳しく教えてください。';
 }
 
-function addMessage(text, type) {
+function createMessageElement(text, type) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}-message`;
     const pTag = document.createElement('p');
     pTag.textContent = text;
     messageDiv.appendChild(pTag);
     chatMessagesWrapper.appendChild(messageDiv);
+}
+
+function addMessage(text, type) {
+    const messageType = type === 'user' ? 'user' : 'ai';
+    chatHistory.push({ sender: messageType, text });
+    saveChatHistory();
+
+    createMessageElement(text, messageType);
     
     // Scroll to bottom
     chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;
@@ -175,10 +233,14 @@ function addMessage(text, type) {
 function initializeChatScreen() {
     const username = localStorage.getItem('username');
     
-    // Clear previous messages and add welcome message
     chatMessagesWrapper.innerHTML = '';
-    addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai');
-    
+    chatHistory = [];
+
+    const hasHistory = loadChatHistory();
+    if (!hasHistory) {
+        addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai');
+    }
+
     // Set default tab to chat
     setActiveSection('chat');
     
