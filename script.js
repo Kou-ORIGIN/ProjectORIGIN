@@ -106,9 +106,42 @@ const chatMessagesWrapper = document.getElementById('chatMessagesWrapper');
 
 sendBtn.addEventListener('click', sendMessage);
 clearHistoryBtn.addEventListener('click', clearChatHistory);
-chatInput.addEventListener('keypress', (e) => {
+
+// Enterキーでの送信制御
+chatInput.addEventListener('keydown', (e) => {
+    // 日本語入力の変換中は処理しない
+    if (e.isComposing || e.keyCode === 229) {
+        return;
+    }
+    
     if (e.key === 'Enter') {
+        // Shift+Enterの場合は改行を許可
+        if (e.shiftKey) {
+            return;
+        }
+        
+        // 通常のEnterキー - デフォルト動作を阻止して送信
+        e.preventDefault();
+        
+        // 入力欄が無効化されている場合は送信しない（ORIGIN入力中）
+        if (chatInput.disabled) {
+            return;
+        }
+        
         sendMessage();
+    }
+});
+
+// textareaの自動拡張機能
+chatInput.addEventListener('input', () => {
+    // スクロールハイトを使用してtextareaの高さを調整
+    chatInput.style.height = 'auto';
+    const scrollHeight = chatInput.scrollHeight;
+    // 最大高さ（120px）を超えないようにクリップ
+    if (scrollHeight > 120) {
+        chatInput.style.height = '120px';
+    } else {
+        chatInput.style.height = scrollHeight + 'px';
     }
 });
 
@@ -171,6 +204,8 @@ function sendMessage() {
     // Add user message
     addMessage(message, 'user');
     chatInput.value = '';
+    // textareaの高さをリセット
+    chatInput.style.height = 'auto';
     
     // Disable input during typing
     chatInput.disabled = true;
