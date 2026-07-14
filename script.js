@@ -244,8 +244,8 @@ function showTypingIndicator() {
     typingDiv.appendChild(dotsSpan);
     chatMessagesWrapper.appendChild(typingDiv);
     
-    // Scroll to bottom
-    chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;
+    // Smooth scroll to bottom
+    typingDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     
     return typingDiv;
 }
@@ -293,6 +293,7 @@ function createMessageElement(text, type, time = null) {
     }
     
     chatMessagesWrapper.appendChild(messageDiv);
+    return messageDiv;
 }
 
 function addMessage(text, type) {
@@ -304,10 +305,10 @@ function addMessage(text, type) {
     chatHistory.push({ sender: messageType, text, time });
     saveChatHistory();
 
-    createMessageElement(text, messageType, time);
+    const messageElement = createMessageElement(text, messageType, time);
     
-    // Scroll to bottom
-    chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;
+    // Smooth scroll to bottom
+    messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ============================================================
