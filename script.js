@@ -116,7 +116,8 @@ let chatHistory = [];
 
 function getChatHistoryKey() {
     const username = localStorage.getItem('username') || 'guest';
-    return `ProjectORIGIN_chat_history_${username}`;
+    // ユーザー名を小文字で正規化してキーを生成（大文字小文字の違いは同じユーザーとして扱う）
+    return `ProjectORIGIN_chat_history_${username.toLowerCase()}`;
 }
 
 function loadChatHistory() {
