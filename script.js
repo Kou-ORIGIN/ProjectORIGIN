@@ -135,7 +135,7 @@ function loadChatHistory() {
         chatHistory = storedHistory;
         chatMessagesWrapper.innerHTML = '';
         chatHistory.forEach((item) => {
-            createMessageElement(item.text, item.sender === 'user' ? 'user' : 'ai');
+            createMessageElement(item.text, item.sender === 'user' ? 'user' : 'ai', item.time);
         });
         return true;
     } catch (error) {
@@ -207,21 +207,34 @@ function getAiResponse(message) {
     return '内容を確認しました。もう少し詳しく教えてください。';
 }
 
-function createMessageElement(text, type) {
+function createMessageElement(text, type, time = null) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}-message`;
     const pTag = document.createElement('p');
     pTag.textContent = text;
     messageDiv.appendChild(pTag);
+    
+    // 時刻情報を表示
+    if (time) {
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'message-time';
+        timeSpan.textContent = time;
+        messageDiv.appendChild(timeSpan);
+    }
+    
     chatMessagesWrapper.appendChild(messageDiv);
 }
 
 function addMessage(text, type) {
     const messageType = type === 'user' ? 'user' : 'ai';
-    chatHistory.push({ sender: messageType, text });
+    // 現在時刻を「HH:mm」形式で取得
+    const now = new Date();
+    const time = now.toLocaleTimeString('ja-JP', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    
+    chatHistory.push({ sender: messageType, text, time });
     saveChatHistory();
 
-    createMessageElement(text, messageType);
+    createMessageElement(text, messageType, time);
     
     // Scroll to bottom
     chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;

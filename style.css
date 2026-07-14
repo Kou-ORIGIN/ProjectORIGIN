@@ -577,6 +577,15 @@ body {
     margin: 0;
 }
 
+.message-time {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(0, 240, 255, 0.5);
+    margin-top: 6px;
+    text-align: right;
+    font-style: italic;
+}
+
 .chat-input-section {
     display: flex;
     gap: 10px;
