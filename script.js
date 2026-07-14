@@ -171,13 +171,48 @@ function sendMessage() {
     // Add user message
     addMessage(message, 'user');
     chatInput.value = '';
-    chatInput.focus();
+    
+    // Disable input during typing
+    chatInput.disabled = true;
+    sendBtn.disabled = true;
+    
+    // Show typing indicator
+    const typingElement = showTypingIndicator();
     
     // Respond based on input intent
+    const delayMs = 800 + Math.random() * 400; // 0.8～1.2秒
     setTimeout(() => {
+        // Remove typing indicator
+        if (typingElement && typingElement.parentNode) {
+            typingElement.parentNode.removeChild(typingElement);
+        }
+        
         const response = getAiResponse(message);
         addMessage(response, 'ai');
-    }, 500);
+        
+        // Re-enable input
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
+        chatInput.focus();
+    }, delayMs);
+}
+
+function showTypingIndicator() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message ai-message message-typing';
+    typingDiv.setAttribute('aria-label', 'ORIGINが入力中');
+    
+    const dotsSpan = document.createElement('span');
+    dotsSpan.className = 'typing-dots';
+    dotsSpan.innerHTML = '<span>.</span><span>.</span><span>.</span>';
+    
+    typingDiv.appendChild(dotsSpan);
+    chatMessagesWrapper.appendChild(typingDiv);
+    
+    // Scroll to bottom
+    chatMessagesWrapper.scrollTop = chatMessagesWrapper.scrollHeight;
+    
+    return typingDiv;
 }
 
 function getAiResponse(message) {
