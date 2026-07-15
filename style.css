@@ -711,6 +711,43 @@ body {
     gap: 15px;
 }
 
+.content-placeholder {
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 24px;
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid var(--hologram-color);
+    border-radius: 8px;
+}
+
+.placeholder-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.placeholder-title {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+.placeholder-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.95rem;
+    max-width: 560px;
+    line-height: 1.7;
+}
+
 .info-item {
     display: flex;
     justify-content: space-between;

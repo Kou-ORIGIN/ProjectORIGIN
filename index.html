@@ -72,6 +72,10 @@
                     <h3 class="sidebar-title">メニュー</h3>
                     <nav class="sidebar-nav">
                         <button class="chat-nav-item active" data-section="chat">チャット</button>
+                        <button class="chat-nav-item" data-section="incident-file">事件ファイル</button>
+                        <button class="chat-nav-item" data-section="origin-map">ORIGIN MAP</button>
+                        <button class="chat-nav-item" data-section="timeline">タイムライン</button>
+                        <button class="chat-nav-item" data-section="favorites">お気に入り</button>
                         <button class="chat-nav-item" data-section="info">情報</button>
                     </nav>
                 </div>
@@ -93,6 +97,54 @@
                         <textarea id="chatInput" class="chat-input" placeholder="メッセージを入力...\nShift+Enterで改行"></textarea>
                         <button id="clearHistoryBtn" class="clear-history-btn">履歴を削除</button>
                         <button id="sendBtn" class="send-btn">送信</button>
+                    </div>
+                </section>
+
+                <!-- Incident File Section -->
+                <section class="chat-section" data-section="incident-file">
+                    <div class="chat-header">
+                        <h2>事件ファイル</h2>
+                    </div>
+                    <div class="content-placeholder hologram">
+                        <div class="placeholder-badge">極秘事件アーカイブ</div>
+                        <h3 class="placeholder-title">未確認の記録を確認する</h3>
+                        <p class="placeholder-description">この画面では、秘密裏に保管された事件記録の仮レイアウトを表示します。</p>
+                    </div>
+                </section>
+
+                <!-- Origin Map Section -->
+                <section class="chat-section" data-section="origin-map">
+                    <div class="chat-header">
+                        <h2>ORIGIN MAP</h2>
+                    </div>
+                    <div class="content-placeholder hologram">
+                        <div class="placeholder-badge">世界の謎を地図から探索</div>
+                        <h3 class="placeholder-title">地理と事件の接点を追う</h3>
+                        <p class="placeholder-description">仮の地図ビューで、未解決の現象や伝説の分布を探索できます。</p>
+                    </div>
+                </section>
+
+                <!-- Timeline Section -->
+                <section class="chat-section" data-section="timeline">
+                    <div class="chat-header">
+                        <h2>タイムライン</h2>
+                    </div>
+                    <div class="content-placeholder hologram">
+                        <div class="placeholder-badge">事件と文明を年代順に探索</div>
+                        <h3 class="placeholder-title">時間の流れをたどる</h3>
+                        <p class="placeholder-description">重要な出来事と文明の変遷を時系列で確認するための仮画面です。</p>
+                    </div>
+                </section>
+
+                <!-- Favorites Section -->
+                <section class="chat-section" data-section="favorites">
+                    <div class="chat-header">
+                        <h2>お気に入り</h2>
+                    </div>
+                    <div class="content-placeholder hologram">
+                        <div class="placeholder-badge">保存した調査ファイル</div>
+                        <h3 class="placeholder-title">重要な資料を素早く開く</h3>
+                        <p class="placeholder-description">保存済みの調査メモや引用を一覧で確認するための仮画面です。</p>
                     </div>
                 </section>
 
