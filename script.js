@@ -14,6 +14,17 @@ const logoutBtn = document.getElementById('logoutBtn');
 const errorMessage = document.getElementById('errorMessage');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
+const dashboardHeader = document.querySelector('.dashboard-header');
+const desktopSidebarMediaQuery = window.matchMedia('(min-width: 993px)');
+
+const HEADER_TOP_REVEAL_THRESHOLD = 24;
+const HEADER_SCROLL_TOGGLE_THRESHOLD = 32;
+
+let lastKnownScrollY = window.scrollY;
+let lastHeaderToggleScrollY = window.scrollY;
+let headerVisibilityLocked = false;
+let isHeaderVisible = true;
+let scrollTicking = false;
 
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -49,6 +60,7 @@ loginForm.addEventListener('submit', (e) => {
     dashboard.style.display = 'grid';
     localStorage.setItem('username', username);
     initializeChatScreen();
+    requestAnimationFrame(refreshHeaderLayout);
 });
 
 function showErrorMessage(message) {
@@ -63,6 +75,7 @@ logoutBtn.addEventListener('click', () => {
         loginForm.reset();
         errorMessage.style.display = 'none';
         localStorage.removeItem('username');
+        lockHeaderVisibility(true);
     }
 });
 
@@ -481,6 +494,7 @@ function openIncidentModal(incident) {
     fillList(incidentLegendsList, incident.legends);
     incidentModalOverlay.hidden = false;
     document.body.classList.add('modal-open');
+    lockHeaderVisibility(true);
 }
 
 function closeIncidentModal() {
@@ -490,6 +504,7 @@ function closeIncidentModal() {
 
     incidentModalOverlay.hidden = true;
     document.body.classList.remove('modal-open');
+    lockHeaderVisibility(false);
 }
 
 if (incidentCloseBtn) {
@@ -834,6 +849,118 @@ function initializeChatScreen() {
 }
 
 // ============================================================
+// HEADER SCROLL BEHAVIOR
+// ============================================================
+
+function updateHeaderMetrics() {
+    if (!dashboardHeader) {
+        return;
+    }
+
+    const headerHeight = dashboardHeader.offsetHeight;
+
+    document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+}
+
+function setHeaderVisibility(visible) {
+    if (!dashboardHeader) {
+        return;
+    }
+
+    if (isHeaderVisible !== visible) {
+        isHeaderVisible = visible;
+        dashboardHeader.classList.toggle('header-hidden', !visible);
+        lastHeaderToggleScrollY = window.scrollY;
+    }
+
+    updateHeaderMetrics();
+}
+
+function handleHeaderScroll() {
+    scrollTicking = false;
+
+    if (!dashboardHeader || loginContainer.style.display !== 'none') {
+        return;
+    }
+
+    const currentScrollY = window.scrollY;
+    const delta = currentScrollY - lastKnownScrollY;
+
+    if (currentScrollY <= HEADER_TOP_REVEAL_THRESHOLD) {
+        setHeaderVisibility(true);
+        lastKnownScrollY = currentScrollY;
+        lastHeaderToggleScrollY = currentScrollY;
+        return;
+    }
+
+    if (Math.abs(delta) < 1) {
+        lastKnownScrollY = currentScrollY;
+        return;
+    }
+
+    const scrolledDistanceFromToggle = currentScrollY - lastHeaderToggleScrollY;
+
+    if (delta > 0 && isHeaderVisible && scrolledDistanceFromToggle >= HEADER_SCROLL_TOGGLE_THRESHOLD) {
+        setHeaderVisibility(false);
+    } else if (delta < 0 && !isHeaderVisible && Math.abs(scrolledDistanceFromToggle) >= HEADER_SCROLL_TOGGLE_THRESHOLD) {
+        setHeaderVisibility(true);
+    }
+
+    lastKnownScrollY = currentScrollY;
+}
+
+function requestHeaderScrollUpdate() {
+    if (headerVisibilityLocked || scrollTicking) {
+        return;
+    }
+
+    scrollTicking = true;
+    requestAnimationFrame(handleHeaderScroll);
+}
+
+function resetHeaderScrollState() {
+    lastKnownScrollY = window.scrollY;
+    lastHeaderToggleScrollY = window.scrollY;
+    setHeaderVisibility(true);
+}
+
+function lockHeaderVisibility(lockVisible) {
+    headerVisibilityLocked = lockVisible;
+    if (lockVisible) {
+        resetHeaderScrollState();
+        return;
+    }
+
+    requestHeaderScrollUpdate();
+}
+
+function refreshHeaderLayout() {
+    if (!dashboardHeader) {
+        return;
+    }
+
+    updateHeaderMetrics();
+    lastKnownScrollY = window.scrollY;
+    lastHeaderToggleScrollY = window.scrollY;
+
+    if (window.scrollY <= HEADER_TOP_REVEAL_THRESHOLD) {
+        setHeaderVisibility(true);
+        return;
+    }
+
+    dashboardHeader.classList.toggle('header-hidden', !isHeaderVisible);
+}
+
+window.addEventListener('scroll', requestHeaderScrollUpdate, { passive: true });
+window.addEventListener('resize', () => {
+    requestAnimationFrame(refreshHeaderLayout);
+});
+
+if (desktopSidebarMediaQuery.addEventListener) {
+    desktopSidebarMediaQuery.addEventListener('change', refreshHeaderLayout);
+}
+
+// ============================================================
 // SYSTEM ANIMATIONS
 // ============================================================
 
@@ -869,8 +996,10 @@ window.addEventListener('load', () => {
         loginContainer.style.display = 'none';
         dashboard.style.display = 'grid';
         initializeChatScreen();
+        refreshHeaderLayout();
     } else {
         loginContainer.style.display = 'flex';
         dashboard.style.display = 'none';
+        resetHeaderScrollState();
     }
 });
