@@ -72,16 +72,51 @@ logoutBtn.addEventListener('click', () => {
 
 const chatNavItems = document.querySelectorAll('.chat-nav-item');
 const chatSections = document.querySelectorAll('.chat-section');
+const ACTIVE_SECTION_STORAGE_KEY = 'ProjectORIGIN_active_section';
 
-function setActiveSection(sectionName) {
+function normalizeSectionName(sectionName) {
+    if (sectionName === 'incidents') {
+        return 'incident-file';
+    }
+    if (sectionName === 'map') {
+        return 'origin-map';
+    }
+    return sectionName;
+}
+
+function getStoredSectionName() {
+    const storedSection = localStorage.getItem(ACTIVE_SECTION_STORAGE_KEY);
+    if (!storedSection) {
+        return 'chat';
+    }
+
+    const normalizedSection = normalizeSectionName(storedSection);
+    const validSections = ['chat', 'incident-file', 'origin-map', 'timeline', 'favorites', 'info'];
+    return validSections.includes(normalizedSection) ? normalizedSection : 'chat';
+}
+
+function persistActiveSection(sectionName) {
+    const normalizedSection = normalizeSectionName(sectionName);
+    const storageValue = normalizedSection === 'incident-file' ? 'incidents' : normalizedSection === 'origin-map' ? 'map' : normalizedSection;
+    localStorage.setItem(ACTIVE_SECTION_STORAGE_KEY, storageValue);
+}
+
+function setActiveSection(sectionName, options = {}) {
+    const normalizedSection = normalizeSectionName(sectionName);
+    const shouldPersist = options.persist !== false;
+
+    if (shouldPersist) {
+        persistActiveSection(normalizedSection);
+    }
+
     chatNavItems.forEach((nav) => {
-        const isActive = nav.dataset.section === sectionName;
+        const isActive = nav.dataset.section === normalizedSection;
         nav.classList.toggle('active', isActive);
         nav.setAttribute('aria-pressed', String(isActive));
     });
 
     chatSections.forEach((section) => {
-        const isActive = section.dataset.section === sectionName;
+        const isActive = section.dataset.section === normalizedSection;
         section.classList.toggle('active', isActive);
         section.hidden = !isActive;
     });
@@ -96,7 +131,7 @@ chatNavItems.forEach((item) => {
     });
 });
 
-setActiveSection('chat');
+setActiveSection(getStoredSectionName(), { persist: false });
 
 // ============================================================
 // INCIDENT ARCHIVE
@@ -500,6 +535,24 @@ function showTypingIndicator() {
     return typingDiv;
 }
 
+function scrollChatToBottom(animated = true) {
+    if (!chatMessagesWrapper) {
+        return;
+    }
+
+    const lastMessage = chatMessagesWrapper.lastElementChild;
+    if (!lastMessage) {
+        return;
+    }
+
+    if (animated) {
+        lastMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+    }
+
+    lastMessage.scrollIntoView({ block: 'end' });
+}
+
 function getAiResponse(message) {
     const text = message.trim().toLowerCase();
 
@@ -546,7 +599,7 @@ function createMessageElement(text, type, time = null) {
     return messageDiv;
 }
 
-function addMessage(text, type) {
+function addMessage(text, type, options = {}) {
     const messageType = type === 'user' ? 'user' : 'ai';
     // 現在時刻を「HH:mm」形式で取得
     const now = new Date();
@@ -557,8 +610,12 @@ function addMessage(text, type) {
 
     const messageElement = createMessageElement(text, messageType, time);
     
-    // Smooth scroll to bottom
-    messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const shouldAnimate = options.animate !== false;
+    if (shouldAnimate) {
+        messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        messageElement.scrollIntoView({ block: 'end' });
+    }
 }
 
 // ============================================================
@@ -573,13 +630,17 @@ function initializeChatScreen() {
 
     const hasHistory = loadChatHistory();
     if (!hasHistory) {
-        addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai');
+        addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai', { animate: false });
     }
 
-    // Set default tab to chat
-    setActiveSection('chat');
+    const savedSection = getStoredSectionName();
+    setActiveSection(savedSection, { persist: false });
+    if (savedSection === 'chat') {
+        requestAnimationFrame(() => {
+            scrollChatToBottom(false);
+        });
+    }
     
-    // Focus on input
     chatInput.focus();
 }
 
