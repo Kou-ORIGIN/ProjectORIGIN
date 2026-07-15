@@ -761,10 +761,99 @@ body {
     flex-wrap: wrap;
 }
 
+.incident-filter-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(160px, 1fr)) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.incident-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.incident-filter-search-group {
+    min-width: 0;
+}
+
+.incident-filter-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.incident-filter-input,
+.incident-filter-select {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    background: rgba(0, 15, 30, 0.82);
+    border: 1px solid rgba(0, 240, 255, 0.28);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
+.incident-filter-input:focus,
+.incident-filter-select:focus {
+    outline: none;
+    border-color: var(--hologram-color);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
+.incident-filter-input::placeholder {
+    color: rgba(0, 240, 255, 0.4);
+}
+
+.incident-reset-btn {
+    min-height: 42px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.28);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+}
+
+.incident-reset-btn:hover,
+.incident-reset-btn:focus-visible {
+    outline: none;
+    color: var(--primary-color);
+    border-color: var(--hologram-color);
+    background: rgba(0, 240, 255, 0.1);
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.18);
+}
+
+.incident-filter-summary {
+    min-height: 1.4em;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.85rem;
+}
+
 .incident-list {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+}
+
+.incident-empty-state {
+    display: grid;
+    place-items: center;
+    min-height: 180px;
+    padding: 20px;
+    border: 1px dashed rgba(0, 240, 255, 0.25);
+    border-radius: 8px;
+    background: rgba(0, 15, 30, 0.45);
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
 }
 
 .incident-card {
@@ -1532,6 +1621,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    .incident-filter-panel {
+        grid-template-columns: 1fr;
+    }
+
     .incident-list {
         grid-template-columns: 1fr;
     }
@@ -1607,6 +1700,10 @@ body {
 }
 
 @media (max-width: 480px) {
+    .incident-reset-btn {
+        width: 100%;
+    }
+
     .system-title {
         font-size: 1rem;
         letter-spacing: 0;

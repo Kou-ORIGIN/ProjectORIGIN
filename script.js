@@ -211,6 +211,151 @@ const incidentFactsList = document.getElementById('incidentFactsList');
 const incidentTheoriesList = document.getElementById('incidentTheoriesList');
 const incidentLegendsList = document.getElementById('incidentLegendsList');
 const incidentCloseBtn = document.getElementById('incidentCloseBtn');
+const incidentSearchInput = document.getElementById('incidentSearchInput');
+const incidentCategoryFilter = document.getElementById('incidentCategoryFilter');
+const incidentDangerFilter = document.getElementById('incidentDangerFilter');
+const incidentResetBtn = document.getElementById('incidentResetBtn');
+const incidentFilterSummary = document.getElementById('incidentFilterSummary');
+const INCIDENT_FILTER_STORAGE_KEY = 'ProjectORIGIN_incident_filters';
+
+const incidentFilterState = {
+    search: '',
+    category: 'all',
+    danger: 'all'
+};
+
+function getDefaultIncidentFilterState() {
+    return {
+        search: '',
+        category: 'all',
+        danger: 'all'
+    };
+}
+
+function loadIncidentFilterState() {
+    const defaults = getDefaultIncidentFilterState();
+    const storedValue = localStorage.getItem(INCIDENT_FILTER_STORAGE_KEY);
+    if (!storedValue) {
+        return defaults;
+    }
+
+    try {
+        const parsedValue = JSON.parse(storedValue);
+        return {
+            search: typeof parsedValue.search === 'string' ? parsedValue.search : defaults.search,
+            category: typeof parsedValue.category === 'string' ? parsedValue.category : defaults.category,
+            danger: typeof parsedValue.danger === 'string' ? parsedValue.danger : defaults.danger
+        };
+    } catch (error) {
+        console.error('事件フィルター状態の読み込みに失敗しました', error);
+        return defaults;
+    }
+}
+
+function saveIncidentFilterState() {
+    localStorage.setItem(INCIDENT_FILTER_STORAGE_KEY, JSON.stringify(incidentFilterState));
+}
+
+function syncIncidentFilterControls() {
+    if (incidentSearchInput) {
+        incidentSearchInput.value = incidentFilterState.search;
+    }
+    if (incidentCategoryFilter) {
+        incidentCategoryFilter.value = incidentFilterState.category;
+    }
+    if (incidentDangerFilter) {
+        incidentDangerFilter.value = incidentFilterState.danger;
+    }
+}
+
+function populateIncidentCategoryOptions() {
+    if (!incidentCategoryFilter) {
+        return;
+    }
+
+    const categories = [...new Set(incidentData.map((incident) => incident.category))];
+    const currentValue = incidentCategoryFilter.value || 'all';
+
+    incidentCategoryFilter.innerHTML = '<option value="all">すべて</option>';
+
+    categories.forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        incidentCategoryFilter.appendChild(option);
+    });
+
+    const nextValue = categories.includes(incidentFilterState.category) ? incidentFilterState.category : 'all';
+    incidentFilterState.category = nextValue === 'all' && currentValue !== 'all' && categories.includes(currentValue) ? currentValue : nextValue;
+    incidentCategoryFilter.value = incidentFilterState.category;
+}
+
+function getFilteredIncidents() {
+    const searchText = incidentFilterState.search.trim().toLowerCase();
+    const selectedCategory = incidentFilterState.category;
+    const selectedDanger = incidentFilterState.danger;
+    const minimumDanger = selectedDanger === 'all' ? null : Number(selectedDanger);
+
+    return incidentData.filter((incident) => {
+        const matchesCategory = selectedCategory === 'all' || incident.category === selectedCategory;
+        const matchesDanger = minimumDanger === null || incident.danger >= minimumDanger;
+
+        if (!matchesCategory || !matchesDanger) {
+            return false;
+        }
+
+        if (!searchText) {
+            return true;
+        }
+
+        const searchableText = [
+            incident.id,
+            incident.name,
+            incident.region,
+            incident.era,
+            incident.category,
+            incident.status,
+            ...incident.facts,
+            ...incident.theories,
+            ...incident.legends
+        ].join(' ').toLowerCase();
+
+        return searchableText.includes(searchText);
+    });
+}
+
+function updateIncidentFilterSummary(filteredIncidents) {
+    if (!incidentFilterSummary) {
+        return;
+    }
+
+    const activeFilters = [];
+    if (incidentFilterState.search.trim()) {
+        activeFilters.push(`検索: ${incidentFilterState.search.trim()}`);
+    }
+    if (incidentFilterState.category !== 'all') {
+        activeFilters.push(`分類: ${incidentFilterState.category}`);
+    }
+    if (incidentFilterState.danger !== 'all') {
+        activeFilters.push(`危険度: ${incidentFilterState.danger}以上`);
+    }
+
+    const baseSummary = `${filteredIncidents.length}件 / 全${incidentData.length}件を表示`;
+    incidentFilterSummary.textContent = activeFilters.length > 0
+        ? `${baseSummary} | ${activeFilters.join(' / ')}`
+        : baseSummary;
+}
+
+function renderIncidentEmptyState() {
+    if (!incidentList) {
+        return;
+    }
+
+    const emptyState = document.createElement('div');
+    emptyState.className = 'incident-empty-state';
+    emptyState.textContent = '条件に一致する事件ファイルは見つかりませんでした。';
+    incidentList.appendChild(emptyState);
+}
 
 function renderIncidentCards() {
     if (!incidentList) {
@@ -219,9 +364,17 @@ function renderIncidentCards() {
 
     incidentList.innerHTML = '';
 
+    const filteredIncidents = getFilteredIncidents();
+    updateIncidentFilterSummary(filteredIncidents);
+
+    if (filteredIncidents.length === 0) {
+        renderIncidentEmptyState();
+        return;
+    }
+
     const fragment = document.createDocumentFragment();
 
-    incidentData.forEach((incident) => {
+    filteredIncidents.forEach((incident) => {
         const card = document.createElement('button');
         card.type = 'button';
         card.className = 'incident-card';
@@ -363,11 +516,47 @@ function initializeIncidentArchive() {
         return;
     }
 
+    Object.assign(incidentFilterState, getDefaultIncidentFilterState(), loadIncidentFilterState());
+    populateIncidentCategoryOptions();
+    syncIncidentFilterControls();
     renderIncidentCards();
 }
 
 initializeIncidentArchive();
 window.renderIncidentCards = renderIncidentCards;
+
+if (incidentSearchInput) {
+    incidentSearchInput.addEventListener('input', (event) => {
+        incidentFilterState.search = event.target.value;
+        saveIncidentFilterState();
+        renderIncidentCards();
+    });
+}
+
+if (incidentCategoryFilter) {
+    incidentCategoryFilter.addEventListener('change', (event) => {
+        incidentFilterState.category = event.target.value;
+        saveIncidentFilterState();
+        renderIncidentCards();
+    });
+}
+
+if (incidentDangerFilter) {
+    incidentDangerFilter.addEventListener('change', (event) => {
+        incidentFilterState.danger = event.target.value;
+        saveIncidentFilterState();
+        renderIncidentCards();
+    });
+}
+
+if (incidentResetBtn) {
+    incidentResetBtn.addEventListener('click', () => {
+        Object.assign(incidentFilterState, getDefaultIncidentFilterState());
+        saveIncidentFilterState();
+        syncIncidentFilterControls();
+        renderIncidentCards();
+    });
+}
 
 function refreshIncidentArchiveIfNeeded() {
     const incidentSection = document.querySelector('.chat-section[data-section="incident-file"]');

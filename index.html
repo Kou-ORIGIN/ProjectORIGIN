@@ -113,6 +113,31 @@
                             </div>
                             <p class="placeholder-description">機密レベルの高い事件記録を一覧化し、詳細を確認できます。</p>
                         </div>
+                        <div class="incident-filter-panel" aria-label="事件ファイルの検索と絞り込み">
+                            <div class="incident-filter-group incident-filter-search-group">
+                                <label class="incident-filter-label" for="incidentSearchInput">検索</label>
+                                <input type="search" id="incidentSearchInput" class="incident-filter-input" placeholder="事件名、地域、分類、内容を検索">
+                            </div>
+                            <div class="incident-filter-group">
+                                <label class="incident-filter-label" for="incidentCategoryFilter">分類</label>
+                                <select id="incidentCategoryFilter" class="incident-filter-select">
+                                    <option value="all">すべて</option>
+                                </select>
+                            </div>
+                            <div class="incident-filter-group">
+                                <label class="incident-filter-label" for="incidentDangerFilter">危険度</label>
+                                <select id="incidentDangerFilter" class="incident-filter-select">
+                                    <option value="all">すべて</option>
+                                    <option value="1">1以上</option>
+                                    <option value="2">2以上</option>
+                                    <option value="3">3以上</option>
+                                    <option value="4">4以上</option>
+                                    <option value="5">5以上</option>
+                                </select>
+                            </div>
+                            <button type="button" class="incident-reset-btn" id="incidentResetBtn">リセット</button>
+                        </div>
+                        <p class="incident-filter-summary" id="incidentFilterSummary" aria-live="polite"></p>
                         <div class="incident-list" id="incidentList" aria-live="polite"></div>
                     </div>
                     <div class="incident-modal-overlay" id="incidentModalOverlay" hidden>
@@ -218,7 +243,7 @@
         </main>
     </div>
 
-    <script src="script.js?v=20260715"></script>
+    <script src="script.js?v=20260716"></script>
 </body>
 </html>
 
