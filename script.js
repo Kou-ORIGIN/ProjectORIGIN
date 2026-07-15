@@ -90,10 +90,260 @@ function setActiveSection(sectionName) {
 chatNavItems.forEach((item) => {
     item.addEventListener('click', () => {
         setActiveSection(item.dataset.section);
+        if (item.dataset.section === 'incident-file') {
+            initializeIncidentArchive();
+        }
     });
 });
 
 setActiveSection('chat');
+
+// ============================================================
+// INCIDENT ARCHIVE
+// ============================================================
+
+const incidentData = [
+    {
+        id: 'FILE-001',
+        name: 'ロズウェル事件',
+        region: 'アメリカ・ニューメキシコ州',
+        era: '1947年',
+        category: 'UFO・未確認飛行物体',
+        danger: 3,
+        status: '調査継続中',
+        facts: [
+            '1947年の夏、ニューメキシコ州で異常な金属片が回収された。',
+            '目撃情報と地上の残留物が報告された。'
+        ],
+        theories: [
+            '軍事機関が収集した物体の調査記録が存在する。',
+            '高高度の航空機または試験機と見られる。'
+        ],
+        legends: [
+            'UFOの墜落現場として都市伝説化した。',
+            '政府が真相を秘匿していると語られる。'
+        ]
+    },
+    {
+        id: 'FILE-002',
+        name: 'ディアトロフ峠事件',
+        region: 'ロシア・ウラル山脈',
+        era: '1959年',
+        category: '未解決事件',
+        danger: 4,
+        status: '一部解明',
+        facts: [
+            'ソ連時代の山岳地帯で複数の目撃情報が残されている。',
+            '地形と足跡の異常が記録された。'
+        ],
+        theories: [
+            '地元の遭難者や軍事部隊の動きと関連がある。',
+            '不明な生物または人為的な装置の存在が推定される。'
+        ],
+        legends: [
+            '山中に「異常な生物」が潜むという噂がある。',
+            '秘密の実験場との噂もある。'
+        ]
+    },
+    {
+        id: 'FILE-003',
+        name: 'ナスカの地上絵',
+        region: 'ペルー・ナスカ高原',
+        era: '紀元前後〜西暦800年頃',
+        category: '古代文明・遺跡',
+        danger: 1,
+        status: '研究継続中',
+        facts: [
+            '巨大な幾何学模様が高原に描かれている。',
+            '空からしか全容が把握しにくい構造になっている。'
+        ],
+        theories: [
+            '古代文明の祭祀・天文観測の記録と見なされる。',
+            '地域共同体の儀式空間として利用された可能性がある。'
+        ],
+        legends: [
+            '異星人のメッセージと解釈する説がある。',
+            '神秘的な象徴として現代でも語り継がれている。'
+        ]
+    }
+];
+
+const incidentList = document.getElementById('incidentList');
+const incidentModalOverlay = document.getElementById('incidentModalOverlay');
+const incidentModalFile = document.getElementById('incidentModalFile');
+const incidentModalTitle = document.getElementById('incidentModalTitle');
+const incidentFactsList = document.getElementById('incidentFactsList');
+const incidentTheoriesList = document.getElementById('incidentTheoriesList');
+const incidentLegendsList = document.getElementById('incidentLegendsList');
+const incidentCloseBtn = document.getElementById('incidentCloseBtn');
+
+function renderIncidentCards() {
+    if (!incidentList) {
+        return;
+    }
+
+    incidentList.innerHTML = '';
+
+    const fragment = document.createDocumentFragment();
+
+    incidentData.forEach((incident) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'incident-card';
+        card.setAttribute('data-id', incident.id);
+
+        const header = document.createElement('div');
+        header.className = 'incident-card-header';
+
+        const idElement = document.createElement('span');
+        idElement.className = 'incident-id';
+        idElement.textContent = incident.id;
+
+        const statusElement = document.createElement('span');
+        statusElement.className = 'incident-status';
+        statusElement.textContent = incident.status;
+
+        header.appendChild(idElement);
+        header.appendChild(statusElement);
+        card.appendChild(header);
+
+        const title = document.createElement('h4');
+        title.className = 'incident-name';
+        title.textContent = incident.name;
+        card.appendChild(title);
+
+        const metaFields = [
+            { label: '地域', value: incident.region },
+            { label: '年代', value: incident.era },
+            { label: '分類', value: incident.category }
+        ];
+
+        metaFields.forEach((field) => {
+            const meta = document.createElement('div');
+            meta.className = 'incident-meta';
+
+            const label = document.createElement('span');
+            label.className = 'incident-meta-label';
+            label.textContent = field.label;
+
+            const value = document.createElement('span');
+            value.className = 'incident-meta-value';
+            value.textContent = field.value;
+
+            meta.appendChild(label);
+            meta.appendChild(value);
+            card.appendChild(meta);
+        });
+
+        const danger = document.createElement('div');
+        danger.className = 'incident-danger';
+
+        const dangerLabel = document.createElement('span');
+        dangerLabel.className = 'incident-danger-label';
+        dangerLabel.textContent = `危険度: ${incident.danger} / 5`;
+
+        const gauge = document.createElement('div');
+        gauge.className = 'danger-gauge';
+
+        for (let index = 0; index < 5; index += 1) {
+            const segment = document.createElement('span');
+            segment.className = 'danger-gauge-segment';
+            if (index < incident.danger) {
+                segment.classList.add('active');
+            }
+            gauge.appendChild(segment);
+        }
+
+        danger.appendChild(dangerLabel);
+        danger.appendChild(gauge);
+        card.appendChild(danger);
+
+        card.addEventListener('click', () => {
+            openIncidentModal(incident);
+        });
+
+        fragment.appendChild(card);
+    });
+
+    incidentList.appendChild(fragment);
+}
+
+function fillList(container, items) {
+    container.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    items.forEach((item) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = item;
+        fragment.appendChild(listItem);
+    });
+
+    container.appendChild(fragment);
+}
+
+function openIncidentModal(incident) {
+    if (!incidentModalOverlay || !incidentModalFile || !incidentModalTitle) {
+        return;
+    }
+
+    incidentModalFile.textContent = incident.id;
+    incidentModalTitle.textContent = incident.name;
+    fillList(incidentFactsList, incident.facts);
+    fillList(incidentTheoriesList, incident.theories);
+    fillList(incidentLegendsList, incident.legends);
+    incidentModalOverlay.hidden = false;
+    document.body.classList.add('modal-open');
+}
+
+function closeIncidentModal() {
+    if (!incidentModalOverlay) {
+        return;
+    }
+
+    incidentModalOverlay.hidden = true;
+    document.body.classList.remove('modal-open');
+}
+
+if (incidentCloseBtn) {
+    incidentCloseBtn.addEventListener('click', closeIncidentModal);
+}
+
+if (incidentModalOverlay) {
+    incidentModalOverlay.addEventListener('click', (event) => {
+        if (event.target === incidentModalOverlay) {
+            closeIncidentModal();
+        }
+    });
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && incidentModalOverlay && !incidentModalOverlay.hidden) {
+        closeIncidentModal();
+    }
+});
+
+function initializeIncidentArchive() {
+    const incidentListNode = document.getElementById('incidentList');
+    if (!incidentListNode) {
+        return;
+    }
+
+    renderIncidentCards();
+}
+
+initializeIncidentArchive();
+window.renderIncidentCards = renderIncidentCards;
+
+function refreshIncidentArchiveIfNeeded() {
+    const incidentSection = document.querySelector('.chat-section[data-section="incident-file"]');
+    if (!incidentSection) {
+        return;
+    }
+
+    if (incidentSection.classList.contains('active')) {
+        initializeIncidentArchive();
+    }
+}
 
 // ============================================================
 // CHAT FUNCTIONALITY

@@ -748,6 +748,211 @@ body {
     line-height: 1.7;
 }
 
+.incident-archive {
+    gap: 18px;
+    align-items: stretch;
+}
+
+.incident-archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.incident-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.incident-card {
+    appearance: none;
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    background: rgba(0, 15, 30, 0.85);
+    color: var(--text-primary);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.08);
+}
+
+.incident-card:hover,
+.incident-card:focus-visible {
+    border-color: var(--hologram-color);
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.incident-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.incident-id {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.incident-status {
+    padding: 4px 8px;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 999px;
+    color: var(--primary-color);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+}
+
+.incident-name {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.incident-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+}
+
+.incident-meta-label {
+    color: var(--text-secondary);
+}
+
+.incident-meta-value {
+    color: rgba(255, 255, 255, 0.95);
+    text-align: right;
+}
+
+.incident-danger {
+    margin-top: 10px;
+}
+
+.incident-danger-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+}
+
+.danger-gauge {
+    display: flex;
+    gap: 6px;
+}
+
+.danger-gauge-segment {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.danger-gauge-segment.active {
+    background: linear-gradient(90deg, #0099ff, #00f0ff);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+}
+
+.incident-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 3000;
+}
+
+.incident-modal-overlay[hidden] {
+    display: none;
+}
+
+.incident-modal {
+    width: min(720px, 100%);
+    max-height: 85vh;
+    overflow-y: auto;
+    background: rgba(5, 8, 18, 0.95);
+    border: 1px solid var(--hologram-color);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.25);
+    padding: 24px;
+    position: relative;
+}
+
+.incident-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    color: var(--primary-color);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Courier New', monospace;
+}
+
+.incident-modal-header {
+    margin-bottom: 18px;
+    padding-right: 90px;
+}
+
+.incident-modal-file {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.incident-modal-header h3 {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+}
+
+.incident-modal-body {
+    display: grid;
+    gap: 16px;
+}
+
+.incident-detail-group {
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    background: rgba(0, 240, 255, 0.04);
+}
+
+.incident-detail-group h4 {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.incident-detail-group ul {
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+}
+
+.incident-detail-group li {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+}
+
 .info-item {
     display: flex;
     justify-content: space-between;
@@ -1327,6 +1532,18 @@ body {
 }
 
 @media (max-width: 768px) {
+    .incident-list {
+        grid-template-columns: 1fr;
+    }
+
+    .incident-modal {
+        padding: 20px;
+    }
+
+    .incident-modal-header {
+        padding-right: 70px;
+    }
+
     .dashboard-header {
         flex-direction: column;
         gap: 15px;

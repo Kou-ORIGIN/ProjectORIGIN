@@ -105,10 +105,38 @@
                     <div class="chat-header">
                         <h2>事件ファイル</h2>
                     </div>
-                    <div class="content-placeholder hologram">
-                        <div class="placeholder-badge">極秘事件アーカイブ</div>
-                        <h3 class="placeholder-title">未確認の記録を確認する</h3>
-                        <p class="placeholder-description">この画面では、秘密裏に保管された事件記録の仮レイアウトを表示します。</p>
+                    <div class="content-placeholder hologram incident-archive">
+                        <div class="incident-archive-header">
+                            <div>
+                                <div class="placeholder-badge">極秘事件アーカイブ</div>
+                                <h3 class="placeholder-title">調査対象ファイル一覧</h3>
+                            </div>
+                            <p class="placeholder-description">機密レベルの高い事件記録を一覧化し、詳細を確認できます。</p>
+                        </div>
+                        <div class="incident-list" id="incidentList" aria-live="polite"></div>
+                    </div>
+                    <div class="incident-modal-overlay" id="incidentModalOverlay" hidden>
+                        <div class="incident-modal" role="dialog" aria-modal="true" aria-labelledby="incidentModalTitle">
+                            <button type="button" class="incident-close-btn" id="incidentCloseBtn">閉じる</button>
+                            <div class="incident-modal-header">
+                                <p class="incident-modal-file" id="incidentModalFile"></p>
+                                <h3 id="incidentModalTitle"></h3>
+                            </div>
+                            <div class="incident-modal-body">
+                                <div class="incident-detail-group">
+                                    <h4>確認された事実</h4>
+                                    <ul id="incidentFactsList"></ul>
+                                </div>
+                                <div class="incident-detail-group">
+                                    <h4>有力な説</h4>
+                                    <ul id="incidentTheoriesList"></ul>
+                                </div>
+                                <div class="incident-detail-group">
+                                    <h4>仮説・都市伝説</h4>
+                                    <ul id="incidentLegendsList"></ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -190,7 +218,7 @@
         </main>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260715"></script>
 </body>
 </html>
 
