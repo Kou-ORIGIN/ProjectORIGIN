@@ -448,6 +448,18 @@ function updateFavoriteButtonState(button, incidentName, active) {
     );
 }
 
+function refreshFavoriteUiAcrossSections() {
+    renderIncidentCards();
+    renderFavoriteCards();
+
+    if (activeOriginMapIncidentId) {
+        const activeIncident = getIncidentById(activeOriginMapIncidentId);
+        if (activeIncident) {
+            renderOriginMapInfoCard(activeIncident);
+        }
+    }
+}
+
 function toggleIncidentFavorite(incidentId) {
     if (isIncidentFavorite(incidentId)) {
         favoriteIncidentIds.delete(incidentId);
@@ -456,8 +468,7 @@ function toggleIncidentFavorite(incidentId) {
     }
 
     saveFavoriteIncidentIds();
-    renderIncidentCards();
-    renderFavoriteCards();
+    refreshFavoriteUiAcrossSections();
 }
 
 function getIncidentById(incidentId) {
@@ -514,61 +525,11 @@ function renderOriginMapInfoCard(incident) {
 
     originMapInfo.innerHTML = '';
 
-    const card = document.createElement('article');
-    card.className = 'incident-card origin-map-info-card';
-
-    const header = document.createElement('div');
-    header.className = 'incident-card-header';
-
-    const idElement = document.createElement('span');
-    idElement.className = 'incident-id';
-    idElement.textContent = incident.id;
-
-    const statusElement = document.createElement('span');
-    statusElement.className = 'incident-status';
-    statusElement.textContent = incident.status;
-
-    header.appendChild(idElement);
-    header.appendChild(statusElement);
-    card.appendChild(header);
-
-    const title = document.createElement('h4');
-    title.className = 'incident-name';
-    title.textContent = incident.name;
-    card.appendChild(title);
-
-    const infoRows = [
-        { label: '年代', value: incident.era },
-        { label: '危険度', value: `${incident.danger} / 5` },
-        { label: '地域', value: incident.region }
-    ];
-
-    infoRows.forEach((row) => {
-        const meta = document.createElement('div');
-        meta.className = 'incident-meta';
-
-        const label = document.createElement('span');
-        label.className = 'incident-meta-label';
-        label.textContent = row.label;
-
-        const value = document.createElement('span');
-        value.className = 'incident-meta-value';
-        value.textContent = row.value;
-
-        meta.appendChild(label);
-        meta.appendChild(value);
-        card.appendChild(meta);
+    const card = createIncidentCard(incident, {
+        enableCardModalOpen: false,
+        cardClassName: 'origin-map-info-card',
+        showDetailButton: true
     });
-
-    const detailButton = document.createElement('button');
-    detailButton.type = 'button';
-    detailButton.className = 'origin-map-detail-btn';
-    detailButton.textContent = '詳細を見る';
-    detailButton.addEventListener('click', () => {
-        openIncidentModal(incident);
-    });
-
-    card.appendChild(detailButton);
     originMapInfo.appendChild(card);
 }
 
@@ -632,7 +593,11 @@ function handleIncidentCardActivate(incident) {
     openIncidentModal(incident);
 }
 
-function bindIncidentCardInteractions(card, incident) {
+function bindIncidentCardInteractions(card, incident, options = {}) {
+    if (options.enableCardModalOpen === false) {
+        return;
+    }
+
     card.addEventListener('click', () => {
         handleIncidentCardActivate(incident);
     });
@@ -658,13 +623,25 @@ function bindIncidentCardInteractions(card, incident) {
     });
 }
 
-function createIncidentCard(incident) {
+function createIncidentCard(incident, options = {}) {
+    const settings = {
+        enableCardModalOpen: true,
+        showDetailButton: false,
+        cardClassName: '',
+        ...options
+    };
+
     const card = document.createElement('article');
-    card.className = 'incident-card';
+    card.className = settings.cardClassName
+        ? `incident-card ${settings.cardClassName}`
+        : 'incident-card';
     card.setAttribute('data-id', incident.id);
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `${incident.name}の詳細を表示`);
+
+    if (settings.enableCardModalOpen) {
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `${incident.name}の詳細を表示`);
+    }
 
     const favoriteButton = document.createElement('button');
     favoriteButton.type = 'button';
@@ -744,7 +721,19 @@ function createIncidentCard(incident) {
     danger.appendChild(gauge);
     card.appendChild(danger);
 
-    bindIncidentCardInteractions(card, incident);
+    if (settings.showDetailButton) {
+        const detailButton = document.createElement('button');
+        detailButton.type = 'button';
+        detailButton.className = 'origin-map-detail-btn';
+        detailButton.textContent = '詳細を見る';
+        detailButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openIncidentModal(incident);
+        });
+        card.appendChild(detailButton);
+    }
+
+    bindIncidentCardInteractions(card, incident, settings);
 
     return card;
 }
