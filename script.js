@@ -75,6 +75,7 @@ logoutBtn.addEventListener('click', () => {
         loginForm.reset();
         errorMessage.style.display = 'none';
         localStorage.removeItem('username');
+        favoriteIncidentIds = new Set();
         lockHeaderVisibility(true);
     }
 });
@@ -140,6 +141,9 @@ chatNavItems.forEach((item) => {
         setActiveSection(item.dataset.section);
         if (item.dataset.section === 'incident-file') {
             initializeIncidentArchive();
+        }
+        if (item.dataset.section === 'favorites') {
+            initializeFavoritesView();
         }
     });
 });
@@ -229,7 +233,12 @@ const incidentCategoryFilter = document.getElementById('incidentCategoryFilter')
 const incidentDangerFilter = document.getElementById('incidentDangerFilter');
 const incidentResetBtn = document.getElementById('incidentResetBtn');
 const incidentFilterSummary = document.getElementById('incidentFilterSummary');
+const favoritesList = document.getElementById('favoritesList');
+const favoritesSummary = document.getElementById('favoritesSummary');
 const INCIDENT_FILTER_STORAGE_KEY = 'ProjectORIGIN_incident_filters';
+const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
+
+let favoriteIncidentIds = new Set();
 
 const incidentFilterState = {
     search: '',
@@ -370,6 +379,196 @@ function renderIncidentEmptyState() {
     incidentList.appendChild(emptyState);
 }
 
+function getCurrentUsernameNormalized() {
+    const username = localStorage.getItem('username');
+    if (typeof username !== 'string') {
+        return 'guest';
+    }
+
+    const normalizedUsername = username.trim().toLowerCase();
+    return normalizedUsername || 'guest';
+}
+
+function getFavoritesStorageKey() {
+    return `${FAVORITES_STORAGE_PREFIX}${getCurrentUsernameNormalized()}`;
+}
+
+function loadFavoriteIncidentIds() {
+    const validIncidentIds = new Set(incidentData.map((incident) => incident.id));
+    const storedValue = localStorage.getItem(getFavoritesStorageKey());
+
+    if (!storedValue) {
+        favoriteIncidentIds = new Set();
+        return;
+    }
+
+    try {
+        const parsedValue = JSON.parse(storedValue);
+        if (!Array.isArray(parsedValue)) {
+            favoriteIncidentIds = new Set();
+            return;
+        }
+
+        favoriteIncidentIds = new Set(
+            parsedValue.filter((id) => typeof id === 'string' && validIncidentIds.has(id))
+        );
+    } catch (error) {
+        console.error('お気に入り状態の読み込みに失敗しました', error);
+        favoriteIncidentIds = new Set();
+    }
+}
+
+function saveFavoriteIncidentIds() {
+    localStorage.setItem(getFavoritesStorageKey(), JSON.stringify([...favoriteIncidentIds]));
+}
+
+function isIncidentFavorite(incidentId) {
+    return favoriteIncidentIds.has(incidentId);
+}
+
+function updateFavoriteButtonState(button, incidentName, active) {
+    button.textContent = active ? '★' : '☆';
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+    button.setAttribute('aria-label', active
+        ? `${incidentName}をお気に入りから解除`
+        : `${incidentName}をお気に入りに登録`
+    );
+}
+
+function toggleIncidentFavorite(incidentId) {
+    if (isIncidentFavorite(incidentId)) {
+        favoriteIncidentIds.delete(incidentId);
+    } else {
+        favoriteIncidentIds.add(incidentId);
+    }
+
+    saveFavoriteIncidentIds();
+    renderIncidentCards();
+    renderFavoriteCards();
+}
+
+function handleIncidentCardActivate(incident) {
+    openIncidentModal(incident);
+}
+
+function bindIncidentCardInteractions(card, incident) {
+    card.addEventListener('click', () => {
+        handleIncidentCardActivate(incident);
+    });
+
+    card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleIncidentCardActivate(incident);
+        }
+    });
+
+    card.addEventListener('mousedown', (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        if (target.closest('.incident-favorite-btn')) {
+            return;
+        }
+
+        event.preventDefault();
+    });
+}
+
+function createIncidentCard(incident) {
+    const card = document.createElement('article');
+    card.className = 'incident-card';
+    card.setAttribute('data-id', incident.id);
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `${incident.name}の詳細を表示`);
+
+    const favoriteButton = document.createElement('button');
+    favoriteButton.type = 'button';
+    favoriteButton.className = 'incident-favorite-btn';
+    updateFavoriteButtonState(favoriteButton, incident.name, isIncidentFavorite(incident.id));
+
+    favoriteButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleIncidentFavorite(incident.id);
+    });
+
+    card.appendChild(favoriteButton);
+
+    const header = document.createElement('div');
+    header.className = 'incident-card-header';
+
+    const idElement = document.createElement('span');
+    idElement.className = 'incident-id';
+    idElement.textContent = incident.id;
+
+    const statusElement = document.createElement('span');
+    statusElement.className = 'incident-status';
+    statusElement.textContent = incident.status;
+
+    header.appendChild(idElement);
+    header.appendChild(statusElement);
+    card.appendChild(header);
+
+    const title = document.createElement('h4');
+    title.className = 'incident-name';
+    title.textContent = incident.name;
+    card.appendChild(title);
+
+    const metaFields = [
+        { label: '地域', value: incident.region },
+        { label: '年代', value: incident.era },
+        { label: '分類', value: incident.category }
+    ];
+
+    metaFields.forEach((field) => {
+        const meta = document.createElement('div');
+        meta.className = 'incident-meta';
+
+        const label = document.createElement('span');
+        label.className = 'incident-meta-label';
+        label.textContent = field.label;
+
+        const value = document.createElement('span');
+        value.className = 'incident-meta-value';
+        value.textContent = field.value;
+
+        meta.appendChild(label);
+        meta.appendChild(value);
+        card.appendChild(meta);
+    });
+
+    const danger = document.createElement('div');
+    danger.className = 'incident-danger';
+
+    const dangerLabel = document.createElement('span');
+    dangerLabel.className = 'incident-danger-label';
+    dangerLabel.textContent = `危険度: ${incident.danger} / 5`;
+
+    const gauge = document.createElement('div');
+    gauge.className = 'danger-gauge';
+
+    for (let index = 0; index < 5; index += 1) {
+        const segment = document.createElement('span');
+        segment.className = 'danger-gauge-segment';
+        if (index < incident.danger) {
+            segment.classList.add('active');
+        }
+        gauge.appendChild(segment);
+    }
+
+    danger.appendChild(dangerLabel);
+    danger.appendChild(gauge);
+    card.appendChild(danger);
+
+    bindIncidentCardInteractions(card, incident);
+
+    return card;
+}
+
 function renderIncidentCards() {
     if (!incidentList) {
         return;
@@ -388,85 +587,42 @@ function renderIncidentCards() {
     const fragment = document.createDocumentFragment();
 
     filteredIncidents.forEach((incident) => {
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'incident-card';
-        card.setAttribute('data-id', incident.id);
-
-        const header = document.createElement('div');
-        header.className = 'incident-card-header';
-
-        const idElement = document.createElement('span');
-        idElement.className = 'incident-id';
-        idElement.textContent = incident.id;
-
-        const statusElement = document.createElement('span');
-        statusElement.className = 'incident-status';
-        statusElement.textContent = incident.status;
-
-        header.appendChild(idElement);
-        header.appendChild(statusElement);
-        card.appendChild(header);
-
-        const title = document.createElement('h4');
-        title.className = 'incident-name';
-        title.textContent = incident.name;
-        card.appendChild(title);
-
-        const metaFields = [
-            { label: '地域', value: incident.region },
-            { label: '年代', value: incident.era },
-            { label: '分類', value: incident.category }
-        ];
-
-        metaFields.forEach((field) => {
-            const meta = document.createElement('div');
-            meta.className = 'incident-meta';
-
-            const label = document.createElement('span');
-            label.className = 'incident-meta-label';
-            label.textContent = field.label;
-
-            const value = document.createElement('span');
-            value.className = 'incident-meta-value';
-            value.textContent = field.value;
-
-            meta.appendChild(label);
-            meta.appendChild(value);
-            card.appendChild(meta);
-        });
-
-        const danger = document.createElement('div');
-        danger.className = 'incident-danger';
-
-        const dangerLabel = document.createElement('span');
-        dangerLabel.className = 'incident-danger-label';
-        dangerLabel.textContent = `危険度: ${incident.danger} / 5`;
-
-        const gauge = document.createElement('div');
-        gauge.className = 'danger-gauge';
-
-        for (let index = 0; index < 5; index += 1) {
-            const segment = document.createElement('span');
-            segment.className = 'danger-gauge-segment';
-            if (index < incident.danger) {
-                segment.classList.add('active');
-            }
-            gauge.appendChild(segment);
-        }
-
-        danger.appendChild(dangerLabel);
-        danger.appendChild(gauge);
-        card.appendChild(danger);
-
-        card.addEventListener('click', () => {
-            openIncidentModal(incident);
-        });
-
-        fragment.appendChild(card);
+        fragment.appendChild(createIncidentCard(incident));
     });
 
     incidentList.appendChild(fragment);
+}
+
+function renderFavoriteCards() {
+    if (!favoritesList) {
+        return;
+    }
+
+    favoritesList.innerHTML = '';
+
+    const favoriteIncidents = incidentData.filter((incident) => favoriteIncidentIds.has(incident.id));
+    if (favoritesSummary) {
+        favoritesSummary.textContent = `${favoriteIncidents.length}件 / 全${incidentData.length}件の事件をお気に入り登録`;
+    }
+
+    if (favoriteIncidents.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.className = 'incident-empty-state';
+        emptyState.textContent = 'まだお気に入りは登録されていません';
+        favoritesList.appendChild(emptyState);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    favoriteIncidents.forEach((incident) => {
+        fragment.appendChild(createIncidentCard(incident));
+    });
+
+    favoritesList.appendChild(fragment);
+}
+
+function initializeFavoritesView() {
+    renderFavoriteCards();
 }
 
 function fillList(container, items) {
@@ -538,6 +694,7 @@ function initializeIncidentArchive() {
 }
 
 initializeIncidentArchive();
+initializeFavoritesView();
 window.renderIncidentCards = renderIncidentCards;
 
 if (incidentSearchInput) {
@@ -836,6 +993,10 @@ function initializeChatScreen() {
     if (!hasHistory) {
         addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai', { animate: false });
     }
+
+    loadFavoriteIncidentIds();
+    initializeIncidentArchive();
+    initializeFavoritesView();
 
     const savedSection = getStoredSectionName();
     setActiveSection(savedSection, { persist: false });

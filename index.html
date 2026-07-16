@@ -140,29 +140,6 @@
                         <p class="incident-filter-summary" id="incidentFilterSummary" aria-live="polite"></p>
                         <div class="incident-list" id="incidentList" aria-live="polite"></div>
                     </div>
-                    <div class="incident-modal-overlay" id="incidentModalOverlay" hidden>
-                        <div class="incident-modal" role="dialog" aria-modal="true" aria-labelledby="incidentModalTitle">
-                            <button type="button" class="incident-close-btn" id="incidentCloseBtn">閉じる</button>
-                            <div class="incident-modal-header">
-                                <p class="incident-modal-file" id="incidentModalFile"></p>
-                                <h3 id="incidentModalTitle"></h3>
-                            </div>
-                            <div class="incident-modal-body">
-                                <div class="incident-detail-group">
-                                    <h4>確認された事実</h4>
-                                    <ul id="incidentFactsList"></ul>
-                                </div>
-                                <div class="incident-detail-group">
-                                    <h4>有力な説</h4>
-                                    <ul id="incidentTheoriesList"></ul>
-                                </div>
-                                <div class="incident-detail-group">
-                                    <h4>仮説・都市伝説</h4>
-                                    <ul id="incidentLegendsList"></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </section>
 
                 <!-- Origin Map Section -->
@@ -194,10 +171,16 @@
                     <div class="chat-header">
                         <h2>お気に入り</h2>
                     </div>
-                    <div class="content-placeholder hologram">
-                        <div class="placeholder-badge">保存した調査ファイル</div>
-                        <h3 class="placeholder-title">重要な資料を素早く開く</h3>
-                        <p class="placeholder-description">保存済みの調査メモや引用を一覧で確認するための仮画面です。</p>
+                    <div class="content-placeholder hologram incident-archive">
+                        <div class="incident-archive-header">
+                            <div>
+                                <div class="placeholder-badge">保存した調査ファイル</div>
+                                <h3 class="placeholder-title">お気に入り事件一覧</h3>
+                            </div>
+                            <p class="placeholder-description">登録した事件ファイルだけを表示します。</p>
+                        </div>
+                        <p class="incident-filter-summary" id="favoritesSummary" aria-live="polite"></p>
+                        <div class="incident-list" id="favoritesList" aria-live="polite"></div>
                     </div>
                 </section>
 
@@ -221,6 +204,30 @@
                         </div>
                     </div>
                 </section>
+
+                <div class="incident-modal-overlay" id="incidentModalOverlay" hidden>
+                    <div class="incident-modal" role="dialog" aria-modal="true" aria-labelledby="incidentModalTitle">
+                        <button type="button" class="incident-close-btn" id="incidentCloseBtn">閉じる</button>
+                        <div class="incident-modal-header">
+                            <p class="incident-modal-file" id="incidentModalFile"></p>
+                            <h3 id="incidentModalTitle"></h3>
+                        </div>
+                        <div class="incident-modal-body">
+                            <div class="incident-detail-group">
+                                <h4>確認された事実</h4>
+                                <ul id="incidentFactsList"></ul>
+                            </div>
+                            <div class="incident-detail-group">
+                                <h4>有力な説</h4>
+                                <ul id="incidentTheoriesList"></ul>
+                            </div>
+                            <div class="incident-detail-group">
+                                <h4>仮説・都市伝説</h4>
+                                <ul id="incidentLegendsList"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- AI Avatar Panel -->
