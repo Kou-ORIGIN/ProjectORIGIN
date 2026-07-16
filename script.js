@@ -142,6 +142,9 @@ chatNavItems.forEach((item) => {
         if (item.dataset.section === 'incident-file') {
             initializeIncidentArchive();
         }
+        if (item.dataset.section === 'origin-map') {
+            initializeOriginMap();
+        }
         if (item.dataset.section === 'favorites') {
             initializeFavoritesView();
         }
@@ -235,10 +238,19 @@ const incidentResetBtn = document.getElementById('incidentResetBtn');
 const incidentFilterSummary = document.getElementById('incidentFilterSummary');
 const favoritesList = document.getElementById('favoritesList');
 const favoritesSummary = document.getElementById('favoritesSummary');
+const originWorldMap = document.getElementById('originWorldMap');
+const originMapInfo = document.getElementById('originMapInfo');
 const INCIDENT_FILTER_STORAGE_KEY = 'ProjectORIGIN_incident_filters';
 const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
 
 let favoriteIncidentIds = new Set();
+let activeOriginMapIncidentId = null;
+
+const originMapMarkerPositions = {
+    'FILE-001': { left: 22, top: 40 },
+    'FILE-002': { left: 62, top: 24 },
+    'FILE-003': { left: 30, top: 67 }
+};
 
 const incidentFilterState = {
     search: '',
@@ -446,6 +458,174 @@ function toggleIncidentFavorite(incidentId) {
     saveFavoriteIncidentIds();
     renderIncidentCards();
     renderFavoriteCards();
+}
+
+function getIncidentById(incidentId) {
+    return incidentData.find((incident) => incident.id === incidentId) || null;
+}
+
+function createOriginMapSvg() {
+    if (!originWorldMap) {
+        return;
+    }
+
+    const svgNamespace = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNamespace, 'svg');
+    svg.classList.add('origin-world-map-svg');
+    svg.setAttribute('viewBox', '0 0 1000 520');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', '世界地図ベース');
+
+    const continents = [
+        'M66,140 L150,80 L286,86 L354,138 L338,214 L262,238 L188,206 L124,212 L78,182 Z',
+        'M246,252 L296,268 L322,332 L306,444 L256,506 L208,474 L190,394 L214,318 Z',
+        'M392,110 L468,88 L596,104 L702,96 L788,126 L826,188 L790,238 L714,250 L636,226 L584,240 L540,214 L478,222 L438,190 L404,160 Z',
+        'M552,250 L610,262 L640,324 L624,384 L590,430 L550,420 L530,356 L536,304 Z',
+        'M768,312 L818,296 L874,316 L906,358 L884,410 L834,434 L784,402 L754,356 Z',
+        'M844,176 L878,160 L920,178 L934,208 L914,234 L878,230 L852,204 Z'
+    ];
+
+    continents.forEach((pathData) => {
+        const path = document.createElementNS(svgNamespace, 'path');
+        path.classList.add('origin-world-map-land');
+        path.setAttribute('d', pathData);
+        svg.appendChild(path);
+    });
+
+    originWorldMap.appendChild(svg);
+}
+
+function updateOriginMapMarkerActiveState() {
+    if (!originWorldMap) {
+        return;
+    }
+
+    const markers = originWorldMap.querySelectorAll('.origin-map-marker');
+    markers.forEach((marker) => {
+        const isActive = marker.getAttribute('data-id') === activeOriginMapIncidentId;
+        marker.classList.toggle('active', isActive);
+    });
+}
+
+function renderOriginMapInfoCard(incident) {
+    if (!originMapInfo || !incident) {
+        return;
+    }
+
+    originMapInfo.innerHTML = '';
+
+    const card = document.createElement('article');
+    card.className = 'incident-card origin-map-info-card';
+
+    const header = document.createElement('div');
+    header.className = 'incident-card-header';
+
+    const idElement = document.createElement('span');
+    idElement.className = 'incident-id';
+    idElement.textContent = incident.id;
+
+    const statusElement = document.createElement('span');
+    statusElement.className = 'incident-status';
+    statusElement.textContent = incident.status;
+
+    header.appendChild(idElement);
+    header.appendChild(statusElement);
+    card.appendChild(header);
+
+    const title = document.createElement('h4');
+    title.className = 'incident-name';
+    title.textContent = incident.name;
+    card.appendChild(title);
+
+    const infoRows = [
+        { label: '年代', value: incident.era },
+        { label: '危険度', value: `${incident.danger} / 5` },
+        { label: '地域', value: incident.region }
+    ];
+
+    infoRows.forEach((row) => {
+        const meta = document.createElement('div');
+        meta.className = 'incident-meta';
+
+        const label = document.createElement('span');
+        label.className = 'incident-meta-label';
+        label.textContent = row.label;
+
+        const value = document.createElement('span');
+        value.className = 'incident-meta-value';
+        value.textContent = row.value;
+
+        meta.appendChild(label);
+        meta.appendChild(value);
+        card.appendChild(meta);
+    });
+
+    const detailButton = document.createElement('button');
+    detailButton.type = 'button';
+    detailButton.className = 'origin-map-detail-btn';
+    detailButton.textContent = '詳細を見る';
+    detailButton.addEventListener('click', () => {
+        openIncidentModal(incident);
+    });
+
+    card.appendChild(detailButton);
+    originMapInfo.appendChild(card);
+}
+
+function handleOriginMapMarkerSelect(incidentId) {
+    const incident = getIncidentById(incidentId);
+    if (!incident) {
+        return;
+    }
+
+    activeOriginMapIncidentId = incidentId;
+    updateOriginMapMarkerActiveState();
+    renderOriginMapInfoCard(incident);
+}
+
+function createOriginMapMarkers() {
+    if (!originWorldMap) {
+        return;
+    }
+
+    incidentData.forEach((incident) => {
+        const position = originMapMarkerPositions[incident.id];
+        if (!position) {
+            return;
+        }
+
+        const marker = document.createElement('button');
+        marker.type = 'button';
+        marker.className = 'origin-map-marker';
+        marker.setAttribute('data-id', incident.id);
+        marker.setAttribute('aria-label', `${incident.name}の地点`);
+        marker.style.left = `${position.left}%`;
+        marker.style.top = `${position.top}%`;
+
+        marker.addEventListener('click', () => {
+            handleOriginMapMarkerSelect(incident.id);
+        });
+
+        originWorldMap.appendChild(marker);
+    });
+}
+
+function initializeOriginMap() {
+    if (!originWorldMap || !originMapInfo) {
+        return;
+    }
+
+    if (!originWorldMap.dataset.initialized) {
+        createOriginMapSvg();
+        createOriginMapMarkers();
+        originWorldMap.dataset.initialized = 'true';
+    }
+
+    if (!activeOriginMapIncidentId) {
+        activeOriginMapIncidentId = incidentData[0]?.id || null;
+    }
+
+    handleOriginMapMarkerSelect(activeOriginMapIncidentId);
 }
 
 function handleIncidentCardActivate(incident) {
@@ -695,6 +875,7 @@ function initializeIncidentArchive() {
 
 initializeIncidentArchive();
 initializeFavoritesView();
+initializeOriginMap();
 window.renderIncidentCards = renderIncidentCards;
 
 if (incidentSearchInput) {
@@ -997,6 +1178,7 @@ function initializeChatScreen() {
     loadFavoriteIncidentIds();
     initializeIncidentArchive();
     initializeFavoritesView();
+    initializeOriginMap();
 
     const savedSection = getStoredSectionName();
     setActiveSection(savedSection, { persist: false });

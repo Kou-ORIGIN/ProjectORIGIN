@@ -147,10 +147,15 @@
                     <div class="chat-header">
                         <h2>ORIGIN MAP</h2>
                     </div>
-                    <div class="content-placeholder hologram">
-                        <div class="placeholder-badge">世界の謎を地図から探索</div>
-                        <h3 class="placeholder-title">地理と事件の接点を追う</h3>
-                        <p class="placeholder-description">仮の地図ビューで、未解決の現象や伝説の分布を探索できます。</p>
+                    <div class="content-placeholder hologram origin-map-layout">
+                        <div class="origin-map-header-row">
+                            <div class="placeholder-badge">世界の謎を地図から探索</div>
+                            <p class="origin-map-helper">光るマーカーを選択して事件情報を表示</p>
+                        </div>
+                        <div class="origin-map-main">
+                            <div class="origin-world-map" id="originWorldMap" role="region" aria-label="世界地図"></div>
+                            <aside class="origin-map-info" id="originMapInfo" aria-live="polite"></aside>
+                        </div>
                     </div>
                 </section>
 
