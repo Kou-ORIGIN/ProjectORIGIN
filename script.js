@@ -560,11 +560,19 @@ function createOriginMapMarkers() {
         marker.className = 'origin-map-marker';
         marker.setAttribute('data-id', incident.id);
         marker.setAttribute('aria-label', `${incident.name}の地点`);
+        marker.setAttribute('draggable', 'false');
         marker.style.left = `${position.left}%`;
         marker.style.top = `${position.top}%`;
 
         marker.addEventListener('click', () => {
             handleOriginMapMarkerSelect(incident.id);
+        });
+
+        marker.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                handleOriginMapMarkerSelect(incident.id);
+            }
         });
 
         originWorldMap.appendChild(marker);

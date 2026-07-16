@@ -813,12 +813,16 @@ body {
     position: absolute;
     width: 16px;
     height: 16px;
+    padding: 0;
     border-radius: 50%;
     border: 1px solid rgba(0, 240, 255, 0.9);
     background: radial-gradient(circle, rgba(200, 250, 255, 1) 0%, rgba(0, 240, 255, 0.9) 45%, rgba(0, 240, 255, 0.2) 100%);
     transform: translate(-50%, -50%);
     box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
     cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    caret-color: transparent;
     animation: originMarkerPulse 3.2s ease-in-out infinite;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
