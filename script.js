@@ -181,7 +181,7 @@ if (logoutConfirmOverlay) {
 // ============================================================
 
 const desktopNavMenu = document.getElementById('desktopNavMenu');
-let chatNavItems = [];
+let desktopNavItems = [];
 const chatSections = document.querySelectorAll('.chat-section');
 const mobileNavToggleBtn = document.getElementById('mobileNavToggleBtn');
 const mobileNavOverlay = document.getElementById('mobileNavOverlay');
@@ -192,12 +192,12 @@ const ACTIVE_SECTION_STORAGE_KEY = 'ProjectORIGIN_active_section';
 const MOBILE_NAV_TRANSITION_MS = 260;
 
 const navigationConfig = [
-    { section: 'chat', label: 'Chat' },
-    { section: 'incident-file', label: 'Incident Archive' },
+    { section: 'chat', label: 'チャット' },
+    { section: 'incident-file', label: '事件ファイル' },
     { section: 'origin-map', label: 'ORIGIN MAP' },
-    { section: 'timeline', label: 'Timeline' },
-    { section: 'favorites', label: 'Favorites' },
-    { section: 'info', label: 'Information' }
+    { section: 'timeline', label: 'タイムライン' },
+    { section: 'favorites', label: 'お気に入り' },
+    { section: 'info', label: '情報' }
 ];
 
 let mobileNavItems = [];
@@ -233,7 +233,7 @@ function persistActiveSection(sectionName) {
 }
 
 function getCombinedNavItems() {
-    return [...chatNavItems, ...mobileNavItems];
+    return [...desktopNavItems, ...mobileNavItems];
 }
 
 function handleSectionSetup(sectionName) {
@@ -301,9 +301,9 @@ function renderDesktopNavItems() {
     });
 
     desktopNavMenu.appendChild(fragment);
-    chatNavItems = Array.from(desktopNavMenu.querySelectorAll('.chat-nav-item'));
+    desktopNavItems = Array.from(desktopNavMenu.querySelectorAll('.chat-nav-item'));
 
-    chatNavItems.forEach((item) => {
+    desktopNavItems.forEach((item) => {
         item.addEventListener('click', () => {
             navigateToSection(item.dataset.section, { closeMobileDrawer: false });
         });
