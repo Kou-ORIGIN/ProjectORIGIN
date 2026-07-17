@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function applyHeaderBootState() {
+            try {
+                if (localStorage.getItem('ProjectORIGIN_header_visibility') === 'hidden') {
+                    document.documentElement.classList.add('header-boot-hidden');
+                }
+            } catch (error) {
+                // Ignore localStorage access errors.
+            }
+        }());
+    </script>
     <title>ProjectORIGIN - AI OS</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -60,24 +71,53 @@
                 </div>
             </div>
             <div class="header-right">
-                <button class="logout-btn" id="logoutBtn">ログアウト</button>
+                <button
+                    type="button"
+                    class="mobile-nav-toggle"
+                    id="mobileNavToggleBtn"
+                    aria-label="Open navigation menu"
+                    aria-controls="mobileNavOverlay"
+                    aria-expanded="false"
+                >
+                    <span class="mobile-nav-toggle-icon" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+                </button>
             </div>
         </header>
+
+        <div class="mobile-nav-overlay" id="mobileNavOverlay" hidden>
+            <aside
+                class="mobile-nav-drawer"
+                id="mobileNavDrawer"
+                role="dialog"
+                aria-modal="true"
+                aria-label="Navigation Drawer"
+                aria-hidden="true"
+            >
+                <div class="mobile-nav-header">
+                    <h2>Navigation</h2>
+                    <button type="button" class="mobile-nav-close" id="mobileNavCloseBtn" aria-label="Close navigation menu">Close</button>
+                </div>
+                <nav class="mobile-nav-menu" id="mobileNavMenu" aria-label="Mobile Navigation"></nav>
+                <div class="mobile-nav-footer">
+                    <button type="button" class="nav-logout-btn" id="mobileLogoutBtn">Log Out</button>
+                </div>
+            </aside>
+        </div>
 
         <!-- Main Content -->
         <main class="dashboard-main">
             <!-- Left Sidebar -->
             <aside class="chat-sidebar">
                 <div class="sidebar-section">
-                    <h3 class="sidebar-title">メニュー</h3>
-                    <nav class="sidebar-nav">
-                        <button class="chat-nav-item active" data-section="chat">チャット</button>
-                        <button class="chat-nav-item" data-section="incident-file">事件ファイル</button>
-                        <button class="chat-nav-item" data-section="origin-map">ORIGIN MAP</button>
-                        <button class="chat-nav-item" data-section="timeline">タイムライン</button>
-                        <button class="chat-nav-item" data-section="favorites">お気に入り</button>
-                        <button class="chat-nav-item" data-section="info">情報</button>
-                    </nav>
+                    <h3 class="sidebar-title">Navigation</h3>
+                    <nav class="sidebar-nav" id="desktopNavMenu" aria-label="Desktop Navigation"></nav>
+                    <div class="sidebar-footer">
+                        <button type="button" class="nav-logout-btn" id="desktopLogoutBtn">Log Out</button>
+                    </div>
                 </div>
             </aside>
 
@@ -230,6 +270,16 @@
                                 <h4>仮説・都市伝説</h4>
                                 <ul id="incidentLegendsList"></ul>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="logout-confirm-overlay" id="logoutConfirmOverlay" hidden>
+                    <div class="logout-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="logoutConfirmTitle">
+                        <h3 id="logoutConfirmTitle">ログアウトしますか？</h3>
+                        <div class="logout-confirm-actions">
+                            <button type="button" class="logout-confirm-cancel" id="logoutConfirmCancelBtn">Cancel</button>
+                            <button type="button" class="logout-confirm-submit" id="logoutConfirmSubmitBtn">Log Out</button>
                         </div>
                     </div>
                 </div>

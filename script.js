@@ -10,21 +10,31 @@
 const loginForm = document.getElementById('loginForm');
 const loginContainer = document.getElementById('loginContainer');
 const dashboard = document.getElementById('dashboard');
-const logoutBtn = document.getElementById('logoutBtn');
+const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
+const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 const errorMessage = document.getElementById('errorMessage');
 const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const dashboardHeader = document.querySelector('.dashboard-header');
+const logoutConfirmOverlay = document.getElementById('logoutConfirmOverlay');
+const logoutConfirmCancelBtn = document.getElementById('logoutConfirmCancelBtn');
+const logoutConfirmSubmitBtn = document.getElementById('logoutConfirmSubmitBtn');
 const desktopSidebarMediaQuery = window.matchMedia('(min-width: 993px)');
 
 const HEADER_TOP_REVEAL_THRESHOLD = 24;
 const HEADER_SCROLL_TOGGLE_THRESHOLD = 32;
+const HEADER_VISIBILITY_STORAGE_KEY = 'ProjectORIGIN_header_visibility';
 
 let lastKnownScrollY = window.scrollY;
 let lastHeaderToggleScrollY = window.scrollY;
 let headerVisibilityLocked = false;
-let isHeaderVisible = true;
+let isHeaderVisible = getStoredHeaderVisibility();
 let scrollTicking = false;
+let logoutConfirmOpen = false;
+
+if (dashboardHeader && !isHeaderVisible) {
+    dashboardHeader.classList.add('header-hidden');
+}
 
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -68,25 +78,132 @@ function showErrorMessage(message) {
     errorMessage.style.display = 'block';
 }
 
-logoutBtn.addEventListener('click', () => {
-    if (confirm('ログアウトしますか？')) {
-        dashboard.style.display = 'none';
-        loginContainer.style.display = 'flex';
-        loginForm.reset();
-        errorMessage.style.display = 'none';
-        localStorage.removeItem('username');
-        favoriteIncidentIds = new Set();
-        lockHeaderVisibility(true);
+function getStoredHeaderVisibility() {
+    try {
+        return localStorage.getItem(HEADER_VISIBILITY_STORAGE_KEY) !== 'hidden';
+    } catch (error) {
+        return true;
     }
-});
+}
+
+function persistHeaderVisibility(visible) {
+    try {
+        localStorage.setItem(HEADER_VISIBILITY_STORAGE_KEY, visible ? 'visible' : 'hidden');
+    } catch (error) {
+        // Ignore localStorage access errors.
+    }
+}
+
+function clearHeaderBootState() {
+    document.documentElement.classList.remove('header-boot-hidden');
+}
+
+function executeLogout() {
+    closeMobileNavDrawer({ restoreFocus: false, immediate: true });
+    dashboard.style.display = 'none';
+    loginContainer.style.display = 'flex';
+    loginForm.reset();
+    errorMessage.style.display = 'none';
+    localStorage.removeItem('username');
+    favoriteIncidentIds = new Set();
+    lockHeaderVisibility(true);
+}
+
+function openLogoutConfirmDialog() {
+    if (!logoutConfirmOverlay || logoutConfirmOpen) {
+        return;
+    }
+
+    logoutConfirmOpen = true;
+    logoutConfirmOverlay.hidden = false;
+    lockBodyScroll('logout-confirm');
+
+    if (logoutConfirmCancelBtn) {
+        logoutConfirmCancelBtn.focus();
+    }
+}
+
+function closeLogoutConfirmDialog(options = {}) {
+    if (!logoutConfirmOverlay || !logoutConfirmOpen) {
+        return;
+    }
+
+    const shouldRestoreFocus = options.restoreFocus !== false;
+    logoutConfirmOpen = false;
+    logoutConfirmOverlay.hidden = true;
+    unlockBodyScroll('logout-confirm');
+
+    if (shouldRestoreFocus) {
+        if (!isMobileNavigationViewport() && desktopLogoutBtn) {
+            desktopLogoutBtn.focus();
+        }
+        if (isMobileNavigationViewport() && mobileLogoutBtn) {
+            mobileLogoutBtn.focus();
+        }
+    }
+}
+
+if (desktopLogoutBtn) {
+    desktopLogoutBtn.addEventListener('click', () => {
+        openLogoutConfirmDialog();
+    });
+}
+
+if (mobileLogoutBtn) {
+    mobileLogoutBtn.addEventListener('click', () => {
+        openLogoutConfirmDialog();
+    });
+}
+
+if (logoutConfirmCancelBtn) {
+    logoutConfirmCancelBtn.addEventListener('click', () => {
+        closeLogoutConfirmDialog();
+    });
+}
+
+if (logoutConfirmSubmitBtn) {
+    logoutConfirmSubmitBtn.addEventListener('click', () => {
+        closeLogoutConfirmDialog({ restoreFocus: false });
+        executeLogout();
+    });
+}
+
+if (logoutConfirmOverlay) {
+    logoutConfirmOverlay.addEventListener('click', (event) => {
+        if (event.target === logoutConfirmOverlay) {
+            closeLogoutConfirmDialog();
+        }
+    });
+}
 
 // ============================================================
 // CHAT SCREEN NAVIGATION
 // ============================================================
 
-const chatNavItems = document.querySelectorAll('.chat-nav-item');
+const desktopNavMenu = document.getElementById('desktopNavMenu');
+let chatNavItems = [];
 const chatSections = document.querySelectorAll('.chat-section');
+const mobileNavToggleBtn = document.getElementById('mobileNavToggleBtn');
+const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+const mobileNavCloseBtn = document.getElementById('mobileNavCloseBtn');
+const mobileNavMenu = document.getElementById('mobileNavMenu');
 const ACTIVE_SECTION_STORAGE_KEY = 'ProjectORIGIN_active_section';
+const MOBILE_NAV_TRANSITION_MS = 260;
+
+const navigationConfig = [
+    { section: 'chat', label: 'Chat' },
+    { section: 'incident-file', label: 'Incident Archive' },
+    { section: 'origin-map', label: 'ORIGIN MAP' },
+    { section: 'timeline', label: 'Timeline' },
+    { section: 'favorites', label: 'Favorites' },
+    { section: 'info', label: 'Information' }
+];
+
+let mobileNavItems = [];
+let mobileNavHideTimerId = null;
+const bodyScrollLockReasons = new Set();
+let bodyScrollLockY = 0;
 
 function normalizeSectionName(sectionName) {
     if (sectionName === 'incidents') {
@@ -105,7 +222,7 @@ function getStoredSectionName() {
     }
 
     const normalizedSection = normalizeSectionName(storedSection);
-    const validSections = ['chat', 'incident-file', 'origin-map', 'timeline', 'favorites', 'info'];
+    const validSections = navigationConfig.map((item) => item.section);
     return validSections.includes(normalizedSection) ? normalizedSection : 'chat';
 }
 
@@ -113,6 +230,35 @@ function persistActiveSection(sectionName) {
     const normalizedSection = normalizeSectionName(sectionName);
     const storageValue = normalizedSection === 'incident-file' ? 'incidents' : normalizedSection === 'origin-map' ? 'map' : normalizedSection;
     localStorage.setItem(ACTIVE_SECTION_STORAGE_KEY, storageValue);
+}
+
+function getCombinedNavItems() {
+    return [...chatNavItems, ...mobileNavItems];
+}
+
+function handleSectionSetup(sectionName) {
+    if (sectionName === 'incident-file') {
+        initializeIncidentArchive();
+    }
+    if (sectionName === 'origin-map') {
+        initializeOriginMap();
+    }
+    if (sectionName === 'favorites') {
+        initializeFavoritesView();
+    }
+}
+
+function navigateToSection(sectionName, options = {}) {
+    const normalizedSection = normalizeSectionName(sectionName);
+    const shouldPersist = options.persist !== false;
+    const shouldCloseMobileDrawer = options.closeMobileDrawer !== false;
+
+    setActiveSection(normalizedSection, { persist: shouldPersist });
+    handleSectionSetup(normalizedSection);
+
+    if (shouldCloseMobileDrawer) {
+        closeMobileNavDrawer({ restoreFocus: false });
+    }
 }
 
 function setActiveSection(sectionName, options = {}) {
@@ -123,7 +269,7 @@ function setActiveSection(sectionName, options = {}) {
         persistActiveSection(normalizedSection);
     }
 
-    chatNavItems.forEach((nav) => {
+    getCombinedNavItems().forEach((nav) => {
         const isActive = nav.dataset.section === normalizedSection;
         nav.classList.toggle('active', isActive);
         nav.setAttribute('aria-pressed', String(isActive));
@@ -136,20 +282,215 @@ function setActiveSection(sectionName, options = {}) {
     });
 }
 
-chatNavItems.forEach((item) => {
-    item.addEventListener('click', () => {
-        setActiveSection(item.dataset.section);
-        if (item.dataset.section === 'incident-file') {
-            initializeIncidentArchive();
+function renderDesktopNavItems() {
+    if (!desktopNavMenu) {
+        return;
+    }
+
+    desktopNavMenu.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    navigationConfig.forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'chat-nav-item';
+        button.setAttribute('data-section', item.section);
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = item.label;
+        fragment.appendChild(button);
+    });
+
+    desktopNavMenu.appendChild(fragment);
+    chatNavItems = Array.from(desktopNavMenu.querySelectorAll('.chat-nav-item'));
+
+    chatNavItems.forEach((item) => {
+        item.addEventListener('click', () => {
+            navigateToSection(item.dataset.section, { closeMobileDrawer: false });
+        });
+    });
+}
+
+function isIncidentModalOpen() {
+    return Boolean(incidentModalOverlay && !incidentModalOverlay.hidden);
+}
+
+function isMobileNavigationViewport() {
+    return !desktopSidebarMediaQuery.matches;
+}
+
+function lockBodyScroll(reason) {
+    if (!reason || bodyScrollLockReasons.has(reason)) {
+        return;
+    }
+
+    if (bodyScrollLockReasons.size === 0) {
+        bodyScrollLockY = window.scrollY || window.pageYOffset || 0;
+        document.body.style.top = `-${bodyScrollLockY}px`;
+        document.body.classList.add('body-scroll-locked');
+    }
+
+    bodyScrollLockReasons.add(reason);
+}
+
+function unlockBodyScroll(reason) {
+    if (!reason || !bodyScrollLockReasons.has(reason)) {
+        return;
+    }
+
+    bodyScrollLockReasons.delete(reason);
+
+    if (bodyScrollLockReasons.size > 0) {
+        return;
+    }
+
+    document.body.classList.remove('body-scroll-locked');
+    document.body.style.top = '';
+    window.scrollTo({ top: bodyScrollLockY, left: 0, behavior: 'auto' });
+}
+
+function renderMobileNavItems() {
+    if (!mobileNavMenu) {
+        return;
+    }
+
+    mobileNavMenu.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    navigationConfig.forEach((item) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'mobile-nav-item';
+        button.setAttribute('data-section', item.section);
+        button.setAttribute('aria-pressed', 'false');
+        button.textContent = item.label;
+
+        button.addEventListener('click', () => {
+            navigateToSection(item.section);
+        });
+
+        fragment.appendChild(button);
+    });
+
+    mobileNavMenu.appendChild(fragment);
+    mobileNavItems = Array.from(mobileNavMenu.querySelectorAll('.mobile-nav-item'));
+}
+
+function openMobileNavDrawer() {
+    if (!mobileNavOverlay || !mobileNavDrawer || !mobileNavToggleBtn) {
+        return;
+    }
+
+    if (!isMobileNavigationViewport()) {
+        closeMobileNavDrawer({ restoreFocus: false, immediate: true });
+        return;
+    }
+
+    if (isIncidentModalOpen()) {
+        return;
+    }
+
+    if (!mobileNavOverlay.hidden && mobileNavOverlay.classList.contains('is-open')) {
+        return;
+    }
+
+    if (mobileNavHideTimerId !== null) {
+        window.clearTimeout(mobileNavHideTimerId);
+        mobileNavHideTimerId = null;
+    }
+
+    mobileNavOverlay.hidden = false;
+    mobileNavDrawer.setAttribute('aria-hidden', 'false');
+    mobileNavToggleBtn.setAttribute('aria-expanded', 'true');
+
+    requestAnimationFrame(() => {
+        mobileNavOverlay.classList.add('is-open');
+    });
+
+    lockBodyScroll('mobile-nav');
+    lockHeaderVisibility(true);
+
+    if (mobileNavCloseBtn) {
+        mobileNavCloseBtn.focus();
+    }
+}
+
+function closeMobileNavDrawer(options = {}) {
+    if (!mobileNavOverlay || !mobileNavDrawer || !mobileNavToggleBtn) {
+        return;
+    }
+
+    if (mobileNavOverlay.hidden) {
+        return;
+    }
+
+    const shouldRestoreFocus = options.restoreFocus !== false;
+    const shouldCloseImmediately = options.immediate === true;
+
+    mobileNavOverlay.classList.remove('is-open');
+    mobileNavDrawer.setAttribute('aria-hidden', 'true');
+    mobileNavToggleBtn.setAttribute('aria-expanded', 'false');
+    unlockBodyScroll('mobile-nav');
+
+    if (!isIncidentModalOpen()) {
+        lockHeaderVisibility(false);
+    }
+
+    if (mobileNavHideTimerId !== null) {
+        window.clearTimeout(mobileNavHideTimerId);
+    }
+
+    if (shouldCloseImmediately) {
+        mobileNavOverlay.hidden = true;
+        mobileNavHideTimerId = null;
+
+        if (shouldRestoreFocus) {
+            mobileNavToggleBtn.focus();
         }
-        if (item.dataset.section === 'origin-map') {
-            initializeOriginMap();
+        return;
+    }
+
+    mobileNavHideTimerId = window.setTimeout(() => {
+        mobileNavOverlay.hidden = true;
+        mobileNavHideTimerId = null;
+    }, MOBILE_NAV_TRANSITION_MS);
+
+    if (shouldRestoreFocus) {
+        mobileNavToggleBtn.focus();
+    }
+}
+
+if (mobileNavToggleBtn) {
+    mobileNavToggleBtn.addEventListener('click', () => {
+        if (!isMobileNavigationViewport()) {
+            closeMobileNavDrawer({ restoreFocus: false, immediate: true });
+            return;
         }
-        if (item.dataset.section === 'favorites') {
-            initializeFavoritesView();
+
+        if (mobileNavOverlay && !mobileNavOverlay.hidden) {
+            closeMobileNavDrawer();
+            return;
+        }
+
+        openMobileNavDrawer();
+    });
+}
+
+if (mobileNavCloseBtn) {
+    mobileNavCloseBtn.addEventListener('click', () => {
+        closeMobileNavDrawer();
+    });
+}
+
+if (mobileNavOverlay) {
+    mobileNavOverlay.addEventListener('click', (event) => {
+        if (event.target === mobileNavOverlay) {
+            closeMobileNavDrawer();
         }
     });
-});
+}
+
+renderDesktopNavItems();
+renderMobileNavItems();
 
 setActiveSection(getStoredSectionName(), { persist: false });
 
@@ -245,8 +586,6 @@ const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
 
 let favoriteIncidentIds = new Set();
 let activeOriginMapIncidentId = null;
-let modalScrollLockY = 0;
-let isModalScrollLocked = false;
 
 const originMapMarkerPositions = {
     'FILE-001': { left: 22, top: 40 },
@@ -818,31 +1157,21 @@ function fillList(container, items) {
 }
 
 function lockBackgroundScrollForModal() {
-    if (isModalScrollLocked) {
-        return;
-    }
-
-    modalScrollLockY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.top = `-${modalScrollLockY}px`;
     document.body.classList.add('modal-open');
-    isModalScrollLocked = true;
+    lockBodyScroll('incident-modal');
 }
 
 function unlockBackgroundScrollForModal() {
-    if (!isModalScrollLocked) {
-        return;
-    }
-
     document.body.classList.remove('modal-open');
-    document.body.style.top = '';
-    window.scrollTo({ top: modalScrollLockY, left: 0, behavior: 'auto' });
-    isModalScrollLocked = false;
+    unlockBodyScroll('incident-modal');
 }
 
 function openIncidentModal(incident) {
     if (!incidentModalOverlay || !incidentModalFile || !incidentModalTitle) {
         return;
     }
+
+    closeMobileNavDrawer({ restoreFocus: false });
 
     incidentModalFile.textContent = incident.id;
     incidentModalTitle.textContent = incident.name;
@@ -877,8 +1206,18 @@ if (incidentModalOverlay) {
 }
 
 document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && logoutConfirmOpen) {
+        closeLogoutConfirmDialog();
+        return;
+    }
+
     if (event.key === 'Escape' && incidentModalOverlay && !incidentModalOverlay.hidden) {
         closeIncidentModal();
+        return;
+    }
+
+    if (event.key === 'Escape' && mobileNavOverlay && !mobileNavOverlay.hidden) {
+        closeMobileNavDrawer();
     }
 });
 
@@ -1226,17 +1565,24 @@ function updateHeaderMetrics() {
     document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
 }
 
-function setHeaderVisibility(visible) {
+function setHeaderVisibility(visible, options = {}) {
     if (!dashboardHeader) {
         return;
     }
+
+    const shouldPersist = options.persist !== false;
 
     if (isHeaderVisible !== visible) {
         isHeaderVisible = visible;
         dashboardHeader.classList.toggle('header-hidden', !visible);
         lastHeaderToggleScrollY = window.scrollY;
+
+        if (shouldPersist) {
+            persistHeaderVisibility(visible);
+        }
     }
 
+    clearHeaderBootState();
     updateHeaderMetrics();
 }
 
@@ -1282,16 +1628,16 @@ function requestHeaderScrollUpdate() {
     requestAnimationFrame(handleHeaderScroll);
 }
 
-function resetHeaderScrollState() {
+function resetHeaderScrollState(options = {}) {
     lastKnownScrollY = window.scrollY;
     lastHeaderToggleScrollY = window.scrollY;
-    setHeaderVisibility(true);
+    setHeaderVisibility(true, options);
 }
 
 function lockHeaderVisibility(lockVisible) {
     headerVisibilityLocked = lockVisible;
     if (lockVisible) {
-        resetHeaderScrollState();
+        resetHeaderScrollState({ persist: false });
         return;
     }
 
@@ -1302,6 +1648,8 @@ function refreshHeaderLayout() {
     if (!dashboardHeader) {
         return;
     }
+
+    clearHeaderBootState();
 
     updateHeaderMetrics();
     lastKnownScrollY = window.scrollY;
@@ -1318,6 +1666,10 @@ function refreshHeaderLayout() {
 window.addEventListener('scroll', requestHeaderScrollUpdate, { passive: true });
 window.addEventListener('resize', () => {
     requestAnimationFrame(refreshHeaderLayout);
+
+    if (!isMobileNavigationViewport()) {
+        closeMobileNavDrawer({ restoreFocus: false, immediate: true });
+    }
 });
 
 if (desktopSidebarMediaQuery.addEventListener) {
