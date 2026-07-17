@@ -39,6 +39,14 @@ body {
     overflow-y: auto;
 }
 
+body.modal-open {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow-y: hidden;
+}
+
 /* Animated Background */
 .animated-bg {
     position: fixed;

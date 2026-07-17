@@ -245,6 +245,8 @@ const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
 
 let favoriteIncidentIds = new Set();
 let activeOriginMapIncidentId = null;
+let modalScrollLockY = 0;
+let isModalScrollLocked = false;
 
 const originMapMarkerPositions = {
     'FILE-001': { left: 22, top: 40 },
@@ -526,9 +528,9 @@ function renderOriginMapInfoCard(incident) {
     originMapInfo.innerHTML = '';
 
     const card = createIncidentCard(incident, {
-        enableCardModalOpen: false,
+        enableCardModalOpen: true,
         cardClassName: 'origin-map-info-card',
-        showDetailButton: true
+        showDetailButton: false
     });
     originMapInfo.appendChild(card);
 }
@@ -736,7 +738,7 @@ function createIncidentCard(incident, options = {}) {
         detailButton.textContent = '詳細を見る';
         detailButton.addEventListener('click', (event) => {
             event.stopPropagation();
-            openIncidentModal(incident);
+            handleIncidentCardActivate(incident);
         });
         card.appendChild(detailButton);
     }
@@ -815,6 +817,28 @@ function fillList(container, items) {
     container.appendChild(fragment);
 }
 
+function lockBackgroundScrollForModal() {
+    if (isModalScrollLocked) {
+        return;
+    }
+
+    modalScrollLockY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.top = `-${modalScrollLockY}px`;
+    document.body.classList.add('modal-open');
+    isModalScrollLocked = true;
+}
+
+function unlockBackgroundScrollForModal() {
+    if (!isModalScrollLocked) {
+        return;
+    }
+
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    window.scrollTo({ top: modalScrollLockY, left: 0, behavior: 'auto' });
+    isModalScrollLocked = false;
+}
+
 function openIncidentModal(incident) {
     if (!incidentModalOverlay || !incidentModalFile || !incidentModalTitle) {
         return;
@@ -826,7 +850,7 @@ function openIncidentModal(incident) {
     fillList(incidentTheoriesList, incident.theories);
     fillList(incidentLegendsList, incident.legends);
     incidentModalOverlay.hidden = false;
-    document.body.classList.add('modal-open');
+    lockBackgroundScrollForModal();
     lockHeaderVisibility(true);
 }
 
@@ -836,7 +860,7 @@ function closeIncidentModal() {
     }
 
     incidentModalOverlay.hidden = true;
-    document.body.classList.remove('modal-open');
+    unlockBackgroundScrollForModal();
     lockHeaderVisibility(false);
 }
 
