@@ -243,6 +243,9 @@ function handleSectionSetup(sectionName) {
     if (sectionName === 'origin-map') {
         initializeOriginMap();
     }
+    if (sectionName === 'timeline') {
+        initializeTimelineSystemLog();
+    }
     if (sectionName === 'favorites') {
         initializeFavoritesView();
     }
@@ -581,6 +584,7 @@ const favoritesList = document.getElementById('favoritesList');
 const favoritesSummary = document.getElementById('favoritesSummary');
 const originWorldMap = document.getElementById('originWorldMap');
 const originMapInfo = document.getElementById('originMapInfo');
+const timelineLogList = document.getElementById('timelineLogList');
 const INCIDENT_FILTER_STORAGE_KEY = 'ProjectORIGIN_incident_filters';
 const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
 
@@ -598,6 +602,144 @@ const incidentFilterState = {
     category: 'all',
     danger: 'all'
 };
+
+const timelineLogData = [
+    {
+        code: 'SYS-BOOT',
+        status: 'BOOT',
+        title: 'ProjectORIGIN起動',
+        message: 'グローバル監視ノード接続完了。未解明事件データベースの同期率100%。',
+        source: 'Core Kernel',
+        date: '2026.07.18',
+        time: '00:01 UTC'
+    },
+    {
+        code: 'CASE-ADD',
+        status: 'INPUT',
+        title: '事件追加',
+        message: '新規ケースFILE-004を登録。北大西洋で観測された異常信号群をアーカイブ化。',
+        source: 'Intake Gateway',
+        date: '2026.07.18',
+        time: '00:12 UTC'
+    },
+    {
+        code: 'ANL-START',
+        status: 'RUNNING',
+        title: '解析開始',
+        message: '衛星画像・音響記録・観測報告のマルチモーダル解析を開始。',
+        source: 'Analysis Engine',
+        date: '2026.07.18',
+        time: '00:20 UTC'
+    },
+    {
+        code: 'ANL-DONE',
+        status: 'COMPLETED',
+        title: '解析完了',
+        message: '既存資料との照合を完了。複数の一致パターンを検出。',
+        source: 'Analysis Engine',
+        date: '2026.07.18',
+        time: '00:46 UTC'
+    },
+    {
+        code: 'SIG-DETECT',
+        status: 'ALERT',
+        title: '新しい情報検出',
+        message: '類似波形を再検出。過去の未分類案件との相関を確認。',
+        source: 'Signal Recon',
+        date: '2026.07.18',
+        time: '01:03 UTC'
+    }
+];
+
+function createTimelineLogCard(log, index) {
+    const item = document.createElement('article');
+    item.className = index % 2 === 0 ? 'timeline-log-item is-left' : 'timeline-log-item is-right';
+
+    const junction = document.createElement('div');
+    junction.className = 'timeline-log-junction';
+
+    const stamp = document.createElement('div');
+    stamp.className = 'timeline-log-stamp';
+
+    const date = document.createElement('p');
+    date.className = 'timeline-log-date';
+    date.textContent = log.date;
+
+    const time = document.createElement('p');
+    time.className = 'timeline-log-time';
+    time.textContent = log.time;
+
+    const node = document.createElement('span');
+    node.className = 'timeline-log-node';
+    node.setAttribute('aria-hidden', 'true');
+
+    stamp.appendChild(date);
+    stamp.appendChild(time);
+    junction.appendChild(stamp);
+    junction.appendChild(node);
+
+    const card = document.createElement('article');
+    card.className = 'incident-card timeline-log-card';
+
+    const header = document.createElement('div');
+    header.className = 'incident-card-header';
+
+    const code = document.createElement('span');
+    code.className = 'timeline-log-code';
+    code.textContent = log.code;
+
+    const status = document.createElement('span');
+    status.className = 'timeline-log-status';
+    status.textContent = log.status;
+
+    const title = document.createElement('h4');
+    title.className = 'timeline-log-title';
+    title.textContent = log.title;
+
+    header.appendChild(code);
+    header.appendChild(status);
+    header.appendChild(title);
+
+    const message = document.createElement('p');
+    message.className = 'timeline-log-message';
+    message.textContent = log.message;
+
+    const meta = document.createElement('div');
+    meta.className = 'timeline-log-meta';
+
+    const source = document.createElement('span');
+    source.textContent = `SOURCE: ${log.source}`;
+
+    const label = document.createElement('span');
+    label.textContent = 'SYSTEM LOG';
+
+    meta.appendChild(source);
+    meta.appendChild(label);
+
+    card.appendChild(header);
+    card.appendChild(message);
+    card.appendChild(meta);
+
+    item.appendChild(junction);
+    item.appendChild(card);
+
+    return item;
+}
+
+function initializeTimelineSystemLog() {
+    if (!timelineLogList) {
+        return;
+    }
+
+    timelineLogList.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+
+    timelineLogData.forEach((log, index) => {
+        fragment.appendChild(createTimelineLogCard(log, index));
+    });
+
+    timelineLogList.appendChild(fragment);
+}
 
 function getDefaultIncidentFilterState() {
     return {
@@ -1236,6 +1378,7 @@ function initializeIncidentArchive() {
 initializeIncidentArchive();
 initializeFavoritesView();
 initializeOriginMap();
+initializeTimelineSystemLog();
 window.renderIncidentCards = renderIncidentCards;
 
 if (incidentSearchInput) {

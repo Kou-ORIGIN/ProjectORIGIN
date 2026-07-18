@@ -1542,6 +1542,183 @@ body.body-scroll-locked {
     line-height: 1.6;
 }
 
+.timeline-system-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 18px 16px;
+}
+
+.timeline-system-header {
+    display: grid;
+    gap: 8px;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+    padding-bottom: 14px;
+}
+
+.timeline-log-list {
+    position: relative;
+    display: grid;
+    gap: 24px;
+    padding: 4px 0;
+}
+
+.timeline-log-list::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.03), rgba(0, 240, 255, 0.28), rgba(0, 240, 255, 0.03));
+}
+
+.timeline-log-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 108px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.timeline-log-item.is-left .timeline-log-card {
+    grid-column: 1;
+}
+
+.timeline-log-item.is-right .timeline-log-card {
+    grid-column: 3;
+}
+
+.timeline-log-junction {
+    grid-column: 2;
+    display: grid;
+    justify-items: center;
+    gap: 9px;
+    padding-top: 8px;
+}
+
+.timeline-log-stamp {
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+    width: 100%;
+    text-align: left;
+}
+
+.timeline-log-item.is-left .timeline-log-stamp {
+    justify-items: start;
+    text-align: left;
+}
+
+.timeline-log-item.is-right .timeline-log-stamp {
+    justify-items: start;
+    text-align: left;
+}
+
+.timeline-log-date {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.1;
+}
+
+.timeline-log-time {
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 0.72rem;
+    letter-spacing: 0.8px;
+    text-align: left;
+}
+
+@media (min-width: 769px) {
+    .timeline-log-time {
+        width: 100%;
+        justify-self: center;
+        text-align: center;
+    }
+}
+
+.timeline-log-node {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 240, 255, 0.58);
+    background: rgba(0, 240, 255, 0.18);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.18);
+}
+
+.timeline-log-card {
+    width: min(100%, 560px);
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    gap: 18px;
+}
+
+.timeline-log-item.is-left .timeline-log-card {
+    justify-self: end;
+}
+
+.timeline-log-item.is-right .timeline-log-card {
+    justify-self: start;
+}
+
+.timeline-log-card .incident-card-header {
+    margin-bottom: 0;
+    padding-right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: start;
+}
+
+.timeline-log-code {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    letter-spacing: 0.8px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    margin: 0 0 9px;
+}
+
+.timeline-log-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    padding: 4px 8px;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    border-radius: 999px;
+    color: var(--primary-color);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 0 0 14px;
+}
+
+.timeline-log-title {
+    color: var(--primary-color);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.timeline-log-message {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+.timeline-log-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.78rem;
+}
+
 .info-item {
     display: flex;
     justify-content: space-between;
@@ -2137,6 +2314,11 @@ body.body-scroll-locked {
     .chat-container {
         grid-column: 1;
     }
+
+    .timeline-log-item {
+        grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
+        gap: 18px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -2155,6 +2337,72 @@ body.body-scroll-locked {
 
     .incident-list {
         grid-template-columns: 1fr;
+    }
+
+    .timeline-log-list {
+        gap: 44px;
+    }
+
+    .timeline-log-list::before {
+        left: 16px;
+        transform: none;
+    }
+
+    .timeline-log-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .timeline-log-junction {
+        grid-column: 1;
+        display: grid;
+        grid-template-columns: 12px auto;
+        justify-items: start;
+        align-items: start;
+        column-gap: 8px;
+        row-gap: 0;
+        padding-top: 0;
+        justify-self: start;
+    }
+
+    .timeline-log-stamp {
+        grid-column: 2;
+        justify-items: start;
+        padding-left: 0;
+        gap: 6px;
+        text-align: left;
+        width: auto;
+    }
+
+    .timeline-log-node {
+        grid-column: 1;
+        grid-row: 1;
+        margin-left: 0;
+        margin-top: 1px;
+    }
+
+    .timeline-log-date {
+        font-size: 0.8rem;
+        color: rgba(0, 240, 255, 0.78);
+        font-weight: 600;
+        text-align: left;
+    }
+
+    .timeline-log-time {
+        font-size: 0.68rem;
+        color: rgba(255, 255, 255, 0.56);
+        text-align: left;
+    }
+
+    .timeline-log-item.is-right .timeline-log-card,
+    .timeline-log-item.is-left .timeline-log-card {
+        grid-column: 1;
+    }
+
+    .timeline-log-card {
+        width: calc(100% - 30px);
+        margin-left: 30px;
+        min-width: 0;
     }
 
     .incident-modal {
