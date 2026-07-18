@@ -6,6 +6,7 @@
     <script>
         (function applyHeaderBootState() {
             try {
+                document.documentElement.classList.add('auth-checking');
                 if (localStorage.getItem('ProjectORIGIN_header_visibility') === 'hidden') {
                     document.documentElement.classList.add('header-boot-hidden');
                 }
@@ -14,6 +15,12 @@
             }
         }());
     </script>
+    <style>
+        html,
+        body {
+            background: #0a0e1f;
+        }
+    </style>
     <title>ProjectORIGIN - AI OS</title>
     <link rel="stylesheet" href="style.css">
 </head>

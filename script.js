@@ -98,6 +98,34 @@ function clearHeaderBootState() {
     document.documentElement.classList.remove('header-boot-hidden');
 }
 
+function clearAuthCheckingState() {
+    document.documentElement.classList.remove('auth-checking');
+}
+
+function hasPersistedLogin() {
+    try {
+        const storedUsername = localStorage.getItem('username');
+        return typeof storedUsername === 'string' && storedUsername.trim() !== '';
+    } catch (error) {
+        return false;
+    }
+}
+
+function applyAuthView(isLoggedIn) {
+    if (isLoggedIn) {
+        loginContainer.style.display = 'none';
+        dashboard.style.display = 'grid';
+        initializeChatScreen();
+        refreshHeaderLayout();
+    } else {
+        loginContainer.style.display = 'flex';
+        dashboard.style.display = 'none';
+        resetHeaderScrollState();
+    }
+
+    clearAuthCheckingState();
+}
+
 function executeLogout() {
     closeMobileNavDrawer({ restoreFocus: false, immediate: true });
     dashboard.style.display = 'none';
@@ -1995,16 +2023,5 @@ updateSystemTime();
 
 window.addEventListener('load', () => {
     console.log('ProjectORIGIN AI OS - Initialized successfully');
-    
-    // Check if user was previously logged in
-    if (localStorage.getItem('username')) {
-        loginContainer.style.display = 'none';
-        dashboard.style.display = 'grid';
-        initializeChatScreen();
-        refreshHeaderLayout();
-    } else {
-        loginContainer.style.display = 'flex';
-        dashboard.style.display = 'none';
-        resetHeaderScrollState();
-    }
+    applyAuthView(hasPersistedLogin());
 });

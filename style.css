@@ -30,6 +30,16 @@ html {
     line-height: 1.6;
     overflow-x: hidden;
     overflow-y: auto;
+    background: var(--bg-primary);
+}
+
+body {
+    background: var(--bg-primary);
+}
+
+html.auth-checking #loginContainer,
+html.auth-checking #dashboard {
+    display: none !important;
 }
 
 body.body-scroll-locked {
