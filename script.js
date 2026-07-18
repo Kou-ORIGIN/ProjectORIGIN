@@ -1188,6 +1188,10 @@ function createOriginMapMarkers() {
         marker.setAttribute('draggable', 'false');
         marker.style.left = `${position.left}%`;
         marker.style.top = `${position.top}%`;
+        // Keep each marker pulse out of phase for a natural scanning feel.
+        const pulseSeed = incident.id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        marker.style.setProperty('--pulse-duration', `${3.6 + (pulseSeed % 7) * 0.2}s`);
+        marker.style.setProperty('--pulse-delay', `${-(pulseSeed % 11) * 0.32}s`);
 
         marker.addEventListener('click', () => {
             handleOriginMapMarkerSelect(incident.id);
