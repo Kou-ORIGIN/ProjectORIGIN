@@ -595,6 +595,81 @@ const incidentData = [
     }
 ];
 
+function createIncidentCardBackgroundDataUrl(incidentLabel, colors) {
+        const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${colors[0]}"/>
+            <stop offset="55%" stop-color="${colors[1]}"/>
+            <stop offset="100%" stop-color="${colors[2]}"/>
+        </linearGradient>
+        <radialGradient id="halo" cx="70%" cy="30%" r="55%">
+            <stop offset="0%" stop-color="rgba(0,240,255,0.38)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+        </radialGradient>
+    </defs>
+    <rect width="1200" height="800" fill="url(#bg)"/>
+    <rect width="1200" height="800" fill="url(#halo)"/>
+    <g stroke="rgba(255,255,255,0.16)" stroke-width="1" fill="none">
+        <path d="M-20 120 H1220"/>
+        <path d="M-20 220 H1220"/>
+        <path d="M-20 320 H1220"/>
+        <path d="M-20 420 H1220"/>
+        <path d="M-20 520 H1220"/>
+        <path d="M-20 620 H1220"/>
+        <path d="M120 0 V800"/>
+        <path d="M300 0 V800"/>
+        <path d="M480 0 V800"/>
+        <path d="M660 0 V800"/>
+        <path d="M840 0 V800"/>
+        <path d="M1020 0 V800"/>
+    </g>
+    <g fill="rgba(255,255,255,0.2)">
+        <circle cx="220" cy="170" r="54"/>
+        <circle cx="920" cy="580" r="72"/>
+        <circle cx="680" cy="240" r="34"/>
+    </g>
+    <text x="52" y="740" fill="rgba(255,255,255,0.38)" font-size="44" font-family="monospace">${incidentLabel}</text>
+</svg>`;
+
+        return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+}
+
+const incidentCardBackgroundImages = {
+        'FILE-001': createIncidentCardBackgroundDataUrl('ROSWELL', ['#08122a', '#142e3f', '#060a14']),
+        'FILE-002': createIncidentCardBackgroundDataUrl('DYATLOV', ['#111726', '#33475a', '#070a12']),
+        'FILE-003': createIncidentCardBackgroundDataUrl('NAZCA', ['#1d1a24', '#4f3a2b', '#0b0c12'])
+};
+
+const incidentStatusLabelMap = {
+    '調査継続中': 'ACTIVE',
+    '一部解明': 'PARTIAL',
+    '研究継続中': 'ANALYZING',
+    '未解明': 'UNKNOWN',
+    '機密扱い': 'CLASSIFIED',
+    '確認済み': 'CONFIRMED'
+};
+
+function getIncidentStatusLabel(status) {
+    if (incidentStatusLabelMap[status]) {
+        return incidentStatusLabelMap[status];
+    }
+
+    return String(status).trim().toUpperCase() || 'UNKNOWN';
+}
+
+function applyIncidentCardBackground(card, incidentId) {
+        const image = incidentCardBackgroundImages[incidentId];
+        if (image) {
+                card.style.setProperty('--incident-bg-image', image);
+                return;
+        }
+
+        const fallback = createIncidentCardBackgroundDataUrl('UNRESOLVED', ['#081124', '#163043', '#050a14']);
+        card.style.setProperty('--incident-bg-image', fallback);
+}
+
 const incidentList = document.getElementById('incidentList');
 const incidentModalOverlay = document.getElementById('incidentModalOverlay');
 const incidentModalFile = document.getElementById('incidentModalFile');
@@ -1302,6 +1377,10 @@ function createIncidentCard(incident, options = {}) {
         : 'incident-card';
     card.setAttribute('data-id', incident.id);
 
+    if (settings.cardClassName.includes('incident-file-card')) {
+        applyIncidentCardBackground(card, incident.id);
+    }
+
     if (settings.enableCardModalOpen) {
         card.setAttribute('role', 'button');
         card.setAttribute('tabindex', '0');
@@ -1329,7 +1408,7 @@ function createIncidentCard(incident, options = {}) {
 
     const statusElement = document.createElement('span');
     statusElement.className = 'incident-status';
-    statusElement.textContent = incident.status;
+    statusElement.textContent = `STATUS ${getIncidentStatusLabel(incident.status)}`;
 
     header.appendChild(idElement);
     header.appendChild(statusElement);
@@ -1341,9 +1420,7 @@ function createIncidentCard(incident, options = {}) {
     card.appendChild(title);
 
     const metaFields = [
-        { label: '地域', value: incident.region },
-        { label: '年代', value: incident.era },
-        { label: '分類', value: incident.category }
+        { label: 'CLASS', value: incident.category }
     ];
 
     metaFields.forEach((field) => {
@@ -1421,7 +1498,7 @@ function renderIncidentCards() {
     const fragment = document.createDocumentFragment();
 
     filteredIncidents.forEach((incident) => {
-        fragment.appendChild(createIncidentCard(incident));
+        fragment.appendChild(createIncidentCard(incident, { cardClassName: 'incident-file-card' }));
     });
 
     incidentList.appendChild(fragment);

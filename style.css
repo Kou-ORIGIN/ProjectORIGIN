@@ -1404,6 +1404,56 @@ body.body-scroll-locked {
     -webkit-user-select: none;
 }
 
+.incident-file-card {
+    overflow: hidden;
+    isolation: isolate;
+    background: #050a14;
+}
+
+.incident-file-card::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    background-image: var(--incident-bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(4px) brightness(0.52) saturate(0.85);
+    transform: scale(1.06);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.incident-file-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(145deg, rgba(0, 240, 255, 0.18) 0%, rgba(0, 240, 255, 0.06) 32%, rgba(0, 0, 0, 0.62) 66%, rgba(0, 0, 0, 0.78) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.65) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.incident-file-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.incident-file-card .incident-favorite-btn {
+    z-index: 3;
+    background: rgba(0, 0, 0, 0.46);
+}
+
+.incident-file-card .incident-name,
+.incident-file-card .incident-meta-value,
+.incident-file-card .incident-id,
+.incident-file-card .incident-status,
+.incident-file-card .incident-danger-label,
+.incident-file-card .incident-meta-label {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
 .incident-card:hover,
 .incident-card:focus-visible {
     border-color: var(--hologram-color);
@@ -1413,12 +1463,22 @@ body.body-scroll-locked {
 }
 
 .incident-card-header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    gap: 10px;
+    column-gap: 10px;
+    margin-bottom: 8px;
+    padding-right: 40px;
+    min-height: 28px;
+}
+
+.incident-file-card .incident-card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
     margin-bottom: 10px;
-    padding-right: 34px;
+    min-height: 46px;
 }
 
 .incident-favorite-btn {
@@ -1462,24 +1522,39 @@ body.body-scroll-locked {
 }
 
 .incident-id {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    color: rgba(132, 240, 255, 0.96);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .incident-status {
+    display: inline-flex;
+    align-items: center;
     padding: 4px 8px;
-    border: 1px solid rgba(0, 240, 255, 0.25);
+    border: 1px solid rgba(0, 240, 255, 0.32);
     border-radius: 999px;
-    color: var(--primary-color);
-    font-size: 0.72rem;
+    color: #bcf8ff;
+    background: rgba(0, 240, 255, 0.12);
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    white-space: nowrap;
     text-transform: uppercase;
+    justify-self: end;
+}
+
+.incident-file-card .incident-status {
+    justify-self: auto;
+    align-self: flex-start;
 }
 
 .incident-name {
     color: var(--primary-color);
     font-size: 1rem;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .incident-meta {
@@ -1493,11 +1568,16 @@ body.body-scroll-locked {
 
 .incident-meta-label {
     color: var(--text-secondary);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
 }
 
 .incident-meta-value {
     color: rgba(255, 255, 255, 0.95);
     text-align: right;
+    overflow-wrap: anywhere;
 }
 
 .incident-danger {
@@ -2447,6 +2527,21 @@ body.body-scroll-locked {
 }
 
 @media (max-width: 768px) {
+    .incident-file-card .incident-card-header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        column-gap: 10px;
+        row-gap: 0;
+        margin-bottom: 8px;
+        min-height: 28px;
+    }
+
+    .incident-file-card .incident-status {
+        justify-self: end;
+        align-self: center;
+    }
+
     .origin-map-main {
         grid-template-columns: 1fr;
     }
