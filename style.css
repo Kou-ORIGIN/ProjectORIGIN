@@ -1582,13 +1582,18 @@ body.body-scroll-locked {
 
 .incident-danger {
     margin-top: 10px;
+    display: grid;
+    gap: 6px;
 }
 
 .incident-danger-label {
     display: block;
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    margin-bottom: 6px;
+    color: rgba(162, 244, 255, 0.92);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    white-space: nowrap;
+    text-transform: uppercase;
 }
 
 .danger-gauge {
@@ -1605,8 +1610,33 @@ body.body-scroll-locked {
 }
 
 .danger-gauge-segment.active {
-    background: linear-gradient(90deg, #0099ff, #00f0ff);
-    box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+    background: linear-gradient(90deg, #0a5766, #15889a);
+    border-color: rgba(46, 180, 198, 0.55);
+    box-shadow: 0 0 4px rgba(21, 136, 154, 0.26);
+}
+
+.danger-gauge .danger-gauge-segment:nth-child(2).active {
+    background: linear-gradient(90deg, #0b7f96, #1cb2cb);
+    border-color: rgba(49, 202, 226, 0.62);
+    box-shadow: 0 0 6px rgba(28, 178, 203, 0.34);
+}
+
+.danger-gauge .danger-gauge-segment:nth-child(3).active {
+    background: linear-gradient(90deg, #00a5d2, #00ebff);
+    border-color: rgba(72, 234, 255, 0.72);
+    box-shadow: 0 0 8px rgba(0, 235, 255, 0.42);
+}
+
+.danger-gauge .danger-gauge-segment:nth-child(4).active {
+    background: linear-gradient(90deg, #1cb9f3, #8af1ff);
+    border-color: rgba(150, 243, 255, 0.82);
+    box-shadow: 0 0 11px rgba(113, 237, 255, 0.56);
+}
+
+.danger-gauge .danger-gauge-segment:nth-child(5).active {
+    background: linear-gradient(90deg, #58d8ff 0%, #dffbff 52%, #7fe8ff 100%);
+    border-color: rgba(216, 249, 255, 0.88);
+    box-shadow: 0 0 12px rgba(150, 240, 255, 0.58);
 }
 
 .incident-modal-overlay {
@@ -2527,6 +2557,11 @@ body.body-scroll-locked {
 }
 
 @media (max-width: 768px) {
+    .incident-danger-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.75px;
+    }
+
     .incident-file-card .incident-card-header {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;

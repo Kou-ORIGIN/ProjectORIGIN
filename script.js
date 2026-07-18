@@ -1445,10 +1445,10 @@ function createIncidentCard(incident, options = {}) {
 
     const dangerLabel = document.createElement('span');
     dangerLabel.className = 'incident-danger-label';
-    dangerLabel.textContent = `危険度: ${incident.danger} / 5`;
+    dangerLabel.textContent = `RISK LEVEL : ${incident.danger}`;
 
     const gauge = document.createElement('div');
-    gauge.className = 'danger-gauge';
+    gauge.className = `danger-gauge risk-level-${incident.danger}`;
 
     for (let index = 0; index < 5; index += 1) {
         const segment = document.createElement('span');
