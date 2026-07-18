@@ -607,6 +607,8 @@ const timelineLogData = [
     {
         code: 'SYS-BOOT',
         status: 'BOOT',
+        accent: 'emerald',
+        icon: 'power',
         title: 'ProjectORIGIN起動',
         message: 'グローバル監視ノード接続完了。未解明事件データベースの同期率100%。',
         source: 'Core Kernel',
@@ -616,6 +618,8 @@ const timelineLogData = [
     {
         code: 'CASE-ADD',
         status: 'INPUT',
+        accent: 'violet',
+        icon: 'folder-plus',
         title: '事件追加',
         message: '新規ケースFILE-004を登録。北大西洋で観測された異常信号群をアーカイブ化。',
         source: 'Intake Gateway',
@@ -625,6 +629,8 @@ const timelineLogData = [
     {
         code: 'ANL-START',
         status: 'RUNNING',
+        accent: 'cyan',
+        icon: 'brain-circuit',
         title: '解析開始',
         message: '衛星画像・音響記録・観測報告のマルチモーダル解析を開始。',
         source: 'Analysis Engine',
@@ -634,6 +640,8 @@ const timelineLogData = [
     {
         code: 'ANL-DONE',
         status: 'COMPLETED',
+        accent: 'emerald',
+        icon: 'circle-check',
         title: '解析完了',
         message: '既存資料との照合を完了。複数の一致パターンを検出。',
         source: 'Analysis Engine',
@@ -643,17 +651,130 @@ const timelineLogData = [
     {
         code: 'SIG-DETECT',
         status: 'ALERT',
+        accent: 'amber',
+        icon: 'radio',
         title: '新しい情報検出',
         message: '類似波形を再検出。過去の未分類案件との相関を確認。',
         source: 'Signal Recon',
         date: '2026.07.18',
         time: '01:03 UTC'
+    },
+    {
+        code: 'DOC-LINK',
+        status: 'INPUT',
+        accent: 'cyan',
+        icon: 'file-text',
+        title: '文書リンク再構成',
+        message: '関連資料の参照関係を再構成。断片化したログを統合。',
+        source: 'Archive Sync',
+        date: '2026.07.18',
+        time: '01:21 UTC'
+    },
+    {
+        code: 'SAT-SCAN',
+        status: 'RUNNING',
+        accent: 'cyan',
+        icon: 'satellite',
+        title: '衛星スキャン実行',
+        message: '軌道上センサーの広域スキャンを実行。異常反応の座標を抽出。',
+        source: 'Orbital Grid',
+        date: '2026.07.18',
+        time: '01:44 UTC'
+    },
+    {
+        code: 'RAD-SCAN',
+        status: 'RUNNING',
+        accent: 'cyan',
+        icon: 'radar',
+        title: 'レーダースキャン実行',
+        message: '海上・地上レーダーの照合を継続。移動反応の軌跡を追跡。',
+        source: 'Wave Sensor',
+        date: '2026.07.18',
+        time: '02:06 UTC'
+    },
+    {
+        code: 'BIO-SCAN',
+        status: 'RUNNING',
+        accent: 'emerald',
+        icon: 'dna',
+        title: 'バイオスキャン照合',
+        message: '生体サンプルを再照合。未知シグネチャの一致候補を抽出。',
+        source: 'Bio Matrix',
+        date: '2026.07.18',
+        time: '02:31 UTC'
+    },
+    {
+        code: 'DATA-MERGE',
+        status: 'COMPLETED',
+        accent: 'violet',
+        icon: 'git-merge',
+        title: 'データ統合',
+        message: '複数ノードの解析結果を統合。ケース相関マップを更新。',
+        source: 'Fusion Core',
+        date: '2026.07.18',
+        time: '02:57 UTC'
+    },
+    {
+        code: 'CLASS-UPD',
+        status: 'COMPLETED',
+        accent: 'emerald',
+        icon: 'badge-check',
+        title: '分類モデル更新',
+        message: '分類ロジックを更新。未解決案件の判定精度を再調整。',
+        source: 'Classifier',
+        date: '2026.07.18',
+        time: '03:14 UTC'
+    },
+    {
+        code: 'ALERT',
+        status: 'ALERT',
+        accent: 'amber',
+        icon: 'triangle-alert',
+        title: '優先警告発行',
+        message: '閾値超過を検知。上位レイヤーへ警告を送信。',
+        source: 'Alert Router',
+        date: '2026.07.18',
+        time: '03:28 UTC'
+    },
+    {
+        code: 'ARCHIVE',
+        status: 'INPUT',
+        accent: 'violet',
+        icon: 'archive',
+        title: '解析ログ保管',
+        message: '暫定結果をアーカイブへ保存。復元用インデックスを生成。',
+        source: 'Vault Node',
+        date: '2026.07.18',
+        time: '03:49 UTC'
+    },
+    {
+        code: 'ACCESS',
+        status: 'BOOT',
+        accent: 'amber',
+        icon: 'key-round',
+        title: 'アクセス監査',
+        message: '特権セッションのアクセスログを監査。不審操作なし。',
+        source: 'Security Gate',
+        date: '2026.07.18',
+        time: '04:08 UTC'
+    },
+    {
+        code: 'PRIORITY',
+        status: 'ALERT',
+        accent: 'amber',
+        icon: 'star',
+        title: '優先案件更新',
+        message: '案件の優先度を再計算。次回解析バッチへ再配置。',
+        source: 'Task Planner',
+        date: '2026.07.18',
+        time: '04:24 UTC'
     }
 ];
 
 function createTimelineLogCard(log, index) {
     const item = document.createElement('article');
     item.className = index % 2 === 0 ? 'timeline-log-item is-left' : 'timeline-log-item is-right';
+    item.classList.add(`timeline-accent-${log.accent}`);
 
     const junction = document.createElement('div');
     junction.className = 'timeline-log-junction';
@@ -686,7 +807,18 @@ function createTimelineLogCard(log, index) {
 
     const code = document.createElement('span');
     code.className = 'timeline-log-code';
-    code.textContent = log.code;
+
+    const icon = document.createElement('i');
+    icon.className = 'timeline-log-icon';
+    icon.setAttribute('data-lucide', log.icon);
+    icon.setAttribute('aria-hidden', 'true');
+
+    const codeText = document.createElement('span');
+    codeText.className = 'timeline-log-code-text';
+    codeText.textContent = log.code;
+
+    code.appendChild(icon);
+    code.appendChild(codeText);
 
     const status = document.createElement('span');
     status.className = 'timeline-log-status';
@@ -739,6 +871,16 @@ function initializeTimelineSystemLog() {
     });
 
     timelineLogList.appendChild(fragment);
+
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons({
+            attrs: {
+                width: 17,
+                height: 17,
+                'stroke-width': 1.8
+            }
+        });
+    }
 }
 
 function getDefaultIncidentFilterState() {

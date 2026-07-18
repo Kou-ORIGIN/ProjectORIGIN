@@ -1674,13 +1674,27 @@ body.body-scroll-locked {
 }
 
 .timeline-log-code {
-    display: block;
+    display: flex;
+    align-items: center;
     color: var(--text-secondary);
     font-size: 0.8rem;
     letter-spacing: 0.8px;
     min-width: 0;
     overflow-wrap: anywhere;
     margin: 0 0 9px;
+    gap: 8px;
+}
+
+.timeline-log-code-text {
+    min-width: 0;
+}
+
+.timeline-log-icon {
+    width: 17px;
+    height: 17px;
+    flex: 0 0 auto;
+    opacity: 0.72;
+    color: var(--primary-color);
 }
 
 .timeline-log-status {
@@ -1696,6 +1710,41 @@ body.body-scroll-locked {
     text-transform: uppercase;
     white-space: nowrap;
     margin: 0 0 14px;
+}
+
+.timeline-accent-emerald .timeline-log-icon,
+.timeline-accent-emerald .timeline-log-status,
+.timeline-accent-emerald::before {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.32);
+}
+
+.timeline-accent-violet .timeline-log-icon,
+.timeline-accent-violet .timeline-log-status,
+.timeline-accent-violet::before {
+    color: #a78bfa;
+    border-color: rgba(167, 139, 250, 0.32);
+}
+
+.timeline-accent-cyan .timeline-log-icon,
+.timeline-accent-cyan .timeline-log-status,
+.timeline-accent-cyan::before {
+    color: #22d3ee;
+    border-color: rgba(34, 211, 238, 0.32);
+}
+
+.timeline-accent-amber .timeline-log-icon,
+.timeline-accent-amber .timeline-log-status,
+.timeline-accent-amber::before {
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.32);
+}
+
+.timeline-accent-emerald .timeline-log-status,
+.timeline-accent-violet .timeline-log-status,
+.timeline-accent-cyan .timeline-log-status,
+.timeline-accent-amber .timeline-log-status {
+    background: rgba(0, 240, 255, 0.06);
 }
 
 .timeline-log-title {
