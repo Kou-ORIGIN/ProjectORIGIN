@@ -672,11 +672,17 @@ function applyIncidentCardBackground(card, incidentId) {
 
 const incidentList = document.getElementById('incidentList');
 const incidentModalOverlay = document.getElementById('incidentModalOverlay');
+const incidentModalPanel = incidentModalOverlay ? incidentModalOverlay.querySelector('.incident-modal') : null;
 const incidentModalFile = document.getElementById('incidentModalFile');
+const incidentModalStatus = document.getElementById('incidentModalStatus');
 const incidentModalTitle = document.getElementById('incidentModalTitle');
-const incidentFactsList = document.getElementById('incidentFactsList');
-const incidentTheoriesList = document.getElementById('incidentTheoriesList');
-const incidentLegendsList = document.getElementById('incidentLegendsList');
+const incidentModalIntro = document.getElementById('incidentModalIntro');
+const incidentModalRegion = document.getElementById('incidentModalRegion');
+const incidentModalYear = document.getElementById('incidentModalYear');
+const incidentModalClass = document.getElementById('incidentModalClass');
+const incidentModalRisk = document.getElementById('incidentModalRisk');
+const incidentModalRiskGauge = document.getElementById('incidentModalRiskGauge');
+const incidentModalBodyCopy = document.getElementById('incidentModalBodyCopy');
 const incidentCloseBtn = document.getElementById('incidentCloseBtn');
 const incidentSearchInput = document.getElementById('incidentSearchInput');
 const incidentCategoryFilter = document.getElementById('incidentCategoryFilter');
@@ -1549,6 +1555,117 @@ function fillList(container, items) {
     container.appendChild(fragment);
 }
 
+const incidentModalBackgroundImages = {
+    ...incidentCardBackgroundImages
+};
+
+function applyIncidentModalBackground(modalElement, incidentId) {
+    if (!modalElement) {
+        return;
+    }
+
+    const image = incidentModalBackgroundImages[incidentId]
+        || createIncidentCardBackgroundDataUrl('UNRESOLVED', ['#081124', '#163043', '#050a14']);
+    modalElement.style.setProperty('--incident-modal-bg-image', image);
+}
+
+function getIncidentOverview(incident) {
+    return incident.facts[0] || incident.theories[0] || incident.legends[0] || '記録可能な概要情報はありません。';
+}
+
+function renderIncidentBodyCopy(container, incident) {
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = '';
+
+    const sectionDefinitions = [
+        {
+            heading: 'OVERVIEW',
+            items: [incident.facts.filter((text) => typeof text === 'string' && text.trim().length > 0).join(' ')].filter(Boolean)
+        },
+        {
+            heading: 'FACTS',
+            items: incident.facts.filter((text) => typeof text === 'string' && text.trim().length > 0)
+        },
+        {
+            heading: 'THEORIES',
+            items: [...incident.theories, ...incident.legends].filter((text) => typeof text === 'string' && text.trim().length > 0)
+        },
+        {
+            heading: 'EVIDENCE',
+            items: Array.isArray(incident.evidence)
+                ? incident.evidence.filter((text) => typeof text === 'string' && text.trim().length > 0)
+                : []
+        },
+        {
+            heading: 'REFERENCES',
+            items: Array.isArray(incident.references)
+                ? incident.references.filter((text) => typeof text === 'string' && text.trim().length > 0)
+                : []
+        }
+    ];
+
+    const visibleSections = sectionDefinitions.filter((section) => section.items.length > 0);
+
+    if (visibleSections.length === 0) {
+        const emptyParagraph = document.createElement('p');
+        emptyParagraph.className = 'incident-modal-body-paragraph';
+        emptyParagraph.textContent = '詳細な本文記録は現在アーカイブされていません。';
+        container.appendChild(emptyParagraph);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    visibleSections.forEach((section) => {
+        const block = document.createElement('section');
+        block.className = 'incident-modal-copy-section';
+
+        const heading = document.createElement('h5');
+        heading.className = 'incident-modal-copy-heading';
+        heading.textContent = section.heading;
+        block.appendChild(heading);
+
+        const body = document.createElement('div');
+        body.className = 'incident-modal-copy-content';
+
+        section.items.forEach((sectionText) => {
+            const paragraph = document.createElement('p');
+            paragraph.className = 'incident-modal-body-paragraph';
+            paragraph.textContent = sectionText;
+            body.appendChild(paragraph);
+        });
+
+        block.appendChild(body);
+        fragment.appendChild(block);
+    });
+
+    container.appendChild(fragment);
+}
+
+function renderIncidentRiskGauge(container, dangerLevel) {
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = '';
+    container.className = `danger-gauge incident-modal-risk-gauge risk-level-${dangerLevel}`;
+
+    const fragment = document.createDocumentFragment();
+    for (let index = 0; index < 5; index += 1) {
+        const segment = document.createElement('span');
+        segment.className = 'danger-gauge-segment';
+        if (index < dangerLevel) {
+            segment.classList.add('active');
+        }
+        fragment.appendChild(segment);
+    }
+
+    container.appendChild(fragment);
+}
+
 function lockBackgroundScrollForModal() {
     document.body.classList.add('modal-open');
     lockBodyScroll('incident-modal');
@@ -1566,11 +1683,29 @@ function openIncidentModal(incident) {
 
     closeMobileNavDrawer({ restoreFocus: false });
 
+    applyIncidentModalBackground(incidentModalPanel || incidentModalOverlay, incident.id);
     incidentModalFile.textContent = incident.id;
+    if (incidentModalStatus) {
+        incidentModalStatus.textContent = `STATUS ${getIncidentStatusLabel(incident.status)}`;
+    }
     incidentModalTitle.textContent = incident.name;
-    fillList(incidentFactsList, incident.facts);
-    fillList(incidentTheoriesList, incident.theories);
-    fillList(incidentLegendsList, incident.legends);
+    if (incidentModalIntro) {
+        incidentModalIntro.textContent = getIncidentOverview(incident);
+    }
+    if (incidentModalRegion) {
+        incidentModalRegion.textContent = incident.region;
+    }
+    if (incidentModalYear) {
+        incidentModalYear.textContent = incident.era;
+    }
+    if (incidentModalClass) {
+        incidentModalClass.textContent = incident.category;
+    }
+    if (incidentModalRisk) {
+        incidentModalRisk.textContent = String(incident.danger);
+    }
+    renderIncidentRiskGauge(incidentModalRiskGauge, incident.danger);
+    renderIncidentBodyCopy(incidentModalBodyCopy, incident);
     incidentModalOverlay.hidden = false;
     lockBackgroundScrollForModal();
     lockHeaderVisibility(true);

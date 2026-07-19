@@ -262,24 +262,38 @@
 
                 <div class="incident-modal-overlay" id="incidentModalOverlay" hidden>
                     <div class="incident-modal" role="dialog" aria-modal="true" aria-labelledby="incidentModalTitle">
-                        <button type="button" class="incident-close-btn" id="incidentCloseBtn">閉じる</button>
-                        <div class="incident-modal-header">
+                        <div class="incident-modal-main">
                             <p class="incident-modal-file" id="incidentModalFile"></p>
+                            <p class="incident-modal-status" id="incidentModalStatus"></p>
                             <h3 id="incidentModalTitle"></h3>
+                            <p class="incident-modal-intro" id="incidentModalIntro"></p>
                         </div>
-                        <div class="incident-modal-body">
-                            <div class="incident-detail-group">
-                                <h4>確認された事実</h4>
-                                <ul id="incidentFactsList"></ul>
+                        <div class="incident-modal-details">
+                            <div class="incident-modal-meta-row">
+                                <span class="incident-modal-meta-label">REGION</span>
+                                <span class="incident-modal-meta-value" id="incidentModalRegion"></span>
                             </div>
-                            <div class="incident-detail-group">
-                                <h4>有力な説</h4>
-                                <ul id="incidentTheoriesList"></ul>
+                            <div class="incident-modal-meta-row">
+                                <span class="incident-modal-meta-label">YEAR</span>
+                                <span class="incident-modal-meta-value" id="incidentModalYear"></span>
                             </div>
-                            <div class="incident-detail-group">
-                                <h4>仮説・都市伝説</h4>
-                                <ul id="incidentLegendsList"></ul>
+                            <div class="incident-modal-meta-row">
+                                <span class="incident-modal-meta-label">CLASS</span>
+                                <span class="incident-modal-meta-value" id="incidentModalClass"></span>
                             </div>
+                            <div class="incident-modal-meta-row">
+                                <span class="incident-modal-meta-label">RISK LEVEL</span>
+                                <span class="incident-modal-meta-value" id="incidentModalRisk"></span>
+                            </div>
+                        </div>
+                        <div class="danger-gauge incident-modal-risk-gauge" id="incidentModalRiskGauge" aria-label="Risk level gauge"></div>
+                        <section class="incident-modal-body-section" aria-labelledby="incidentModalBodyHeading">
+                            <h4 class="incident-modal-body-heading" id="incidentModalBodyHeading">事件概要</h4>
+                            <div class="incident-modal-body-copy" id="incidentModalBodyCopy"></div>
+                        </section>
+                        <div class="incident-modal-actions">
+                            <button type="button" class="incident-map-btn" id="incidentViewOnMapBtn">VIEW ON ORIGIN MAP</button>
+                            <button type="button" class="incident-close-btn" id="incidentCloseBtn">CLOSE FILE</button>
                         </div>
                     </div>
                 </div>

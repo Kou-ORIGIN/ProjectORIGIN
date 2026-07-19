@@ -1642,7 +1642,7 @@ body.body-scroll-locked {
 .incident-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.82);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1656,76 +1656,209 @@ body.body-scroll-locked {
 
 .incident-modal {
     width: min(720px, 100%);
-    max-height: 85vh;
+    max-height: 88vh;
     overflow-y: auto;
-    background: rgba(5, 8, 18, 0.95);
+    background: rgba(0, 0, 0, 0.12);
     border: 1px solid var(--hologram-color);
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 0 30px rgba(0, 240, 255, 0.25);
-    padding: 24px;
+    padding: 24px 24px 20px;
     position: relative;
+    isolation: isolate;
+    display: grid;
+    gap: 10px;
 }
 
-.incident-close-btn {
+.incident-modal::before {
+    content: '';
     position: absolute;
-    top: 16px;
-    right: 16px;
-    background: transparent;
-    border: 1px solid rgba(0, 240, 255, 0.35);
-    color: var(--primary-color);
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: 'Courier New', monospace;
+    inset: -10px;
+    background-image: var(--incident-modal-bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(5px) brightness(0.46) saturate(0.86);
+    transform: scale(1.05);
+    z-index: 0;
+    pointer-events: none;
 }
 
-.incident-modal-header {
-    margin-bottom: 18px;
-    padding-right: 90px;
+.incident-modal::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(155deg, rgba(0, 240, 255, 0.14) 0%, rgba(0, 240, 255, 0.03) 30%, rgba(0, 0, 0, 0.68) 66%, rgba(0, 0, 0, 0.9) 100%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.84) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.incident-modal > * {
+    position: relative;
+    z-index: 2;
+}
+
+.incident-modal-main {
+    display: grid;
+    gap: 10px;
 }
 
 .incident-modal-file {
-    color: var(--text-secondary);
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    color: rgba(175, 244, 255, 0.9);
+    font-size: 0.78rem;
+    letter-spacing: 1.6px;
     text-transform: uppercase;
-    margin-bottom: 6px;
 }
 
-.incident-modal-header h3 {
+.incident-modal-status {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    min-height: 26px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 240, 255, 0.34);
+    background: rgba(0, 240, 255, 0.12);
+    color: rgba(210, 251, 255, 0.96);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.incident-modal h3 {
     color: var(--primary-color);
-    font-size: 1.3rem;
+    font-size: 1.34rem;
+    line-height: 1.35;
 }
 
-.incident-modal-body {
+.incident-modal-intro {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.92rem;
+    line-height: 1.68;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+}
+
+.incident-modal-details {
     display: grid;
-    gap: 16px;
+    gap: 8px;
+    margin-top: 4px;
 }
 
-.incident-detail-group {
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    border-radius: 8px;
-    padding: 12px 14px;
-    background: rgba(0, 240, 255, 0.04);
+.incident-modal-meta-row {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
 }
 
-.incident-detail-group h4 {
+.incident-modal-meta-label {
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-bottom: 8px;
+    font-size: 0.74rem;
+    font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
-.incident-detail-group ul {
-    padding-left: 18px;
-    display: grid;
-    gap: 6px;
+.incident-modal-meta-value {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
 }
 
-.incident-detail-group li {
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.6;
+.incident-modal-risk-gauge {
+    margin-top: 2px;
+}
+
+.incident-modal-body-section {
+    display: grid;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0, 240, 255, 0.18);
+}
+
+.incident-modal-body-heading {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.incident-modal-body-copy {
+    display: grid;
+    gap: 18px;
+    padding-right: 2px;
+    width: 100%;
+    min-width: 0;
+}
+
+.incident-modal-copy-section {
+    display: grid;
+    gap: 8px;
+}
+
+.incident-modal-copy-section + .incident-modal-copy-section {
+    padding-top: 14px;
+    border-top: 1px solid rgba(0, 240, 255, 0.14);
+}
+
+.incident-modal-copy-heading {
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.incident-modal-copy-content {
+    display: grid;
+    gap: 10px;
+}
+
+.incident-modal-body-paragraph {
+    color: rgba(255, 255, 255, 0.94);
+    font-size: 0.94rem;
+    line-height: 1.78;
+    text-wrap: pretty;
+}
+
+.incident-modal-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.incident-map-btn,
+.incident-close-btn {
+    min-height: 38px;
+    border-radius: 7px;
+    border: 1px solid rgba(0, 240, 255, 0.36);
+    background: rgba(0, 18, 36, 0.52);
+    color: var(--primary-color);
+    font-family: 'Courier New', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.incident-map-btn:hover,
+.incident-map-btn:focus-visible,
+.incident-close-btn:hover,
+.incident-close-btn:focus-visible {
+    outline: none;
+    border-color: var(--hologram-color);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.28);
+    background: rgba(0, 240, 255, 0.14);
 }
 
 .timeline-system-panel {
@@ -2662,10 +2795,28 @@ body.body-scroll-locked {
 
     .incident-modal {
         padding: 20px;
+        max-height: 90vh;
     }
 
-    .incident-modal-header {
-        padding-right: 70px;
+    .incident-modal-meta-row {
+        grid-template-columns: 80px minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .incident-modal h3 {
+        font-size: 1.18rem;
+    }
+
+    .incident-modal-intro {
+        font-size: 0.88rem;
+    }
+
+    .incident-modal-body-paragraph {
+        font-size: 0.9rem;
+    }
+
+    .incident-modal-actions {
+        grid-template-columns: 1fr;
     }
 
     .dashboard-header {
