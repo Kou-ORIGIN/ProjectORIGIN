@@ -1676,7 +1676,7 @@ body.body-scroll-locked {
     inset: -10px;
     background-image: var(--incident-modal-bg-image);
     background-size: cover;
-    background-position: center;
+    background-position: var(--incident-modal-bg-position-desktop, center center);
     background-repeat: no-repeat;
     filter: blur(5px) brightness(0.46) saturate(0.86);
     transform: scale(1.05);
@@ -2726,6 +2726,10 @@ body.body-scroll-locked {
 }
 
 @media (max-width: 768px) {
+    .incident-modal::before {
+        background-position: var(--incident-modal-bg-position-mobile, var(--incident-modal-bg-position-desktop, center center));
+    }
+
     .incident-danger-label {
         font-size: 0.7rem;
         letter-spacing: 0.75px;

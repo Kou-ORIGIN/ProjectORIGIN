@@ -538,6 +538,13 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 3,
         status: '調査継続中',
+        modalBackground: {
+            imagePath: '',
+            desktopPosition: 'center 18%',
+            mobilePosition: '62% 16%',
+            fallbackLabel: 'ROSWELL INCIDENT',
+            fallbackColors: ['#08111e', '#1b3043', '#060a14']
+        },
         facts: [
             '1947年の夏、ニューメキシコ州で異常な金属片が回収された。',
             '目撃情報と地上の残留物が報告された。'
@@ -1555,18 +1562,31 @@ function fillList(container, items) {
     container.appendChild(fragment);
 }
 
-const incidentModalBackgroundImages = {
-    ...incidentCardBackgroundImages
-};
+function resolveIncidentModalBackground(incident) {
+    const modalBackground = incident?.modalBackground;
+    const fallbackImage = createIncidentCardBackgroundDataUrl(
+        modalBackground?.fallbackLabel || incident?.id || 'UNRESOLVED',
+        modalBackground?.fallbackColors || ['#081124', '#163043', '#050a14']
+    );
 
-function applyIncidentModalBackground(modalElement, incidentId) {
+    return {
+        image: typeof modalBackground?.imagePath === 'string' && modalBackground.imagePath.trim().length > 0
+            ? `url("${modalBackground.imagePath.trim()}")`
+            : fallbackImage,
+        desktopPosition: modalBackground?.desktopPosition || 'center center',
+        mobilePosition: modalBackground?.mobilePosition || modalBackground?.desktopPosition || 'center center'
+    };
+}
+
+function applyIncidentModalBackground(modalElement, incident) {
     if (!modalElement) {
         return;
     }
 
-    const image = incidentModalBackgroundImages[incidentId]
-        || createIncidentCardBackgroundDataUrl('UNRESOLVED', ['#081124', '#163043', '#050a14']);
-    modalElement.style.setProperty('--incident-modal-bg-image', image);
+    const backgroundConfig = resolveIncidentModalBackground(incident);
+    modalElement.style.setProperty('--incident-modal-bg-image', backgroundConfig.image);
+    modalElement.style.setProperty('--incident-modal-bg-position-desktop', backgroundConfig.desktopPosition);
+    modalElement.style.setProperty('--incident-modal-bg-position-mobile', backgroundConfig.mobilePosition);
 }
 
 function getIncidentOverview(incident) {
@@ -1683,7 +1703,7 @@ function openIncidentModal(incident) {
 
     closeMobileNavDrawer({ restoreFocus: false });
 
-    applyIncidentModalBackground(incidentModalPanel || incidentModalOverlay, incident.id);
+    applyIncidentModalBackground(incidentModalPanel || incidentModalOverlay, incident);
     incidentModalFile.textContent = incident.id;
     if (incidentModalStatus) {
         incidentModalStatus.textContent = `STATUS ${getIncidentStatusLabel(incident.status)}`;
