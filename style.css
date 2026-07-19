@@ -1658,6 +1658,7 @@ body.body-scroll-locked {
     width: min(720px, 100%);
     max-height: 88vh;
     overflow-y: auto;
+    overflow-x: hidden;
     background: rgba(0, 0, 0, 0.12);
     border: 1px solid var(--hologram-color);
     border-radius: 12px;
@@ -1697,11 +1698,15 @@ body.body-scroll-locked {
 .incident-modal > * {
     position: relative;
     z-index: 2;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .incident-modal-main {
     display: grid;
     gap: 10px;
+    min-width: 0;
 }
 
 .incident-modal-file {
@@ -1709,6 +1714,9 @@ body.body-scroll-locked {
     font-size: 0.78rem;
     letter-spacing: 1.6px;
     text-transform: uppercase;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .incident-modal-status {
@@ -1732,6 +1740,8 @@ body.body-scroll-locked {
     color: var(--primary-color);
     font-size: 1.34rem;
     line-height: 1.35;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .incident-modal-intro {
@@ -1743,12 +1753,14 @@ body.body-scroll-locked {
     -webkit-line-clamp: 3;
     line-clamp: 3;
     overflow: hidden;
+    max-width: 100%;
 }
 
 .incident-modal-details {
     display: grid;
     gap: 8px;
     margin-top: 4px;
+    min-width: 0;
 }
 
 .incident-modal-meta-row {
@@ -1756,6 +1768,7 @@ body.body-scroll-locked {
     grid-template-columns: 96px minmax(0, 1fr);
     gap: 10px;
     align-items: center;
+    min-width: 0;
 }
 
 .incident-modal-meta-label {
@@ -1764,12 +1777,15 @@ body.body-scroll-locked {
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
+    min-width: 0;
 }
 
 .incident-modal-meta-value {
     color: rgba(255, 255, 255, 0.9);
     font-size: 0.88rem;
     overflow-wrap: anywhere;
+    word-break: break-word;
+    min-width: 0;
 }
 
 .incident-modal-risk-gauge {
@@ -1781,6 +1797,8 @@ body.body-scroll-locked {
     gap: 10px;
     padding-top: 10px;
     border-top: 1px solid rgba(0, 240, 255, 0.18);
+    min-width: 0;
+    max-width: 100%;
 }
 
 .incident-modal-body-heading {
@@ -1797,11 +1815,15 @@ body.body-scroll-locked {
     padding-right: 2px;
     width: 100%;
     min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .incident-modal-copy-section {
     display: grid;
     gap: 8px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .incident-modal-copy-section + .incident-modal-copy-section {
@@ -1820,6 +1842,7 @@ body.body-scroll-locked {
 .incident-modal-copy-content {
     display: grid;
     gap: 10px;
+    min-width: 0;
 }
 
 .incident-modal-body-paragraph {
@@ -1827,17 +1850,27 @@ body.body-scroll-locked {
     font-size: 0.94rem;
     line-height: 1.78;
     text-wrap: pretty;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .incident-modal-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     margin-top: 4px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .incident-map-btn,
 .incident-close-btn {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     min-height: 38px;
     border-radius: 7px;
     border: 1px solid rgba(0, 240, 255, 0.36);
@@ -1849,6 +1882,9 @@ body.body-scroll-locked {
     text-transform: uppercase;
     cursor: pointer;
     transition: var(--transition);
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .incident-map-btn:hover,
