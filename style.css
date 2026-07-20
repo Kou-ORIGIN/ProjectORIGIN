@@ -1674,12 +1674,7 @@ body.body-scroll-locked {
     content: '';
     position: absolute;
     inset: -10px;
-    background-image: var(--incident-modal-bg-image);
-    background-size: cover;
-    background-position: var(--incident-modal-bg-position-desktop, center center);
-    background-repeat: no-repeat;
-    filter: blur(5px) brightness(0.46) saturate(0.86);
-    transform: scale(1.05);
+    background: none;
     z-index: 0;
     pointer-events: none;
 }
@@ -1704,9 +1699,37 @@ body.body-scroll-locked {
 }
 
 .incident-modal-main {
-    display: grid;
-    gap: 10px;
+    position: relative;
+    display: block;
     min-width: 0;
+    border-radius: 11px;
+    overflow: hidden;
+}
+
+.incident-modal-background {
+    width: 100%;
+    height: clamp(260px, 40vh, 340px);
+    background-image: var(--incident-modal-bg-image);
+    background-size: cover;
+    background-position: var(--incident-modal-bg-position-desktop, center center);
+    background-repeat: no-repeat;
+}
+
+.incident-modal-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18) 8%, rgba(0, 0, 0, 0.52) 58%, rgba(0, 0, 0, 0.86) 100%);
+}
+
+.incident-modal-hero-copy {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    display: grid;
+    gap: 8px;
+    z-index: 2;
 }
 
 .incident-modal-file {
@@ -1717,6 +1740,7 @@ body.body-scroll-locked {
     max-width: 100%;
     overflow-wrap: anywhere;
     word-break: break-word;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.88);
 }
 
 .incident-modal-status {
@@ -1742,6 +1766,7 @@ body.body-scroll-locked {
     line-height: 1.35;
     max-width: 100%;
     overflow-wrap: anywhere;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.92);
 }
 
 .incident-modal-intro {
@@ -1754,6 +1779,7 @@ body.body-scroll-locked {
     line-clamp: 3;
     overflow: hidden;
     max-width: 100%;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.92);
 }
 
 .incident-modal-details {
@@ -2726,8 +2752,15 @@ body.body-scroll-locked {
 }
 
 @media (max-width: 768px) {
-    .incident-modal::before {
+    .incident-modal-background {
+        height: clamp(220px, 34vh, 290px);
         background-position: var(--incident-modal-bg-position-mobile, var(--incident-modal-bg-position-desktop, center center));
+    }
+
+    .incident-modal-hero-copy {
+        left: 14px;
+        right: 14px;
+        bottom: 12px;
     }
 
     .incident-danger-label {
@@ -3015,27 +3048,3 @@ body.body-scroll-locked {
     background: rgba(0, 240, 255, 0.58);
 }
 
-
-.incident-modal-main {
-    position: relative;
-    overflow: hidden;
-}
-
-.incident-modal-background {
-    display: block !important;
-    width: 100% !important;
-    height: 320px !important;
-    min-height: 320px !important;
-
-    background-image: url("./images/backgrounds/roswell.png") !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-
-    position: relative;
-    z-index: 1;
-    opacity: 1 !important;
-
-    border-radius: 12px;
-    margin-bottom: 24px;
-}
