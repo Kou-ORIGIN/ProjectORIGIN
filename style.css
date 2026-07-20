@@ -3016,3 +3016,26 @@ body.body-scroll-locked {
 }
 
 
+.incident-modal-main {
+    position: relative;
+    overflow: hidden;
+}
+
+.incident-modal-background {
+    display: block !important;
+    width: 100% !important;
+    height: 320px !important;
+    min-height: 320px !important;
+
+    background-image: url("./images/backgrounds/roswell.png") !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+
+    position: relative;
+    z-index: 1;
+    opacity: 1 !important;
+
+    border-radius: 12px;
+    margin-bottom: 24px;
+}
