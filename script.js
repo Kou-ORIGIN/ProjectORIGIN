@@ -666,6 +666,16 @@ function getIncidentStatusLabel(status) {
     return String(status).trim().toUpperCase() || 'UNKNOWN';
 }
 
+function formatIncidentDisplayId(incidentId) {
+    const rawId = String(incidentId || '').trim();
+    const match = rawId.match(/^FILE-(\d+)$/i);
+    if (!match) {
+        return rawId;
+    }
+
+    return `FILE ${match[1].padStart(4, '0')}`;
+}
+
 function applyIncidentCardBackground(card, incidentId) {
         const image = incidentCardBackgroundImages[incidentId];
         if (image) {
@@ -1417,7 +1427,7 @@ function createIncidentCard(incident, options = {}) {
 
     const idElement = document.createElement('span');
     idElement.className = 'incident-id';
-    idElement.textContent = incident.id;
+    idElement.textContent = formatIncidentDisplayId(incident.id);
 
     const statusElement = document.createElement('span');
     statusElement.className = 'incident-status';
@@ -1717,7 +1727,7 @@ function openIncidentModal(incident) {
     closeMobileNavDrawer({ restoreFocus: false });
 
     applyIncidentModalBackground(incidentModalPanel || incidentModalOverlay, incident);
-    incidentModalFile.textContent = incident.id;
+    incidentModalFile.textContent = formatIncidentDisplayId(incident.id);
     if (incidentModalStatus) {
         incidentModalStatus.textContent = `STATUS ${getIncidentStatusLabel(incident.status)}`;
     }

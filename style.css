@@ -1462,22 +1462,13 @@ body.body-scroll-locked {
     outline: none;
 }
 
-.incident-card-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    column-gap: 10px;
-    margin-bottom: 8px;
-    padding-right: 40px;
-    min-height: 28px;
-}
-
-.incident-file-card .incident-card-header {
+.incident-card:not(.timeline-log-card) .incident-card-header {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
     margin-bottom: 10px;
+    padding-right: 40px;
     min-height: 46px;
 }
 
@@ -1546,7 +1537,7 @@ body.body-scroll-locked {
     justify-self: end;
 }
 
-.incident-file-card .incident-status {
+.incident-card:not(.timeline-log-card) .incident-status {
     justify-self: auto;
     align-self: flex-start;
 }
@@ -2776,19 +2767,13 @@ body.body-scroll-locked {
         letter-spacing: 0.75px;
     }
 
-    .incident-file-card .incident-card-header {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: center;
-        column-gap: 10px;
-        row-gap: 0;
-        margin-bottom: 8px;
-        min-height: 28px;
-    }
-
-    .incident-file-card .incident-status {
-        justify-self: end;
-        align-self: center;
+    .incident-card:not(.timeline-log-card) .incident-card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        margin-bottom: 10px;
+        min-height: 46px;
     }
 
     .origin-map-main {
