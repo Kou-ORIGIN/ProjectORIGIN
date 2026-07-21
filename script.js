@@ -539,7 +539,7 @@ const incidentData = [
         danger: 3,
         status: '調査継続中',
         modalBackground: {
-            imagePath: '',
+            imagePath: './images/backgrounds/roswell.png',
             desktopPosition: 'center 18%',
             mobilePosition: '62% 16%',
             fallbackLabel: 'ROSWELL INCIDENT',
@@ -1589,6 +1589,19 @@ function applyIncidentModalBackground(modalElement, incident) {
     modalElement.style.setProperty('--incident-modal-bg-position-mobile', backgroundConfig.mobilePosition);
 }
 
+function updateIncidentModalBackgroundFade(modalElement) {
+    if (!modalElement) {
+        return;
+    }
+
+    const maxScroll = modalElement.scrollHeight - modalElement.clientHeight;
+    const progress = maxScroll > 0
+        ? Math.min(Math.max(modalElement.scrollTop / maxScroll, 0), 1)
+        : 0;
+    const fade = Math.min(0.9, Math.pow(progress, 0.82) * 0.9);
+    modalElement.style.setProperty('--incident-modal-scroll-fade', fade.toFixed(3));
+}
+
 function getIncidentOverview(incident) {
     return incident.facts[0] || incident.theories[0] || incident.legends[0] || '記録可能な概要情報はありません。';
 }
@@ -1727,6 +1740,7 @@ function openIncidentModal(incident) {
     renderIncidentRiskGauge(incidentModalRiskGauge, incident.danger);
     renderIncidentBodyCopy(incidentModalBodyCopy, incident);
     incidentModalOverlay.hidden = false;
+    updateIncidentModalBackgroundFade(incidentModalPanel || incidentModalOverlay);
     lockBackgroundScrollForModal();
     lockHeaderVisibility(true);
 }
@@ -1751,6 +1765,12 @@ if (incidentModalOverlay) {
             closeIncidentModal();
         }
     });
+}
+
+if (incidentModalPanel) {
+    incidentModalPanel.addEventListener('scroll', () => {
+        updateIncidentModalBackgroundFade(incidentModalPanel);
+    }, { passive: true });
 }
 
 document.addEventListener('keydown', (event) => {

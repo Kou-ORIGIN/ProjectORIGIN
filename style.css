@@ -1668,29 +1668,18 @@ body.body-scroll-locked {
     isolation: isolate;
     display: grid;
     gap: 10px;
+    --incident-modal-scroll-fade: 0;
 }
 
 .incident-modal::before {
-    content: '';
-    position: absolute;
-    inset: -10px;
-    background: none;
-    z-index: 0;
-    pointer-events: none;
+    content: none;
 }
 
 .incident-modal::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(155deg, rgba(0, 240, 255, 0.14) 0%, rgba(0, 240, 255, 0.03) 30%, rgba(0, 0, 0, 0.68) 66%, rgba(0, 0, 0, 0.9) 100%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.84) 100%);
-    z-index: 1;
-    pointer-events: none;
+    content: none;
 }
 
-.incident-modal > * {
+.incident-modal > :not(.incident-modal-background) {
     position: relative;
     z-index: 2;
     max-width: 100%;
@@ -1701,25 +1690,41 @@ body.body-scroll-locked {
 .incident-modal-main {
     position: relative;
     display: block;
+    min-height: clamp(260px, 36vh, 340px);
     min-width: 0;
-    border-radius: 11px;
-    overflow: hidden;
 }
 
 .incident-modal-background {
-    width: 100%;
-    height: clamp(260px, 40vh, 340px);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
     background-image: var(--incident-modal-bg-image);
     background-size: cover;
     background-position: var(--incident-modal-bg-position-desktop, center center);
     background-repeat: no-repeat;
 }
 
+.incident-modal-background::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg,
+            rgba(0, 0, 0, 0.2) 0%,
+            rgba(0, 0, 0, 0.34) 26%,
+            rgba(0, 0, 0, 0.56) 52%,
+            rgba(0, 0, 0, 0.78) 72%,
+            rgba(0, 0, 0, 0.92) 100%);
+}
+
 .incident-modal-background::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18) 8%, rgba(0, 0, 0, 0.52) 58%, rgba(0, 0, 0, 0.86) 100%);
+    background: #000;
+    opacity: var(--incident-modal-scroll-fade, 0);
+    transition: opacity 120ms linear;
 }
 
 .incident-modal-hero-copy {
@@ -2753,8 +2758,11 @@ body.body-scroll-locked {
 
 @media (max-width: 768px) {
     .incident-modal-background {
-        height: clamp(220px, 34vh, 290px);
         background-position: var(--incident-modal-bg-position-mobile, var(--incident-modal-bg-position-desktop, center center));
+    }
+
+    .incident-modal-main {
+        min-height: clamp(220px, 32vh, 290px);
     }
 
     .incident-modal-hero-copy {
