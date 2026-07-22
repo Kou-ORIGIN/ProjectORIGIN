@@ -1625,10 +1625,6 @@ function renderIncidentBodyCopy(container, incident) {
 
     const sectionDefinitions = [
         {
-            heading: 'OVERVIEW',
-            items: [incident.facts.filter((text) => typeof text === 'string' && text.trim().length > 0).join(' ')].filter(Boolean)
-        },
-        {
             heading: 'FACTS',
             items: incident.facts.filter((text) => typeof text === 'string' && text.trim().length > 0)
         },
