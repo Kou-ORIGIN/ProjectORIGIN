@@ -599,6 +599,123 @@ const incidentData = [
             '異星人のメッセージと解釈する説がある。',
             '神秘的な象徴として現代でも語り継がれている。'
         ]
+    },
+    {
+        id: 'FILE-004',
+        name: 'Area 51',
+        englishName: 'Area 51',
+        region: 'アメリカ・ネバダ州',
+        era: 'TBD',
+        category: 'UFO・未確認飛行物体',
+        danger: 3,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-005',
+        name: 'Phoenix Lights',
+        englishName: 'Phoenix Lights',
+        region: 'アメリカ・アリゾナ州',
+        era: 'TBD',
+        category: 'UFO・未確認飛行物体',
+        danger: 3,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-006',
+        name: 'Rendlesham Forest Incident',
+        englishName: 'Rendlesham Forest Incident',
+        region: 'イギリス・サフォーク',
+        era: 'TBD',
+        category: 'UFO・未確認飛行物体',
+        danger: 3,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-007',
+        name: 'Belgian UFO Wave',
+        englishName: 'Belgian UFO Wave',
+        region: 'ベルギー',
+        era: 'TBD',
+        category: 'UFO・未確認飛行物体',
+        danger: 2,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-008',
+        name: 'Tunguska Event',
+        englishName: 'Tunguska Event',
+        region: 'ロシア・シベリア',
+        era: 'TBD',
+        category: '未解決事件',
+        danger: 4,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-009',
+        name: 'Great Pyramid of Giza',
+        englishName: 'Great Pyramid of Giza',
+        region: 'エジプト・ギザ',
+        era: 'TBD',
+        category: '古代文明・遺跡',
+        danger: 2,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-010',
+        name: 'Göbekli Tepe',
+        englishName: 'Göbekli Tepe',
+        region: 'トルコ・シャンルウルファ',
+        era: 'TBD',
+        category: '古代文明・遺跡',
+        danger: 2,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-011',
+        name: 'Mary Celeste',
+        englishName: 'Mary Celeste',
+        region: '北大西洋',
+        era: 'TBD',
+        category: '未解決事件',
+        danger: 3,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
+    },
+    {
+        id: 'FILE-012',
+        name: 'Bermuda Triangle',
+        englishName: 'Bermuda Triangle',
+        region: '北大西洋・バミューダ海域',
+        era: 'TBD',
+        category: '未解決事件',
+        danger: 4,
+        status: 'PLANNED',
+        facts: [],
+        theories: [],
+        legends: []
     }
 ];
 
@@ -720,7 +837,16 @@ let activeOriginMapIncidentId = null;
 const originMapMarkerPositions = {
     'FILE-001': { left: 22, top: 40 },
     'FILE-002': { left: 62, top: 24 },
-    'FILE-003': { left: 30, top: 67 }
+    'FILE-003': { left: 30, top: 67 },
+    'FILE-004': { left: 21, top: 42 },
+    'FILE-005': { left: 22, top: 46 },
+    'FILE-006': { left: 49, top: 33 },
+    'FILE-007': { left: 48, top: 31 },
+    'FILE-008': { left: 69, top: 23 },
+    'FILE-009': { left: 53, top: 49 },
+    'FILE-010': { left: 56, top: 44 },
+    'FILE-011': { left: 40, top: 42 },
+    'FILE-012': { left: 31, top: 43 }
 };
 
 const incidentFilterState = {
