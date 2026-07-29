@@ -1,20 +1,18 @@
-# ProjectORIGIN Database Rule v2.0
-
 # Chapter 1
 
 # Mission
 
 ## Purpose
 
-ProjectORIGINは、「未知を探索する機密データベース」として、未確認現象、未解決事件、歴史的事象、都市伝説などに関する情報を体系的に整理・管理することを目的とする。
+ProjectORIGINにおけるデータベースの設計および運用に関する基準を定義する。
 
-本書は、ProjectORIGINにおけるデータベース設計、事件管理、およびデータ運用の基準を定義する正式設計書である。
+本書は、未知の事件・現象・歴史・技術などを長期的に管理するための正式なデータベース設計書とする。
 
-本ルールは、1000件以上の事件ファイルを長期的に管理・運用できるデータベースを前提とし、ProjectORIGIN全体で統一された品質と運用基準を維持することを目的とする。
+ProjectORIGINは、1000件以上の事件ファイルを継続的に管理・運用できる構造を目標とする。
 
-データベースの設計および運用は、ProjectORIGIN全体の設計思想に従い、UIは英語、コンテンツは日本語の方針を維持する。
+UIおよびシステム操作は英語、事件ファイルなどのコンテンツは日本語を基本とする。
 
-また、本書はデータベース設計、事件管理、タグ設計、カテゴリ設計、およびデータ運用を対象とし、実装、GitHub Copilot、コード作成は対象外とする。
+本書では、データベース設計、データ管理、および運用基準を対象とし、実装、GitHub Copilot、コード作成は対象外とする。
 
 ---
 
@@ -22,17 +20,19 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 
 # Database Philosophy
 
-## Basic Policy
+## Basic Philosophy
 
-ProjectORIGINは、事件を紹介するサイトではなく、事件を調査・整理・蓄積するデータベースとして設計する。
+ProjectORIGINは、未知の事件・現象を調査・整理・蓄積するためのデータベースとして設計する。
 
-事件ファイルは、無料版および将来のCLASSIFIED ACCESSを前提とした構成とする。ただし、現時点では有料機能は実装しない。
+事件ファイルは単なる紹介記事ではなく、長期的に調査・更新・管理されるデータとして扱う。
 
-無料版は、事件の全体像を理解できる品質を目標とし、読者が事件の概要や主要な論点を把握できる内容を提供する。
+Case Card Imageは、事件データを構成する正式なデータ管理対象として扱う。
 
-調査過程で収集した詳細な資料や分析情報は、公開の有無にかかわらず継続的に保管し、将来的なCLASSIFIED ACCESSへの発展を想定したデータとして管理する。
+ProjectORIGINでは、無料版および将来的なCLASSIFIED ACCESSを前提としたデータ管理を行う。
 
-すべての事件ファイルは、ProjectORIGIN全体で統一された設計思想および品質基準に基づいて制作・管理し、長期運営においても一貫性を維持する。
+ただし、現時点では有料機能は実装しない。
+
+Researchによって整理・検証された情報を基準とし、データベース全体で一貫した品質を維持する。
 
 # Chapter 3
 
@@ -68,6 +68,8 @@ ProjectORIGINは、事件を紹介するサイトではなく、事件を調査�
 
 ただし、現時点では有料機能は実装しない。
 
+Case Card Imageは、各Case Fileに関連付けられるデータとして管理し、Case Fileから参照するものとする。
+
 ### Free Edition
 
 無料版は、事件の全体像を理解できる品質を目標とする。
@@ -102,7 +104,6 @@ ProjectORIGINは、事件を紹介するサイトではなく、事件を調査�
 - AI分析用メモ
 
 これらの情報は、将来的なコンテンツ拡張に対応できるよう管理する。
-```
 
 # Chapter 5
 
@@ -164,8 +165,9 @@ ProjectORIGINでは、事実・有力な説・仮説を明確に区別し、客�
 
 SNSや個人投稿は参考情報として扱うが、事実認定の根拠とはしない。
 
+Case Card Imageが登録されていない場合は、既定のカード画像を参照する。
+
 資料の評価はResearch BibleおよびResearch Templateで定める調査基準に従い、事件ファイルの制作およびデータ管理に反映する。
-```
 
 # Chapter 7
 
@@ -251,5 +253,5 @@ ProjectORIGINは、事件を紹介するサイトではなく、事件を調査�
 
 | Version | Date | Changes |
 |----------|------------|---------|
+| v2.1 | 2026-07-30 | Case Card Imageを正式なデータ管理対象として追加。Database Philosophyへ管理対象を明記し、Case Fileとの関連付けおよび参照ルールを追加。画像未登録時は既定のカード画像を参照する運用を定義。既存のデータベース設計・データ管理・運用基準との整合性を維持。 |
 | v2.0 | 2026-07-27 | ProjectORIGIN Database Ruleを正式設計書として再構成。Mission、Database Philosophy、Database Scope、Case File Policy、Research Policy、Source Priority、Image Policy、AI Analysis Policy、Long-Term Operationを整理し、ProjectORIGIN全体（AGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、Image Rule）との整合性を維持した正式版として確定。 |
-```
