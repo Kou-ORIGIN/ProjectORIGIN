@@ -538,6 +538,7 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 3,
         status: '調査継続中',
+        caseCardImage: null,
         modalBackground: {
             imagePath: './images/backgrounds/roswell.png',
             desktopPosition: 'center 18%',
@@ -566,6 +567,7 @@ const incidentData = [
         category: '未解決事件',
         danger: 4,
         status: '一部解明',
+        caseCardImage: null,
         facts: [
             'ソ連時代の山岳地帯で複数の目撃情報が残されている。',
             '地形と足跡の異常が記録された。'
@@ -587,6 +589,7 @@ const incidentData = [
         category: '古代文明・遺跡',
         danger: 1,
         status: '研究継続中',
+        caseCardImage: null,
         facts: [
             '巨大な幾何学模様が高原に描かれている。',
             '空からしか全容が把握しにくい構造になっている。'
@@ -609,6 +612,7 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 3,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -622,6 +626,7 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 3,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -635,6 +640,7 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 3,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -648,6 +654,7 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 2,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -661,6 +668,7 @@ const incidentData = [
         category: '未解決事件',
         danger: 4,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -674,6 +682,7 @@ const incidentData = [
         category: '古代文明・遺跡',
         danger: 2,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -687,6 +696,7 @@ const incidentData = [
         category: '古代文明・遺跡',
         danger: 2,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -700,6 +710,7 @@ const incidentData = [
         category: '未解決事件',
         danger: 3,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -713,6 +724,7 @@ const incidentData = [
         category: '未解決事件',
         danger: 4,
         status: 'PLANNED',
+        caseCardImage: null,
         facts: [],
         theories: [],
         legends: []
@@ -760,12 +772,6 @@ function createIncidentCardBackgroundDataUrl(incidentLabel, colors) {
         return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 }
 
-const incidentCardBackgroundImages = {
-        'FILE-001': createIncidentCardBackgroundDataUrl('ROSWELL', ['#08122a', '#142e3f', '#060a14']),
-        'FILE-002': createIncidentCardBackgroundDataUrl('DYATLOV', ['#111726', '#33475a', '#070a12']),
-        'FILE-003': createIncidentCardBackgroundDataUrl('NAZCA', ['#1d1a24', '#4f3a2b', '#0b0c12'])
-};
-
 const incidentStatusLabelMap = {
     '調査継続中': 'ACTIVE',
     '一部解明': 'PARTIAL',
@@ -793,15 +799,32 @@ function formatIncidentDisplayId(incidentId) {
     return `FILE ${match[1].padStart(4, '0')}`;
 }
 
-function applyIncidentCardBackground(card, incidentId) {
-        const image = incidentCardBackgroundImages[incidentId];
-        if (image) {
-                card.style.setProperty('--incident-bg-image', image);
-                return;
-        }
+function getIncidentCaseCardImagePath(incident) {
+    const caseCardImage = incident?.caseCardImage;
+    if (!caseCardImage || typeof caseCardImage !== 'object' || Array.isArray(caseCardImage)) {
+        return null;
+    }
 
-        const fallback = createIncidentCardBackgroundDataUrl('UNRESOLVED', ['#081124', '#163043', '#050a14']);
-        card.style.setProperty('--incident-bg-image', fallback);
+    if (typeof caseCardImage.path !== 'string') {
+        return null;
+    }
+
+    const path = caseCardImage.path.trim();
+    return path || null;
+}
+
+function applyIncidentCaseCardImage(card, incident) {
+    if (!card) {
+        return;
+    }
+
+    const imagePath = getIncidentCaseCardImagePath(incident);
+    if (!imagePath) {
+        return;
+    }
+
+    card.classList.add('has-case-card-image');
+    card.style.setProperty('--incident-card-image', `url(${JSON.stringify(imagePath)})`);
 }
 
 const incidentList = document.getElementById('incidentList');
@@ -1527,7 +1550,7 @@ function createIncidentCard(incident, options = {}) {
     card.setAttribute('data-id', incident.id);
 
     if (settings.cardClassName.includes('incident-file-card')) {
-        applyIncidentCardBackground(card, incident.id);
+        applyIncidentCaseCardImage(card, incident);
     }
 
     if (settings.enableCardModalOpen) {

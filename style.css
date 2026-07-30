@@ -1404,17 +1404,17 @@ body.body-scroll-locked {
     -webkit-user-select: none;
 }
 
-.incident-file-card {
+.incident-file-card.has-case-card-image {
     overflow: hidden;
     isolation: isolate;
     background: #050a14;
 }
 
-.incident-file-card::before {
+.incident-file-card.has-case-card-image::before {
     content: '';
     position: absolute;
     inset: -8px;
-    background-image: var(--incident-bg-image);
+    background-image: var(--incident-card-image);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1424,7 +1424,7 @@ body.body-scroll-locked {
     pointer-events: none;
 }
 
-.incident-file-card::after {
+.incident-file-card.has-case-card-image::after {
     content: '';
     position: absolute;
     inset: 0;
@@ -1435,22 +1435,22 @@ body.body-scroll-locked {
     pointer-events: none;
 }
 
-.incident-file-card > * {
+.incident-file-card.has-case-card-image > * {
     position: relative;
     z-index: 2;
 }
 
-.incident-file-card .incident-favorite-btn {
+.incident-file-card.has-case-card-image .incident-favorite-btn {
     z-index: 3;
     background: rgba(0, 0, 0, 0.46);
 }
 
-.incident-file-card .incident-name,
-.incident-file-card .incident-meta-value,
-.incident-file-card .incident-id,
-.incident-file-card .incident-status,
-.incident-file-card .incident-danger-label,
-.incident-file-card .incident-meta-label {
+.incident-file-card.has-case-card-image .incident-name,
+.incident-file-card.has-case-card-image .incident-meta-value,
+.incident-file-card.has-case-card-image .incident-id,
+.incident-file-card.has-case-card-image .incident-status,
+.incident-file-card.has-case-card-image .incident-danger-label,
+.incident-file-card.has-case-card-image .incident-meta-label {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
@@ -3040,4 +3040,3 @@ body.body-scroll-locked {
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 240, 255, 0.58);
 }
-
