@@ -56,6 +56,20 @@ Researchによって整理・検証された情報を基準とし、データベ
 
 また、本書はAGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、およびImage Ruleと連携し、それぞれの役割を尊重しながら運用する。
 
+## Case Card Image Data Structure
+
+Case Card Imageの正式フィールド名は、`caseCardImage`とする。
+
+`caseCardImage`の値は、Case Card Imageが設定されている場合はオブジェクト、設定されていない場合はnullとする。
+
+Case Card Imageが設定されている場合、画像パスは`path`プロパティに保持する。
+
+正式なデータ構造は、以下のとおりとする。
+
+```text
+caseCardImage
+└── path: string
+```
 ---
 
 # Chapter 4
@@ -68,7 +82,11 @@ Researchによって整理・検証された情報を基準とし、データベ
 
 ただし、現時点では有料機能は実装しない。
 
-Case Card Imageは、各Case Fileに関連付けられるデータとして管理し、Case Fileから参照するものとする。
+Case Card Imageは、各Case Fileに属する事件データ内で直接管理する。
+
+各事件データは、自身の`caseCardImage`フィールドを保持し、Case Card Imageが設定されている場合は画像参照情報を記録する。
+
+Case Card ImageをCase Fileとは別の対応表のみで管理する構造は採用しない。
 
 ### Free Edition
 
@@ -165,8 +183,6 @@ ProjectORIGINでは、事実・有力な説・仮説を明確に区別し、客�
 
 SNSや個人投稿は参考情報として扱うが、事実認定の根拠とはしない。
 
-Case Card Imageが登録されていない場合は、既定のカード画像を参照する。
-
 資料の評価はResearch BibleおよびResearch Templateで定める調査基準に従い、事件ファイルの制作およびデータ管理に反映する。
 
 # Chapter 7
@@ -186,6 +202,22 @@ Case Card Imageが登録されていない場合は、既定のカード画像�
 事件ファイルの背景画像は、ProjectORIGINで制作・管理する背景画像を優先して使用する。
 
 背景画像は、事件の世界観や調査資料としての雰囲気を補完する目的で使用し、本文の可読性や情報伝達を妨げないことを前提とする。
+
+## Case Card Image Data Management
+
+Case Card Imageが設定されていない場合は、`caseCardImage`の値をnullとする。
+
+空文字は、Case Card Imageの正式な値として使用しない。
+
+`caseCardImage`が空文字の場合、または`path`が空文字の場合は、Case Card Image未設定として扱い、正式データではnullへ統一する。
+
+既存の事件データに`caseCardImage`フィールドが存在しない場合は、Case Card Image未設定として扱う。
+
+ただし、正式な事件データでは`caseCardImage`フィールドを保持し、未設定の場合はnullを記録する。
+
+Case Card Imageが未設定の場合、既定画像または代替画像のパスをデータ上で参照しない。
+
+画像未設定時のカード表現はImage Ruleに従い、Database Ruleでは画像データが存在しない状態のみを定義する。
 
 ## Image Management
 
@@ -253,5 +285,6 @@ ProjectORIGINは、事件を紹介するサイトではなく、事件を調査�
 
 | Version | Date | Changes |
 |----------|------------|---------|
+| v2.2 | 2026-07-30 | Case Card Image実装前監査を反映。Case Card Imageの正式なデータ構造を追加し、正式フィールド名を`caseCardImage`、画像パスの正式プロパティ名を`path`として定義。正式な未設定値を`null`とし、空文字、空の`path`、フィールド未定義の扱いを統一。Case Card Imageを各事件データ内で直接管理する構造を明確化。Chapter 6から「Case Card Imageが登録されていない場合は、既定のカード画像を参照する。」を削除し、未設定時のデータ管理をChapter 7へ移設してImage Rule v1.1との整合性を確立。 |
 | v2.1 | 2026-07-30 | Case Card Imageを正式なデータ管理対象として追加。Database Philosophyへ管理対象を明記し、Case Fileとの関連付けおよび参照ルールを追加。画像未登録時は既定のカード画像を参照する運用を定義。既存のデータベース設計・データ管理・運用基準との整合性を維持。 |
 | v2.0 | 2026-07-27 | ProjectORIGIN Database Ruleを正式設計書として再構成。Mission、Database Philosophy、Database Scope、Case File Policy、Research Policy、Source Priority、Image Policy、AI Analysis Policy、Long-Term Operationを整理し、ProjectORIGIN全体（AGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、Image Rule）との整合性を維持した正式版として確定。 |
