@@ -34,6 +34,45 @@ ProjectORIGINでは、無料版および将来的なCLASSIFIED ACCESSを前提�
 
 Researchによって整理・検証された情報を基準とし、データベース全体で一貫した品質を維持する。
 
+## Data Responsibility
+
+事件そのものを表す正式な事実データと、画面表示のために使用する表示用データは分離して管理する。
+
+事件データには、正式な事件情報を保持し、UI固有の表示値や、既存データから共通ルールで導出できる表示情報を重複して保存しない。
+
+以下の情報は、正式な事件データとして管理する。
+
+- 日本語の正式事件名
+- `englishName`
+- 正式な`country`
+- 正式な`location`
+- 正式な日付・年代情報
+- `category`
+- `class`
+- `tags`
+- `riskLevel`
+- `caseCardImage`
+- その他の正式な事件情報
+
+以下の情報は、事件データへ保存しない。
+
+- 代表タグの複製
+- 短縮国名
+- 表示用地域略称
+- `displayEra`
+- Risk Levelの英語表示名
+- Risk Levelの表示色
+- UI専用ラベル
+- 既存データから共通ルールで導出できる表示文字列
+
+代表タグは`tags`から、短縮地域名は正式な`country`および`location`と共通の地域表示定義から取得する。
+
+`displayEra`は事件データへ保存せず、正式な日付・年代情報から共通ルールで導出する。
+
+表示用情報は、正式な事件データおよびProjectORIGIN全体の共通定義から取得する。
+
+これにより、UIや表示方針が変更された場合でも、事件データ全件へ表示専用の修正を行う必要がない構造を維持する。
+
 # Chapter 3
 
 # Database Scope
@@ -56,11 +95,93 @@ Researchによって整理・検証された情報を基準とし、データベ
 
 また、本書はAGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、およびImage Ruleと連携し、それぞれの役割を尊重しながら運用する。
 
+---
+
+## Case Data Structure
+
+事件データは、ProjectORIGIN全体で共通して利用できる正式な情報を保持する。
+
+表示専用の情報は事件データへ重複保存せず、正式な事件データおよび共通定義から取得する。
+
+### englishName
+
+正式フィールド名は、`englishName`とする。
+
+事件の正式英語名を保持する。
+
+#### 値型
+
+```text
+string | null
+```
+
+#### 必須・任意
+
+正式公開データでは必須とする。
+
+調査中または移行中の事件データでは、一時的に`null`を許容する。
+
+#### 未設定値
+
+正式な未設定値は`null`とする。
+
+空文字は正式な値として使用しない。
+
+既存データでフィールドが未定義の場合は未設定として扱う。
+
+正式な事件データでは、`englishName`フィールドを保持する。
+
+---
+
+### riskLevel
+
+正式フィールド名は、`riskLevel`とする。
+
+事件のRisk Level段階を保持する。
+
+#### 値型
+
+```text
+integer | null
+```
+
+#### 許可値
+
+```text
+1
+2
+3
+4
+5
+```
+
+正式公開データでは必須とする。
+
+調査中または移行中の事件データでは、一時的に`null`を許容する。
+
+#### 未設定値
+
+正式な未設定値は`null`とする。
+
+以下は正式な値として使用しない。
+
+- 空文字
+- 文字列
+- 小数
+- 0
+- 6以上の整数
+
+事件データには、Risk Levelを整数値のみで保持する。
+
+Risk Levelの英語表示名、表示色その他の表示情報は保持しない。
+
+---
+
 ## Case Card Image Data Structure
 
 Case Card Imageの正式フィールド名は、`caseCardImage`とする。
 
-`caseCardImage`の値は、Case Card Imageが設定されている場合はオブジェクト、設定されていない場合はnullとする。
+`caseCardImage`の値は、Case Card Imageが設定されている場合はオブジェクト、設定されていない場合は`null`とする。
 
 Case Card Imageが設定されている場合、画像パスは`path`プロパティに保持する。
 
@@ -70,6 +191,37 @@ Case Card Imageが設定されている場合、画像パスは`path`プロパ�
 caseCardImage
 └── path: string
 ```
+
+`path`には、Case Card Imageとして使用する画像リソースを参照する、空文字ではない文字列を保持する。
+
+Case Card Imageが設定されていない場合は、以下の形式で管理する。
+
+```text
+caseCardImage: null
+```
+
+正式な事件データでは、Case Card Imageの設定有無を明確にするため、`caseCardImage`フィールドを保持する。
+
+以下は、事件データ内での概念的な記述例である。
+
+```yaml
+incidentData:
+  - fileNumber: "0001"
+    caseName: "ロズウェル事件"
+    englishName: "Roswell Incident"
+    riskLevel: 4
+    caseCardImage:
+      path: "images/case-cards/file-0001.webp"
+
+  - fileNumber: "0002"
+    caseName: "Example Case"
+    englishName: null
+    riskLevel: null
+    caseCardImage: null
+```
+
+この記述例はデータ構造を示すものであり、特定の実装言語やファイル形式を指定するものではない。
+
 ---
 
 # Chapter 4
@@ -87,6 +239,16 @@ Case Card Imageは、各Case Fileに属する事件データ内で直接管理�
 各事件データは、自身の`caseCardImage`フィールドを保持し、Case Card Imageが設定されている場合は画像参照情報を記録する。
 
 Case Card ImageをCase Fileとは別の対応表のみで管理する構造は採用しない。
+
+`englishName`は、事件を識別する正式な英語名称として管理する。
+
+正式公開データでは、`englishName`および`riskLevel`を必須とする。
+
+代表タグは、`tags`を順序付き一覧として管理し、先頭に登録された有効なタグを使用する。
+
+代表タグを別フィールドとして重複保存しない。
+
+`tags`が空の場合は、代表タグを未設定として扱う。
 
 ### Free Edition
 
@@ -273,6 +435,32 @@ ProjectORIGINは、1000件以上の事件ファイルを長期的に管理・運
 
 すべての事件ファイルは、Research Bible、Research Template、Case File Template、およびMaster Case File Templateに基づいて制作・管理する。
 
+既存データの正規化を継続的に実施し、同一の意味を持つ情報を複数の正式フィールドへ重複保存しない。
+
+正式な事件情報は事件データとして保持し、表示専用の情報はProjectORIGIN全体の共通定義から取得する。
+
+UIや表示方針が変更された場合でも、事件データ全件を修正することなく、共通定義のみを更新できる構造を維持する。
+
+Risk Levelの英語表示名は、`riskLevel`の値からProjectORIGIN全体の共通表示定義を使用して取得する。
+
+正式な対応は以下のとおりとする。
+
+| riskLevel | English Display |
+|-----------|-----------------|
+| 1 | LOW |
+| 2 | MEDIUM |
+| 3 | HIGH |
+| 4 | VERY HIGH |
+| 5 | EXTREME |
+
+Risk Levelの英語表示名は事件データへ保存しない。
+
+Risk Levelの表示色、配置、サイズ、強調方法およびアニメーションはUIおよび視覚表現側の責務とし、Database Ruleでは定義しない。
+
+Case Card、Case File、Favorites、ORIGIN MAPおよび将来のCLASSIFIED ACCESSは、同一の共通表示定義を使用する。
+
+将来的に表示名称を変更する場合も、事件データは変更せず、共通表示定義のみを更新する。
+
 ## Project Philosophy
 
 ProjectORIGINは、事件を紹介するサイトではなく、事件を調査・整理・蓄積するデータベースとして長期運営する。
@@ -285,6 +473,6 @@ ProjectORIGINは、事件を紹介するサイトではなく、事件を調査�
 
 | Version | Date | Changes |
 |----------|------------|---------|
-| v2.2 | 2026-07-30 | Case Card Image実装前監査を反映。Case Card Imageの正式なデータ構造を追加し、正式フィールド名を`caseCardImage`、画像パスの正式プロパティ名を`path`として定義。正式な未設定値を`null`とし、空文字、空の`path`、フィールド未定義の扱いを統一。Case Card Imageを各事件データ内で直接管理する構造を明確化。Chapter 6から「Case Card Imageが登録されていない場合は、既定のカード画像を参照する。」を削除し、未設定時のデータ管理をChapter 7へ移設してImage Rule v1.1との整合性を確立。 |
+| v2.2 | 2026-08-01 | Case Card Imageの正式フィールド名を`caseCardImage`、画像パスの正式プロパティ名を`path`として定義。`caseCardImage`の正式な未設定値を`null`とし、空文字、空の`path`、フィールド未定義を未設定として扱い、正式データでは未設定値を`null`へ統一する方針を確定。Case Card Imageを各事件データ内で直接管理し、未設定時に既定画像または代替画像をデータ上で参照しない方針、およびImage Ruleとの責務分離を明確化。`englishName`および`riskLevel`を正式フィールドとして定義し、`riskLevel`の値型を`integer \| null`、許可値を1〜5として定義。Risk Levelの英語表示名は共通表示定義から取得し、代表タグは`tags`の先頭の有効値から取得する方針を確定。短縮地域名は共通の地域表示定義から取得し、`displayEra`は保存せず正式な日付・年代情報から導出する方針を追加。事実データと表示データを分離する方針を正式化。 |
 | v2.1 | 2026-07-30 | Case Card Imageを正式なデータ管理対象として追加。Database Philosophyへ管理対象を明記し、Case Fileとの関連付けおよび参照ルールを追加。画像未登録時は既定のカード画像を参照する運用を定義。既存のデータベース設計・データ管理・運用基準との整合性を維持。 |
 | v2.0 | 2026-07-27 | ProjectORIGIN Database Ruleを正式設計書として再構成。Mission、Database Philosophy、Database Scope、Case File Policy、Research Policy、Source Priority、Image Policy、AI Analysis Policy、Long-Term Operationを整理し、ProjectORIGIN全体（AGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、Image Rule）との整合性を維持した正式版として確定。 |

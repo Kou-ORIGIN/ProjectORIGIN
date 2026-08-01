@@ -1408,50 +1408,30 @@ body.body-scroll-locked {
     overflow: hidden;
     isolation: isolate;
     background: #050a14;
+    padding: 0;
 }
 
-.incident-file-card.has-case-card-image::before {
-    content: '';
-    position: absolute;
-    inset: -8px;
+.incident-file-card.has-case-card-image .incident-card-image {
+    height: clamp(120px, 11vw, 128px);
     background-image: var(--incident-card-image);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: blur(4px) brightness(0.52) saturate(0.85);
-    transform: scale(1.06);
-    z-index: 0;
     pointer-events: none;
 }
 
-.incident-file-card.has-case-card-image::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(145deg, rgba(0, 240, 255, 0.18) 0%, rgba(0, 240, 255, 0.06) 32%, rgba(0, 0, 0, 0.62) 66%, rgba(0, 0, 0, 0.78) 100%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.65) 100%);
-    z-index: 1;
-    pointer-events: none;
-}
-
-.incident-file-card.has-case-card-image > * {
+.incident-file-card.has-case-card-image .incident-card-content {
     position: relative;
-    z-index: 2;
+    padding: 16px;
+    background: rgba(0, 15, 30, 0.96);
 }
 
 .incident-file-card.has-case-card-image .incident-favorite-btn {
-    z-index: 3;
-    background: rgba(0, 0, 0, 0.46);
-}
-
-.incident-file-card.has-case-card-image .incident-name,
-.incident-file-card.has-case-card-image .incident-meta-value,
-.incident-file-card.has-case-card-image .incident-id,
-.incident-file-card.has-case-card-image .incident-status,
-.incident-file-card.has-case-card-image .incident-danger-label,
-.incident-file-card.has-case-card-image .incident-meta-label {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    left: auto;
+    z-index: 1;
 }
 
 .incident-card:hover,

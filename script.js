@@ -538,7 +538,9 @@ const incidentData = [
         category: 'UFO・未確認飛行物体',
         danger: 3,
         status: '調査継続中',
-        caseCardImage: null,
+        caseCardImage: {
+            path: "images/case-cards/file-0001.webp"
+        },
         modalBackground: {
             imagePath: './images/backgrounds/roswell.png',
             desktopPosition: 'center 18%',
@@ -1559,6 +1561,20 @@ function createIncidentCard(incident, options = {}) {
         card.setAttribute('aria-label', `${incident.name}の詳細を表示`);
     }
 
+    let cardContent = card;
+    if (card.classList.contains('has-case-card-image')) {
+        const imageRegion = document.createElement('div');
+        imageRegion.className = 'incident-card-image';
+        imageRegion.setAttribute('aria-hidden', 'true');
+
+        const contentRegion = document.createElement('div');
+        contentRegion.className = 'incident-card-content';
+
+        card.appendChild(imageRegion);
+        card.appendChild(contentRegion);
+        cardContent = contentRegion;
+    }
+
     const favoriteButton = document.createElement('button');
     favoriteButton.type = 'button';
     favoriteButton.className = 'incident-favorite-btn';
@@ -1569,7 +1585,7 @@ function createIncidentCard(incident, options = {}) {
         toggleIncidentFavorite(incident.id);
     });
 
-    card.appendChild(favoriteButton);
+    cardContent.appendChild(favoriteButton);
 
     const header = document.createElement('div');
     header.className = 'incident-card-header';
@@ -1584,12 +1600,12 @@ function createIncidentCard(incident, options = {}) {
 
     header.appendChild(idElement);
     header.appendChild(statusElement);
-    card.appendChild(header);
+    cardContent.appendChild(header);
 
     const title = document.createElement('h4');
     title.className = 'incident-name';
     title.textContent = incident.name;
-    card.appendChild(title);
+    cardContent.appendChild(title);
 
     const metaFields = [
         { label: 'CLASS', value: incident.category }
@@ -1609,7 +1625,7 @@ function createIncidentCard(incident, options = {}) {
 
         meta.appendChild(label);
         meta.appendChild(value);
-        card.appendChild(meta);
+        cardContent.appendChild(meta);
     });
 
     const danger = document.createElement('div');
@@ -1633,7 +1649,7 @@ function createIncidentCard(incident, options = {}) {
 
     danger.appendChild(dangerLabel);
     danger.appendChild(gauge);
-    card.appendChild(danger);
+    cardContent.appendChild(danger);
 
     if (settings.showDetailButton) {
         const detailButton = document.createElement('button');
