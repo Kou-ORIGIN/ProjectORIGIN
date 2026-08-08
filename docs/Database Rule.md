@@ -1,478 +1,532 @@
 # Chapter 1
 
-# Mission
+# Mission and Authority
 
 ## Purpose
 
-ProjectORIGINにおけるデータベースの設計および運用に関する基準を定義する。
+本章は、ProjectORIGINにおけるDatabase Ruleの目的、適用範囲および権限に関する基本原則を定義する。
 
-本書は、未知の事件・現象・歴史・技術などを長期的に管理するための正式なデータベース設計書とする。
-
-ProjectORIGINは、1000件以上の事件ファイルを継続的に管理・運用できる構造を目標とする。
-
-UIおよびシステム操作は英語、事件ファイルなどのコンテンツは日本語を基本とする。
-
-本書では、データベース設計、データ管理、および運用基準を対象とし、実装、GitHub Copilot、コード作成は対象外とする。
+Database Ruleは、ProjectORIGIN全体で共通して適用するデータ管理およびデータベース設計の最上位原則とする。
 
 ---
 
-# Chapter 2
+## Mission
 
-# Database Philosophy
+Database Ruleは、ProjectORIGINにおけるデータ管理およびデータベース設計の基本原則を定義する。
 
-## Basic Philosophy
+ProjectORIGINは、未知の事件・現象・歴史・技術などを長期的に管理・運用することを目的とする。
 
-ProjectORIGINは、未知の事件・現象を調査・整理・蓄積するためのデータベースとして設計する。
+Database Ruleは、個別のデータ仕様や実装方法ではなく、ProjectORIGIN全体で共通して維持する設計原則を定義する。
 
-事件ファイルは単なる紹介記事ではなく、長期的に調査・更新・管理されるデータとして扱う。
+---
 
-Case Card Imageは、事件データを構成する正式なデータ管理対象として扱う。
+## Authority
 
-ProjectORIGINでは、無料版および将来的なCLASSIFIED ACCESSを前提としたデータ管理を行う。
+Database Ruleは、ProjectORIGINにおけるデータ管理およびデータベース設計に関する最上位の設計原則とする。
 
-ただし、現時点では有料機能は実装しない。
+Database Schemaおよび関連する正式文書は、本書で定義する設計原則に従って管理する。
 
-Researchによって整理・検証された情報を基準とし、データベース全体で一貫した品質を維持する。
-
-## Data Responsibility
-
-事件そのものを表す正式な事実データと、画面表示のために使用する表示用データは分離して管理する。
-
-事件データには、正式な事件情報を保持し、UI固有の表示値や、既存データから共通ルールで導出できる表示情報を重複して保存しない。
-
-以下の情報は、正式な事件データとして管理する。
-
-- 日本語の正式事件名
-- `englishName`
-- 正式な`country`
-- 正式な`location`
-- 正式な日付・年代情報
-- `category`
-- `class`
-- `tags`
-- `riskLevel`
-- `caseCardImage`
-- その他の正式な事件情報
-
-以下の情報は、事件データへ保存しない。
-
-- 代表タグの複製
-- 短縮国名
-- 表示用地域略称
-- `displayEra`
-- Risk Levelの英語表示名
-- Risk Levelの表示色
-- UI専用ラベル
-- 既存データから共通ルールで導出できる表示文字列
-
-代表タグは`tags`から、短縮地域名は正式な`country`および`location`と共通の地域表示定義から取得する。
-
-`displayEra`は事件データへ保存せず、正式な日付・年代情報から共通ルールで導出する。
-
-表示用情報は、正式な事件データおよびProjectORIGIN全体の共通定義から取得する。
-
-これにより、UIや表示方針が変更された場合でも、事件データ全件へ表示専用の修正を行う必要がない構造を維持する。
-
-# Chapter 3
-
-# Database Scope
+---
 
 ## Scope
 
-本書は、ProjectORIGINにおけるデータベースの設計および運用に関する基準を定義する。
+Database Ruleは、以下を対象とする。
 
-対象とする範囲は、以下のとおりとする。
+- データベース設計原則
+- データ管理原則
+- データ責務
+- データ分類
+- 長期運用原則
 
-- データベース設計
-- 事件管理
-- タグ設計
-- カテゴリ設計
-- データ運用
+Database Ruleは、以下を対象外とする。
 
-本書では、事件ファイルのデータ構造や管理基準を対象とし、実装、GitHub Copilot、コード作成は対象外とする。
+- 個別データ仕様
+- データ構造
+- Validation
+- Migration
+- 実装
+- UI
+- システム運用
 
-データベースは、1000件以上の事件ファイルを長期的に管理できる構造を前提とし、ProjectORIGIN全体で統一された運用基準を維持する。
-
-また、本書はAGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、およびImage Ruleと連携し、それぞれの役割を尊重しながら運用する。
-
----
-
-## Case Data Structure
-
-事件データは、ProjectORIGIN全体で共通して利用できる正式な情報を保持する。
-
-表示専用の情報は事件データへ重複保存せず、正式な事件データおよび共通定義から取得する。
-
-### englishName
-
-正式フィールド名は、`englishName`とする。
-
-事件の正式英語名を保持する。
-
-#### 値型
-
-```text
-string | null
-```
-
-#### 必須・任意
-
-正式公開データでは必須とする。
-
-調査中または移行中の事件データでは、一時的に`null`を許容する。
-
-#### 未設定値
-
-正式な未設定値は`null`とする。
-
-空文字は正式な値として使用しない。
-
-既存データでフィールドが未定義の場合は未設定として扱う。
-
-正式な事件データでは、`englishName`フィールドを保持する。
+これらは、それぞれの正式文書または正式な責務領域で定義する。
 
 ---
 
-### riskLevel
+## Long-Term Objective
 
-正式フィールド名は、`riskLevel`とする。
+ProjectORIGINは、1000件以上の管理対象を長期的かつ継続的に管理できる構造を前提として設計する。
 
-事件のRisk Level段階を保持する。
+Database Ruleは、一時的な要件ではなく、ProjectORIGIN全体で長期的に維持できる設計原則を定義する。
 
-#### 値型
+# Chapter 2
 
-```text
-integer | null
-```
+# Core Data Principles
 
-#### 許可値
+## Purpose
 
-```text
-1
-2
-3
-4
-5
-```
+本章は、ProjectORIGIN全体で共通して適用するデータ管理の基本原則を定義する。
 
-正式公開データでは必須とする。
-
-調査中または移行中の事件データでは、一時的に`null`を許容する。
-
-#### 未設定値
-
-正式な未設定値は`null`とする。
-
-以下は正式な値として使用しない。
-
-- 空文字
-- 文字列
-- 小数
-- 0
-- 6以上の整数
-
-事件データには、Risk Levelを整数値のみで保持する。
-
-Risk Levelの英語表示名、表示色その他の表示情報は保持しない。
+本章で定義する原則は、Database Rule全体および関連する正式文書に共通して適用する。
 
 ---
 
-## Case Card Image Data Structure
+## Single Source of Truth
 
-Case Card Imageの正式フィールド名は、`caseCardImage`とする。
+正式な情報は、一つの正式な情報源のみで管理する。
 
-`caseCardImage`の値は、Case Card Imageが設定されている場合はオブジェクト、設定されていない場合は`null`とする。
+同一の意味を持つ情報を複数の正式な管理対象へ重複保存しない。
 
-Case Card Imageが設定されている場合、画像パスは`path`プロパティに保持する。
-
-正式なデータ構造は、以下のとおりとする。
-
-```text
-caseCardImage
-└── path: string
-```
-
-`path`には、Case Card Imageとして使用する画像リソースを参照する、空文字ではない文字列を保持する。
-
-Case Card Imageが設定されていない場合は、以下の形式で管理する。
-
-```text
-caseCardImage: null
-```
-
-正式な事件データでは、Case Card Imageの設定有無を明確にするため、`caseCardImage`フィールドを保持する。
-
-以下は、事件データ内での概念的な記述例である。
-
-```yaml
-incidentData:
-  - fileNumber: "0001"
-    caseName: "ロズウェル事件"
-    englishName: "Roswell Incident"
-    riskLevel: 4
-    caseCardImage:
-      path: "images/case-cards/file-0001.webp"
-
-  - fileNumber: "0002"
-    caseName: "Example Case"
-    englishName: null
-    riskLevel: null
-    caseCardImage: null
-```
-
-この記述例はデータ構造を示すものであり、特定の実装言語やファイル形式を指定するものではない。
+表示専用の情報は、正式なデータまたは共通定義から取得する。
 
 ---
+
+## Separation of Responsibilities
+
+各正式文書および各データは、それぞれ定義された責務のみを持つ。
+
+責務の異なる情報を同一の管理対象へ混在させない。
+
+---
+
+## Data Integrity
+
+正式データは、一貫性および整合性を維持しなければならない。
+
+正式データの変更は、ProjectORIGIN全体の整合性を維持することを前提とする。
+
+---
+
+## Technology Independence
+
+Database Ruleは、特定の実装言語、データベース製品または開発環境へ依存しない。
+
+設計原則は、技術の変更後も継続して適用できることを前提とする。
+
+---
+
+## Long-Term Maintainability
+
+Database Ruleは、長期運用に耐えられる構造を維持する。
+
+一時的な要件ではなく、継続的な保守性を優先する。
+
+---
+
+## Change Impact Isolation
+
+変更による影響は、可能な限り局所化する。
+
+一つの変更がProjectORIGIN全体へ不要な影響を与えない構造を維持する。
+
+---
+
+## Common Definitions
+
+表示名、分類、その他の共通情報は、ProjectORIGIN全体で共通定義として管理する。
+
+正式データへ同一内容を重複保存しない。
+
+# Chapter 3
+
+# Data Classification and Ownership
+
+## Purpose
+
+本章は、ProjectORIGINにおける正式データの分類および管理責任に関する基本原則を定義する。
+
+データ分類および管理責任は、ProjectORIGIN全体で一貫して適用する。
+
+---
+
+## Data Classification
+
+正式データは、その役割および責務に応じて分類する。
+
+各データ分類は、明確な目的および責務を持たなければならない。
+
+責務の異なる情報を同一のデータ分類へ混在させない。
+
+---
+
+## Data Ownership
+
+すべての正式データは、明確な管理責任を持たなければならない。
+
+各データは、一つの正式な管理主体によって維持および管理する。
+
+管理責任が不明確な正式データを作成しない。
+
+---
+
+## Responsibility Separation
+
+データ分類と管理責任は、それぞれ独立した責務として管理する。
+
+データ分類は情報の役割を定義し、管理責任は維持および更新の責任を定義する。
+
+---
+
+## Ownership Consistency
+
+正式データの管理責任は、ProjectORIGIN全体で一貫性を維持する。
+
+データ分類の変更または拡張を行う場合も、管理責任を明確に定義しなければならない。
+
+---
+
+## Long-Term Maintainability
+
+データ分類および管理責任は、将来のデータ追加および拡張に対応できる構造を維持する。
+
+一時的な要件ではなく、長期的な保守性および継続的な運用を前提として設計する。
 
 # Chapter 4
 
-# Case File Policy
+# Document and Layer Responsibilities
 
-## Basic Policy
+## Purpose
 
-事件ファイルは、無料版および将来のCLASSIFIED ACCESSを前提として設計する。
+本章は、ProjectORIGINを構成する正式文書および各レイヤーの責務に関する基本原則を定義する。
 
-ただし、現時点では有料機能は実装しない。
+各正式文書は、明確に定義された責務のみを持つ。
 
-Case Card Imageは、各Case Fileに属する事件データ内で直接管理する。
+---
 
-各事件データは、自身の`caseCardImage`フィールドを保持し、Case Card Imageが設定されている場合は画像参照情報を記録する。
+## Responsibility Principle
 
-Case Card ImageをCase Fileとは別の対応表のみで管理する構造は採用しない。
+各正式文書は、それぞれ定義された責務のみを管理する。
 
-`englishName`は、事件を識別する正式な英語名称として管理する。
+責務の異なる内容を同一の正式文書へ混在させない。
 
-正式公開データでは、`englishName`および`riskLevel`を必須とする。
+---
 
-代表タグは、`tags`を順序付き一覧として管理し、先頭に登録された有効なタグを使用する。
+## Layer Independence
 
-代表タグを別フィールドとして重複保存しない。
+各レイヤーは、それぞれ独立した責務を持つ。
 
-`tags`が空の場合は、代表タグを未設定として扱う。
+一つのレイヤーの変更が、他のレイヤーへ不要な影響を与えない構造を維持する。
 
-### Free Edition
+---
 
-無料版は、事件の全体像を理解できる品質を目標とする。
+## Single Responsibility
 
-無料版には、以下の内容を含める。
+一つの正式文書は、一つの主要な責務を持つ。
 
-- 概要
-- 事実
-- 有力な説
-- 仮説
-- 未解決点
+複数の異なる責務を一つの正式文書へ集約しない。
 
-無料版のみでも、事件の概要と主要な論点を理解できる内容とする。
+---
 
-### Future CLASSIFIED ACCESS
+## Document Relationship
 
-調査中に収集した情報は、公開の有無にかかわらず継続的に保管する。
+正式文書は、それぞれ独立した責務を維持しながら相互に連携する。
 
-将来的なCLASSIFIED ACCESSへの発展を想定し、以下の情報を管理対象とする。
+各正式文書は、他の正式文書の責務を代替しない。
 
-- 詳細な証言
-- 詳細時系列
-- 参考資料
-- 一次資料
-- 軍資料
-- 公文書
-- 書籍
-- 論文
-- 写真
-- 地図
-- 関連事件
-- AI分析用メモ
+---
 
-これらの情報は、将来的なコンテンツ拡張に対応できるよう管理する。
+## Responsibility Consistency
+
+正式文書間の責務境界は、ProjectORIGIN全体で一貫性を維持する。
+
+新しい正式文書を追加する場合も、既存の責務境界を維持しなければならない。
+
+---
+
+## Long-Term Maintainability
+
+正式文書および各レイヤーは、将来の機能追加および文書追加に対応できる構造を維持する。
+
+ProjectORIGIN全体のルールが増えても、責務を整理し続けられる構造を維持する。
 
 # Chapter 5
 
-# Research Policy
+# Change and Evolution Principles
 
-## Information Classification
+## Purpose
 
-事件に関する情報は、以下の3つに分類して管理する。
+本章は、ProjectORIGINにおける変更および継続的な進化に関する基本原則を定義する。
 
-1. Fact（事実）
-2. Leading Theory（有力な説）
-3. Hypothesis（仮説）
-
-各分類は明確に区別し、相互に混同しない。
-
-### Fact
-
-公的機関の発表、一次資料、信頼性の高い記録などにより確認できる情報を対象とする。
-
-### Leading Theory
-
-一定の根拠や複数の資料・研究によって支持されている説を対象とする。
-
-### Hypothesis
-
-十分な証拠による裏付けがなく、現時点では推測や可能性の段階にある内容を対象とする。
-
-## Research Principle
-
-事件ファイルの制作およびデータ管理は、Research BibleおよびResearch Templateで定める調査基準に従って実施する。
-
-ProjectORIGINでは、事実・有力な説・仮説を明確に区別し、客観性と中立性を維持した情報管理を行う。
+変更は、一貫性、責務分離および長期運用性を維持することを前提とする。
 
 ---
+
+## Controlled Change
+
+正式な変更は、明確な目的および責務に基づいて実施する。
+
+一時的な要件によって設計原則を変更しない。
+
+---
+
+## Change Impact Isolation
+
+変更による影響は、可能な限り局所化する。
+
+一つの変更が他の責務領域へ不要な影響を与えない構造を維持する。
+
+---
+
+## Backward Consistency
+
+変更を実施する場合は、ProjectORIGIN全体の整合性および一貫性を維持しなければならない。
+
+既存の設計原則と矛盾する変更を行わない。
+
+---
+
+## Sustainable Growth
+
+ProjectORIGINは、継続的な拡張および改善を前提として設計する。
+
+将来の機能追加およびデータ拡張に対応できる構造を維持する。
+
+---
+
+## Evolution Responsibility
+
+変更および進化は、各正式文書の責務を維持した上で実施する。
+
+一つの変更を理由として責務境界を曖昧にしない。
+
+---
+
+## Long-Term Maintainability
+
+ProjectORIGINは、変更を繰り返しても長期的な保守性を維持できる構造を目指す。
+
+設計原則は、一時的な最適化ではなく継続的な成長を支えることを目的とする。
 
 # Chapter 6
 
-# Source Priority
+# Data Integrity and Relationships
 
-## Source Evaluation
+## Purpose
 
-事件の調査およびデータ管理では、資料の信頼性を考慮し、以下の優先順位に従って取り扱う。
+本章は、ProjectORIGINにおける正式データ間の関係性および整合性に関する基本原則を定義する。
 
-| Priority | Source |
-|----------|--------|
-| ★★★★★ | 一次資料 |
-| ★★★★★ | 公的機関 |
-| ★★★★☆ | 書籍 |
-| ★★★★☆ | 学術資料 |
-| ★★★☆☆ | 信頼できるニュース |
-| ★★☆☆☆ | 研究家・民間調査資料 |
-| ★☆☆☆☆ | SNS・個人投稿 |
+データ間の関係は、一貫性、独立性および長期的な保守性を維持することを前提とする。
 
-## Basic Policy
+---
 
-一次資料および公的機関が公開する資料を最優先とする。
+## Data Integrity
 
-書籍、学術資料、報道、研究家による資料は、それぞれの信頼性を考慮した上で参照する。
+正式データは、常に一貫性および整合性を維持しなければならない。
 
-SNSや個人投稿は参考情報として扱うが、事実認定の根拠とはしない。
+データの追加、変更または削除を行う場合も、ProjectORIGIN全体の整合性を維持する。
 
-資料の評価はResearch BibleおよびResearch Templateで定める調査基準に従い、事件ファイルの制作およびデータ管理に反映する。
+---
+
+## Relationships
+
+正式データ間の関係は、明確な目的および責務に基づいて定義する。
+
+不要または曖昧な関係を作成しない。
+
+---
+
+## Referential Consistency
+
+正式データ間の参照関係は、一貫性を維持しなければならない。
+
+参照関係の変更は、関連する正式データ全体への影響を考慮した上で実施する。
+
+---
+
+## Data Independence
+
+各正式データは、それぞれ独立した責務を持つ。
+
+一つの正式データが他の正式データの責務を代替しない。
+
+---
+
+## Common Definitions
+
+複数の正式データで共通して利用する情報は、共通定義として管理する。
+
+同一内容を複数の正式データへ重複保存しない。
+
+---
+
+## Integrity Responsibility
+
+データ間の関係性および整合性は、ProjectORIGIN全体で継続的に維持しなければならない。
+
+データ構造を変更する場合も、本章で定義する原則を維持する。
 
 # Chapter 7
 
-# Image Policy
+# Lifecycle Principles
 
-## Basic Policy
+## Purpose
 
-事件ファイルで使用する画像は、著作権および利用条件を尊重して管理する。
+本章は、ProjectORIGINにおける正式データのライフサイクルに関する基本原則を定義する。
 
-利用許諾を満たさない画像は掲載しない。
-
-画像の選定および管理は、ProjectORIGIN全体の画像運用基準に従って実施する。
-
-## Background Images
-
-事件ファイルの背景画像は、ProjectORIGINで制作・管理する背景画像を優先して使用する。
-
-背景画像は、事件の世界観や調査資料としての雰囲気を補完する目的で使用し、本文の可読性や情報伝達を妨げないことを前提とする。
-
-## Case Card Image Data Management
-
-Case Card Imageが設定されていない場合は、`caseCardImage`の値をnullとする。
-
-空文字は、Case Card Imageの正式な値として使用しない。
-
-`caseCardImage`が空文字の場合、または`path`が空文字の場合は、Case Card Image未設定として扱い、正式データではnullへ統一する。
-
-既存の事件データに`caseCardImage`フィールドが存在しない場合は、Case Card Image未設定として扱う。
-
-ただし、正式な事件データでは`caseCardImage`フィールドを保持し、未設定の場合はnullを記録する。
-
-Case Card Imageが未設定の場合、既定画像または代替画像のパスをデータ上で参照しない。
-
-画像未設定時のカード表現はImage Ruleに従い、Database Ruleでは画像データが存在しない状態のみを定義する。
-
-## Image Management
-
-画像の管理および運用は、Image Ruleで定める基準に従う。
-
-データベースでは、画像を事件データの構成要素として管理するが、画像制作や画像品質の詳細な基準は本書の対象外とする。
+正式データは、継続的な品質向上および長期的な維持管理を前提として管理する。
 
 ---
+
+## Continuous Improvement
+
+正式データは、継続的な改善を前提として維持する。
+
+新たな情報または知見が得られた場合は、一貫性および整合性を維持した上で改善する。
+
+---
+
+## Lifecycle Principle
+
+正式データは、作成から更新、維持および将来の発展までを含めたライフサイクル全体を考慮して管理する。
+
+一時的な利用のみを前提とした設計を行わない。
+
+---
+
+## Quality Progression
+
+正式データの品質は、継続的な改善を通じて向上させる。
+
+品質向上は、既存データとの整合性および責務分離を維持した上で実施する。
+
+---
+
+## Stable Publication
+
+正式データは、安定した品質を維持した状態で公開および利用する。
+
+継続的な改善を行う場合も、正式データとしての信頼性を損なわない。
+
+---
+
+## Long-Term Evolution
+
+正式データは、将来の拡張および改善に対応できる構造を維持する。
+
+継続的な成長を前提とし、一時的な最適化を目的とした設計を行わない。
+
+---
+
+## Lifecycle Responsibility
+
+正式データのライフサイクルは、ProjectORIGIN全体で一貫した責務のもとに管理する。
+
+ライフサイクル全体を通じて、品質、一貫性および長期的な保守性を維持する。
 
 # Chapter 8
 
-# AI Analysis Policy
+# Long-Term Operation
 
-## Basic Policy
+## Purpose
 
-ProjectORIGINでは、将来的にAIによる分析機能を導入することを想定し、分析に活用できる情報を継続的に蓄積する。
+本章は、ProjectORIGIN全体の長期的かつ持続的な運営に関する基本原則を定義する。
 
-現時点では、AI分析機能の実装は行わず、分析に必要な情報の管理を対象とする。
-
-## Analysis Data
-
-将来のAI分析に備え、以下の情報を管理対象とする。
-
-- 分析メモ
-- 矛盾点
-- 比較情報
-
-これらの情報は、事件ファイルとは区別して管理し、将来的な分析機能の基礎データとして活用する。
-
-## Operation Policy
-
-AI分析に関するデータ管理は、Research BibleおよびResearch Templateで定める調査基準に従う。
-
-本書では、AI分析機能の仕様や実装は対象とせず、分析に必要なデータの管理方針のみを定義する。
+ProjectORIGINは、継続的な成長および将来の拡張を前提として設計する。
 
 ---
 
+## Long-Term Operation Principle
+
+ProjectORIGINは、短期的な要件ではなく、長期的な運営を前提として管理する。
+
+設計原則は、継続的な保守性および安定性を維持しなければならない。
+
+---
+
+## Scalability
+
+ProjectORIGINは、管理対象、データ量および機能の拡張に対応できる構造を維持する。
+
+将来の拡張を妨げる設計を行わない。
+
+---
+
+## Maintainability
+
+ProjectORIGINは、長期的な保守性を維持できる構造を維持する。
+
+設計原則は、一時的な最適化ではなく、継続的な保守を優先する。
+
+---
+
+## Adaptability
+
+ProjectORIGINは、技術の変化および新しい要件へ柔軟に対応できる構造を維持する。
+
+技術の変更を理由として設計原則を変更しない。
+
+---
+
+## Sustainable Operation
+
+ProjectORIGINは、継続的な運営および改善を前提として管理する。
+
+長期運営に必要な一貫性、責務分離および保守性を維持する。
+
+---
+
+## Future Readiness
+
+ProjectORIGINは、将来の機能追加および運営環境の変化に対応できる構造を維持する。
+
+長期的な成長を支える設計原則を継続的に維持する。
+
 # Chapter 9
 
-# Long-Term Operation
+# Governance and Document Authority
 
-## Long-Term Policy
+## Purpose
 
-ProjectORIGINは、1000件以上の事件ファイルを長期的に管理・運用することを前提として設計する。
+本章は、ProjectORIGINにおける正式文書のガバナンスおよび文書間の責務に関する基本原則を定義する。
 
-データベースは、一時的な情報の蓄積ではなく、継続的な調査・更新・管理を行うための基盤として運用する。
+すべての正式文書は、明確な責務および権限のもとで管理する。
 
-## Database Operation
+---
 
-事件ファイルは、ProjectORIGIN全体で統一された設計思想および品質基準に基づいて管理する。
+## Governance Principle
 
-新たな資料や信頼性の高い情報が確認された場合は、既存データを継続的に見直し、必要に応じて更新する。
+正式文書は、それぞれ定義された責務および権限に基づいて管理する。
 
-すべての事件ファイルは、Research Bible、Research Template、Case File Template、およびMaster Case File Templateに基づいて制作・管理する。
+責務の異なる内容を同一の正式文書へ混在させない。
 
-既存データの正規化を継続的に実施し、同一の意味を持つ情報を複数の正式フィールドへ重複保存しない。
+---
 
-正式な事件情報は事件データとして保持し、表示専用の情報はProjectORIGIN全体の共通定義から取得する。
+## Document Authority
 
-UIや表示方針が変更された場合でも、事件データ全件を修正することなく、共通定義のみを更新できる構造を維持する。
+各正式文書は、それぞれ定義された責務範囲において正式な情報源とする。
 
-Risk Levelの英語表示名は、`riskLevel`の値からProjectORIGIN全体の共通表示定義を使用して取得する。
+一つの正式文書が、他の正式文書の責務を代替しない。
 
-正式な対応は以下のとおりとする。
+---
 
-| riskLevel | English Display |
-|-----------|-----------------|
-| 1 | LOW |
-| 2 | MEDIUM |
-| 3 | HIGH |
-| 4 | VERY HIGH |
-| 5 | EXTREME |
+## Responsibility Consistency
 
-Risk Levelの英語表示名は事件データへ保存しない。
+正式文書間の責務境界は、ProjectORIGIN全体で一貫して維持する。
 
-Risk Levelの表示色、配置、サイズ、強調方法およびアニメーションはUIおよび視覚表現側の責務とし、Database Ruleでは定義しない。
+正式文書の追加または変更を行う場合も、既存の責務境界を維持しなければならない。
 
-Case Card、Case File、Favorites、ORIGIN MAPおよび将来のCLASSIFIED ACCESSは、同一の共通表示定義を使用する。
+---
 
-将来的に表示名称を変更する場合も、事件データは変更せず、共通表示定義のみを更新する。
+## Governance Consistency
 
-## Project Philosophy
+正式文書間で内容の不整合が確認された場合は、各文書の責務範囲を確認した上で整合性を回復する。
 
-ProjectORIGINは、事件を紹介するサイトではなく、事件を調査・整理・蓄積するデータベースとして長期運営する。
+データ管理およびデータベース設計の基本原則については、Database Ruleを正式基準とする。
 
-すべての事件ファイルは、事実・有力な説・仮説を明確に区別し、統一された品質基準のもとで継続的に管理する。
+個別のデータ仕様については、Database Ruleに反しない範囲でDatabase Schemaを正式基準とする。
 
-長期運営においても、ProjectORIGIN全体の設計思想、世界観、およびデータ品質の一貫性を維持する。
+---
+
+## Long-Term Governance
+
+ProjectORIGINは、長期的な運営および継続的な成長に対応できるガバナンスを維持する。
+
+新しい正式文書を追加する場合も、本章で定義する責務および権限の原則を維持する。
 
 # Version History
 
 | Version | Date | Changes |
 |----------|------------|---------|
+| v3.0 | 2026-08-08 | Database RuleをProjectORIGIN V3 Architectureの正式な設計原則として全面再設計。Mission and Authorityを再構成し、Database RuleをProjectORIGIN全体で共通して適用するデータ管理およびデータベース設計の最上位原則として明確化。Core Data Principles、Data Classification and Ownership、Document and Layer Responsibilities、Change and Evolution Principles、Data Integrity and Relationships、Lifecycle Principles、Long-Term Operation、Governance and Document Authorityを再構成し、責務分離、Single Source of Truth、Change Impact Isolation、長期運用性および変更に強い設計を正式原則として確立。Database RuleとDatabase Schemaの責務境界を明確化し、正式文書間で不整合が発生した場合のガバナンス原則を追加。ProjectORIGIN全体で共通して適用するデータ管理およびデータベース設計の基盤として正式版を確立。 |
 | v2.2 | 2026-08-01 | Case Card Imageの正式フィールド名を`caseCardImage`、画像パスの正式プロパティ名を`path`として定義。`caseCardImage`の正式な未設定値を`null`とし、空文字、空の`path`、フィールド未定義を未設定として扱い、正式データでは未設定値を`null`へ統一する方針を確定。Case Card Imageを各事件データ内で直接管理し、未設定時に既定画像または代替画像をデータ上で参照しない方針、およびImage Ruleとの責務分離を明確化。`englishName`および`riskLevel`を正式フィールドとして定義し、`riskLevel`の値型を`integer \| null`、許可値を1〜5として定義。Risk Levelの英語表示名は共通表示定義から取得し、代表タグは`tags`の先頭の有効値から取得する方針を確定。短縮地域名は共通の地域表示定義から取得し、`displayEra`は保存せず正式な日付・年代情報から導出する方針を追加。事実データと表示データを分離する方針を正式化。 |
 | v2.1 | 2026-07-30 | Case Card Imageを正式なデータ管理対象として追加。Database Philosophyへ管理対象を明記し、Case Fileとの関連付けおよび参照ルールを追加。画像未登録時は既定のカード画像を参照する運用を定義。既存のデータベース設計・データ管理・運用基準との整合性を維持。 |
-| v2.0 | 2026-07-27 | ProjectORIGIN Database Ruleを正式設計書として再構成。Mission、Database Philosophy、Database Scope、Case File Policy、Research Policy、Source Priority、Image Policy、AI Analysis Policy、Long-Term Operationを整理し、ProjectORIGIN全体（AGENTS.md、Operating Manual、Research Bible、Research Template、Case File Template、Master Case File Template、Audit Rule、Image Rule）との整合性を維持した正式版として確定。 |
+| v2.0 | 2026-07-27 | ProjectORIGIN Database Ruleを正式設計書として再構成。Mission、Database Philosophy、Database Scope、Case File Policy、Research Policy、Source Priority、Image Policy、AI Analysis Policy、Long-Term Operationを整理し、ProjectORIGIN全体との整合性を維持した正式版として確定。 |

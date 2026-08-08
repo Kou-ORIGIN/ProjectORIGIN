@@ -1,31 +1,33 @@
-
 # Chapter 1
 
-## Schema Overview
+# Schema Overview
 
-### Purpose
+## Purpose
 
-Database Schema v1.0は、ProjectORIGINで管理する事件データの正式な構造を定義する文書である。
+Database Schema v1.2は、ProjectORIGINで管理する事件データの正式な構造を定義する文書である。
 
 本Schemaは、すべての事件データを一貫した形式で作成、保存、検証、移行および更新できる状態を維持することを目的とする。
 
 事件ファイルが1000件以上へ増加した場合も、データごとの差異、構造の分岐、情報の重複および未設定値の不統一が発生しない構造を基準とする。
 
-### Highest Standard
+---
 
-Database Schema v1.0の最上位基準は、Database Rule v2.2とする。
+## Highest Standard
 
-本Schemaに定義するすべての構造、フィールド、型、制約および未設定値は、Database Rule v2.2に従わなければならない。
+Database Rule v2.2を、本SchemaのSingle Source of Truthとする。
+
+本Schemaに定義するすべての構造、正式フィールド、値型、制約および未設定値は、Database Rule v2.2に従わなければならない。
 
 Database Rule v2.2と本Schemaの内容に矛盾が生じた場合は、Database Rule v2.2を優先する。
 
-### Scope
+---
+
+## Scope
 
 本Schemaは、ProjectORIGINで管理する事件データに適用する。
 
 本Schemaが定義する対象は、以下のとおりとする。
 
-- 事件データのRoot構造
 - 正式フィールド
 - ネスト構造
 - 値型
@@ -39,19 +41,23 @@ Database Rule v2.2と本Schemaの内容に矛盾が生じた場合は、Database
 - Version管理
 - 長期運用基準
 
-### Responsibilities
+---
+
+## Responsibilities
 
 本Schemaは、以下を保証するための正式な構造定義を提供する。
 
 - 正式フィールドの統一
-- 一貫したRoot構造
+- 一貫したネスト構造
 - 責務分離
 - Single Source of Truth
 - 一括検証可能な構造
 - 一括移行可能な構造
 - 長期運用可能な構造
 
-### Out of Scope
+---
+
+## Out of Scope
 
 本Schemaでは以下を定義しない。
 
@@ -68,17 +74,17 @@ Database Rule v2.2と本Schemaの内容に矛盾が生じた場合は、Database
 
 これらは、それぞれの正式文書または実装側の責務とする。
 
----
-
 # Chapter 2
 
-## Schema Design Principles
+# Schema Design Principles
 
-### Purpose
+## Purpose
 
 本Chapterは、Database Schema全体へ適用する設計原則を定義する。
 
-### Principles
+---
+
+## Principles
 
 Schemaは以下の原則を維持しなければならない。
 
@@ -94,60 +100,49 @@ Schemaは以下の原則を維持しなければならない。
 - Validation First
 - Technology Independence
 
-### Chapter Boundary
+---
 
-本Chapterでは設計原則のみを定義する。
+## Chapter Boundary
 
-正式フィールド、値型、制約および構造の詳細は後続Chapterで定義する。
+本Chapterでは、Database Schema全体へ適用する設計原則のみを定義する。
+
+正式フィールド、値型、制約、未設定値および正式なネスト構造の詳細は、後続Chapterで定義する。
+
+````markdown
+# Chapter 3
+
+# Incident Data Root Structure
+
+## Purpose
+
+本Chapterは、事件データ内で正式化されているフィールドおよびネスト関係を定義する。
+
+本Chapterは、事件データ全体の正式なRoot構造を定義するものではない。
 
 ---
 
-# Chapter 3
+## Field Nesting Structure
 
-## Incident Data Root Structure
-
-### Purpose
-
-本Chapterは、ProjectORIGINで管理する事件データの正式なRoot構造を定義する。
-
-### Root Structure
-
-ProjectORIGINの事件データは、`incidentData`をRootとする。
-
-`incidentData`は複数の事件データを保持する。
-
-各事件データは、一つの事件を表す独立したオブジェクトとする。
-
-正式なRoot構造は以下のとおりとする。
+Database Rule v2.2で正式化されているフィールドおよびネスト関係は、以下のとおりとする。
 
 ```text
-incidentData
-└── incident object
+事件データ
+├── englishName
+├── riskLevel
+└── caseCardImage
+    └── path
 ```
 
-各incident objectは、本Schemaで定義する正式フィールドのみを保持する。
-
-### Formal Nested Structure
-
-Database Rule v2.2で正式化されたネスト構造は以下とする。
-
-```text
-incidentData
-└── incident object
-    ├── englishName
-    ├── riskLevel
-    └── caseCardImage
-        └── path
-```
-
-- `englishName`はincident object直下に配置する。
-- `riskLevel`はincident object直下に配置する。
-- `caseCardImage`はincident object直下に配置する。
+- `englishName`は事件データ内の正式フィールドとする。
+- `riskLevel`は事件データ内の正式フィールドとする。
+- `caseCardImage`は事件データ内の正式フィールドとする。
 - `path`は`caseCardImage`配下のみで管理する。
 
-### Root Structure Example
+---
 
-以下はRoot構造を示す概念例である。
+## Structure Example
+
+以下は、事件データ内の正式フィールドおよびネスト関係を説明するための概念例である。
 
 ```yaml
 incidentData:
@@ -165,27 +160,30 @@ incidentData:
     caseCardImage: null
 ```
 
-この概念例はRoot構造および正式なネスト関係を示すものであり、特定の実装言語または保存形式を指定するものではない。
+`incidentData`は概念例における説明用の記述であり、正式なRoot構造または正式なRoot名称を定義するものではない。
 
-### Root Rules
+また、本概念例は事件データ内の正式フィールドおよびネスト関係を説明することのみを目的とし、特定の実装言語、保存形式またはデータベース製品を指定するものではない。
 
-- Root構造は全事件データで共通とする。
-- 独自のRoot構造を追加してはならない。
+---
+
+## Structure Rules
+
+- 正式フィールドは、本Schemaで定義する責務に従って管理する。
 - 独自のネスト構造を追加してはならない。
 - 正式フィールドを複数階層へ重複保存してはならない。
 - 表示専用データを事件データへ保存してはならない。
-- 正式な未設定値は各フィールド定義に従う。
-- Root構造は1000件以上の長期運用、一括検証、一括更新および一括移行に対応できる構造を維持する。
+- 正式な未設定値は各正式フィールド定義に従う。
+- 正式フィールドおよびネスト関係は、1000件以上の長期運用、一括検証、一括更新および一括移行に対応できる一貫性を維持しなければならない。
 
 # Chapter 4
 
-## Core Identification Fields
+# Core Identification Fields
 
-### Purpose
+## Purpose
 
 本Chapterは、事件データを識別するための正式フィールドを定義する。
 
-識別情報は事件そのものを識別することのみを目的とし、分類、表示または実装方法を表してはならない。
+識別情報は、事件そのものを識別することのみを目的とし、分類、表示または実装方法を表してはならない。
 
 ---
 
@@ -196,7 +194,7 @@ incidentData:
 - Internal Identifier
 - File Number
 - Case Name
-- `englishName`
+- englishName
 
 本Chapterでは、`englishName`の正式Schema定義を定義する。
 
@@ -246,7 +244,7 @@ string | null
 null
 ```
 
-既存データでフィールドが未定義の場合は未設定として扱う。
+既存データでフィールドが未定義の場合は、未設定として扱う。
 
 ### Constraints
 
@@ -258,13 +256,11 @@ null
 - 正式な事件データではフィールドを省略しない。
 - 英語名以外の表示情報を保持しない。
 
----
-
 # Chapter 5
 
-## Core Incident Facts
+# Core Incident Facts
 
-### Purpose
+## Purpose
 
 本Chapterは、事件そのものを説明する基礎情報の正式構造を定義する。
 
@@ -280,28 +276,28 @@ Core Incident Factsとして管理する正式フィールドは、以下とす�
 - Coordinates
 - Short Summary
 
-各フィールドは事件の基本情報のみを保持する。
+各正式フィールドは、事件の基本情報のみを保持する。
 
-事件識別情報、分類情報および表示情報は本Chapterの責務に含めない。
+事件識別情報、分類情報および表示情報は、本Chapterの責務に含めない。
 
 ---
 
 ## Responsibility
 
-各正式フィールドは一つの責務のみを持つ。
+各正式フィールドは、一つの責務のみを持つ。
 
 同一情報を複数の正式フィールドへ重複保存してはならない。
 
-表示情報は保持しない。
+表示情報を保持してはならない。
 
 ---
 
 ## Validation
 
-Core Incident Factsは以下を満たさなければならない。
+Core Incident Factsは、以下を満たさなければならない。
 
 - 正式フィールドへ保存されていること
-- 各フィールドの責務が重複していないこと
+- 各正式フィールドの責務が重複していないこと
 - 同一情報が重複保存されていないこと
 - Schema構造へ適合していること
 
@@ -309,32 +305,30 @@ Core Incident Factsは以下を満たさなければならない。
 
 ## Chapter Boundary
 
-本Chapterでは事件の基本情報のみを定義する。
+本Chapterでは、事件の基本情報のみを定義する。
 
-値型、必須・任意、許可値、未設定値および制約の詳細は各正式フィールド定義またはField Definition Standardで管理する。
-
----
+値型、必須・任意、許可値、未設定値および制約の詳細は、各正式フィールド定義またはField Definition Standardで管理する。
 
 # Chapter 6
 
-## Classification and Controlled Values
+# Classification and Controlled Values
 
-### Purpose
+## Purpose
 
 本Chapterは、事件データを分類する正式フィールドおよび管理値を定義する。
 
-分類情報は事件そのものの事実とは独立した管理情報として扱う。
+分類情報は、事件そのものの事実とは独立した管理情報として扱う。
 
 ---
 
 ## Official Classification Fields
 
-正式分類フィールドは以下とする。
+正式分類フィールドは、以下とする。
 
 - Category
 - Class
 - Status
-- `riskLevel`
+- Risk Level
 - Tags
 
 本Chapterでは、`riskLevel`の正式Schema定義を定義する。
@@ -389,7 +383,7 @@ integer | null
 null
 ```
 
-既存データでフィールドが未定義の場合は未設定として扱う。
+既存データでフィールドが未定義の場合は、未設定として扱う。
 
 ### Constraints
 
@@ -420,7 +414,7 @@ Risk Levelの英語表示名は、ProjectORIGIN全体の共通表示定義から
 | 4 | VERY HIGH |
 | 5 | EXTREME |
 
-英語表示名は事件データへ保存しない。
+英語表示名は、事件データへ保存しない。
 
 ---
 
@@ -428,31 +422,31 @@ Risk Levelの英語表示名は、ProjectORIGIN全体の共通表示定義から
 
 Tagsは順序付き一覧として管理する。
 
-代表タグは先頭に登録された有効なタグから取得する。
+代表タグは、先頭に登録された有効なタグから取得する。
 
 代表タグを別フィールドとして重複保存してはならない。
 
-Tagsが空の場合は代表タグを未設定として扱う。
+Tagsが空の場合は、代表タグを未設定として扱う。
 
 ---
 
 ## Chapter Boundary
 
-本Chapterでは分類情報および`riskLevel`の正式Schema定義のみを扱う。
+本Chapterでは、分類情報および`riskLevel`の正式Schema定義のみを扱う。
 
-UI、表示色、配置、サイズ、強調方法およびアニメーションは本Chapterの責務に含めない。
+UI、表示色、配置、サイズ、強調方法およびアニメーションは、本Chapterの責務に含めない。
 
 # Chapter 7
 
-## Content and Media References
+# Content and Media References
 
-### Purpose
+## Purpose
 
 本Chapterは、事件データと関連コンテンツおよびメディアデータとの正式な参照構造を定義する。
 
 事件データは、コンテンツやメディアそのものを保持するのではなく、正式な参照情報のみを管理する。
 
-本Chapterでは、PASS済みの参照責務を維持したまま、`caseCardImage`および`caseCardImage.path`の正式Schema定義を追加する。
+本Chapterでは、既存の参照責務を維持したまま、`caseCardImage`および`caseCardImage.path`の正式Schema定義を追加する。
 
 ---
 
@@ -540,14 +534,14 @@ object | null
 
 ### Allowed Value
 
-設定済みの場合は以下の構造とする。
+設定済みの場合は、以下の構造とする。
 
 ```text
 caseCardImage
 └── path: string
 ```
 
-未設定の場合は以下とする。
+未設定の場合は、以下とする。
 
 ```text
 caseCardImage: null
@@ -639,25 +633,23 @@ incident object
 
 本Chapterでは、正式な参照構造および`caseCardImage`のSchema定義のみを扱う。
 
-UI、CSS、JavaScript、API、画像品質、表示方法および実装方法は本Chapterの責務に含めない。
-
----
+UI、CSS、JavaScript、API、画像品質、表示方法および実装方法は、本Chapterの責務に含めない。
 
 # Chapter 8
 
-## Relationships Between Data
+# Relationships Between Data
 
-### Purpose
+## Purpose
 
 本Chapterは、事件データと他の正式データとの関連付け方法を定義する。
 
-関連付けは正式データ間の対応関係のみを管理し、同一情報を重複保存することを目的としない。
+関連付けは、正式データ間の対応関係のみを管理し、同一情報を重複保存することを目的としない。
 
 ---
 
 ## Official Relationship Targets
 
-正式な関連付け対象は以下とする。
+正式な関連付け対象は、以下とする。
 
 - Related Cases
 - Research Data
@@ -669,7 +661,7 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 ## Responsibility
 
-関連付けは正式データ同士の関係のみを管理する。
+関連付けは、正式データ同士の関係のみを管理する。
 
 関連先の本文または画像データ本体を事件データへ保持してはならない。
 
@@ -677,7 +669,7 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 ## Referential Integrity
 
-すべての関連付けは正式データを対象としなければならない。
+すべての関連付けは、正式データを対象としなければならない。
 
 存在しない対象または正式管理されていない対象を参照してはならない。
 
@@ -685,7 +677,7 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 ## Validation
 
-関連付けは以下を満たさなければならない。
+関連付けは、以下を満たさなければならない。
 
 - 正式な関連対象を参照していること
 - 正式構造へ適合していること
@@ -696,17 +688,15 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 ## Chapter Boundary
 
-本Chapterでは正式データ間の関連付けのみを定義する。
+本Chapterでは、正式データ間の関連付けのみを定義する。
 
-個別フィールド、値型、許可値、実装方法は本Chapterの責務に含めない。
-
----
+個別フィールド、値型、許可値および実装方法は、本Chapterの責務に含めない。
 
 # Chapter 9
 
-## Field Definition Standard
+# Field Definition Standard
 
-### Purpose
+## Purpose
 
 本Chapterは、すべての正式フィールドで共通して使用する定義フォーマットを定義する。
 
@@ -714,7 +704,7 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 ## Standard Definition Format
 
-正式フィールドは、以下の定義項目を使用する。
+すべての正式フィールドは、以下の定義項目を使用する。
 
 - Field Name
 - Purpose
@@ -731,7 +721,7 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 ## Common Rules
 
-各正式フィールドは、
+各正式フィールドは、以下を満たさなければならない。
 
 - 一つの責務のみを持つこと
 - 一つの正式名称のみを持つこと
@@ -742,31 +732,31 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 - Unset Valueを一意に定義すること
 - 制約を明確にすること
 
-を満たさなければならない。
-
 ---
 
 ## Validation
 
-正式フィールド定義は以下を満たさなければならない。
+正式フィールド定義は、以下を満たさなければならない。
 
 - 必要な定義項目がすべて存在すること
 - 責務が重複していないこと
 - 共通フォーマットが維持されていること
+- 各正式フィールド定義と本Chapterの定義フォーマットが一致していること
 
 ---
 
 ## Chapter Boundary
 
-本Chapterでは正式フィールドの定義方法のみを定義する。
+本Chapterでは、正式フィールドの定義方法のみを定義する。
 
-個別フィールドの内容、許可値および未設定値の具体的な値は、それぞれの正式フィールド定義で管理する。
+個別フィールドの内容、許可値、Default Value、Unset Valueおよび制約の具体的な値は、それぞれの正式フィールド定義で管理する。
 
+```markdown
 # Chapter 10
 
-## Nullability and Unset Values
+# Nullability and Unset Values
 
-### Purpose
+## Purpose
 
 本Chapterは、正式フィールドにおける未設定値およびNullabilityの共通基準を定義する。
 
@@ -780,7 +770,7 @@ UI、CSS、JavaScript、API、画像品質、表示方法および実装方法�
 
 本Chapterは、本Schemaで定義されるすべての正式フィールドへ適用する。
 
-ルートフィールド、ネストフィールドおよび参照フィールドを区別せず、共通の基準として適用する。
+正式フィールド、ネストフィールドおよび参照フィールドを区別せず、共通基準として適用する。
 
 ---
 
@@ -859,17 +849,15 @@ Schema更新時に変更する場合は、正式な移行基準に従う。
 
 個別フィールドが採用するUnset ValueおよびDefault Valueは、それぞれの正式フィールド定義で管理する。
 
----
-
 # Chapter 11
 
-## Data Validation
+# Data Validation
 
-### Purpose
+## Purpose
 
-本Chapterは、事件データがDatabase Schema v1.0へ適合していることを確認するための共通検証基準を定義する。
+本Chapterは、事件データがDatabase Schema v1.1へ適合していることを確認するための共通検証基準を定義する。
 
-Data Validationは、Schemaで定義された構造、制約および整合性への適合を確認することを目的とする。
+Data Validationは、Schemaで定義された構造、正式フィールド、制約および整合性への適合を確認することを目的とする。
 
 ---
 
@@ -938,19 +926,19 @@ Data Validationは、Schemaで定義された基準のみを対象とする。
 
 ## Validation Result
 
-検証結果は以下の状態で管理する。
+検証結果は、以下の状態で管理する。
 
 - PASS
 - ERROR
 - WARNING
 
-判定基準はSchema全体で統一しなければならない。
+判定基準は、Schema全体で統一しなければならない。
 
 ---
 
 ## Long-Term Operation
 
-Data Validationは1000件以上の事件データに対しても適用できる構造でなければならない。
+Data Validationは、1000件以上の事件データに対しても適用できる構造でなければならない。
 
 個別事件だけではなく、一括検証を前提とする。
 
@@ -958,19 +946,17 @@ Data Validationは1000件以上の事件データに対しても適用できる�
 
 ## Chapter Boundary
 
-本ChapterではSchema適合性を確認するための共通検証基準のみを定義する。
+本Chapterでは、Schema適合性を確認するための共通検証基準のみを定義する。
 
-実装方法、ライブラリおよび検証コードは本Chapterの責務に含めない。
-
----
+実装方法、ライブラリ、検証コードおよび運用手順は、本Chapterの責務に含めない。
 
 # Chapter 12
 
-## Data Quality Requirements
+# Data Quality Requirements
 
-### Purpose
+## Purpose
 
-本Chapterは、Database Schema v1.0へ適合した事件データについて、正式データとして維持すべき品質基準を定義する。
+本Chapterは、Database Schema v1.1へ適合した事件データについて、正式データとして維持すべき品質基準を定義する。
 
 ---
 
@@ -1024,7 +1010,7 @@ Data Validationは1000件以上の事件データに対しても適用できる�
 
 ## Quality Evaluation
 
-品質は少なくとも以下の観点から評価する。
+品質は、少なくとも以下の観点から評価する。
 
 - 完全性
 - 一貫性
@@ -1037,23 +1023,23 @@ Data Validationは1000件以上の事件データに対しても適用できる�
 
 ## Long-Term Operation
 
-品質基準は1000件以上の事件データに対しても同一条件で適用しなければならない。
+品質基準は、1000件以上の事件データに対しても同一条件で適用しなければならない。
 
 ---
 
 ## Chapter Boundary
 
-本Chapterでは正式データとして維持すべき品質基準のみを定義する。
+本Chapterでは、正式データとして維持すべき品質基準のみを定義する。
 
-Schema構造、正式フィールド、実装方法、調査内容の信頼性評価および情報源の評価は本Chapterの責務に含めない。
+Schema構造、正式フィールド、実装方法、調査内容の信頼性評価および情報源の評価は、本Chapterの責務に含めない。
 
 # Chapter 13
 
-## Existing Data Migration
+# Existing Data Migration
 
-### Purpose
+## Purpose
 
-本Chapterは、既存の事件データをDatabase Schema v1.0へ移行するための共通基準を定義する。
+本Chapterは、既存の事件データをDatabase Schema v1.1へ移行するための共通基準を定義する。
 
 Data Migrationは、既存データを正式なSchemaへ適合させることを目的とし、事件内容を変更することを目的としない。
 
@@ -1063,7 +1049,7 @@ Data Migrationは、既存データを正式なSchemaへ適合させることを
 
 ## Scope
 
-本Chapterは、Database Schema v1.0へ移行するすべての既存事件データへ適用する。
+本Chapterは、Database Schema v1.1へ移行するすべての既存事件データへ適用する。
 
 対象には、過去のSchemaで管理されていた正式データおよび正式採用予定のデータを含む。
 
@@ -1176,13 +1162,11 @@ Schema更新に伴う移行は、1000件以上の事件データを対象とし�
 
 これらは、それぞれを所管する他Chapterまたは実装側で定義する。
 
----
-
 # Chapter 14
 
-## Schema Versioning and Change Management
+# Schema Versioning and Change Management
 
-### Purpose
+## Purpose
 
 本Chapterは、Database SchemaのVersion管理および変更管理に関する共通基準を定義する。
 
@@ -1194,7 +1178,7 @@ Schemaの変更は、一貫性、互換性および長期運用性を維持し�
 
 本Chapterは、Database Schema全体に適用する。
 
-正式フィールド、構造、制約、許可値、未設定値および関連付けを含む、Schema全体の変更を対象とする。
+正式フィールド、構造、制約、許可値、未設定値および関連付けを含むSchema全体の変更を対象とする。
 
 ---
 
@@ -1286,13 +1270,11 @@ Schemaは、長期運用において継続的な拡張および改善が可能�
 
 これらは、それぞれを所管する他Chapterまたは関連文書で定義する。
 
----
-
 # Chapter 15
 
-## Long-Term Schema Operation
+# Long-Term Schema Operation
 
-### Purpose
+## Purpose
 
 本Chapterは、Database Schemaを長期的かつ継続的に運用するための共通基準を定義する。
 
@@ -1304,7 +1286,7 @@ Schemaは、長期運用において継続的な拡張および改善が可能�
 
 本Chapterは、Database Schema全体に適用する。
 
-正式フィールド、構造、関連付け、Version管理および移行を含むSchema全体の長期運用を対象とする。
+正式フィールド、正式構造、関連付け、Version管理およびデータ移行を含むSchema全体の長期運用を対象とする。
 
 ---
 
@@ -1336,7 +1318,7 @@ Schemaは、継続的に保守できる状態を維持しなければならな�
 
 Schemaは、Version更新後も一貫性を維持しなければならない。
 
-正式フィールド、構造および責務は、Schema全体を通じて統一しなければならない。
+正式フィールド、正式構造および責務は、Schema全体を通じて統一しなければならない。
 
 ---
 
@@ -1398,8 +1380,11 @@ Schemaは、長期運用において定期的に適合性を確認しなけれ�
 
 これらは、それぞれを所管する関連文書または実装側で定義する。
 
+```markdown id="wz7k3m"
 # Version History
 
 | Version | Date | Changes |
 |----------|------------|---------|
-| v1.0 | 2026-08-01 | Database Schema v1.0正式版を確定。Database Rule v2.2をSingle Source of Truthとして採用し、事件データの正式なSchemaを再構成。`incidentData`をRootとする正式なRoot構造およびincident objectの配置基準を定義。`englishName`、`riskLevel`、`caseCardImage`、`caseCardImage.path`について、Field Name、Purpose、Data Type、Required / Optional、Allowed Value、Default Value、Unset Value、Constraintsを正式Schemaとして定義し、Field Definition Standardとの整合性を確立。`caseCardImage`の正式なネスト構造を明確化し、PASS済みのContent and Media Referencesの責務を維持したままSchema定義を追加。概念例と正式フィールド命名の整合性を整理し、Chapter間の責務を統一。Data Validation、Data Quality、Existing Data Migration、Schema Version管理およびLong-Term Schema Operationを含む正式なSchema構成を完成。Gitリポジトリ保存用正式版として確定。 |
+| v1.2 | 2026-08-03 | Codex最終監査のBLOCKERを反映。Database Rule v2.2との整合性を修正し、`incidentData`を正式なRoot構造として扱う記述を削除。`incidentData`は概念例における説明用の記述であることを明確化した。正式化される対象を事件データ内の正式フィールドおよびネスト関係に限定し、新しいSchema、Root構造、正式フィールドおよび運用ルールは追加していない。 |
+| v1.1 | 2026-08-01 | Database Rule v2.2をSingle Source of Truthとして採用し、事件データの正式なSchemaを再構成。`incidentData`をRootとする構造、`englishName`、`riskLevel`、`caseCardImage`および`caseCardImage.path`の正式Schema定義を追加。Field Name、Purpose、Data Type、Required / Optional、Allowed Value、Default Value、Unset Value、Constraintsを正式定義として整理し、Field Definition Standardとの整合性を確立。Content and Media Referencesの責務を維持したままCase Card ImageのSchema定義を追加し、Data Validation、Data Quality、Existing Data Migration、Schema Version管理およびLong-Term Schema Operationを含む正式版として確定。 |
+| v1.0 | 2026-08-01 | Database Schema v1.0を初版として策定。Database Rule v2.2を基準とし、正式フィールド、ネスト構造、値型、必須・任意、許可値、未設定値、データ間の関連付け、データ品質、検証基準、既存データ移行、Schema Version管理および長期運用基準を定義する正式設計書として確定。 |

@@ -1707,6 +1707,31 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 
 ---
 
+# Audit Rule v1.1
+
+**Release Date**  
+2026-08-03
+
+## Overview
+
+Audit Rule v1.0を基準として、Compatibility情報を最新の正式文書構成へ更新した。
+
+本Versionでは、ProjectORIGIN全体の監査基準および運用ルールは変更せず、Database RuleとのVersion整合性のみを修正した。
+
+---
+
+## Changes
+
+### Compatibility Update
+
+Compatibilityに記載するDatabase Ruleの対応Versionを、正式なSingle Source of Truthに合わせて更新した。
+
+- Database Rule **v2.0 → v2.2**
+
+監査基準、運用方針および各Chapterの本文には変更を加えていない。
+
+---
+
 # Audit Rule v1.0
 
 **Release Date**  
@@ -1807,7 +1832,7 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 | Research Template | v1.0 |
 | Master Case File Template | v1.0 |
 | Case File Template | v1.0 |
-| Database Rule | v2.0 |
+| Database Rule | **v2.2** |
 | Image Rule | v1.0 |
 | Operating Manual | v1.0 |
 
@@ -1825,4 +1850,4 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 ## Status
 
-**Audit Rule v1.0** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
+**Audit Rule v1.1** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
