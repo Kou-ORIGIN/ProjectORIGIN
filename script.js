@@ -536,7 +536,7 @@ const incidentData = [
         region: 'アメリカ・ニューメキシコ州',
         era: '1947年',
         category: 'UFO・未確認飛行物体',
-        danger: 3,
+        riskLevel: 3,
         status: '調査継続中',
         caseCardImage: {
             path: "images/case-cards/file-0001.webp"
@@ -567,7 +567,7 @@ const incidentData = [
         region: 'ロシア・ウラル山脈',
         era: '1959年',
         category: '未解決事件',
-        danger: 4,
+        riskLevel: 4,
         status: '一部解明',
         caseCardImage: null,
         facts: [
@@ -589,7 +589,7 @@ const incidentData = [
         region: 'ペルー・ナスカ高原',
         era: '紀元前後〜西暦800年頃',
         category: '古代文明・遺跡',
-        danger: 1,
+        riskLevel: 1,
         status: '研究継続中',
         caseCardImage: null,
         facts: [
@@ -612,7 +612,7 @@ const incidentData = [
         region: 'アメリカ・ネバダ州',
         era: 'TBD',
         category: 'UFO・未確認飛行物体',
-        danger: 3,
+        riskLevel: 3,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -626,7 +626,7 @@ const incidentData = [
         region: 'アメリカ・アリゾナ州',
         era: 'TBD',
         category: 'UFO・未確認飛行物体',
-        danger: 3,
+        riskLevel: 3,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -640,7 +640,7 @@ const incidentData = [
         region: 'イギリス・サフォーク',
         era: 'TBD',
         category: 'UFO・未確認飛行物体',
-        danger: 3,
+        riskLevel: 3,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -654,7 +654,7 @@ const incidentData = [
         region: 'ベルギー',
         era: 'TBD',
         category: 'UFO・未確認飛行物体',
-        danger: 2,
+        riskLevel: 2,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -668,7 +668,7 @@ const incidentData = [
         region: 'ロシア・シベリア',
         era: 'TBD',
         category: '未解決事件',
-        danger: 4,
+        riskLevel: 4,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -682,7 +682,7 @@ const incidentData = [
         region: 'エジプト・ギザ',
         era: 'TBD',
         category: '古代文明・遺跡',
-        danger: 2,
+        riskLevel: 2,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -696,7 +696,7 @@ const incidentData = [
         region: 'トルコ・シャンルウルファ',
         era: 'TBD',
         category: '古代文明・遺跡',
-        danger: 2,
+        riskLevel: 2,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -710,7 +710,7 @@ const incidentData = [
         region: '北大西洋',
         era: 'TBD',
         category: '未解決事件',
-        danger: 3,
+        riskLevel: 3,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -724,7 +724,7 @@ const incidentData = [
         region: '北大西洋・バミューダ海域',
         era: 'TBD',
         category: '未解決事件',
-        danger: 4,
+        riskLevel: 4,
         status: 'PLANNED',
         caseCardImage: null,
         facts: [],
@@ -1234,7 +1234,7 @@ function getFilteredIncidents() {
 
     return incidentData.filter((incident) => {
         const matchesCategory = selectedCategory === 'all' || incident.category === selectedCategory;
-        const matchesDanger = minimumDanger === null || incident.danger >= minimumDanger;
+        const matchesDanger = minimumDanger === null || incident.riskLevel >= minimumDanger;
 
         if (!matchesCategory || !matchesDanger) {
             return false;
@@ -1633,15 +1633,15 @@ function createIncidentCard(incident, options = {}) {
 
     const dangerLabel = document.createElement('span');
     dangerLabel.className = 'incident-danger-label';
-    dangerLabel.textContent = `RISK LEVEL : ${incident.danger}`;
+    dangerLabel.textContent = `RISK LEVEL : ${incident.riskLevel}`;
 
     const gauge = document.createElement('div');
-    gauge.className = `danger-gauge risk-level-${incident.danger}`;
+    gauge.className = `danger-gauge risk-level-${incident.riskLevel}`;
 
     for (let index = 0; index < 5; index += 1) {
         const segment = document.createElement('span');
         segment.className = 'danger-gauge-segment';
-        if (index < incident.danger) {
+        if (index < incident.riskLevel) {
             segment.classList.add('active');
         }
         gauge.appendChild(segment);
@@ -1906,9 +1906,9 @@ function openIncidentModal(incident) {
         incidentModalClass.textContent = incident.category;
     }
     if (incidentModalRisk) {
-        incidentModalRisk.textContent = String(incident.danger);
+        incidentModalRisk.textContent = String(incident.riskLevel);
     }
-    renderIncidentRiskGauge(incidentModalRiskGauge, incident.danger);
+    renderIncidentRiskGauge(incidentModalRiskGauge, incident.riskLevel);
     renderIncidentBodyCopy(incidentModalBodyCopy, incident);
     incidentModalOverlay.hidden = false;
     updateIncidentModalBackgroundFade(incidentModalPanel || incidentModalOverlay);
