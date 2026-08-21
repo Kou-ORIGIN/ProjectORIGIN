@@ -109,7 +109,7 @@ CategoryとClassについて、正式な階層関係または依存関係が存�
 - 表記揺れ、大文字・小文字の違い、略称、翻訳名その他の表示上の差異を理由として、新しいClass値を独自に作成しない。
 - CategoryとClassの階層関係または依存関係を、正式な根拠なく設定しない。
 - Categoryの値から使用可能なClass値を制限する規則を、正式な根拠なく設定しない。
-- `HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件を担当する別論点として維持する。
+- `HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件を担当する別論点として解消済みである。
 
 ### 未確認事項
 
@@ -169,136 +169,6 @@ CategoryによってClass Allowed Valueが制限される場合は、その正�
 5. 確定した仕様をDatabase Schema Chapter 6 / Class Field Definitionへ反映する。
 6. 関連するCategory仕様との整合性を確認する。
 7. Class Field Definition全体を再監査し、本HOLDに関する矛盾または未解決の依存関係が残っていないことを確認する。
-
-### 解消根拠
-
-未確定。
-
-### 反映先
-
-Database Schema Chapter 6 / Class Field Definition
-
-### 最終監査結果
-
-未実施。
-
----
-
-## HOLD-CLASS-02 — Class Data Type / Nullability / Lifecycle
-
-### Status
-
-HOLD
-
-### 発生元
-
-Database Schema Chapter 6 / Class Field Definition
-
-### 対象
-
-`class`のData Type、Nullability、正式なUnset Value、およびLifecycle別のUnset Value許可条件。
-
-### 発生理由
-
-`Class`はProjectORIGINの正式なClassification Fieldとして確認できている。
-
-一方、現行の正式Source of Truthからは、`class`の正式なData Typeを一意に確定できる仕様を確認できていない。
-
-そのため、以前候補として検討した`string | null`を正式なData Typeとして確定することはできない。
-
-Data Typeが未確定であるため、`null`を正式なUnset Valueとして先行確定することもできない。
-
-また、Class値が未設定となり得る場合について、調査中、移行中、正式公開時などのLifecycleごとのNullability条件も確認できていない。
-
-これらを推測によって確定すると、正式Source of Truthに存在しないClass仕様を新たに作成することになるため、HOLDとして保持する。
-
-### 確認済み事項
-
-- `Class`はProjectORIGINの正式なClassification Fieldである。
-- 正式なClass Field DefinitionにはData Typeの明確な定義が必要である。
-- Classの正式なData Typeは現行の正式Source of Truthから確認できていない。
-- ClassのNullability条件は現行の正式Source of Truthから確認できていない。
-- ClassのLifecycle別Nullability条件は現行の正式Source of Truthから確認できていない。
-- `class`フィールド自体の存在要件と、Class値の未設定状態は分離して定義する必要がある。
-- `riskLevel`その他のFieldに存在するData Type、Nullability、Lifecycle規則を、そのままClassへ転用できる正式根拠は確認できていない。
-- `HOLD-CLASS-01`は、Class Controlled ValuesおよびCategory依存関係を担当する別論点として維持する。
-
-### 未確認事項
-
-- `class`の正式なData Type
-- Class値を単一値として保持するかどうか
-- `null`をData Typeに含めるか
-- Classの正式なUnset Value
-- 調査中にClassのUnset状態を許可するか
-- 移行中にClassのUnset状態を許可するか
-- 正式公開データでClassのUnset状態を許可するか
-- 正式公開前にClass値の確定を必須とするか
-- LifecycleごとのClass Nullability条件
-
-### 依存関係
-
-Database Schema Chapter 6 / Class Field Definitionに依存する。
-
-ClassのData Type、Unset Value、NullabilityおよびLifecycle条件を一意に決定できる正式Source of Truthの確認または正式確定に依存する。
-
-`HOLD-CLASS-01 — Class Controlled Values / Category依存関係`とは別論点として管理する。
-
-`HOLD-CLASS-01`が解消されたことだけを理由として、`HOLD-CLASS-02`をRESOLVEDとして扱わない。
-
-`riskLevel`その他のFieldに存在するData Type、Nullability、Unset ValueまたはLifecycle規則を、本HOLDの解消根拠として自動的に転用しない。
-
-### 現時点で確定しない事項
-
-以下は正式仕様が確認または確定されるまで、正式なClass仕様として扱わない。
-
-- `class`のData Typeを`string | null`とすること
-- `null`をClassの正式なUnset Valueとすること
-- `class: null`を正式なClass未設定状態として使用すること
-- 調査中または移行中のみ`null`を許可すること
-- 正式公開データで`null`を禁止すること
-- 正式公開データで`null`を許可すること
-
-### 禁止事項
-
-- ClassのData Typeを推測によって確定してはならない。
-- `string | null`を正式根拠なくClassの正式Data Typeとして採用してはならない。
-- `null`を正式根拠なくClassの正式Unset Valueとして採用してはならない。
-- `riskLevel`その他のFieldのData Type、Nullability、Lifecycle規則をClassへ推測で転用してはならない。
-- 正式根拠なくClassのLifecycle別Unset許可条件を決定してはならない。
-- HOLD解消前にClassのData Type、Nullability、Unset Value、Lifecycle条件を確定済みとして扱ってはならない。
-- `HOLD-CLASS-01`の解消だけを根拠として、本HOLDを解消してはならない。
-
-### 影響範囲
-
-Database Schema Chapter 6 / Class Field Definitionの以下の項目に影響する。
-
-- Data Type
-- Required / OptionalのうちClass値のNullabilityに関する部分
-- Unset Value
-- ConstraintsのうちData Type、Nullability、Unset Value、Lifecycleに依存する部分
-
-Field Name、Purpose、Default Value、およびHOLD-CLASS-02に依存しないConstraintsについては、本HOLDとは分離して監査する。
-
-`HOLD-CLASS-01 — Class Controlled Values / Category依存関係`は、本HOLDとは別論点として維持する。
-
-### 次のAction
-
-Class Field DefinitionのData Type、Unset Value、および関連Constraintsについて、HOLD-CLASS-02を未解決のまま保持できる形へ再構成する。
-
-再構成後、Class Field Definition全体を再監査する。
-
-Data Type、Nullability、Unset Value、Lifecycleを一意に決定できる正式根拠が確認または正式確定された場合、本HOLDの解消判定を実施する。
-
-### 解消条件
-
-以下を満たすこと。
-
-1. `class`の正式なData Typeを一意に決定できる正式仕様を確認または正式確定する。
-2. Classの正式なUnset Valueを一意に決定する。
-3. ClassのNullability条件を正式に確定する。
-4. 必要な場合、調査中、移行中、正式公開時などのLifecycle別条件を正式に確定する。
-5. 確定した仕様をDatabase Schema Chapter 6 / Class Field Definitionへ反映する。
-6. Class Field Definition全体を再監査し、矛盾または未解決の依存関係がないことを確認する。
 
 ### 解消根拠
 
@@ -592,6 +462,170 @@ BLOCKER：0
 
 ---
 
+## HOLD-CLASS-02 — Class Data Type / Nullability / Lifecycle
+
+### Status
+
+RESOLVED
+
+### 発生元
+
+Database Schema Chapter 6 / Class Field Definition
+
+### 対象
+
+`class`のData Type、Nullability、正式なUnset Value、およびLifecycle別のUnset Value許可条件。
+
+### 発生理由
+
+`Class`はProjectORIGINの正式なClassification Fieldとして確認できていた。
+
+一方、HOLD登録時点では、現行の正式Source of Truthから`class`の正式なData Typeを一意に確定できる仕様を確認できていなかった。
+
+そのため、以前候補として検討した`string | null`を正式なData Typeとして確定することはできなかった。
+
+Data Typeが未確定であったため、`null`を正式なUnset Valueとして先行確定することもできなかった。
+
+また、Class値が未設定となり得る場合について、調査中、移行中、正式公開時などのLifecycleごとのNullability条件も確認できていなかった。
+
+これらを推測によって確定すると、正式Source of Truthに存在しないClass仕様を新たに作成することになるため、HOLDとして保持した。
+
+### 確認済み事項
+
+Human DecisionおよびDatabase Schema Chapter 6への正式反映により、以下を確定した。
+
+- `Class`はProjectORIGINの正式なClassification Fieldである。
+- `class`は単一のClass値を保持する。
+- Class値が設定されている場合のNon-null Data Typeは`string`とする。
+- `class`の正式なData Typeは`string | null`とする。
+- 正式なUnset Valueは`null`とする。
+- `null`はClassのControlled Valueとして扱わない。
+- `class`フィールド自体の欠落と`class: null`は異なる状態として扱う。
+- `class`フィールド自体は、正式な事件データで保持する。
+- 調査中または移行中の事件データでは、Class分類がまだ正式に設定されていない場合に限り、一時的に`null`を許容する。
+- 正式公開データでは`null`を許容しない。
+- 正式公開データでは、`HOLD-CLASS-01`の解消によって正式確定されたClass Controlled Valueのいずれかを必ず保持する。
+- `HOLD-CLASS-01`は、Class Controlled ValuesおよびCategory依存関係を担当する別論点として維持する。
+
+### 未確認事項
+
+なし。
+
+`HOLD-CLASS-02`の解消対象としていたData Type、Nullability、Unset ValueおよびLifecycle条件について、未確認事項は残っていない。
+
+Class Controlled ValuesおよびCategory依存関係は`HOLD-CLASS-01`の対象であり、本HOLDの未確認事項として扱わない。
+
+### 依存関係
+
+Database Schema Chapter 6 / Class Field Definitionへの正式反映に依存した。
+
+ClassのData Type、Unset Value、NullabilityおよびLifecycle条件の正式確定に依存した。
+
+Class Field Definition反映後の最終再監査に依存した。
+
+これらの依存事項は確認済み。
+
+`HOLD-CLASS-01 — Class Controlled Values / Category依存関係`とは別論点として管理する。
+
+`HOLD-CLASS-01`が未解決であることを理由として、`HOLD-CLASS-02`を未解決状態へ戻さない。
+
+一方、`HOLD-CLASS-02`の解消だけを理由として、`HOLD-CLASS-01`をRESOLVEDとして扱わない。
+
+### 禁止事項
+
+- `class`に複数のClass値を保持してはならない。
+- 非`null`のClass値に`string`以外のData Typeを使用してはならない。
+- `null`をClassのControlled Valueとして扱ってはならない。
+- 空文字、`"Unknown"`、`"Unclassified"`、`"N/A"`その他の疑似Class値を、正式なUnset Valueとして使用してはならない。
+- `class`フィールド自体の欠落と`class: null`を同一の状態として扱ってはならない。
+- 正式公開データで`null`を使用してはならない。
+- 調査中または移行中でClass分類がすでに正式設定されている場合に、設定済みClass値を`null`へ置き換えてはならない。
+- `HOLD-CLASS-02`の解消を理由として、未確定のClass Controlled ValuesまたはCategory依存関係を推測によって確定してはならない。
+- `HOLD-CLASS-01`の未解決事項を、本HOLDの解消内容として扱ってはならない。
+
+### 次のAction
+
+なし。
+
+`HOLD-CLASS-02`の解消条件は満たされている。
+
+本項目はActive HOLD / Pendingとして追跡せず、RESOLVED履歴として保持する。
+
+### 解消条件
+
+以下の条件をすべて満たしたことを確認した。
+
+1. `class`の正式なData Typeを一意に決定できる正式仕様を確認または正式確定する。
+2. Classの正式なUnset Valueを一意に決定する。
+3. ClassのNullability条件を正式に確定する。
+4. 必要な場合、調査中、移行中、正式公開時などのLifecycle別条件を正式に確定する。
+5. 確定した仕様をDatabase Schema Chapter 6 / Class Field Definitionへ反映する。
+6. Class Field Definition全体を再監査し、矛盾または未解決の依存関係がないことを確認する。
+
+**上記6条件：すべて達成済み。**
+
+### 解消根拠
+
+Human Decisionにより、ClassのData Type、Unset Value、NullabilityおよびLifecycle条件を正式確定した。
+
+Database Schema Chapter 6 / Class Field Definitionへ、以下の仕様を正式反映した。
+
+- Classは単一値として保持する。
+- Non-null Data Type：`string`
+- Data Type：`string | null`
+- Unset Value：`null`
+- `null`はClassのControlled Valueとして扱わない。
+- `class`フィールド自体の欠落と`class: null`を分離する。
+- 調査中または移行中は、Class分類がまだ正式に設定されていない場合に限り、一時的な`null`を許容する。
+- 正式公開データでは`null`を禁止する。
+- 正式公開データでは、`HOLD-CLASS-01`の解消によって正式確定されたClass Controlled Valueのいずれかを必須とする。
+- Class Controlled ValuesおよびCategory依存関係は`HOLD-CLASS-01`へ分離して維持する。
+
+反映後、Class Field DefinitionおよびChapter 6の状態整合性について最終再監査を実施した。
+
+Data Type、Required / Optional、Unset Valueおよび関連ConstraintsはPASSし、`HOLD-CLASS-02`の対象事項に未解決の矛盾が残っていないことを確認した。
+
+`Allowed Value`は`HOLD-CLASS-01`としてHOLDを維持しており、`HOLD-CLASS-02`の解消によって推測確定されていない。
+
+### 反映先
+
+Database Schema Chapter 6 / Class Field Definition
+
+### 最終監査結果
+
+PASS
+
+`Field Name` — PASS  
+`Purpose` — PASS  
+`Data Type` — PASS  
+`Required / Optional` — PASS  
+`Allowed Value` — HOLD (`HOLD-CLASS-01`)  
+`Default Value` — PASS  
+`Unset Value` — PASS  
+`Constraints` — PASS
+
+**Field Definition Structure: PASS**
+
+**HOLD-CLASS-02 解消条件: PASS**  
+**解消根拠: PASS**  
+**反映先: PASS**  
+**依存関係: PASS**  
+**最終再監査: PASS**
+
+新規REVISION：0  
+新規HOLD：0  
+BLOCKER：0
+
+### Resolution
+
+**HOLD-CLASS-02 — RESOLVED**
+
+本項目をActive HOLD / Pendingとして扱わない。
+
+解消後も記録を削除せず、RESOLVED履歴として保持する。
+
+---
+
 # 7. Recovery Log
 
 ## Category関連HOLD
@@ -658,10 +692,9 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 ## Active HOLD / Pending
 
 - `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
-- `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
 - `HOLD-TAGS-01` — Tags Controlled Values / 有効Tag判定
 
-**Active HOLD / Pending Count: 3**
+**Active HOLD / Pending Count: 2**
 
 ## Resolution Review
 
@@ -672,8 +705,9 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 ## RESOLVED Archive
 
 - `HOLD-STATUS-01` — Status Meaning / Data Type / Controlled Values / Nullability
+- `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
 
-**RESOLVED Archive Count: 1**
+**RESOLVED Archive Count: 2**
 
 ## Recovery Log
 
@@ -687,9 +721,11 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 
 本台帳v1.0は、現時点で確認できたHOLD記録および正式Source of Truthに基づいて構成する。
 
-`HOLD-CLASS-01`、`HOLD-CLASS-02`および`HOLD-TAGS-01`は、現在も未解決であることを確認したActive HOLD / Pendingとして保持する。
+`HOLD-CLASS-01`および`HOLD-TAGS-01`は、現在も未解決であることを確認したActive HOLD / Pendingとして保持する。
 
 `HOLD-STATUS-01`は、必要な仕様確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
+`HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 
 Category関連HOLDについては、未解決事項の存在のみを確認済みとし、正式IDまたは正式HOLD Recordを確認できていないためRecovery Logへ保持する。
 
@@ -723,13 +759,13 @@ ProjectORIGIN HOLD管理台帳の正式初版。
 以下の記録を統合した。
 
 - `HOLD-CLASS-01`をActive HOLD / Pendingとして登録。
-- `HOLD-CLASS-02`をActive HOLD / Pendingとして登録。
 - `HOLD-TAGS-01`をActive HOLD / Pendingとして登録。
 - Resolution Reviewは現在登録なしとして保持。
-- `HOLD-STATUS-01`をRESOLVED Archiveへ登録。
+- `HOLD-STATUS-01`をRESOLVED Archiveへ保持。
+- `HOLD-CLASS-02`について、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認し、Active HOLD / PendingからRESOLVED Archiveへ移行。
 - Category関連HOLDをRecovery Logへ保持し、正式IDまたは正式Record確認前の推測登録を禁止。
 - HOLD解消後も履歴を保持する構造を維持。
 
-全文再監査を実施し、新規REVISION 0、新規HOLD 0、BLOCKER 0でPASS。
+`HOLD-CLASS-02`解消反映後の台帳整合性を確認し、新規REVISION 0、新規HOLD 0、BLOCKER 0でPASS。
 
-本Versionを `ProjectORIGIN HOLD管理台帳 v1.0` の正式版として確定する。
+本Versionを `ProjectORIGIN HOLD管理台帳 v1.0` の正式管理状態として維持する。
