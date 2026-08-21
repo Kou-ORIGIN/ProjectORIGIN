@@ -74,116 +74,6 @@ HOLD管理では、以下を原則とする。
 
 # 4. Active HOLD / Pending
 
-## HOLD-CLASS-01 — Class Controlled Values / Category依存関係
-
-### Status
-
-HOLD
-
-### 発生元
-
-Database Schema Chapter 6 / Class Field Definition
-
-### 対象
-
-`class`の正式なControlled Values、Class Controlled Valuesの正式管理元、およびCategoryとClassの正式な依存関係。
-
-### 発生理由
-
-`Class`はProjectORIGINの正式なClassification Fieldとして確認できている。
-
-一方、現行の正式Source of Truthからは、正式Class Controlled Valuesを一意に決定できる仕様を確認できていない。
-
-また、Class Controlled Valuesの正式管理元についても一意に確定できていない。
-
-CategoryとClassについて、正式な階層関係または依存関係が存在するか、またCategoryの値によって使用可能なClass値を制限する正式規則が存在するかについても、現行の正式Source of Truthから一意に確定できていない。
-
-これらを推測によって確定すると、正式Source of Truthに存在しないClass値、階層関係またはAllowed Value制約を新たに作成することになるため、HOLDとして保持する。
-
-### 確認済み事項
-
-- `Class`はProjectORIGINの正式なClassification Fieldである。
-- `class`フィールド自体は、正式な事件データで保持する。
-- 正式に定義されていない自由入力値を、新しい正式Class値として使用しない。
-- 正式に定義・承認されていないClass値を、AI、Database層、Application層その他の処理が正式値として独自に生成または補完しない。
-- 表記揺れ、大文字・小文字の違い、略称、翻訳名その他の表示上の差異を理由として、新しいClass値を独自に作成しない。
-- CategoryとClassの階層関係または依存関係を、正式な根拠なく設定しない。
-- Categoryの値から使用可能なClass値を制限する規則を、正式な根拠なく設定しない。
-- `HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件を担当する別論点として解消済みである。
-
-### 未確認事項
-
-- 正式Class Controlled Values
-- Class Controlled Valuesの正式管理元
-- CategoryとClassの正式な階層関係の有無
-- CategoryとClassの正式な依存関係の有無
-- Categoryの値によって使用可能なClass値を制限する正式規則の有無
-- Category依存関係が存在する場合の具体的な制約条件
-
-### 依存関係
-
-Database Schema Chapter 6 / Class Field Definitionに依存する。
-
-CategoryとClassの正式な依存関係が存在する場合は、その関係を正式に定義するSource of Truthの確認または正式確定に依存する。
-
-Category関連HOLDに、本HOLDの解消に必要な正式仕様が含まれる場合は、その解消結果との整合確認を必要とする。
-
-`HOLD-CLASS-02`とは別論点として管理する。
-
-`HOLD-CLASS-02`が解消されたことだけを理由として、`HOLD-CLASS-01`をRESOLVEDとして扱わない。
-
-### 禁止事項
-
-- 正式Class Controlled Valuesを推測によって確定してはならない。
-- 正式に定義・承認されていないClass値を、新しい正式Class値として独自に生成してはならない。
-- 正式に定義されていない自由入力値を、新しい正式Class値として使用してはならない。
-- AI、Database層、Application層その他の処理が、正式に定義されていないClass値を正式値として生成または補完してはならない。
-- 表記揺れ、大文字・小文字の違い、略称、翻訳名その他の表示上の差異を理由として、新しいClass値を独自に作成してはならない。
-- CategoryとClassの階層関係または依存関係を、正式な根拠なく設定してはならない。
-- Categoryの値から使用可能なClass値を制限する規則を、正式な根拠なく設定してはならない。
-- 他のClassification Fieldの値から、正式な根拠なくClass値を推測または自動補完してはならない。
-- 事件本文その他の情報から、正式な分類判断を経ずにClass値を推測または自動補完してはならない。
-- `HOLD-CLASS-02`の解消だけを根拠として、本HOLDを解消してはならない。
-- HOLD解消前にClass Controlled ValuesまたはCategory依存関係を確定済みとして扱ってはならない。
-
-### 次のAction
-
-正式Class Controlled Valuesを一意に決定できる正式仕様または正式管理元を確認する。
-
-CategoryとClassの正式な階層関係または依存関係の有無を確認する。
-
-CategoryによってClass Allowed Valueが制限される場合は、その正式な条件を確認または正式確定する。
-
-必要な仕様が確認または正式確定された後、Database Schema Chapter 6 / Class Field Definitionへ反映する。
-
-反映後、Class Field Definition全体を再監査する。
-
-### 解消条件
-
-以下をすべて満たすこと。
-
-1. 正式Class Controlled Valuesを一意に決定できる正式仕様を確認または正式確定する。
-2. Class Controlled Valuesの正式管理元を確認または正式確定する。
-3. CategoryとClassの正式な階層関係または依存関係の有無を確認または正式確定する。
-4. CategoryによるClass Allowed Value制約が存在する場合、その正式な条件を確認または正式確定する。
-5. 確定した仕様をDatabase Schema Chapter 6 / Class Field Definitionへ反映する。
-6. 関連するCategory仕様との整合性を確認する。
-7. Class Field Definition全体を再監査し、本HOLDに関する矛盾または未解決の依存関係が残っていないことを確認する。
-
-### 解消根拠
-
-未確定。
-
-### 反映先
-
-Database Schema Chapter 6 / Class Field Definition
-
-### 最終監査結果
-
-未実施。
-
----
-
 ## HOLD-TAGS-01 — Tags Controlled Values / 有効Tag判定
 
 ### Status
@@ -360,7 +250,7 @@ Status Field Definition反映後の最終再監査に依存した。
 
 Category関連HOLD、`HOLD-CLASS-01`、`HOLD-CLASS-02`および`HOLD-TAGS-01`は、本HOLDとは独立した別論点として扱う。
 
-これらの別HOLDが未解決であることを理由として、`HOLD-STATUS-01`を未解決状態へ戻さない。
+これらの別HOLDの状態を理由として、`HOLD-STATUS-01`を未解決状態へ戻さない。
 
 ### 禁止事項
 
@@ -504,16 +394,14 @@ Human DecisionおよびDatabase Schema Chapter 6への正式反映により、�
 - `class`フィールド自体は、正式な事件データで保持する。
 - 調査中または移行中の事件データでは、Class分類がまだ正式に設定されていない場合に限り、一時的に`null`を許容する。
 - 正式公開データでは`null`を許容しない。
-- 正式公開データでは、`HOLD-CLASS-01`の解消によって正式確定されたClass Controlled Valueのいずれかを必ず保持する。
-- `HOLD-CLASS-01`は、Class Controlled ValuesおよびCategory依存関係を担当する別論点として維持する。
+- 正式公開データでは、正式なClass Controlled Valueのいずれかを必ず保持する。
+- Class Controlled ValuesおよびCategoryとの関係は`HOLD-CLASS-01`の対象として分離して管理した。
 
 ### 未確認事項
 
 なし。
 
 `HOLD-CLASS-02`の解消対象としていたData Type、Nullability、Unset ValueおよびLifecycle条件について、未確認事項は残っていない。
-
-Class Controlled ValuesおよびCategory依存関係は`HOLD-CLASS-01`の対象であり、本HOLDの未確認事項として扱わない。
 
 ### 依存関係
 
@@ -525,11 +413,9 @@ Class Field Definition反映後の最終再監査に依存した。
 
 これらの依存事項は確認済み。
 
-`HOLD-CLASS-01 — Class Controlled Values / Category依存関係`とは別論点として管理する。
+`HOLD-CLASS-01`とは別論点として管理した。
 
-`HOLD-CLASS-01`が未解決であることを理由として、`HOLD-CLASS-02`を未解決状態へ戻さない。
-
-一方、`HOLD-CLASS-02`の解消だけを理由として、`HOLD-CLASS-01`をRESOLVEDとして扱わない。
+`HOLD-CLASS-01`の状態を理由として、`HOLD-CLASS-02`を未解決状態へ戻さない。
 
 ### 禁止事項
 
@@ -540,8 +426,6 @@ Class Field Definition反映後の最終再監査に依存した。
 - `class`フィールド自体の欠落と`class: null`を同一の状態として扱ってはならない。
 - 正式公開データで`null`を使用してはならない。
 - 調査中または移行中でClass分類がすでに正式設定されている場合に、設定済みClass値を`null`へ置き換えてはならない。
-- `HOLD-CLASS-02`の解消を理由として、未確定のClass Controlled ValuesまたはCategory依存関係を推測によって確定してはならない。
-- `HOLD-CLASS-01`の未解決事項を、本HOLDの解消内容として扱ってはならない。
 
 ### 次のAction
 
@@ -560,7 +444,7 @@ Class Field Definition反映後の最終再監査に依存した。
 3. ClassのNullability条件を正式に確定する。
 4. 必要な場合、調査中、移行中、正式公開時などのLifecycle別条件を正式に確定する。
 5. 確定した仕様をDatabase Schema Chapter 6 / Class Field Definitionへ反映する。
-6. Class Field Definition全体を再監査し、矛盾または未解決の依存関係がないことを確認する。
+6. Class Field Definition全体を再監査し、本HOLDの対象事項に矛盾または未解決の依存関係がないことを確認する。
 
 **上記6条件：すべて達成済み。**
 
@@ -578,14 +462,10 @@ Database Schema Chapter 6 / Class Field Definitionへ、以下の仕様を正式
 - `class`フィールド自体の欠落と`class: null`を分離する。
 - 調査中または移行中は、Class分類がまだ正式に設定されていない場合に限り、一時的な`null`を許容する。
 - 正式公開データでは`null`を禁止する。
-- 正式公開データでは、`HOLD-CLASS-01`の解消によって正式確定されたClass Controlled Valueのいずれかを必須とする。
-- Class Controlled ValuesおよびCategory依存関係は`HOLD-CLASS-01`へ分離して維持する。
 
 反映後、Class Field DefinitionおよびChapter 6の状態整合性について最終再監査を実施した。
 
 Data Type、Required / Optional、Unset Valueおよび関連ConstraintsはPASSし、`HOLD-CLASS-02`の対象事項に未解決の矛盾が残っていないことを確認した。
-
-`Allowed Value`は`HOLD-CLASS-01`としてHOLDを維持しており、`HOLD-CLASS-02`の解消によって推測確定されていない。
 
 ### 反映先
 
@@ -599,7 +479,7 @@ PASS
 `Purpose` — PASS  
 `Data Type` — PASS  
 `Required / Optional` — PASS  
-`Allowed Value` — HOLD (`HOLD-CLASS-01`)  
+`Allowed Value` — PASS  
 `Default Value` — PASS  
 `Unset Value` — PASS  
 `Constraints` — PASS
@@ -626,6 +506,201 @@ BLOCKER：0
 
 ---
 
+## HOLD-CLASS-01 — Class Controlled Values / Category依存関係
+
+### Status
+
+RESOLVED
+
+### 発生元
+
+Database Schema Chapter 6 / Class Field Definition
+
+### 対象
+
+`class`の正式なControlled Values、Class Controlled Valuesの正式管理元、およびCategoryとClassの正式な依存関係。
+
+### 発生理由
+
+`Class`はProjectORIGINの正式なClassification Fieldとして確認できていた。
+
+一方、HOLD登録時点では、正式Class Controlled Valuesを一意に決定できる仕様を確認できていなかった。
+
+また、Class Controlled Valuesの正式管理元についても一意に確定できていなかった。
+
+CategoryとClassについて、正式な階層関係または依存関係が存在するか、またCategoryの値によって使用可能なClass値を制限する正式規則が存在するかについても、一意に確定できていなかった。
+
+これらを推測によって確定すると、正式Source of Truthに存在しないClass値、階層関係またはAllowed Value制約を新たに作成することになるため、HOLDとして保持した。
+
+### 確認済み事項
+
+Human DecisionおよびDatabase Schema Chapter 6への正式反映により、以下を確定した。
+
+- `Class`はProjectORIGINの正式なClassification Fieldである。
+- Classは、事件または現象の性質および中心となる現象タイプを表す。
+- `class`は単一のClass値を保持する。
+- 正式Class Controlled Valuesは以下の7値とする。
+  - `Encounter`
+  - `Disappearance`
+  - `Anomaly`
+  - `Discovery`
+  - `Transmission`
+  - `Transformation`
+  - `Disturbance`
+- Class Controlled ValuesのSingle Source of Truthは、Database Schema Chapter 6 / Class Field Definition / Allowed Valueとする。
+- Class Controlled Valuesを別の正式管理元へ重複定義しない。
+- CategoryとClassは独立したClassification Fieldとして扱う。
+- CategoryをClassの上位分類として扱わない。
+- ClassをCategoryの下位分類として扱わない。
+- Categoryの値によって使用可能なClass値を制限しない。
+- CategoryからClass値を自動導出しない。
+- ClassからCategory値を自動導出しない。
+- 複数のClass候補に該当し得る場合は、事件の中心となる現象タイプを1つだけ採用する。
+- `Unknown`を正式なClass Controlled Valueとして使用しない。
+
+### 未確認事項
+
+なし。
+
+`HOLD-CLASS-01`の解消対象としていたClass Controlled Values、Controlled Valuesの正式管理元、およびCategoryとの依存関係について、未確認事項は残っていない。
+
+Category自体に残る未解決事項は、本HOLDとは分離し、Recovery Logで継続管理する。
+
+### 依存関係
+
+Database Schema Chapter 6 / Class Field Definitionへの正式反映に依存した。
+
+正式Class Controlled Valuesの確定に依存した。
+
+Class Controlled ValuesのSingle Source of Truthの確定に依存した。
+
+CategoryとClassの正式な関係の確定に依存した。
+
+CategoryによるClass Allowed Value制約の有無の確定に依存した。
+
+Class Field Definition反映後の最終再監査に依存した。
+
+これらの依存事項は確認済み。
+
+Category自体には未解決事項が残っているが、CategoryとClassを独立したClassification Fieldとして正式確定したため、Category自体の未解決HOLDは本HOLDの解消を妨げない。
+
+Category自体のHOLDを、本HOLDの解消を理由としてRESOLVEDとして扱わない。
+
+`HOLD-CLASS-02`はClassのData Type、Nullability、Unset ValueおよびLifecycle条件を担当した別論点であり、既にRESOLVEDとして管理する。
+
+### 禁止事項
+
+- `Encounter`、`Disappearance`、`Anomaly`、`Discovery`、`Transmission`、`Transformation`、`Disturbance`以外の値を正式なClass値として使用してはならない。
+- 正式に定義されていない自由入力値を、新しい正式Class値として使用してはならない。
+- 正式に定義・承認されていないClass値を、AI、Database層、Application層その他の処理が正式値として独自に生成または補完してはならない。
+- 表記揺れ、大文字・小文字の違い、略称、翻訳名その他の表示上の差異を理由として、新しいClass値を独自に作成してはならない。
+- `Unknown`を正式なClass Controlled Valueとして使用してはならない。
+- Class Controlled Valuesを複数の正式管理元へ重複定義してはならない。
+- CategoryをClassの上位分類として扱ってはならない。
+- ClassをCategoryの下位分類として扱ってはならない。
+- Categoryの値によって使用可能なClass値を制限してはならない。
+- CategoryからClass値を自動導出してはならない。
+- ClassからCategory値を自動導出してはならない。
+- Categoryとの組み合わせを理由として、新しいClass値を生成してはならない。
+- 複数のClass値を同時に保持してはならない。
+- 他のClassification Fieldの値から、正式な分類判断を経ずにClass値を推測または自動補完してはならない。
+- 事件本文その他の情報から、正式な分類判断を経ずにClass値を推測または自動補完してはならない。
+- 本HOLDの解消を理由として、Category自体の未解決事項を解消済みとして扱ってはならない。
+
+### 次のAction
+
+なし。
+
+`HOLD-CLASS-01`の解消条件は満たされている。
+
+本項目はActive HOLD / Pendingとして追跡せず、RESOLVED履歴として保持する。
+
+### 解消条件
+
+以下の条件をすべて満たしたことを確認した。
+
+1. 正式Class Controlled Valuesを一意に決定できる正式仕様を確認または正式確定する。
+2. Class Controlled Valuesの正式管理元を確認または正式確定する。
+3. CategoryとClassの正式な階層関係または依存関係の有無を確認または正式確定する。
+4. CategoryによるClass Allowed Value制約が存在する場合、その正式な条件を確認または正式確定する。
+5. 確定した仕様をDatabase Schema Chapter 6 / Class Field Definitionへ反映する。
+6. 関連するCategory仕様との整合性を確認する。
+7. Class Field Definition全体を再監査し、本HOLDに関する矛盾または未解決の依存関係が残っていないことを確認する。
+
+**上記7条件：すべて達成済み。**
+
+### 解消根拠
+
+Human Decisionにより、Class Controlled Values、Controlled Valuesの正式管理元、およびCategoryとの関係を正式確定した。
+
+Database Schema Chapter 6 / Class Field Definitionへ、以下の仕様を正式反映した。
+
+- Classは事件または現象の性質および中心となる現象タイプを表す。
+- 正式Class Controlled Values：
+  - `Encounter`
+  - `Disappearance`
+  - `Anomaly`
+  - `Discovery`
+  - `Transmission`
+  - `Transformation`
+  - `Disturbance`
+- Class Controlled ValuesのSingle Source of Truthは、Database Schema Chapter 6 / Class Field Definition / Allowed Valueとする。
+- Class Controlled Valuesを別の正式管理元へ重複定義しない。
+- CategoryとClassは独立したClassification Fieldとする。
+- CategoryをClassの上位分類として扱わない。
+- ClassをCategoryの下位分類として扱わない。
+- Categoryの値によってClass Allowed Valueを制限しない。
+- CategoryからClassを自動導出しない。
+- ClassからCategoryを自動導出しない。
+- 複数候補に該当する場合は、事件の中心となる現象タイプを1つだけ採用する。
+- `Unknown`を正式Class Controlled Valueとして採用しない。
+
+反映後、Class Field DefinitionおよびCategoryとの責務整合性について最終再監査を実施した。
+
+Field Name、Purpose、Data Type、Required / Optional、Allowed Value、Default Value、Unset Value、Constraintsの全項目がPASSした。
+
+Category自体には未解決HOLDが残っているが、CategoryとClassの独立関係が正式確定されたため、本HOLDの解消を妨げる依存関係ではないことを確認した。
+
+### 反映先
+
+Database Schema Chapter 6 / Class Field Definition
+
+### 最終監査結果
+
+PASS
+
+`Field Name` — PASS  
+`Purpose` — PASS  
+`Data Type` — PASS  
+`Required / Optional` — PASS  
+`Allowed Value` — PASS  
+`Default Value` — PASS  
+`Unset Value` — PASS  
+`Constraints` — PASS
+
+**Field Definition Structure: PASS**
+
+**HOLD-CLASS-01 解消条件: PASS**  
+**解消根拠: PASS**  
+**反映先: PASS**  
+**依存関係: PASS**  
+**Categoryとの責務整合性: PASS**  
+**最終再監査: PASS**
+
+新規REVISION：0  
+新規HOLD：0  
+BLOCKER：0
+
+### Resolution
+
+**HOLD-CLASS-01 — RESOLVED**
+
+本項目をActive HOLD / Pendingとして扱わない。
+
+解消後も記録を削除せず、RESOLVED履歴として保持する。
+
+---
+
 # 7. Recovery Log
 
 ## Category関連HOLD
@@ -638,9 +713,13 @@ BLOCKER：0
 
 Database Schema Chapter 6により、Categoryに未解決HOLDが存在することは確認済み。
 
-CategoryのField Definitionは、監査済みのCategory Repository Working Draftを正式な作業基準として扱う。
+CategoryのField Definitionは、監査済みのCategory Repository Working Draftを正式な作業基準とする。
 
 未解決HOLDが存在する事項について、暫定値または推測値を正式仕様として採用しない。
+
+Classについては、Categoryとは独立したClassification Fieldとして正式確定している。
+
+`HOLD-CLASS-01`の解消は、Category自体の未解決事項を解消するものではない。
 
 ### 未確認事項
 
@@ -676,6 +755,7 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 - Category Repository Working Draftの内容を推測によって作成してはならない。
 - Category関連HOLDが未特定であることを理由として、CategoryをPASSとして扱ってはならない。
 - Recovery Logへの記録だけを理由として、Active HOLD / Pendingへ正式登録済みとして扱ってはならない。
+- `HOLD-CLASS-01`の解消を理由として、Category自体の未解決事項をRESOLVEDとして扱ってはならない。
 
 ### Current Classification Status
 
@@ -691,10 +771,9 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 
 ## Active HOLD / Pending
 
-- `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
 - `HOLD-TAGS-01` — Tags Controlled Values / 有効Tag判定
 
-**Active HOLD / Pending Count: 2**
+**Active HOLD / Pending Count: 1**
 
 ## Resolution Review
 
@@ -706,8 +785,9 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 
 - `HOLD-STATUS-01` — Status Meaning / Data Type / Controlled Values / Nullability
 - `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
+- `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
 
-**RESOLVED Archive Count: 2**
+**RESOLVED Archive Count: 3**
 
 ## Recovery Log
 
@@ -721,13 +801,17 @@ Category Repository Working Draftまたは既存の正式HOLD記録を確認で�
 
 本台帳v1.0は、現時点で確認できたHOLD記録および正式Source of Truthに基づいて構成する。
 
-`HOLD-CLASS-01`および`HOLD-TAGS-01`は、現在も未解決であることを確認したActive HOLD / Pendingとして保持する。
+`HOLD-TAGS-01`は、現在も未解決であることを確認したActive HOLD / Pendingとして保持する。
 
 `HOLD-STATUS-01`は、必要な仕様確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 
 `HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 
+`HOLD-CLASS-01`は、Class Controlled Values、Controlled ValuesのSingle Source of Truth、Categoryとの独立関係およびCategoryによるClass Allowed Value制約なしの正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 Category関連HOLDについては、未解決事項の存在のみを確認済みとし、正式IDまたは正式HOLD Recordを確認できていないためRecovery Logへ保持する。
+
+`HOLD-CLASS-01`の解消はCategory自体の未解決事項を解消するものではない。
 
 Category関連HOLDについて、未確認のHOLD IDまたはHOLD内容を推測によって正式登録しない。
 
@@ -758,14 +842,15 @@ ProjectORIGIN HOLD管理台帳の正式初版。
 
 以下の記録を統合した。
 
-- `HOLD-CLASS-01`をActive HOLD / Pendingとして登録。
-- `HOLD-TAGS-01`をActive HOLD / Pendingとして登録。
+- `HOLD-TAGS-01`をActive HOLD / Pendingとして保持。
 - Resolution Reviewは現在登録なしとして保持。
 - `HOLD-STATUS-01`をRESOLVED Archiveへ保持。
-- `HOLD-CLASS-02`について、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認し、Active HOLD / PendingからRESOLVED Archiveへ移行。
+- `HOLD-CLASS-02`をRESOLVED Archiveへ保持。
+- `HOLD-CLASS-01`について、Class Controlled Values、Controlled ValuesのSingle Source of Truth、Categoryとの独立関係およびCategoryによるClass Allowed Value制約なしの正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認し、Active HOLD / PendingからRESOLVED Archiveへ移行。
 - Category関連HOLDをRecovery Logへ保持し、正式IDまたは正式Record確認前の推測登録を禁止。
+- `HOLD-CLASS-01`の解消によってCategory自体の未解決事項を解消済みとして扱わない。
 - HOLD解消後も履歴を保持する構造を維持。
 
-`HOLD-CLASS-02`解消反映後の台帳整合性を確認し、新規REVISION 0、新規HOLD 0、BLOCKER 0でPASS。
+`HOLD-CLASS-01`解消反映後の台帳整合性を確認し、新規REVISION 0、新規HOLD 0、BLOCKER 0でPASS。
 
 本Versionを `ProjectORIGIN HOLD管理台帳 v1.0` の正式管理状態として維持する。
