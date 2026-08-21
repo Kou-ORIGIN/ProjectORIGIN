@@ -748,68 +748,127 @@ BLOCKER：0
 
 # 7. Recovery Log
 
-## Category関連HOLD
+## Category Repository Working Draft / Category HOLD Record Recovery
 
 ### Recovery Status
 
-確認継続中。
+CLOSED — HISTORICAL RECORD NOT RECOVERED
 
-### 確認済み事項
+### 対象
 
-Database Schema Chapter 6により、Categoryに未解決HOLDが存在することは確認済み。
+過去のCategory Repository Working Draft、および同Working Draftで管理されていた可能性のあるCategory関連HOLD ID / HOLD Record。
 
-CategoryのField Definitionは、監査済みのCategory Repository Working Draftを正式な作業基準とする。
+### 発見経緯
 
-未解決HOLDが存在する事項について、暫定値または推測値を正式仕様として採用しない。
+Categoryに関する過去の作業記録から、Category Repository Working Draftが存在していた可能性を確認した。
 
-Classについては、Categoryとは独立したClassification Fieldとして正式確定している。
+一方、Recovery開始時点で、以下の正式記録を現存するSource of Truthから確認できなかった。
 
-`HOLD-CLASS-01`の解消は、Category自体の未解決事項を解消するものではない。
-
-### 未確認事項
-
-現時点で確認可能な正式Source of Truthから、以下を一意に確認できていない。
-
-- Category関連HOLDの正式ID
 - Category Repository Working Draft本体
-- 個別HOLDの正式な対象
-- 個別HOLDの発生理由
-- 個別HOLDの確認済み事項
-- 個別HOLDの未確認事項
-- 個別HOLDの依存関係
-- 個別HOLDの禁止事項
-- 個別HOLDの解消条件
-- 個別HOLDの解消根拠
-- 個別HOLDの反映先
-- 個別HOLDの最終監査結果
+- Category関連HOLDの正式ID
+- Category関連HOLDの正式Record
+- 当時の具体的な未確認事項
+- 当時の解消条件
+- 当時の解消根拠
+- 当時の反映先
+- 当時の最終監査結果
 
-### Recovery方針
+そのため、過去の記憶または断片的な情報のみを根拠としてCategory関連HOLDを復元しない方針を採用した。
 
-Categoryに未解決事項が存在すること自体は記録として保持する。
+### Recovery結果
 
-一方、正式IDまたは正式HOLD Recordを確認できるまで、新しいHOLD IDを推測によって発行しない。
+Category Repository Working Draft本体は回収できなかった。
 
-Category Repository Working Draftまたは既存の正式HOLD記録を確認できた時点で、現在も未解決であるかを証拠ベースで確認する。
+Category関連HOLDの正式IDおよび正式Recordも回収できなかった。
 
-確認後、Active HOLD / Pendingへの正式登録判定を実施する。
+したがって、過去のCategory HOLD Recordを推測によってActive HOLD / PendingまたはRESOLVED Archiveへ登録していない。
 
-### 禁止事項
+旧Category HOLDの正式ID、正式内容、正式Statusその他の履歴情報は、未確認のまま保持する。
 
-- Category関連HOLDの正式IDを推測によって作成してはならない。
-- 未確認のCategory HOLD内容を正式記録として復元してはならない。
-- Category Repository Working Draftの内容を推測によって作成してはならない。
-- Category関連HOLDが未特定であることを理由として、CategoryをPASSとして扱ってはならない。
-- Recovery Logへの記録だけを理由として、Active HOLD / Pendingへ正式登録済みとして扱ってはならない。
-- `HOLD-CLASS-01`の解消を理由として、Category自体の未解決事項をRESOLVEDとして扱ってはならない。
+### 現行Category仕様との関係
 
-### Current Classification Status
+旧Category Repository Working Draftおよび旧Category HOLD RecordのRecoveryとは独立して、現存する正式Source of Truthから確認できるCategory関連仕様を再確認した。
 
-**Category: HOLD**
+その後、未確定であったCategory Field DefinitionについてHuman Decisionを実施し、現行のCategory仕様を新たに正式確定した。
 
-### Active Registration
+確定した仕様をDatabase Schema Chapter 6 / Category Field Definitionへ正式反映した。
 
-未実施。
+反映後、Category Field Definitionについて最終再監査を実施した。
 
+最終再監査の結果、以下をPASSと確認した。
+
+- Field Name
+- Purpose
+- Data Type
+- Required / Optional
+- Allowed Value
+- Default Value
+- Unset Value
+- Constraints
+- CategoryとClassの責務分離
+- Field Definition Standardへの適合
+
+Category Field Definitionの現行仕様について、新規REVISION、新規HOLDおよびBLOCKERは確認されていない。
+
+### Recoveryと現行仕様の分離
+
+旧Category Repository Working Draftが回収されていないことを理由として、現行Category Field Definitionを未確定として扱わない。
+
+旧Category HOLD Recordが回収されていないことを理由として、現行Category Field DefinitionをActive HOLD / Pendingとして扱わない。
+
+現行Category仕様の正式根拠は、推測によって復元した旧Working Draftまたは旧HOLD Recordではなく、現存Source of Truthの確認、Human Decision、Database Schema Chapter 6への正式反映、および最終再監査結果とする。
+
+旧Category HOLD IDまたは旧Category HOLD Recordを、現在のCategory仕様から逆算して生成してはならない。
+
+旧Category HOLDがRESOLVEDであったと推測してRESOLVED Archiveへ追加してはならない。
+
+旧Category HOLDがActiveであったと推測してActive HOLD / Pendingへ追加してはならない。
+
+### Current Impact
+
+旧Category Repository Working Draftおよび旧Category HOLD Recordの未回収状態は、歴史的Record Recovery上の未回収事項としてのみ扱う。
+
+現行Category Field Definitionの正式性、運用または監査Statusへの未解決依存関係として扱わない。
+
+Category Field Definitionは、現行仕様に基づく最終再監査PASS後の状態として扱う。
+
+Chapter 6全体のStatusは、Category Recoveryではなく、Chapter 6に残る他のActive HOLD / Pendingを含めて判定する。
+
+### Future Recovery
+
+将来、Category Repository Working Draft本体、正式Category HOLD IDまたは正式Category HOLD Recordを証拠ベースで発見した場合は、その内容を現行仕様へ自動反映しない。
+
+発見したRecordについて、以下を個別に確認する。
+
+1. Recordが正式なProjectORIGIN記録であること。
+2. 正式HOLD IDを確認できること。
+3. 当時の対象および未確認事項を確認できること。
+4. 現行Category Field Definitionとの関係を確認できること。
+5. 現在も未解決の仕様が存在するかを確認すること。
+6. 現行仕様との矛盾が存在する場合は、推測によって解消しないこと。
+7. 必要な場合は、Human Decisionおよび正式監査を実施すること。
+
+過去Recordを発見したことだけを理由として、現行Category仕様を変更してはならない。
+
+### Recovery Resolution
+
+Category Repository Working Draft — NOT RECOVERED
+
+Category HOLD ID — NOT RECOVERED
+
+Category HOLD Record — NOT RECOVERED
+
+Historical Record Recovery — CLOSED
+
+Current Category Specification Dependency — NONE
+
+Current Category Field Definition — PASS
+
+### Notes
+
+本Recovery LogのCLOSEDは、失われたCategory Repository Working Draftまたは旧Category HOLD Recordを復元できたことを意味しない。
+
+本Recovery LogのCLOSEDは、推測によるRecoveryを継続せず、旧Recordの未回収状態を歴史的事実として保持した上で、現行Category仕様が独立した正式手続によって確定されたため、旧Record Recoveryを現行仕様の未解決依存関係として扱わないことを意味する。
 ---
 
 # 8. Current Ledger State
