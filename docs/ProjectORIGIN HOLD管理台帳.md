@@ -74,7 +74,7 @@ HOLD管理では、以下を原則とする。
 
 # 4. Active HOLD / Pending
 
-## HOLD-TAGS-01 — Tags Controlled Values / 有効Tag判定
+## HOLD-TAGS-01 — Tags Controlled Values / 正式Tag一覧
 
 ### Status
 
@@ -86,89 +86,134 @@ Database Schema Chapter 6 / Tags Field Definition
 
 ### 対象
 
-`tags`のAllowed Value、正式Tag Controlled Values、「有効なタグ」の判定条件、および代表タグ判定に直接関係する仕様。
+`tags`に保持できる具体的な正式Tag Controlled Values一覧。
 
 ### 発生理由
 
-現行Database Schemaでは、Tagsを順序付き一覧として管理し、代表タグを先頭に登録された有効なタグから取得することは確認できる。
+`tags`はProjectORIGINの正式なClassification Fieldとして確認されている。
 
-一方で、正式Tag Controlled Valuesおよび「有効なタグ」の具体的な判定条件を一意に決定できる正式仕様を確認できていない。
+Human DecisionおよびDatabase Schema Chapter 6 / Tags Field Definitionへの正式反映により、Tagsの基本責務、Data Type、Required / Optional、Tag Controlled ValuesのSingle Source of Truth、「有効なTag」の判定条件、代表タグ判定、Default Value、Unset Value、重複Tagの扱い、および主要Constraintsは確定した。
 
-また、重複TagをSchema上禁止するかについても、正式仕様を確認できていない。
+一方、`tags`に保持できる具体的な正式Tag Controlled Values一覧については、現時点で一意に確定できていない。
 
-これらを推測によって確定すると、正式Source of Truthに存在しないTag値またはTag判定規則を新たに作成することになるため、HOLDとして保持する。
+また、既存の正式事件データから初期Tag Controlled Valuesを抽出できる十分な正式データ母集団も、現時点では確認できていない。
+
+具体的な正式Tag Controlled Values一覧を推測によって確定すると、正式Source of Truthに存在しないTag値を新たに作成することになるため、本HOLDを維持する。
 
 ### 確認済み事項
 
 - `tags`はProjectORIGINの正式なClassification Fieldである。
+- `tags`は、Category、Classその他の正式Classification Fieldだけでは表現しきれない事件の特徴について、検索、絞り込みおよび事件横断での関連付けに使用する補助的なClassification情報を保持する。
+- Tagsは既存の正式Fieldの責務を代替するために使用しない。
+- Category、Class、Status、Risk Level、Date、Location、Countryその他の専用Fieldで正式に管理できる情報を、同一の意味を持つTagとして重複管理しない。
+- Data Typeは`array<string>`とする。
+- `tags`フィールド自体は、正式な事件データでは必須とする。
+- 正式Tagが設定されていない場合も、`tags`フィールド自体を保持する。
 - Tagsは順序付き一覧として管理する。
-- 代表タグは、先頭に登録された有効なタグから取得する。
+- `tags`に保持できる値は、正式なTag Controlled Valuesとして登録された値のみとする。
+- Tag Controlled ValuesのSingle Source of Truthは、Database Schema Chapter 6 / Tags Field Definition / Allowed Valueとする。
+- Tag Controlled Valuesを別の正式管理元へ重複定義しない。
+- Tag Controlled Valuesは、将来の正式な判断によって拡張可能とする。
+- 未承認のTag値を正式Tagとして使用しない。
+- AI、Database層、Application層その他の処理が、新しいTag値を自動的に正式Controlled Valueへ追加しない。
+- 「有効なTag」とは、Tags Field DefinitionのAllowed Valueに正式なTag Controlled Valueとして登録されている値を指す。
+- 正式Allowed Valueと一致しない値を、有効なTagとして扱わない。
+- 表記揺れ、大文字・小文字の違い、略称、翻訳名、類似表現その他を理由として、未登録値を有効なTagとして扱わない。
+- AIその他の処理が、意味的に類似していることのみを理由として未登録値を有効なTagへ変換または補完しない。
+- 代表タグは、`tags`を先頭から順に確認し、最初に登録されている有効なTagから取得する。
 - 代表タグを別フィールドへ重複保存しない。
 - Tagsが空の場合、代表タグは未設定として扱う。
-- Field Name `tags`はPASSしている。
-- PurposeはPASSしている。
-- Data Type `array<string>`はPASSしている。
-- `tags`フィールド自体を保持するRequired / Optional設計はPASSしている。
+- 有効なTagが存在しない場合も、代表タグは未設定として扱う。
+- Tagの登録順序は保持する。
+- 同一Tagを同一`tags`配列内へ複数回保持しない。
+- Tagの重複によって代表Tagの優先度、重要度その他の意味を表さない。
+- Default Valueは設定しない。
+- 空配列、特定のTag値その他を暗黙のDefault Valueとして自動設定しない。
+- 正式なUnset Valueは`[]`とする。
+- `tags: []`は、正式なTagが1件も設定されていない状態を表す。
+- `null`、空文字または`tags`フィールド自体の欠落を正式なUnset Valueとして使用しない。
+- 1事件だけにしか意味を持たない固有表現は、原則として正式Tagへ昇格させない。
+- 複数事件へ適用可能であることをTag候補の原則とする。
+- 固定件数のみを理由としてTag昇格条件を定義しない。
+- Tagの意味または用途が既存の正式Tagと実質的に重複する場合、別Tagとして追加しない。
+- 新しいTag Controlled Valueの追加は、正式な判断を経てAllowed Valueへ反映する。
 
 ### 未確認事項
 
-- 正式Tag Controlled Values
-- Tag Controlled Valuesの正式管理元
-- 「有効なタグ」の正式判定条件
-- 重複TagをSchema上禁止するか
+- 具体的な正式Tag Controlled Values一覧
 
 ### 依存関係
 
 Database Schema Chapter 6 / Tags Field Definitionに依存する。
 
-正式Tag Controlled Valuesおよび「有効なタグ」を一意に判定できる正式仕様または正式管理元の確認または正式確定に依存する。
+本HOLDの解消は、具体的な正式Tag Controlled Values一覧を一意に決定できる正式な判断に依存する。
 
-代表タグ判定は、「有効なタグ」の正式判定条件に依存する。
+既存の正式事件データから初期Tag Controlled Valuesを抽出する場合は、その判断に使用できる十分な正式データ母集団が確認できることに依存する。
 
-重複Tagの扱いをConstraintsとして正式化する場合は、重複TagをSchema上禁止するかどうかの正式確定に依存する。
+具体的な正式Tag Controlled Values一覧を確定した場合、その一覧をDatabase Schema Chapter 6 / Tags Field Definition / Allowed Valueへ正式反映することに依存する。
 
-他のClassification Fieldに存在するControlled Valuesまたは判定規則を、本HOLDの解消根拠として自動的に転用しない。
+代表タグ判定は、Allowed Valueへ正式登録されたTagを「有効なTag」として使用する。
+
+他のClassification Field、専用Field、過去の記憶、一般的な分類体系または未承認の既存データからTag Controlled Valuesを自動的に導出しない。
 
 ### 禁止事項
 
 - AIが正式に定義されていないTag値を独自生成してはならない。
-- 未確認のTag一覧を正式Controlled Valuesとして採用してはならない。
-- 「有効なタグ」の条件を推測によって定義してはならない。
-- 正式根拠なく重複Tagの許可または禁止を確定してはならない。
-- 他のClassification FieldのControlled Valuesまたは判定規則を、正式な根拠なくTagsへ転用してはならない。
-- HOLD解消前にTags全体をPASSとして扱ってはならない。
+- 未確認または未承認のTag一覧を正式Controlled Valuesとして採用してはならない。
+- 具体的な正式Tag Controlled Values一覧を推測によって補完してはならない。
+- 未登録Tagを正式な有効Tagとして扱ってはならない。
+- 表記揺れ、大文字・小文字の違い、略称、翻訳名、類似表現その他を理由として、未登録値を正式Tagとして扱ってはならない。
+- AI、Database層、Application層その他の処理が、新しいTag値を自動的に正式Controlled Valueへ追加してはならない。
+- 他のClassification Fieldまたは専用Fieldの値を、正式な判断なくTag Controlled Valuesへ転用してはならない。
+- Category、Class、Status、Risk Level、Date、Location、Countryその他の専用Fieldで正式に管理できる情報を、同一の意味を持つTagとして重複管理してはならない。
+- 同一Tagを同一`tags`配列内へ複数回保持してはならない。
+- Tagの重複によって優先度、重要度その他の意味を表してはならない。
+- `null`、空文字またはフィールド欠落をTagsの正式なUnset Valueとして使用してはならない。
+- HOLD解消前に、具体的な正式Tag Controlled Values一覧が確定済みであるものとして扱ってはならない。
+- HOLD解消前にTags Field Definition全体をPASSとして扱ってはならない。
 
 ### 次のAction
 
-Tags Field Definitionのうち、HOLD-TAGS-01に依存しないDefault Value、Unset Value、Constraintsを継続して監査する。
+具体的な正式Tag Controlled Values一覧を確定するための正式な判断を行う。
 
-その後、Tags Field Definition全体を再監査する。
+既存の正式事件データから初期Tag Controlled Valuesを抽出する方法を採用する場合は、その判断に使用できる十分な正式データ母集団が存在することを確認する。
 
-正式Tag Controlled Values、「有効なタグ」の正式判定条件、および必要な重複Tag規則を一意に決定できる正式根拠が確認または正式確定された場合、本HOLDの解消判定を実施する。
+十分な正式データ母集団を確認できない場合は、未確認データまたはAIによる推測からTag Controlled Valuesを生成せず、必要な正式判断を行う。
+
+具体的な正式Tag Controlled Values一覧が確定した後、Database Schema Chapter 6 / Tags Field Definition / Allowed Valueへ正式反映する。
+
+反映後、Tags Field Definition全体を再監査する。
 
 ### 解消条件
 
 以下を満たすこと。
 
-1. 正式Tag Controlled Valuesを一意に決定できる正式仕様を確認または正式確定する。
-2. Tag Controlled Valuesの正式管理元を確認または正式確定する。
-3. 「有効なタグ」を一意に判定できる正式条件を確認または正式確定する。
-4. 重複TagをSchema上禁止するかどうかを正式に確定する。
-5. 必要な仕様をDatabase Schema Chapter 6 / Tags Field Definitionへ反映する。
-6. 代表タグ判定との整合性を確認する。
+1. 具体的な正式Tag Controlled Values一覧を正式に確定する。
+2. 確定したTag Controlled Values一覧が、Tagsの正式なPurposeおよびConstraintsと整合していることを確認する。
+3. Category、Class、Status、Risk Level、Date、Location、Countryその他の専用Fieldとの責務重複がないことを確認する。
+4. 確定したTag Controlled Values一覧をDatabase Schema Chapter 6 / Tags Field Definition / Allowed Valueへ正式反映する。
+5. 「有効なTag」の判定条件および代表タグ判定との整合性を確認する。
+6. 重複Tag禁止を含む既存Constraintsとの整合性を確認する。
 7. Tags Field Definition全体を再監査し、本HOLDに関する矛盾または未解決の依存関係が残っていないことを確認する。
+8. 最終再監査がPASSする。
 
 ### 解消根拠
 
 未確定。
 
+具体的な正式Tag Controlled Values一覧の正式確定を必要とする。
+
 ### 反映先
 
-Database Schema Chapter 6 / Tags Field Definition
+Database Schema Chapter 6 / Tags Field Definition / Allowed Value
+
+必要に応じて、同Field Definition内の関連記述との整合性を確認する。
 
 ### 最終監査結果
 
 未実施。
+
+具体的な正式Tag Controlled Values一覧の確定および正式反映後に、Tags Field Definition全体の最終再監査を実施する。
 
 ---
 
