@@ -1380,11 +1380,10 @@ Schemaは、長期運用において定期的に適合性を確認しなけれ�
 
 これらは、それぞれを所管する関連文書または実装側で定義する。
 
-```markdown id="wz7k3m"
 # Version History
 
 | Version | Date | Changes |
 |----------|------------|---------|
 | v1.2 | 2026-08-03 | Codex最終監査のBLOCKERを反映。Database Rule v2.2との整合性を修正し、`incidentData`を正式なRoot構造として扱う記述を削除。`incidentData`は概念例における説明用の記述であることを明確化した。正式化される対象を事件データ内の正式フィールドおよびネスト関係に限定し、新しいSchema、Root構造、正式フィールドおよび運用ルールは追加していない。 |
 | v1.1 | 2026-08-01 | Database Rule v2.2をSingle Source of Truthとして採用し、事件データの正式なSchemaを再構成。`incidentData`をRootとする構造、`englishName`、`riskLevel`、`caseCardImage`および`caseCardImage.path`の正式Schema定義を追加。Field Name、Purpose、Data Type、Required / Optional、Allowed Value、Default Value、Unset Value、Constraintsを正式定義として整理し、Field Definition Standardとの整合性を確立。Content and Media Referencesの責務を維持したままCase Card ImageのSchema定義を追加し、Data Validation、Data Quality、Existing Data Migration、Schema Version管理およびLong-Term Schema Operationを含む正式版として確定。 |
-| v1.0 | 2026-08-01 | Database Schema v1.0を初版として策定。Database Rule v2.2を基準とし、正式フィールド、ネスト構造、値型、必須・任意、許可値、未設定値、データ間の関連付け、データ品質、検証基準、既存データ移行、Schema Version管理および長期運用基準を定義する正式設計書として確定。 |
+| v1.0 | 2026-08-01 | Database Schema v1.0を初版として策定。Database Rule v2.2を基準とし、正式フィールド、ネスト構造、値型、必須・任意、許可値、未設定値、データ間の関連付け、データ品質、検証基準、既存データ移行、Schema Version管理および長期運用基準を定義する正式設計書として確定。|

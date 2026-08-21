@@ -2902,7 +2902,7 @@ ProjectORIGINでは、
 
 ---
 
-## 7.8 Workflow Status
+Repository / Database Rule
 
 RepositoryではWorkflow状態を管理する。
 
