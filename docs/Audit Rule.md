@@ -1707,6 +1707,57 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 
 ---
 
+# Audit Rule v1.3
+
+**Release Date**  
+2026-08-22
+
+## Overview
+
+Audit Rule v1.2を基準として、Compatibility情報を現在の正式文書構成へ更新した。
+
+本Versionでは、ProjectORIGIN全体の監査基準および運用ルールは変更せず、Master Case File TemplateとのVersion整合性のみを修正した。
+
+---
+
+## Changes
+
+### Compatibility Update
+
+Compatibilityに記載するMaster Case File Templateの対応Versionを、現在の正式基準に合わせて更新した。
+
+- Master Case File Template **v1.0 → v1.0.0**
+
+監査基準、運用方針および各Chapterの本文には変更を加えていない。
+
+---
+
+# Audit Rule v1.2
+
+**Release Date**  
+2026-08-22
+
+## Overview
+
+Audit Rule v1.1を基準として、Compatibility情報を現在の正式文書構成へ更新した。
+
+本Versionでは、ProjectORIGIN全体の監査基準および運用ルールは変更せず、Database RuleおよびImage RuleとのVersion整合性のみを修正した。
+
+---
+
+## Changes
+
+### Compatibility Update
+
+Compatibilityに記載するDatabase RuleおよびImage Ruleの対応Versionを、現在の正式基準に合わせて更新した。
+
+- Database Rule **v2.2 → v3.0**
+- Image Rule **v1.0 → v1.1**
+
+監査基準、運用方針および各Chapterの本文には変更を加えていない。
+
+---
+
 # Audit Rule v1.1
 
 **Release Date**  
@@ -1830,10 +1881,10 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 | AGENTS.md | v1.0 |
 | Research Bible | v1.0 |
 | Research Template | v1.0 |
-| Master Case File Template | v1.0 |
+| Master Case File Template | v1.0.0 |
 | Case File Template | v1.0 |
-| Database Rule | **v2.2** |
-| Image Rule | v1.0 |
+| Database Rule | **v3.0** |
+| Image Rule | v1.1 |
 | Operating Manual | v1.0 |
 
 ---
@@ -1850,4 +1901,4 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 ## Status
 
-**Audit Rule v1.1** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
+**Audit Rule v1.3** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
