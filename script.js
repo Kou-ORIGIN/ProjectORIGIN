@@ -1428,8 +1428,11 @@ function createIncidentCard(incident, options = {}) {
 
     const incidentId = getIncidentId(incident);
     const incidentName = getIncidentCaseName(incident);
+    const incidentEnglishName = getIncidentEnglishName(incident);
     const incidentCategory = getIncidentCategory(incident);
+    const incidentClass = getIncidentClass(incident);
     const incidentRiskLevel = getIncidentRiskLevel(incident);
+    const incidentTags = getIncidentTags(incident);
 
     const card = document.createElement('article');
     card.className = settings.cardClassName
@@ -1437,9 +1440,7 @@ function createIncidentCard(incident, options = {}) {
         : 'incident-card';
     card.setAttribute('data-id', incidentId);
 
-    if (settings.cardClassName.includes('incident-file-card')) {
-        applyIncidentCaseCardImage(card, incident);
-    }
+    applyIncidentCaseCardImage(card, incident);
 
     if (settings.enableCardModalOpen) {
         card.setAttribute('role', 'button');
@@ -1447,19 +1448,32 @@ function createIncidentCard(incident, options = {}) {
         card.setAttribute('aria-label', `${incidentName}の詳細を表示`);
     }
 
-    let cardContent = card;
+    const imageRegion = document.createElement('div');
+    imageRegion.className = 'incident-card-image';
+
+    const imageDescription = document.createElement('span');
+    imageDescription.className = 'incident-card-image-description';
+    imageDescription.setAttribute('role', 'img');
+
     if (card.classList.contains('has-case-card-image')) {
-        const imageRegion = document.createElement('div');
-        imageRegion.className = 'incident-card-image';
-        imageRegion.setAttribute('aria-hidden', 'true');
+        imageDescription.setAttribute('aria-label', `${incidentName}の事件画像`);
+    } else {
+        card.classList.add('has-case-card-placeholder');
+        imageDescription.setAttribute('aria-label', `${incidentName}の画像は未設定です`);
 
-        const contentRegion = document.createElement('div');
-        contentRegion.className = 'incident-card-content';
-
-        card.appendChild(imageRegion);
-        card.appendChild(contentRegion);
-        cardContent = contentRegion;
+        const placeholderLabel = document.createElement('span');
+        placeholderLabel.className = 'incident-card-image-placeholder-label';
+        placeholderLabel.textContent = 'CASE FILE / IMAGE NOT ASSIGNED';
+        imageRegion.appendChild(placeholderLabel);
     }
+
+    imageRegion.appendChild(imageDescription);
+
+    const cardContent = document.createElement('div');
+    cardContent.className = 'incident-card-content';
+
+    card.appendChild(imageRegion);
+    card.appendChild(cardContent);
 
     const favoriteButton = document.createElement('button');
     favoriteButton.type = 'button';
@@ -1471,7 +1485,7 @@ function createIncidentCard(incident, options = {}) {
         toggleIncidentFavorite(incidentId);
     });
 
-    cardContent.appendChild(favoriteButton);
+    imageRegion.appendChild(favoriteButton);
 
     const header = document.createElement('div');
     header.className = 'incident-card-header';
@@ -1480,12 +1494,12 @@ function createIncidentCard(incident, options = {}) {
     idElement.className = 'incident-id';
     idElement.textContent = formatIncidentDisplayId(incidentId);
 
+    header.appendChild(idElement);
     const statusElement = document.createElement('span');
     statusElement.className = 'incident-status';
     statusElement.textContent = `STATUS ${getIncidentStatusDisplay(incident)}`;
     statusElement.classList.toggle('is-unset', getIncidentStatus(incident) === null);
 
-    header.appendChild(idElement);
     header.appendChild(statusElement);
     cardContent.appendChild(header);
 
@@ -1494,9 +1508,20 @@ function createIncidentCard(incident, options = {}) {
     title.textContent = incidentName;
     cardContent.appendChild(title);
 
-    const metaFields = incidentCategory === null
-        ? []
-        : [{ label: 'CATEGORY', value: incidentCategory }];
+    if (incidentEnglishName) {
+        const englishTitle = document.createElement('p');
+        englishTitle.className = 'incident-english-name';
+        englishTitle.textContent = incidentEnglishName;
+        cardContent.appendChild(englishTitle);
+    }
+
+    const classification = document.createElement('div');
+    classification.className = 'incident-classification';
+
+    const metaFields = [
+        { label: 'CATEGORY', value: incidentCategory },
+        { label: 'CLASS', value: incidentClass }
+    ].filter((field) => field.value !== null);
 
     metaFields.forEach((field) => {
         const meta = document.createElement('div');
@@ -1512,8 +1537,27 @@ function createIncidentCard(incident, options = {}) {
 
         meta.appendChild(label);
         meta.appendChild(value);
-        cardContent.appendChild(meta);
+        classification.appendChild(meta);
     });
+
+    if (incidentTags.length > 0) {
+        const tags = document.createElement('div');
+        tags.className = 'incident-tags';
+        tags.setAttribute('aria-label', 'Case tags');
+
+        incidentTags.forEach((tag) => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'incident-tag';
+            tagElement.textContent = tag;
+            tags.appendChild(tagElement);
+        });
+
+        classification.appendChild(tags);
+    }
+
+    if (classification.childElementCount > 0) {
+        cardContent.appendChild(classification);
+    }
 
     const danger = document.createElement('div');
     danger.className = 'incident-danger';
@@ -1524,6 +1568,7 @@ function createIncidentCard(incident, options = {}) {
 
     const gauge = document.createElement('div');
     gauge.className = 'danger-gauge';
+    gauge.setAttribute('aria-label', `Risk level ${getIncidentRiskLevelDisplay(incident)}`);
     if (incidentRiskLevel !== null) {
         gauge.classList.add(`risk-level-${incidentRiskLevel}`);
     } else {
