@@ -579,12 +579,45 @@ const incidentStatusLabelMap = {
     '確認済み': 'CONFIRMED'
 };
 
-function getIncidentStatusLabel(status) {
+function getIncidentId(incident) {
+    return incident?.id ?? null;
+}
+
+function getIncidentCaseName(incident) {
+    return incident?.name ?? null;
+}
+
+function getIncidentEnglishName(incident) {
+    return incident?.englishName ?? null;
+}
+
+function getIncidentCategory(incident) {
+    return incident?.category ?? null;
+}
+
+function getIncidentClass(incident) {
+    return incident?.class ?? null;
+}
+
+function getIncidentStatus(incident) {
+    return incident?.status ?? null;
+}
+
+function getIncidentStatusDisplay(incident) {
+    const status = getIncidentStatus(incident);
     if (incidentStatusLabelMap[status]) {
         return incidentStatusLabelMap[status];
     }
 
     return String(status).trim().toUpperCase() || 'UNKNOWN';
+}
+
+function getIncidentRiskLevel(incident) {
+    return incident?.riskLevel ?? null;
+}
+
+function getIncidentTags(incident) {
+    return Array.isArray(incident?.tags) ? incident.tags : [];
 }
 
 function formatIncidentDisplayId(incidentId) {
@@ -609,6 +642,20 @@ function getIncidentCaseCardImagePath(incident) {
 
     const path = caseCardImage.path.trim();
     return path || null;
+}
+
+function getIncidentSearchText(incident) {
+    return [
+        getIncidentId(incident),
+        getIncidentCaseName(incident),
+        incident.region,
+        incident.era,
+        getIncidentCategory(incident),
+        getIncidentStatus(incident),
+        ...incident.facts,
+        ...incident.theories,
+        ...incident.legends
+    ].join(' ').toLowerCase();
 }
 
 function applyIncidentCaseCardImage(card, incident) {
@@ -1005,7 +1052,7 @@ function populateIncidentCategoryOptions() {
         return;
     }
 
-    const categories = [...new Set(incidentData.map((incident) => incident.category))];
+    const categories = [...new Set(incidentData.map((incident) => getIncidentCategory(incident)))];
     const currentValue = incidentCategoryFilter.value || 'all';
 
     incidentCategoryFilter.innerHTML = '<option value="all">すべて</option>';
@@ -1029,8 +1076,8 @@ function getFilteredIncidents() {
     const minimumDanger = selectedDanger === 'all' ? null : Number(selectedDanger);
 
     return incidentData.filter((incident) => {
-        const matchesCategory = selectedCategory === 'all' || incident.category === selectedCategory;
-        const matchesDanger = minimumDanger === null || incident.riskLevel >= minimumDanger;
+        const matchesCategory = selectedCategory === 'all' || getIncidentCategory(incident) === selectedCategory;
+        const matchesDanger = minimumDanger === null || getIncidentRiskLevel(incident) >= minimumDanger;
 
         if (!matchesCategory || !matchesDanger) {
             return false;
@@ -1040,19 +1087,7 @@ function getFilteredIncidents() {
             return true;
         }
 
-        const searchableText = [
-            incident.id,
-            incident.name,
-            incident.region,
-            incident.era,
-            incident.category,
-            incident.status,
-            ...incident.facts,
-            ...incident.theories,
-            ...incident.legends
-        ].join(' ').toLowerCase();
-
-        return searchableText.includes(searchText);
+        return getIncidentSearchText(incident).includes(searchText);
     });
 }
 
@@ -1104,7 +1139,7 @@ function getFavoritesStorageKey() {
 }
 
 function loadFavoriteIncidentIds() {
-    const validIncidentIds = new Set(incidentData.map((incident) => incident.id));
+    const validIncidentIds = new Set(incidentData.map((incident) => getIncidentId(incident)));
     const storedValue = localStorage.getItem(getFavoritesStorageKey());
 
     if (!storedValue) {
@@ -1170,7 +1205,7 @@ function toggleIncidentFavorite(incidentId) {
 }
 
 function getIncidentById(incidentId) {
-    return incidentData.find((incident) => incident.id === incidentId) || null;
+    return incidentData.find((incident) => getIncidentId(incident) === incidentId) || null;
 }
 
 function createOriginMapSvg() {
@@ -1248,7 +1283,9 @@ function createOriginMapMarkers() {
     }
 
     incidentData.forEach((incident) => {
-        const position = originMapMarkerPositions[incident.id];
+        const incidentId = getIncidentId(incident);
+        const incidentName = getIncidentCaseName(incident);
+        const position = originMapMarkerPositions[incidentId];
         if (!position) {
             return;
         }
@@ -1256,24 +1293,24 @@ function createOriginMapMarkers() {
         const marker = document.createElement('button');
         marker.type = 'button';
         marker.className = 'origin-map-marker';
-        marker.setAttribute('data-id', incident.id);
-        marker.setAttribute('aria-label', `${incident.name}の地点`);
+        marker.setAttribute('data-id', incidentId);
+        marker.setAttribute('aria-label', `${incidentName}の地点`);
         marker.setAttribute('draggable', 'false');
         marker.style.left = `${position.left}%`;
         marker.style.top = `${position.top}%`;
         // Keep each marker pulse out of phase for a natural scanning feel.
-        const pulseSeed = incident.id.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        const pulseSeed = incidentId.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
         marker.style.setProperty('--pulse-duration', `${3.6 + (pulseSeed % 7) * 0.2}s`);
         marker.style.setProperty('--pulse-delay', `${-(pulseSeed % 11) * 0.32}s`);
 
         marker.addEventListener('click', () => {
-            handleOriginMapMarkerSelect(incident.id);
+            handleOriginMapMarkerSelect(incidentId);
         });
 
         marker.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
-                handleOriginMapMarkerSelect(incident.id);
+                handleOriginMapMarkerSelect(incidentId);
             }
         });
 
@@ -1293,7 +1330,7 @@ function initializeOriginMap() {
     }
 
     if (!activeOriginMapIncidentId) {
-        activeOriginMapIncidentId = incidentData[0]?.id || null;
+        activeOriginMapIncidentId = getIncidentId(incidentData[0]);
     }
 
     handleOriginMapMarkerSelect(activeOriginMapIncidentId);
@@ -1341,11 +1378,16 @@ function createIncidentCard(incident, options = {}) {
         ...options
     };
 
+    const incidentId = getIncidentId(incident);
+    const incidentName = getIncidentCaseName(incident);
+    const incidentCategory = getIncidentCategory(incident);
+    const incidentRiskLevel = getIncidentRiskLevel(incident);
+
     const card = document.createElement('article');
     card.className = settings.cardClassName
         ? `incident-card ${settings.cardClassName}`
         : 'incident-card';
-    card.setAttribute('data-id', incident.id);
+    card.setAttribute('data-id', incidentId);
 
     if (settings.cardClassName.includes('incident-file-card')) {
         applyIncidentCaseCardImage(card, incident);
@@ -1354,7 +1396,7 @@ function createIncidentCard(incident, options = {}) {
     if (settings.enableCardModalOpen) {
         card.setAttribute('role', 'button');
         card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `${incident.name}の詳細を表示`);
+        card.setAttribute('aria-label', `${incidentName}の詳細を表示`);
     }
 
     let cardContent = card;
@@ -1374,11 +1416,11 @@ function createIncidentCard(incident, options = {}) {
     const favoriteButton = document.createElement('button');
     favoriteButton.type = 'button';
     favoriteButton.className = 'incident-favorite-btn';
-    updateFavoriteButtonState(favoriteButton, incident.name, isIncidentFavorite(incident.id));
+    updateFavoriteButtonState(favoriteButton, incidentName, isIncidentFavorite(incidentId));
 
     favoriteButton.addEventListener('click', (event) => {
         event.stopPropagation();
-        toggleIncidentFavorite(incident.id);
+        toggleIncidentFavorite(incidentId);
     });
 
     cardContent.appendChild(favoriteButton);
@@ -1388,11 +1430,11 @@ function createIncidentCard(incident, options = {}) {
 
     const idElement = document.createElement('span');
     idElement.className = 'incident-id';
-    idElement.textContent = formatIncidentDisplayId(incident.id);
+    idElement.textContent = formatIncidentDisplayId(incidentId);
 
     const statusElement = document.createElement('span');
     statusElement.className = 'incident-status';
-    statusElement.textContent = `STATUS ${getIncidentStatusLabel(incident.status)}`;
+    statusElement.textContent = `STATUS ${getIncidentStatusDisplay(incident)}`;
 
     header.appendChild(idElement);
     header.appendChild(statusElement);
@@ -1400,11 +1442,11 @@ function createIncidentCard(incident, options = {}) {
 
     const title = document.createElement('h4');
     title.className = 'incident-name';
-    title.textContent = incident.name;
+    title.textContent = incidentName;
     cardContent.appendChild(title);
 
     const metaFields = [
-        { label: 'CLASS', value: incident.category }
+        { label: 'CLASS', value: incidentCategory }
     ];
 
     metaFields.forEach((field) => {
@@ -1429,15 +1471,15 @@ function createIncidentCard(incident, options = {}) {
 
     const dangerLabel = document.createElement('span');
     dangerLabel.className = 'incident-danger-label';
-    dangerLabel.textContent = `RISK LEVEL : ${incident.riskLevel}`;
+    dangerLabel.textContent = `RISK LEVEL : ${incidentRiskLevel}`;
 
     const gauge = document.createElement('div');
-    gauge.className = `danger-gauge risk-level-${incident.riskLevel}`;
+    gauge.className = `danger-gauge risk-level-${incidentRiskLevel}`;
 
     for (let index = 0; index < 5; index += 1) {
         const segment = document.createElement('span');
         segment.className = 'danger-gauge-segment';
-        if (index < incident.riskLevel) {
+        if (index < incidentRiskLevel) {
             segment.classList.add('active');
         }
         gauge.appendChild(segment);
@@ -1495,7 +1537,7 @@ function renderFavoriteCards() {
 
     favoritesList.innerHTML = '';
 
-    const favoriteIncidents = incidentData.filter((incident) => favoriteIncidentIds.has(incident.id));
+    const favoriteIncidents = incidentData.filter((incident) => favoriteIncidentIds.has(getIncidentId(incident)));
     if (favoritesSummary) {
         favoritesSummary.textContent = `${favoriteIncidents.length}件 / 全${incidentData.length}件の事件をお気に入り登録`;
     }
@@ -1536,7 +1578,7 @@ function fillList(container, items) {
 function resolveIncidentModalBackground(incident) {
     const modalBackground = incident?.modalBackground;
     const fallbackImage = createIncidentCardBackgroundDataUrl(
-        modalBackground?.fallbackLabel || incident?.id || 'UNRESOLVED',
+        modalBackground?.fallbackLabel || getIncidentId(incident) || 'UNRESOLVED',
         modalBackground?.fallbackColors || ['#081124', '#163043', '#050a14']
     );
 
@@ -1684,11 +1726,11 @@ function openIncidentModal(incident) {
     closeMobileNavDrawer({ restoreFocus: false });
 
     applyIncidentModalBackground(incidentModalPanel || incidentModalOverlay, incident);
-    incidentModalFile.textContent = formatIncidentDisplayId(incident.id);
+    incidentModalFile.textContent = formatIncidentDisplayId(getIncidentId(incident));
     if (incidentModalStatus) {
-        incidentModalStatus.textContent = `STATUS ${getIncidentStatusLabel(incident.status)}`;
+        incidentModalStatus.textContent = `STATUS ${getIncidentStatusDisplay(incident)}`;
     }
-    incidentModalTitle.textContent = incident.name;
+    incidentModalTitle.textContent = getIncidentCaseName(incident);
     if (incidentModalIntro) {
         incidentModalIntro.textContent = getIncidentOverview(incident);
     }
@@ -1699,12 +1741,12 @@ function openIncidentModal(incident) {
         incidentModalYear.textContent = incident.era;
     }
     if (incidentModalClass) {
-        incidentModalClass.textContent = incident.category;
+        incidentModalClass.textContent = getIncidentCategory(incident);
     }
     if (incidentModalRisk) {
-        incidentModalRisk.textContent = String(incident.riskLevel);
+        incidentModalRisk.textContent = String(getIncidentRiskLevel(incident));
     }
-    renderIncidentRiskGauge(incidentModalRiskGauge, incident.riskLevel);
+    renderIncidentRiskGauge(incidentModalRiskGauge, getIncidentRiskLevel(incident));
     renderIncidentBodyCopy(incidentModalBodyCopy, incident);
     incidentModalOverlay.hidden = false;
     updateIncidentModalBackgroundFade(incidentModalPanel || incidentModalOverlay);
