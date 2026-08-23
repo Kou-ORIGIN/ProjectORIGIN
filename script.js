@@ -1052,7 +1052,11 @@ function populateIncidentCategoryOptions() {
         return;
     }
 
-    const categories = [...new Set(incidentData.map((incident) => getIncidentCategory(incident)))];
+    const categories = [...new Set(
+        incidentData
+            .map((incident) => getIncidentCategory(incident))
+            .filter((category) => category !== null)
+    )];
     const currentValue = incidentCategoryFilter.value || 'all';
 
     incidentCategoryFilter.innerHTML = '<option value="all">すべて</option>';
