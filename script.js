@@ -605,6 +605,10 @@ function getIncidentStatus(incident) {
 
 function getIncidentStatusDisplay(incident) {
     const status = getIncidentStatus(incident);
+    if (status === null) {
+        return '—';
+    }
+
     if (incidentStatusLabelMap[status]) {
         return incidentStatusLabelMap[status];
     }
@@ -687,6 +691,7 @@ const incidentModalIntro = document.getElementById('incidentModalIntro');
 const incidentModalRegion = document.getElementById('incidentModalRegion');
 const incidentModalYear = document.getElementById('incidentModalYear');
 const incidentModalClass = document.getElementById('incidentModalClass');
+const incidentModalCategoryRow = document.getElementById('incidentModalCategoryRow');
 const incidentModalRisk = document.getElementById('incidentModalRisk');
 const incidentModalRiskGauge = document.getElementById('incidentModalRiskGauge');
 const incidentModalBodyCopy = document.getElementById('incidentModalBodyCopy');
@@ -1064,7 +1069,9 @@ function populateIncidentCategoryOptions() {
     )];
     const currentValue = incidentCategoryFilter.value || 'all';
 
-    incidentCategoryFilter.innerHTML = '<option value="all">すべて</option>';
+    incidentCategoryFilter.innerHTML = categories.length > 0
+        ? '<option value="all">ALL CATEGORIES</option>'
+        : '<option value="all">CATEGORY — NOT ASSIGNED</option>';
 
     categories.forEach((category) => {
         const option = document.createElement('option');
@@ -1076,6 +1083,36 @@ function populateIncidentCategoryOptions() {
     const nextValue = categories.includes(incidentFilterState.category) ? incidentFilterState.category : 'all';
     incidentFilterState.category = nextValue === 'all' && currentValue !== 'all' && categories.includes(currentValue) ? currentValue : nextValue;
     incidentCategoryFilter.value = incidentFilterState.category;
+    incidentCategoryFilter.disabled = categories.length === 0;
+    incidentCategoryFilter.closest('.incident-filter-group')?.classList.toggle('is-filter-unavailable', categories.length === 0);
+}
+
+function updateIncidentRiskFilterAvailability() {
+    if (!incidentDangerFilter) {
+        return;
+    }
+
+    const hasFormalRiskLevel = incidentData.some((incident) => {
+        const riskLevel = getIncidentRiskLevel(incident);
+        return Number.isInteger(riskLevel) && riskLevel >= 1 && riskLevel <= 5;
+    });
+    incidentDangerFilter.innerHTML = hasFormalRiskLevel
+        ? `
+            <option value="all">ALL RISK LEVELS</option>
+            <option value="1">1以上</option>
+            <option value="2">2以上</option>
+            <option value="3">3以上</option>
+            <option value="4">4以上</option>
+            <option value="5">5以上</option>
+        `
+        : '<option value="all">RISK — NOT ASSIGNED</option>';
+
+    if (!hasFormalRiskLevel) {
+        incidentFilterState.danger = 'all';
+    }
+
+    incidentDangerFilter.disabled = !hasFormalRiskLevel;
+    incidentDangerFilter.closest('.incident-filter-group')?.classList.toggle('is-filter-unavailable', !hasFormalRiskLevel);
 }
 
 function getFilteredIncidents() {
@@ -1118,7 +1155,7 @@ function updateIncidentFilterSummary(filteredIncidents) {
         activeFilters.push(`危険度: ${incidentFilterState.danger}以上`);
     }
 
-    const baseSummary = `${filteredIncidents.length}件 / 全${incidentData.length}件を表示`;
+    const baseSummary = `TOTAL CASES ${incidentData.length}  /  VISIBLE CASES ${filteredIncidents.length}  /  FAVORITES ${favoriteIncidentIds.size}`;
     incidentFilterSummary.textContent = activeFilters.length > 0
         ? `${baseSummary} | ${activeFilters.join(' / ')}`
         : baseSummary;
@@ -1446,6 +1483,7 @@ function createIncidentCard(incident, options = {}) {
     const statusElement = document.createElement('span');
     statusElement.className = 'incident-status';
     statusElement.textContent = `STATUS ${getIncidentStatusDisplay(incident)}`;
+    statusElement.classList.toggle('is-unset', getIncidentStatus(incident) === null);
 
     header.appendChild(idElement);
     header.appendChild(statusElement);
@@ -1456,9 +1494,9 @@ function createIncidentCard(incident, options = {}) {
     title.textContent = incidentName;
     cardContent.appendChild(title);
 
-    const metaFields = [
-        { label: 'CATEGORY', value: incidentCategory }
-    ];
+    const metaFields = incidentCategory === null
+        ? []
+        : [{ label: 'CATEGORY', value: incidentCategory }];
 
     metaFields.forEach((field) => {
         const meta = document.createElement('div');
@@ -1488,6 +1526,8 @@ function createIncidentCard(incident, options = {}) {
     gauge.className = 'danger-gauge';
     if (incidentRiskLevel !== null) {
         gauge.classList.add(`risk-level-${incidentRiskLevel}`);
+    } else {
+        gauge.classList.add('is-unset');
     }
 
     for (let index = 0; index < 5; index += 1) {
@@ -1710,6 +1750,8 @@ function renderIncidentRiskGauge(container, dangerLevel) {
     container.className = 'danger-gauge incident-modal-risk-gauge';
     if (dangerLevel !== null) {
         container.classList.add(`risk-level-${dangerLevel}`);
+    } else {
+        container.classList.add('is-unset');
     }
 
     const fragment = document.createDocumentFragment();
@@ -1746,6 +1788,7 @@ function openIncidentModal(incident) {
     incidentModalFile.textContent = formatIncidentDisplayId(getIncidentId(incident));
     if (incidentModalStatus) {
         incidentModalStatus.textContent = `STATUS ${getIncidentStatusDisplay(incident)}`;
+        incidentModalStatus.classList.toggle('is-unset', getIncidentStatus(incident) === null);
     }
     incidentModalTitle.textContent = getIncidentCaseName(incident);
     if (incidentModalIntro) {
@@ -1758,7 +1801,11 @@ function openIncidentModal(incident) {
         incidentModalYear.textContent = incident.era;
     }
     if (incidentModalClass) {
-        incidentModalClass.textContent = getIncidentCategory(incident);
+        const incidentCategory = getIncidentCategory(incident);
+        incidentModalClass.textContent = incidentCategory ?? '';
+        if (incidentModalCategoryRow) {
+            incidentModalCategoryRow.hidden = incidentCategory === null;
+        }
     }
     if (incidentModalRisk) {
         incidentModalRisk.textContent = getIncidentRiskLevelDisplay(incident);
@@ -1823,6 +1870,7 @@ function initializeIncidentArchive() {
 
     Object.assign(incidentFilterState, getDefaultIncidentFilterState(), loadIncidentFilterState());
     populateIncidentCategoryOptions();
+    updateIncidentRiskFilterAvailability();
     syncIncidentFilterControls();
     renderIncidentCards();
 }

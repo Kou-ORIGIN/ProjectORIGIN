@@ -163,24 +163,24 @@
                     <div class="content-placeholder hologram incident-archive">
                         <div class="incident-archive-header">
                             <div>
-                                <div class="placeholder-badge">極秘事件アーカイブ</div>
-                                <h3 class="placeholder-title">調査対象ファイル一覧</h3>
+                                <div class="placeholder-badge">Case Archive / Secure Index</div>
+                                <h3 class="placeholder-title">調査事件ファイル</h3>
                             </div>
-                            <p class="placeholder-description">機密レベルの高い事件記録を一覧化し、詳細を確認できます。</p>
+                            <p class="placeholder-description">登録済み事件を検索・照合し、個別の調査記録を確認します。</p>
                         </div>
                         <div class="incident-filter-panel" aria-label="事件ファイルの検索と絞り込み">
                             <div class="incident-filter-group incident-filter-search-group">
-                                <label class="incident-filter-label" for="incidentSearchInput">検索</label>
+                                <label class="incident-filter-label" for="incidentSearchInput">Search Database</label>
                                 <input type="search" id="incidentSearchInput" class="incident-filter-input" placeholder="事件名、地域、分類、内容を検索">
                             </div>
                             <div class="incident-filter-group">
-                                <label class="incident-filter-label" for="incidentCategoryFilter">分類</label>
+                                <label class="incident-filter-label" for="incidentCategoryFilter">Category</label>
                                 <select id="incidentCategoryFilter" class="incident-filter-select">
                                     <option value="all">すべて</option>
                                 </select>
                             </div>
                             <div class="incident-filter-group">
-                                <label class="incident-filter-label" for="incidentDangerFilter">危険度</label>
+                                <label class="incident-filter-label" for="incidentDangerFilter">Risk Level</label>
                                 <select id="incidentDangerFilter" class="incident-filter-select">
                                     <option value="all">すべて</option>
                                     <option value="1">1以上</option>
@@ -190,7 +190,7 @@
                                     <option value="5">5以上</option>
                                 </select>
                             </div>
-                            <button type="button" class="incident-reset-btn" id="incidentResetBtn">リセット</button>
+                            <button type="button" class="incident-reset-btn" id="incidentResetBtn">Reset</button>
                         </div>
                         <p class="incident-filter-summary" id="incidentFilterSummary" aria-live="polite"></p>
                         <div class="incident-list" id="incidentList" aria-live="polite"></div>
@@ -288,7 +288,7 @@
                                 <span class="incident-modal-meta-label">YEAR</span>
                                 <span class="incident-modal-meta-value" id="incidentModalYear"></span>
                             </div>
-                            <div class="incident-modal-meta-row">
+                            <div class="incident-modal-meta-row" id="incidentModalCategoryRow">
                                 <span class="incident-modal-meta-label">CATEGORY</span>
                                 <span class="incident-modal-meta-value" id="incidentModalClass"></span>
                             </div>
