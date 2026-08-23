@@ -1446,7 +1446,7 @@ function createIncidentCard(incident, options = {}) {
     cardContent.appendChild(title);
 
     const metaFields = [
-        { label: 'CLASS', value: incidentCategory }
+        { label: 'CATEGORY', value: incidentCategory }
     ];
 
     metaFields.forEach((field) => {
