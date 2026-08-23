@@ -3643,26 +3643,52 @@ body.body-scroll-locked {
 }
 
 .incident-card:not(.timeline-log-card).has-case-card-placeholder .incident-card-image {
-    display: grid;
-    place-items: center;
     background:
-        linear-gradient(rgba(91, 201, 220, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(91, 201, 220, 0.035) 1px, transparent 1px),
-        radial-gradient(circle at 50% 42%, rgba(91, 201, 220, 0.06), transparent 48%),
-        #080e16;
-    background-size: 24px 24px, 24px 24px, auto, auto;
+        repeating-linear-gradient(0deg, rgba(166, 178, 184, 0.018) 0, rgba(166, 178, 184, 0.018) 1px, transparent 1px, transparent 5px),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.018), transparent 38%),
+        #090d13;
+}
+
+.incident-card:not(.timeline-log-card).has-case-card-placeholder .incident-card-image::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    z-index: 1;
+    background:
+        linear-gradient(rgba(143, 157, 164, 0.2), rgba(143, 157, 164, 0.2)) left top / 12px 1px no-repeat,
+        linear-gradient(rgba(143, 157, 164, 0.2), rgba(143, 157, 164, 0.2)) left top / 1px 12px no-repeat,
+        linear-gradient(rgba(143, 157, 164, 0.16), rgba(143, 157, 164, 0.16)) right bottom / 12px 1px no-repeat,
+        linear-gradient(rgba(143, 157, 164, 0.16), rgba(143, 157, 164, 0.16)) right bottom / 1px 12px no-repeat;
+    pointer-events: none;
+}
+
+.incident-card:not(.timeline-log-card).has-case-card-placeholder .incident-card-image::after {
+    background:
+        radial-gradient(ellipse at center, transparent 30%, rgba(2, 5, 8, 0.5) 100%),
+        linear-gradient(180deg, transparent 58%, rgba(4, 7, 11, 0.66) 100%);
 }
 
 .incident-card-image-placeholder-label {
-    position: relative;
-    z-index: 1;
-    padding: 5px 8px;
-    border: 1px solid rgba(122, 164, 181, 0.14);
-    color: rgba(130, 146, 157, 0.6);
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    z-index: 2;
+    color: rgba(143, 157, 164, 0.42);
     font-family: 'Courier New', monospace;
-    font-size: 0.56rem;
-    letter-spacing: 1.1px;
+    font-size: 0.48rem;
+    letter-spacing: 0.9px;
+    line-height: 1;
     text-transform: uppercase;
+}
+
+.origin-map-info-card.has-case-card-placeholder .incident-card-image::before {
+    inset: 8px;
+}
+
+.origin-map-info-card .incident-card-image-placeholder-label {
+    bottom: 7px;
+    left: 8px;
+    font-size: 0.44rem;
 }
 
 .incident-card:not(.timeline-log-card) .incident-card-content {

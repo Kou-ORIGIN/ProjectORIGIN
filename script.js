@@ -1463,7 +1463,7 @@ function createIncidentCard(incident, options = {}) {
 
         const placeholderLabel = document.createElement('span');
         placeholderLabel.className = 'incident-card-image-placeholder-label';
-        placeholderLabel.textContent = 'CASE FILE / IMAGE NOT ASSIGNED';
+        placeholderLabel.textContent = 'VISUAL RECORD PENDING';
         imageRegion.appendChild(placeholderLabel);
     }
 
