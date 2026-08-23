@@ -616,6 +616,11 @@ function getIncidentRiskLevel(incident) {
     return incident?.riskLevel ?? null;
 }
 
+function getIncidentRiskLevelDisplay(incident) {
+    const riskLevel = getIncidentRiskLevel(incident);
+    return riskLevel === null ? '—' : String(riskLevel);
+}
+
 function getIncidentTags(incident) {
     return Array.isArray(incident?.tags) ? incident.tags : [];
 }
@@ -1081,7 +1086,9 @@ function getFilteredIncidents() {
 
     return incidentData.filter((incident) => {
         const matchesCategory = selectedCategory === 'all' || getIncidentCategory(incident) === selectedCategory;
-        const matchesDanger = minimumDanger === null || getIncidentRiskLevel(incident) >= minimumDanger;
+        const incidentRiskLevel = getIncidentRiskLevel(incident);
+        const matchesDanger = minimumDanger === null
+            || (incidentRiskLevel !== null && incidentRiskLevel >= minimumDanger);
 
         if (!matchesCategory || !matchesDanger) {
             return false;
@@ -1475,15 +1482,18 @@ function createIncidentCard(incident, options = {}) {
 
     const dangerLabel = document.createElement('span');
     dangerLabel.className = 'incident-danger-label';
-    dangerLabel.textContent = `RISK LEVEL : ${incidentRiskLevel}`;
+    dangerLabel.textContent = `RISK LEVEL : ${getIncidentRiskLevelDisplay(incident)}`;
 
     const gauge = document.createElement('div');
-    gauge.className = `danger-gauge risk-level-${incidentRiskLevel}`;
+    gauge.className = 'danger-gauge';
+    if (incidentRiskLevel !== null) {
+        gauge.classList.add(`risk-level-${incidentRiskLevel}`);
+    }
 
     for (let index = 0; index < 5; index += 1) {
         const segment = document.createElement('span');
         segment.className = 'danger-gauge-segment';
-        if (index < incidentRiskLevel) {
+        if (incidentRiskLevel !== null && index < incidentRiskLevel) {
             segment.classList.add('active');
         }
         gauge.appendChild(segment);
@@ -1697,13 +1707,16 @@ function renderIncidentRiskGauge(container, dangerLevel) {
     }
 
     container.innerHTML = '';
-    container.className = `danger-gauge incident-modal-risk-gauge risk-level-${dangerLevel}`;
+    container.className = 'danger-gauge incident-modal-risk-gauge';
+    if (dangerLevel !== null) {
+        container.classList.add(`risk-level-${dangerLevel}`);
+    }
 
     const fragment = document.createDocumentFragment();
     for (let index = 0; index < 5; index += 1) {
         const segment = document.createElement('span');
         segment.className = 'danger-gauge-segment';
-        if (index < dangerLevel) {
+        if (dangerLevel !== null && index < dangerLevel) {
             segment.classList.add('active');
         }
         fragment.appendChild(segment);
@@ -1748,7 +1761,7 @@ function openIncidentModal(incident) {
         incidentModalClass.textContent = getIncidentCategory(incident);
     }
     if (incidentModalRisk) {
-        incidentModalRisk.textContent = String(getIncidentRiskLevel(incident));
+        incidentModalRisk.textContent = getIncidentRiskLevelDisplay(incident);
     }
     renderIncidentRiskGauge(incidentModalRiskGauge, getIncidentRiskLevel(incident));
     renderIncidentBodyCopy(incidentModalBodyCopy, incident);
