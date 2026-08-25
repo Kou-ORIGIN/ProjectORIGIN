@@ -219,13 +219,33 @@
                     <div class="chat-header">
                         <h2>タイムライン</h2>
                     </div>
-                    <div class="content-placeholder hologram timeline-system-panel">
-                        <div class="timeline-system-header">
-                            <div class="placeholder-badge">ORIGIN AI / GLOBAL ANALYSIS LOG</div>
-                            <h3 class="placeholder-title">世界未解明事件 解析タイムライン</h3>
-                            <p class="placeholder-description">ORIGIN AIが実行した解析ノードのシステムログを表示します。</p>
-                        </div>
-                        <div class="timeline-log-list" id="timelineLogList" aria-live="polite"></div>
+                    <div class="content-placeholder hologram temporal-exploration-panel">
+                        <header class="temporal-exploration-header">
+                            <div class="placeholder-badge">TEMPORAL INDEX / CASE CHRONOLOGY</div>
+                            <h3 class="placeholder-title">時間から未知を探索</h3>
+                            <p class="placeholder-description">事件を時間の流れから調査するためのTemporal Exploration Indexです。</p>
+                        </header>
+                        <section class="temporal-pending-state" aria-labelledby="temporalPendingTitle" aria-describedby="temporalPendingDescription">
+                            <div class="temporal-axis-preview" aria-hidden="true">
+                                <span class="temporal-axis-line"></span>
+                                <span class="temporal-axis-node"></span>
+                            </div>
+                            <div class="temporal-pending-copy">
+                                <p class="temporal-pending-label">CHRONOLOGY DATA PENDING</p>
+                                <h4 id="temporalPendingTitle">正式な年代記録を準備しています</h4>
+                                <p id="temporalPendingDescription">検証済みの事件年代と前後関係が利用可能になるまで、未確認の出来事や日付は表示しません。</p>
+                            </div>
+                            <dl class="temporal-foundation-record" aria-label="Temporal Index status">
+                                <div>
+                                    <dt>EXPLORATION AXIS</dt>
+                                    <dd>WHEN</dd>
+                                </div>
+                                <div>
+                                    <dt>DATA STATUS</dt>
+                                    <dd>PENDING VERIFICATION</dd>
+                                </div>
+                            </dl>
+                        </section>
                     </div>
                 </section>
 
