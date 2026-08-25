@@ -687,15 +687,21 @@ const incidentModalPanel = incidentModalOverlay ? incidentModalOverlay.querySele
 const incidentModalFile = document.getElementById('incidentModalFile');
 const incidentModalStatus = document.getElementById('incidentModalStatus');
 const incidentModalTitle = document.getElementById('incidentModalTitle');
+const incidentModalEnglishTitle = document.getElementById('incidentModalEnglishTitle');
 const incidentModalIntro = document.getElementById('incidentModalIntro');
 const incidentModalRegion = document.getElementById('incidentModalRegion');
 const incidentModalYear = document.getElementById('incidentModalYear');
+const incidentModalStatusRecord = document.getElementById('incidentModalStatusRecord');
+const incidentModalCategory = document.getElementById('incidentModalCategory');
 const incidentModalClass = document.getElementById('incidentModalClass');
 const incidentModalCategoryRow = document.getElementById('incidentModalCategoryRow');
+const incidentModalClassRow = document.getElementById('incidentModalClassRow');
 const incidentModalRisk = document.getElementById('incidentModalRisk');
 const incidentModalRiskGauge = document.getElementById('incidentModalRiskGauge');
 const incidentModalBodyCopy = document.getElementById('incidentModalBodyCopy');
 const incidentCloseBtn = document.getElementById('incidentCloseBtn');
+const incidentModalCornerCloseBtn = document.getElementById('incidentModalCornerCloseBtn');
+const incidentViewOnMapBtn = document.getElementById('incidentViewOnMapBtn');
 const incidentSearchInput = document.getElementById('incidentSearchInput');
 const incidentCategoryFilter = document.getElementById('incidentCategoryFilter');
 const incidentDangerFilter = document.getElementById('incidentDangerFilter');
@@ -711,6 +717,8 @@ const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
 
 let favoriteIncidentIds = new Set();
 let activeOriginMapIncidentId = null;
+let activeIncidentModalId = null;
+let incidentModalReturnFocus = null;
 
 const originMapMarkerPositions = {
     'FILE-001': { left: 22, top: 40 },
@@ -1762,7 +1770,7 @@ function renderIncidentBodyCopy(container, incident) {
 
     visibleSections.forEach((section) => {
         const block = document.createElement('section');
-        block.className = 'incident-modal-copy-section';
+        block.className = `incident-modal-copy-section is-${section.heading.toLowerCase()}`;
 
         const heading = document.createElement('h5');
         heading.className = 'incident-modal-copy-heading';
@@ -1836,6 +1844,11 @@ function openIncidentModal(incident) {
         incidentModalStatus.classList.toggle('is-unset', getIncidentStatus(incident) === null);
     }
     incidentModalTitle.textContent = getIncidentCaseName(incident);
+    if (incidentModalEnglishTitle) {
+        const englishName = getIncidentEnglishName(incident);
+        incidentModalEnglishTitle.textContent = englishName ?? '';
+        incidentModalEnglishTitle.hidden = !englishName;
+    }
     if (incidentModalIntro) {
         incidentModalIntro.textContent = getIncidentOverview(incident);
     }
@@ -1845,25 +1858,38 @@ function openIncidentModal(incident) {
     if (incidentModalYear) {
         incidentModalYear.textContent = incident.era;
     }
+    if (incidentModalStatusRecord) {
+        incidentModalStatusRecord.textContent = getIncidentStatusDisplay(incident);
+    }
+    const incidentCategory = getIncidentCategory(incident);
+    if (incidentModalCategory) {
+        incidentModalCategory.textContent = incidentCategory ?? '';
+    }
+    if (incidentModalCategoryRow) {
+        incidentModalCategoryRow.hidden = incidentCategory === null;
+    }
+    const incidentClass = getIncidentClass(incident);
     if (incidentModalClass) {
-        const incidentCategory = getIncidentCategory(incident);
-        incidentModalClass.textContent = incidentCategory ?? '';
-        if (incidentModalCategoryRow) {
-            incidentModalCategoryRow.hidden = incidentCategory === null;
-        }
+        incidentModalClass.textContent = incidentClass ?? '';
+    }
+    if (incidentModalClassRow) {
+        incidentModalClassRow.hidden = incidentClass === null;
     }
     if (incidentModalRisk) {
         incidentModalRisk.textContent = getIncidentRiskLevelDisplay(incident);
     }
     renderIncidentRiskGauge(incidentModalRiskGauge, getIncidentRiskLevel(incident));
     renderIncidentBodyCopy(incidentModalBodyCopy, incident);
+    activeIncidentModalId = getIncidentId(incident);
+    incidentModalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     incidentModalOverlay.hidden = false;
     updateIncidentModalBackgroundFade(incidentModalPanel || incidentModalOverlay);
     lockBackgroundScrollForModal();
     lockHeaderVisibility(true);
+    incidentModalCornerCloseBtn?.focus({ preventScroll: true });
 }
 
-function closeIncidentModal() {
+function closeIncidentModal(options = {}) {
     if (!incidentModalOverlay) {
         return;
     }
@@ -1871,10 +1897,33 @@ function closeIncidentModal() {
     incidentModalOverlay.hidden = true;
     unlockBackgroundScrollForModal();
     lockHeaderVisibility(false);
+    activeIncidentModalId = null;
+    if (options.restoreFocus !== false && incidentModalReturnFocus?.isConnected) {
+        incidentModalReturnFocus.focus({ preventScroll: true });
+    }
+    incidentModalReturnFocus = null;
 }
 
 if (incidentCloseBtn) {
     incidentCloseBtn.addEventListener('click', closeIncidentModal);
+}
+
+if (incidentModalCornerCloseBtn) {
+    incidentModalCornerCloseBtn.addEventListener('click', closeIncidentModal);
+}
+
+if (incidentViewOnMapBtn) {
+    incidentViewOnMapBtn.addEventListener('click', () => {
+        const incidentId = activeIncidentModalId;
+        if (!incidentId || !getIncidentById(incidentId) || !originMapMarkerPositions[incidentId]) {
+            return;
+        }
+
+        closeIncidentModal({ restoreFocus: false });
+        navigateToSection('origin-map');
+        handleOriginMapMarkerSelect(incidentId);
+        document.querySelector(`.origin-map-marker[data-id="${incidentId}"]`)?.focus({ preventScroll: true });
+    });
 }
 
 if (incidentModalOverlay) {
