@@ -207,11 +207,6 @@ body.body-scroll-locked {
     letter-spacing: 2px;
 }
 
-.login-logo p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
 .login-form {
     display: flex;
     flex-direction: column;
@@ -294,29 +289,6 @@ body.body-scroll-locked {
     background: linear-gradient(135deg, transparent, rgba(0, 240, 255, 0.4));
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
     transform: translateY(-2px);
-}
-
-.login-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.status-indicator {
-    width: 8px;
-    height: 8px;
-    background: #00ff00;
-    border-radius: 50%;
-    animation: pulse 1s infinite;
-    box-shadow: 0 0 5px #00ff00;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
 }
 
 /* ============================================================
@@ -552,15 +524,6 @@ body.body-scroll-locked {
     gap: 8px;
     color: var(--text-secondary);
     font-size: 0.9rem;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background: #00ff00;
-    border-radius: 50%;
-    animation: pulse 1s infinite;
-    box-shadow: 0 0 5px #00ff00;
 }
 
 .header-right {
@@ -2695,8 +2658,7 @@ body.body-scroll-locked {
 }
 
 .header-eyebrow,
-.header-context-label,
-.header-context-value {
+.header-context-label {
     font-family: 'Courier New', monospace;
     text-transform: uppercase;
 }
@@ -2725,14 +2687,6 @@ body.body-scroll-locked {
     text-transform: uppercase;
 }
 
-.status-dot {
-    width: 6px;
-    height: 6px;
-    background: var(--v5-accent);
-    box-shadow: 0 0 5px rgba(91, 201, 220, 0.45);
-    animation: none;
-}
-
 .header-context {
     display: flex;
     align-items: center;
@@ -2744,8 +2698,7 @@ body.body-scroll-locked {
     border-left: 1px solid var(--v5-border-subtle);
 }
 
-.header-context-label,
-.header-context-value {
+.header-context-label {
     font-size: 0.64rem;
     letter-spacing: 1px;
     white-space: nowrap;
@@ -2753,16 +2706,6 @@ body.body-scroll-locked {
 
 .header-context-label {
     color: var(--v5-accent);
-}
-
-.header-context-value {
-    color: var(--v5-text-muted);
-}
-
-.header-context-divider {
-    width: 3px;
-    height: 3px;
-    background: var(--v5-border-strong);
 }
 
 .header-right {

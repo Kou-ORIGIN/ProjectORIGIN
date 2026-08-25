@@ -1574,19 +1574,6 @@ function initializeFavoritesView() {
     renderFavoriteCards();
 }
 
-function fillList(container, items) {
-    container.innerHTML = '';
-    const fragment = document.createDocumentFragment();
-
-    items.forEach((item) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = item;
-        fragment.appendChild(listItem);
-    });
-
-    container.appendChild(fragment);
-}
-
 function resolveIncidentModalBackground(incident) {
     const modalBackground = incident?.modalBackground;
     const fallbackImage = createIncidentCardBackgroundDataUrl(
@@ -1919,17 +1906,6 @@ if (incidentResetBtn) {
         syncIncidentFilterControls();
         renderIncidentCards();
     });
-}
-
-function refreshIncidentArchiveIfNeeded() {
-    const incidentSection = document.querySelector('.chat-section[data-section="incident-file"]');
-    if (!incidentSection) {
-        return;
-    }
-
-    if (incidentSection.classList.contains('active')) {
-        initializeIncidentArchive();
-    }
 }
 
 // ============================================================
@@ -2289,17 +2265,6 @@ window.addEventListener('resize', () => {
 if (desktopSidebarMediaQuery.addEventListener) {
     desktopSidebarMediaQuery.addEventListener('change', refreshHeaderLayout);
 }
-
-// ============================================================
-// SYSTEM ANIMATIONS
-// ============================================================
-
-setInterval(() => {
-    const statusDots = document.querySelectorAll('.status-dot, .status-indicator');
-    statusDots.forEach(dot => {
-        dot.style.opacity = Math.random() > 0.5 ? 1 : 0.7;
-    });
-}, 500);
 
 // Update system time
 function updateSystemTime() {
