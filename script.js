@@ -1304,6 +1304,7 @@ function updateOriginMapMarkerActiveState() {
     markers.forEach((marker) => {
         const isActive = marker.getAttribute('data-id') === activeOriginMapIncidentId;
         marker.classList.toggle('active', isActive);
+        marker.setAttribute('aria-pressed', String(isActive));
     });
 }
 
@@ -1351,6 +1352,8 @@ function createOriginMapMarkers() {
         marker.className = 'origin-map-marker';
         marker.setAttribute('data-id', incidentId);
         marker.setAttribute('aria-label', `${incidentName}の地点`);
+        marker.setAttribute('aria-controls', 'originMapInfo');
+        marker.setAttribute('aria-pressed', 'false');
         marker.setAttribute('draggable', 'false');
         marker.style.left = `${position.left}%`;
         marker.style.top = `${position.top}%`;

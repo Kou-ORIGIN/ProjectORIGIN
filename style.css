@@ -3980,6 +3980,275 @@ body.body-scroll-locked {
 }
 
 /* ============================================================
+   V5 ORIGIN MAP EXPLORATION
+   ============================================================ */
+
+.origin-map-layout.hologram {
+    gap: var(--v5-space-3);
+    min-height: 0;
+    padding: var(--v5-space-4);
+    border-color: var(--v5-border-subtle);
+    border-radius: var(--v5-panel-radius);
+    background: var(--v5-surface-panel-muted);
+    box-shadow: none;
+}
+
+.origin-map-layout.hologram::before {
+    display: none;
+}
+
+.origin-map-header-row {
+    min-height: 32px;
+    padding-bottom: var(--v5-space-3);
+    border-bottom: 1px solid var(--v5-border-subtle);
+}
+
+.origin-map-layout .placeholder-badge {
+    padding: 0 0 0 10px;
+    border: 0;
+    border-left: 2px solid rgba(91, 201, 220, 0.58);
+    border-radius: 0;
+    color: var(--v5-accent);
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.45px;
+}
+
+.origin-map-helper {
+    color: var(--v5-text-muted);
+    font-size: 0.72rem;
+    line-height: 1.5;
+}
+
+.origin-map-main {
+    grid-template-columns: minmax(0, 2.45fr) minmax(220px, 0.72fr);
+    gap: var(--v5-space-3);
+    align-items: start;
+}
+
+.origin-world-map {
+    min-height: clamp(360px, 48vh, 540px);
+    isolation: isolate;
+    border-color: rgba(122, 164, 181, 0.17);
+    border-radius: 2px;
+    background:
+        radial-gradient(circle at 47% 48%, rgba(61, 110, 122, 0.055), transparent 58%),
+        linear-gradient(180deg, #080d14, #060a10);
+    box-shadow: inset 0 0 42px rgba(0, 0, 0, 0.34);
+}
+
+.origin-world-map::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+        linear-gradient(rgba(130, 146, 157, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(130, 146, 157, 0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+}
+
+.origin-world-map-svg {
+    position: relative;
+    z-index: 1;
+    min-height: clamp(360px, 48vh, 540px);
+}
+
+.origin-world-map-land {
+    fill: rgba(87, 119, 128, 0.1);
+    stroke: rgba(110, 154, 164, 0.2);
+    stroke-width: 1;
+}
+
+.origin-map-marker {
+    z-index: 2;
+    width: 24px;
+    height: 24px;
+    box-shadow: none;
+    animation: originMarkerPulse var(--pulse-duration, 5s) ease-in-out var(--pulse-delay, 0s) infinite;
+    transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.origin-map-marker::before {
+    width: 6px;
+    height: 6px;
+    border: 1px solid rgba(185, 235, 241, 0.76);
+    background: rgba(91, 201, 220, 0.74);
+    box-shadow: 0 0 7px rgba(91, 201, 220, 0.34);
+}
+
+.origin-map-marker::after {
+    width: 15px;
+    height: 15px;
+    border-color: rgba(91, 201, 220, 0.22);
+    box-shadow: none;
+}
+
+.origin-map-marker:focus-visible {
+    outline: 1px solid rgba(197, 239, 244, 0.94);
+    outline-offset: 2px;
+    border-radius: 2px;
+    box-shadow: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .origin-map-marker:hover,
+    .origin-map-marker:focus-visible {
+        transform: translate(-50%, -50%) scale(1.08);
+        box-shadow: none;
+        filter: brightness(1.22);
+    }
+
+    .origin-map-marker:hover::before,
+    .origin-map-marker:focus-visible::before {
+        background: rgba(166, 231, 238, 0.92);
+        box-shadow: 0 0 9px rgba(91, 201, 220, 0.48);
+    }
+}
+
+.origin-map-marker.active {
+    filter: none;
+    box-shadow: none;
+    animation: none;
+}
+
+.origin-map-marker.active::before {
+    width: 8px;
+    height: 8px;
+    border-color: rgba(225, 252, 255, 0.96);
+    background: rgba(125, 220, 230, 0.98);
+    box-shadow: 0 0 10px rgba(91, 201, 220, 0.58);
+}
+
+.origin-map-marker.active::after {
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(125, 220, 230, 0.74);
+    box-shadow: 0 0 0 3px rgba(91, 201, 220, 0.06);
+}
+
+@keyframes originMarkerPulse {
+    0%,
+    100% {
+        opacity: 0.72;
+        filter: brightness(0.94);
+    }
+    50% {
+        opacity: 0.92;
+        filter: brightness(1.04);
+    }
+}
+
+.origin-map-info {
+    min-width: 0;
+    padding-left: var(--v5-space-3);
+    border-left: 1px solid var(--v5-border-subtle);
+}
+
+.incident-card.origin-map-info-card {
+    opacity: 0.88;
+    border-color: rgba(122, 164, 181, 0.14);
+    background: rgba(7, 12, 18, 0.7);
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.incident-card.origin-map-info-card:hover {
+    opacity: 1;
+    border-color: var(--v5-border-strong);
+    box-shadow: inset 2px 0 0 rgba(91, 201, 220, 0.34);
+    transform: none;
+}
+
+.incident-card.origin-map-info-card:focus-visible {
+    opacity: 1;
+    outline: 1px solid var(--v5-accent);
+    outline-offset: 2px;
+    transform: none;
+}
+
+.origin-map-info-card .incident-card-image {
+    aspect-ratio: 16 / 6.25;
+    opacity: 0.78;
+}
+
+.origin-map-info-card:hover .incident-card-image,
+.origin-map-info-card:focus-visible .incident-card-image {
+    opacity: 0.92;
+}
+
+@media (max-width: 992px) {
+    .origin-map-main {
+        grid-template-columns: minmax(0, 1.65fr) minmax(210px, 0.78fr);
+    }
+
+    .origin-world-map,
+    .origin-world-map-svg {
+        min-height: 360px;
+    }
+}
+
+@media (max-width: 768px) {
+    .origin-map-layout.hologram {
+        padding: var(--v5-space-3);
+    }
+
+    .origin-map-header-row {
+        align-items: flex-start;
+    }
+
+    .origin-map-main {
+        grid-template-columns: 1fr;
+        gap: var(--v5-space-3);
+    }
+
+    .origin-world-map,
+    .origin-world-map-svg {
+        min-height: clamp(300px, 48vh, 420px);
+    }
+
+    .origin-map-info {
+        padding: var(--v5-space-3) 0 0;
+        border-top: 1px solid var(--v5-border-subtle);
+        border-left: 0;
+    }
+
+    .incident-card.origin-map-info-card {
+        display: grid;
+        grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.2fr);
+    }
+
+    .origin-map-info-card .incident-card-image {
+        height: 100%;
+        min-height: 130px;
+        aspect-ratio: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .origin-world-map,
+    .origin-world-map-svg {
+        min-height: 300px;
+    }
+
+    .incident-card.origin-map-info-card {
+        grid-template-columns: minmax(105px, 0.72fr) minmax(0, 1.28fr);
+    }
+
+    .origin-map-info-card .incident-card-image {
+        min-height: 120px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .origin-map-marker {
+        animation: none;
+    }
+}
+
+/* ============================================================
    V5 INVESTIGATION DOSSIER
    ============================================================ */
 
