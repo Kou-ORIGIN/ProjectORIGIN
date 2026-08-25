@@ -1365,13 +1365,26 @@ function renderFavoriteCards() {
 
     const favoriteIncidents = incidentData.filter((incident) => favoriteIncidentIds.has(getIncidentId(incident)));
     if (favoritesSummary) {
-        favoritesSummary.textContent = `${favoriteIncidents.length}件 / 全${incidentData.length}件の事件をお気に入り登録`;
+        favoritesSummary.textContent = `SAVED CASES ${favoriteIncidents.length}  /  ARCHIVE TOTAL ${incidentData.length}`;
     }
 
     if (favoriteIncidents.length === 0) {
         const emptyState = document.createElement('div');
-        emptyState.className = 'incident-empty-state';
-        emptyState.textContent = 'まだお気に入りは登録されていません';
+        emptyState.className = 'incident-empty-state personal-collection-empty';
+
+        const emptyLabel = document.createElement('p');
+        emptyLabel.className = 'personal-collection-empty-label';
+        emptyLabel.textContent = 'NO SAVED CASE RECORDS';
+
+        const emptyTitle = document.createElement('h4');
+        emptyTitle.textContent = '保存された事件ファイルはまだありません';
+
+        const emptyDescription = document.createElement('p');
+        emptyDescription.textContent = '事件ファイルで星印を選択すると、ここから同じCaseへ戻れます。';
+
+        emptyState.appendChild(emptyLabel);
+        emptyState.appendChild(emptyTitle);
+        emptyState.appendChild(emptyDescription);
         favoritesList.appendChild(emptyState);
         return;
     }

@@ -3684,6 +3684,98 @@ body.body-scroll-locked {
 }
 
 /* ============================================================
+   V5 PERSONAL CASE COLLECTION
+   ============================================================ */
+
+.personal-case-collection {
+    background:
+        linear-gradient(135deg, rgba(91, 201, 220, 0.022), transparent 38%),
+        var(--v5-surface-panel-muted);
+}
+
+.personal-collection-header .placeholder-badge {
+    padding-left: 10px;
+    border-left: 2px solid rgba(91, 201, 220, 0.54);
+    font-family: 'Courier New', monospace;
+}
+
+.personal-collection-summary {
+    width: fit-content;
+    min-width: min(100%, 250px);
+    padding-inline: 0;
+    border-top: 0;
+    border-bottom-color: var(--v5-border-subtle);
+    color: var(--v5-text-muted);
+}
+
+.personal-collection-list {
+    grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+    align-content: start;
+}
+
+.personal-collection-list .incident-card {
+    max-width: 460px;
+}
+
+.personal-collection-empty {
+    grid-column: 1 / -1;
+    justify-items: start;
+    align-content: center;
+    gap: var(--v5-space-2);
+    width: 100%;
+    max-width: none;
+    min-height: 250px;
+    padding: clamp(28px, 5vw, 54px);
+    border-color: rgba(122, 164, 181, 0.17);
+    border-radius: 2px;
+    background:
+        linear-gradient(90deg, rgba(91, 201, 220, 0.035), transparent 28%),
+        rgba(4, 9, 15, 0.42);
+    text-align: left;
+}
+
+.personal-collection-empty-label {
+    color: var(--v5-accent);
+    font-family: 'Courier New', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.personal-collection-empty h4 {
+    color: var(--v5-text-primary);
+    font-size: clamp(0.98rem, 2vw, 1.2rem);
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.personal-collection-empty > p:last-child {
+    max-width: 560px;
+    color: var(--v5-text-muted);
+    font-size: 0.78rem;
+    line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+    .personal-collection-list {
+        grid-template-columns: 1fr;
+    }
+
+    .personal-collection-list .incident-card {
+        max-width: none;
+    }
+
+    .personal-collection-summary {
+        width: 100%;
+    }
+
+    .personal-collection-empty {
+        min-height: 220px;
+        padding: 28px 22px;
+    }
+}
+
+/* ============================================================
    V5 TEMPORAL EXPLORATION FOUNDATION
    ============================================================ */
 
