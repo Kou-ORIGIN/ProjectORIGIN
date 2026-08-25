@@ -17,6 +17,7 @@ const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const dashboardHeader = document.querySelector('.dashboard-header');
 const logoutConfirmOverlay = document.getElementById('logoutConfirmOverlay');
+const logoutConfirmDialog = logoutConfirmOverlay?.querySelector('.logout-confirm-dialog') || null;
 const logoutConfirmCancelBtn = document.getElementById('logoutConfirmCancelBtn');
 const logoutConfirmSubmitBtn = document.getElementById('logoutConfirmSubmitBtn');
 const desktopSidebarMediaQuery = window.matchMedia('(min-width: 993px)');
@@ -31,6 +32,153 @@ let headerVisibilityLocked = false;
 let isHeaderVisible = getStoredHeaderVisibility();
 let scrollTicking = false;
 let logoutConfirmOpen = false;
+const modalStack = [];
+const modalManagedInertElements = new Set();
+const FOCUSABLE_SELECTOR = [
+    'a[href]',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+].join(',');
+
+function isVisibleFocusableElement(element) {
+    if (!(element instanceof HTMLElement) || element.hidden || element.closest('[hidden]')) {
+        return false;
+    }
+
+    const style = window.getComputedStyle(element);
+    return style.display !== 'none'
+        && style.visibility !== 'hidden'
+        && element.getClientRects().length > 0;
+}
+
+function getModalFocusableElements(dialog) {
+    if (!dialog) {
+        return [];
+    }
+
+    return Array.from(dialog.querySelectorAll(FOCUSABLE_SELECTOR)).filter(isVisibleFocusableElement);
+}
+
+function getTopModalEntry() {
+    return modalStack[modalStack.length - 1] || null;
+}
+
+function clearManagedBackgroundInert() {
+    modalManagedInertElements.forEach((element) => {
+        element.inert = false;
+    });
+    modalManagedInertElements.clear();
+}
+
+function setModalBackgroundInert(activeOverlay) {
+    clearManagedBackgroundInert();
+
+    if (!activeOverlay) {
+        return;
+    }
+
+    let activeBranch = activeOverlay;
+    let parent = activeBranch.parentElement;
+
+    while (parent) {
+        Array.from(parent.children).forEach((sibling) => {
+            if (sibling !== activeBranch && sibling instanceof HTMLElement && !sibling.inert) {
+                sibling.inert = true;
+                modalManagedInertElements.add(sibling);
+            }
+        });
+
+        if (parent === document.body) {
+            break;
+        }
+
+        activeBranch = parent;
+        parent = parent.parentElement;
+    }
+}
+
+function syncModalInteractionState() {
+    const topModal = getTopModalEntry();
+    setModalBackgroundInert(topModal?.overlay || null);
+}
+
+function activateModal(id, overlay, dialog, trigger) {
+    const existingIndex = modalStack.findIndex((entry) => entry.id === id);
+    if (existingIndex !== -1) {
+        modalStack.splice(existingIndex, 1);
+    }
+
+    modalStack.push({
+        id,
+        overlay,
+        dialog,
+        trigger: trigger instanceof HTMLElement ? trigger : null
+    });
+    syncModalInteractionState();
+}
+
+function deactivateModal(id) {
+    const entryIndex = modalStack.findIndex((entry) => entry.id === id);
+    if (entryIndex === -1) {
+        return null;
+    }
+
+    const [entry] = modalStack.splice(entryIndex, 1);
+    syncModalInteractionState();
+    return entry;
+}
+
+function restoreModalTriggerFocus(entry, fallback = null) {
+    const trigger = entry?.trigger;
+    const focusTarget = trigger?.isConnected && isVisibleFocusableElement(trigger) ? trigger : fallback;
+    if (focusTarget instanceof HTMLElement && !focusTarget.inert && isVisibleFocusableElement(focusTarget)) {
+        focusTarget.focus({ preventScroll: true });
+    }
+}
+
+function containFocusWithinTopModal(event) {
+    const topModal = getTopModalEntry();
+    if (!topModal?.dialog) {
+        return;
+    }
+
+    const focusableElements = getModalFocusableElements(topModal.dialog);
+    if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+    }
+
+    const firstFocusable = focusableElements[0];
+    const lastFocusable = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+
+    if (!topModal.dialog.contains(activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? lastFocusable : firstFocusable).focus();
+        return;
+    }
+
+    if (event.shiftKey && activeElement === firstFocusable) {
+        event.preventDefault();
+        lastFocusable.focus();
+    } else if (!event.shiftKey && activeElement === lastFocusable) {
+        event.preventDefault();
+        firstFocusable.focus();
+    }
+}
+
+function redirectEscapedModalFocus(event) {
+    const topModal = getTopModalEntry();
+    if (!topModal?.dialog || topModal.dialog.contains(event.target)) {
+        return;
+    }
+
+    const [firstFocusable] = getModalFocusableElements(topModal.dialog);
+    firstFocusable?.focus({ preventScroll: true });
+}
 
 if (dashboardHeader && !isHeaderVisible) {
     dashboardHeader.classList.add('header-hidden');
@@ -137,13 +285,14 @@ function executeLogout() {
     lockHeaderVisibility(true);
 }
 
-function openLogoutConfirmDialog() {
+function openLogoutConfirmDialog(trigger = document.activeElement) {
     if (!logoutConfirmOverlay || logoutConfirmOpen) {
         return;
     }
 
     logoutConfirmOpen = true;
     logoutConfirmOverlay.hidden = false;
+    activateModal('logout-confirm', logoutConfirmOverlay, logoutConfirmDialog, trigger);
     lockBodyScroll('logout-confirm');
 
     if (logoutConfirmCancelBtn) {
@@ -159,27 +308,23 @@ function closeLogoutConfirmDialog(options = {}) {
     const shouldRestoreFocus = options.restoreFocus !== false;
     logoutConfirmOpen = false;
     logoutConfirmOverlay.hidden = true;
+    const modalEntry = deactivateModal('logout-confirm');
     unlockBodyScroll('logout-confirm');
 
     if (shouldRestoreFocus) {
-        if (!isMobileNavigationViewport() && desktopLogoutBtn) {
-            desktopLogoutBtn.focus();
-        }
-        if (isMobileNavigationViewport() && mobileLogoutBtn) {
-            mobileLogoutBtn.focus();
-        }
+        restoreModalTriggerFocus(modalEntry);
     }
 }
 
 if (desktopLogoutBtn) {
-    desktopLogoutBtn.addEventListener('click', () => {
-        openLogoutConfirmDialog();
+    desktopLogoutBtn.addEventListener('click', (event) => {
+        openLogoutConfirmDialog(event.currentTarget);
     });
 }
 
 if (mobileLogoutBtn) {
-    mobileLogoutBtn.addEventListener('click', () => {
-        openLogoutConfirmDialog();
+    mobileLogoutBtn.addEventListener('click', (event) => {
+        openLogoutConfirmDialog(event.currentTarget);
     });
 }
 
@@ -231,6 +376,7 @@ const navigationConfig = [
 
 let mobileNavItems = [];
 let mobileNavHideTimerId = null;
+let mobileNavReturnFocus = null;
 const bodyScrollLockReasons = new Set();
 let bodyScrollLockY = 0;
 
@@ -434,6 +580,8 @@ function openMobileNavDrawer() {
     mobileNavOverlay.hidden = false;
     mobileNavDrawer.setAttribute('aria-hidden', 'false');
     mobileNavToggleBtn.setAttribute('aria-expanded', 'true');
+    mobileNavReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : mobileNavToggleBtn;
+    activateModal('mobile-nav', mobileNavOverlay, mobileNavDrawer, mobileNavReturnFocus);
 
     requestAnimationFrame(() => {
         mobileNavOverlay.classList.add('is-open');
@@ -458,6 +606,7 @@ function closeMobileNavDrawer(options = {}) {
 
     const shouldRestoreFocus = options.restoreFocus !== false;
     const shouldCloseImmediately = options.immediate === true;
+    const modalEntry = deactivateModal('mobile-nav');
 
     mobileNavOverlay.classList.remove('is-open');
     mobileNavDrawer.setAttribute('aria-hidden', 'true');
@@ -477,8 +626,9 @@ function closeMobileNavDrawer(options = {}) {
         mobileNavHideTimerId = null;
 
         if (shouldRestoreFocus) {
-            mobileNavToggleBtn.focus();
+            restoreModalTriggerFocus(modalEntry, mobileNavToggleBtn);
         }
+        mobileNavReturnFocus = null;
         return;
     }
 
@@ -488,8 +638,9 @@ function closeMobileNavDrawer(options = {}) {
     }, MOBILE_NAV_TRANSITION_MS);
 
     if (shouldRestoreFocus) {
-        mobileNavToggleBtn.focus();
+        restoreModalTriggerFocus(modalEntry, mobileNavToggleBtn);
     }
+    mobileNavReturnFocus = null;
 }
 
 if (mobileNavToggleBtn) {
@@ -1620,6 +1771,7 @@ function openIncidentModal(incident) {
     activeIncidentModalId = getIncidentId(incident);
     incidentModalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     incidentModalOverlay.hidden = false;
+    activateModal('incident-modal', incidentModalOverlay, incidentModalPanel, incidentModalReturnFocus);
     updateIncidentModalBackgroundFade(incidentModalPanel || incidentModalOverlay);
     lockBackgroundScrollForModal();
     lockHeaderVisibility(true);
@@ -1632,11 +1784,12 @@ function closeIncidentModal(options = {}) {
     }
 
     incidentModalOverlay.hidden = true;
+    const modalEntry = deactivateModal('incident-modal');
     unlockBackgroundScrollForModal();
     lockHeaderVisibility(false);
     activeIncidentModalId = null;
-    if (options.restoreFocus !== false && incidentModalReturnFocus?.isConnected) {
-        incidentModalReturnFocus.focus({ preventScroll: true });
+    if (options.restoreFocus !== false) {
+        restoreModalTriggerFocus(modalEntry, incidentModalReturnFocus);
     }
     incidentModalReturnFocus = null;
 }
@@ -1677,7 +1830,14 @@ if (incidentModalPanel) {
     }, { passive: true });
 }
 
+document.addEventListener('focusin', redirectEscapedModalFocus);
+
 document.addEventListener('keydown', (event) => {
+    if (event.key === 'Tab' && getTopModalEntry()) {
+        containFocusWithinTopModal(event);
+        return;
+    }
+
     if (event.key === 'Escape' && logoutConfirmOpen) {
         closeLogoutConfirmDialog();
         return;
