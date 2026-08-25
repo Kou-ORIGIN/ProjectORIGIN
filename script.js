@@ -2130,7 +2130,7 @@ function updateSystemTime() {
     if (statusElement) {
         const now = new Date();
         const timeString = now.toLocaleTimeString('ja-JP', { hour12: false });
-        statusElement.textContent = `オンライン - ${timeString}`;
+        statusElement.textContent = timeString;
     }
 }
 
