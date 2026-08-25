@@ -139,19 +139,26 @@
             <!-- Chat Area -->
             <div class="chat-container">
                 <!-- Chat Section -->
-                <section class="chat-section active" data-section="chat">
-                    <div class="chat-header">
-                        <h2>AIアシスタント - ORIGIN</h2>
+                <section class="chat-section origin-console active" data-section="chat">
+                    <div class="chat-header origin-console-header">
+                        <div>
+                            <p class="origin-console-eyebrow">INVESTIGATION ASSISTANT / FOUNDATION</p>
+                            <h2>ORIGIN</h2>
+                        </div>
+                        <p class="origin-console-scope" id="originConsoleScope">現在はProjectORIGIN内の基本的な探索方法のみ案内します。</p>
                     </div>
-                    <div class="chat-messages-wrapper" id="chatMessagesWrapper">
+                    <div class="chat-messages-wrapper" id="chatMessagesWrapper" role="log" aria-live="polite" aria-relevant="additions text">
                         <div class="message ai-message">
-                            <p>こんにちは！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？</p>
+                            <p>ORIGIN案内機能です。現在はArchive、ORIGIN MAP、Timeline、Favoritesの役割を案内できます。</p>
                         </div>
                     </div>
                     <div class="chat-input-section">
-                        <textarea id="chatInput" class="chat-input" placeholder="メッセージを入力...\nShift+Enterで改行"></textarea>
-                        <button id="clearHistoryBtn" class="clear-history-btn">履歴を削除</button>
-                        <button id="sendBtn" class="send-btn">送信</button>
+                        <label class="origin-console-input-label" for="chatInput">QUESTION / BASIC GUIDANCE</label>
+                        <textarea id="chatInput" class="chat-input" aria-describedby="originConsoleScope" placeholder="利用できる探索機能について入力\nShift+Enterで改行"></textarea>
+                        <div class="origin-console-actions">
+                            <button type="button" id="clearHistoryBtn" class="clear-history-btn">履歴を削除</button>
+                            <button type="button" id="sendBtn" class="send-btn">送信</button>
+                        </div>
                     </div>
                 </section>
 
@@ -356,19 +363,19 @@
             </div>
 
             <!-- AI Avatar Panel -->
-            <aside class="avatar-panel">
+            <aside class="avatar-panel" id="originAssistantPanel" aria-label="ORIGIN assistant scope">
                 <div class="avatar-section">
-                    <div class="ai-avatar">
+                    <div class="ai-avatar" aria-hidden="true">
                         <div class="avatar-core"></div>
                         <div class="avatar-orbit"></div>
                     </div>
                     <div class="avatar-info">
                         <h3>ORIGIN</h3>
-                        <p>AI Assistant</p>
+                        <p>Investigation Assistant</p>
                     </div>
                     <div class="avatar-status">
-                        <span class="status-indicator"></span>
-                        <span>準備完了</span>
+                        <span class="avatar-status-label">CURRENT SCOPE</span>
+                        <span>Basic guidance only</span>
                     </div>
                 </div>
             </aside>

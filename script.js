@@ -216,6 +216,7 @@ const mobileNavOverlay = document.getElementById('mobileNavOverlay');
 const mobileNavDrawer = document.getElementById('mobileNavDrawer');
 const mobileNavCloseBtn = document.getElementById('mobileNavCloseBtn');
 const mobileNavMenu = document.getElementById('mobileNavMenu');
+const originAssistantPanel = document.getElementById('originAssistantPanel');
 const ACTIVE_SECTION_STORAGE_KEY = 'ProjectORIGIN_active_section';
 const MOBILE_NAV_TRANSITION_MS = 260;
 
@@ -308,6 +309,10 @@ function setActiveSection(sectionName, options = {}) {
         section.classList.toggle('active', isActive);
         section.hidden = !isActive;
     });
+
+    if (originAssistantPanel) {
+        originAssistantPanel.classList.toggle('is-chat-context', normalizedSection === 'chat');
+    }
 }
 
 function renderDesktopNavItems() {
@@ -1846,7 +1851,7 @@ function clearChatHistory() {
     chatMessagesWrapper.innerHTML = '';
 
     const username = localStorage.getItem('username') || 'ゲスト';
-    addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai');
+    addMessage(getOriginFoundationGreeting(username), 'ai');
 }
 
 function sendMessage() {
@@ -1862,47 +1867,8 @@ function sendMessage() {
     // textareaの高さをリセット
     chatInput.style.height = 'auto';
     
-    // Disable input during typing
-    chatInput.disabled = true;
-    sendBtn.disabled = true;
-    
-    // Show typing indicator
-    const typingElement = showTypingIndicator();
-    
-    // Respond based on input intent
-    const delayMs = 800 + Math.random() * 400; // 0.8～1.2秒
-    setTimeout(() => {
-        // Remove typing indicator
-        if (typingElement && typingElement.parentNode) {
-            typingElement.parentNode.removeChild(typingElement);
-        }
-        
-        const response = getAiResponse(message);
-        addMessage(response, 'ai');
-        
-        // Re-enable input
-        chatInput.disabled = false;
-        sendBtn.disabled = false;
-        chatInput.focus();
-    }, delayMs);
-}
-
-function showTypingIndicator() {
-    const typingDiv = document.createElement('div');
-    typingDiv.className = 'message ai-message message-typing';
-    typingDiv.setAttribute('aria-label', 'ORIGINが入力中');
-    
-    const dotsSpan = document.createElement('span');
-    dotsSpan.className = 'typing-dots';
-    dotsSpan.innerHTML = '<span>.</span><span>.</span><span>.</span>';
-    
-    typingDiv.appendChild(dotsSpan);
-    chatMessagesWrapper.appendChild(typingDiv);
-    
-    // Smooth scroll to bottom
-    typingDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    
-    return typingDiv;
+    addMessage(getAiResponse(message), 'ai');
+    chatInput.focus();
 }
 
 function scrollChatToBottom(animated = true) {
@@ -1926,28 +1892,31 @@ function scrollChatToBottom(animated = true) {
 function getAiResponse(message) {
     const text = message.trim().toLowerCase();
 
-    if (text === 'こんにちは') {
-        return 'こんにちは！本日はどのようなご用件でしょうか？';
+    if (/^(こんにちは|おはよう|こんばんは)[！!。.]?$/.test(text)) {
+        return 'ORIGIN案内機能です。現在はProjectORIGIN内の基本的な探索方法を案内できます。';
     }
-    if (text === 'おはよう') {
-        return 'おはようございます！今日もよろしくお願いいたします。';
+    if (text.includes('projectorigin') || text.includes('使い方') || text.includes('何ができ')) {
+        return 'ProjectORIGINでは、事件ファイルの一覧、場所から探すORIGIN MAP、時間から探すTimeline、保存したCaseへ戻るFavoritesを利用できます。現在のORIGINは、これら既存機能の基本案内に限定されています。';
     }
-    if (text === 'こんばんは') {
-        return 'こんばんは！本日のご相談をどうぞ。';
+    if (text.includes('archive') || text.includes('事件ファイル') || text.includes('一覧')) {
+        return '事件ファイルでは、登録済みCaseの検索と、利用可能な正式項目による絞り込みができます。Case Cardを選択するとDossierが開きます。';
     }
-    if (text === '時間') {
-        const now = new Date();
-        return `現在の時刻は ${now.toLocaleTimeString('ja-JP', { hour12: false })} です。`;
+    if (text.includes('map') || text.includes('地図') || text.includes('場所')) {
+        return 'ORIGIN MAPは、場所から事件を探索する画面です。地点を選ぶとCase Cardが表示され、そこからDossierを開けます。';
     }
-    if (text === '日付') {
-        const today = new Date();
-        return `今日の日付は ${today.toLocaleDateString('ja-JP')} です。`;
+    if (text.includes('timeline') || text.includes('タイムライン') || text.includes('時間') || text.includes('年代')) {
+        return 'Timelineは時間から未知を探索するためのFoundationです。正式な年代記録が未整備のため、現在は検証待ち状態を表示しています。';
     }
-    if (text === 'projectoriginとは' || text === 'projectoriginとは？' || text === 'projectoriginとは。') {
-        return 'ProjectORIGINは、AIアシスタントと未来的なインターフェースを備えた次世代のAI OSです。';
+    if (text.includes('favorite') || text.includes('お気に入り') || text.includes('保存')) {
+        return 'Favoritesには、星印で保存したCaseだけが表示されます。保存状態は現在のユーザーごとにこのブラウザへ保持されます。';
     }
 
-    return '内容を確認しました。もう少し詳しく教えてください。';
+    return '現在、この質問には対応していません。ORIGINは現段階ではArchive、ORIGIN MAP、Timeline、Favoritesの基本案内のみ提供します。Case固有の調査回答、Source検索、推薦、分類、Risk判断には対応していません。';
+}
+
+function getOriginFoundationGreeting(username) {
+    const displayName = typeof username === 'string' && username.trim() ? username.trim() : 'ゲスト';
+    return `${displayName}さん、ORIGIN案内機能です。現在はArchive、ORIGIN MAP、Timeline、Favoritesの役割を案内できます。Case固有の調査回答やSource検索には対応していません。`;
 }
 
 function createMessageElement(text, type, time = null) {
@@ -2000,7 +1969,7 @@ function initializeChatScreen() {
 
     const hasHistory = loadChatHistory();
     if (!hasHistory) {
-        addMessage(`こんにちは、${username}さん！ProjectORIGINへようこそ。本日はどのようなことでお役に立てますか？`, 'ai', { animate: false });
+        addMessage(getOriginFoundationGreeting(username), 'ai', { animate: false });
     }
 
     loadFavoriteIncidentIds();

@@ -958,48 +958,6 @@ body.body-scroll-locked {
     font-style: italic;
 }
 
-.message-typing {
-    padding: 12px 15px !important;
-    background: rgba(0, 240, 255, 0.05) !important;
-    border-left: 3px solid rgba(0, 240, 255, 0.4) !important;
-}
-
-.typing-dots {
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    height: 1.2em;
-}
-
-.typing-dots span {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    background: var(--hologram-color);
-    border-radius: 50%;
-    opacity: 0.4;
-    animation: typingBounce 1.4s infinite;
-}
-
-.typing-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-
-.typing-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-}
-
-@keyframes typingBounce {
-    0%, 60%, 100% {
-        opacity: 0.4;
-        transform: translateY(0);
-    }
-    30% {
-        opacity: 1;
-        transform: translateY(-8px);
-    }
-}
-
 .chat-input-section {
     display: flex;
     gap: 10px;
@@ -3680,6 +3638,307 @@ body.body-scroll-locked {
 
     .incident-card:not(.timeline-log-card) .incident-name {
         font-size: 0.88rem;
+    }
+}
+
+/* ============================================================
+   V5 ORIGIN INVESTIGATION ASSISTANT FOUNDATION
+   ============================================================ */
+
+.origin-console {
+    min-height: min(680px, calc(100vh - var(--v5-header-height) - (var(--v5-shell-gutter) * 2) - (var(--v5-space-4) * 2)));
+}
+
+.origin-console-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--v5-space-4);
+}
+
+.origin-console-header > div {
+    display: grid;
+    gap: var(--v5-space-1);
+}
+
+.origin-console-eyebrow {
+    color: var(--v5-accent);
+    font-family: 'Courier New', monospace;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 1.45px;
+}
+
+.origin-console-scope {
+    max-width: 440px;
+    color: var(--v5-text-muted);
+    font-size: 0.7rem;
+    line-height: 1.55;
+    text-align: right;
+}
+
+.origin-console .chat-messages-wrapper {
+    gap: var(--v5-space-2);
+    min-height: 360px;
+    max-height: none;
+    padding: var(--v5-space-3) 0;
+    border-bottom: 1px solid var(--v5-border-subtle);
+    scrollbar-gutter: stable;
+}
+
+.origin-console .message {
+    position: relative;
+    width: min(100%, 760px);
+    max-width: 88%;
+    padding: 13px 15px 12px;
+    border: 1px solid var(--v5-border-subtle);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.018);
+    color: var(--v5-text-primary);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    animation: none;
+}
+
+.origin-console .ai-message {
+    align-self: flex-start;
+    border-left: 2px solid rgba(91, 201, 220, 0.56);
+    background: rgba(91, 201, 220, 0.03);
+}
+
+.origin-console .ai-message::before,
+.origin-console .user-message::before {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--v5-text-muted);
+    font-family: 'Courier New', monospace;
+    font-size: 0.54rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.origin-console .ai-message::before {
+    content: 'ORIGIN / GUIDANCE';
+}
+
+.origin-console .user-message {
+    align-self: flex-end;
+    border-left: 1px solid var(--v5-border-subtle);
+    border-right: 2px solid rgba(159, 177, 184, 0.44);
+    background: rgba(159, 177, 184, 0.025);
+}
+
+.origin-console .user-message::before {
+    content: 'INVESTIGATOR / INPUT';
+    text-align: right;
+}
+
+.origin-console .message-time {
+    margin-top: 7px;
+    color: rgba(130, 146, 157, 0.62);
+    font-family: 'Courier New', monospace;
+    font-size: 0.58rem;
+    font-style: normal;
+    letter-spacing: 0.5px;
+}
+
+.origin-console .chat-input-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--v5-space-2) var(--v5-space-3);
+    padding-top: var(--v5-space-3);
+    border-top: 0;
+}
+
+.origin-console-input-label {
+    grid-column: 1 / -1;
+    color: var(--v5-text-muted);
+    font-family: 'Courier New', monospace;
+    font-size: 0.56rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.origin-console .chat-input {
+    min-height: 68px;
+    padding: 12px 13px;
+    border-color: var(--v5-border-subtle);
+    border-radius: 2px;
+    background: rgba(4, 9, 15, 0.72);
+    color: var(--v5-text-primary);
+    font-size: 0.78rem;
+    line-height: 1.55;
+    box-shadow: none;
+}
+
+.origin-console .chat-input::placeholder {
+    color: rgba(130, 146, 157, 0.62);
+}
+
+.origin-console .chat-input:focus {
+    outline: 1px solid var(--v5-accent);
+    outline-offset: 1px;
+    border-color: var(--v5-border-strong);
+    box-shadow: none;
+}
+
+.origin-console-actions {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: var(--v5-space-2);
+    align-items: stretch;
+}
+
+.origin-console .send-btn,
+.origin-console .clear-history-btn {
+    min-height: 40px;
+    padding: 9px 13px;
+    border: 1px solid var(--v5-border-subtle);
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.018);
+    color: var(--v5-text-muted);
+    font-family: 'Courier New', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.7px;
+    box-shadow: none;
+}
+
+.origin-console .send-btn {
+    border-color: var(--v5-border-strong);
+    color: var(--v5-accent);
+}
+
+.origin-console .send-btn:hover,
+.origin-console .send-btn:focus-visible,
+.origin-console .clear-history-btn:hover,
+.origin-console .clear-history-btn:focus-visible {
+    outline: 1px solid var(--v5-accent);
+    outline-offset: 1px;
+    border-color: var(--v5-accent);
+    background: var(--v5-accent-muted);
+    color: var(--v5-text-primary);
+    box-shadow: none;
+}
+
+.avatar-panel {
+    min-height: 0;
+    padding: var(--v5-space-3);
+    opacity: 0.58;
+    border-left-color: var(--v5-border-subtle);
+    background: rgba(7, 12, 18, 0.66);
+    transition: opacity 0.16s ease, border-color 0.16s ease, background-color 0.16s ease;
+}
+
+.avatar-panel.is-chat-context {
+    opacity: 0.9;
+    border-left-color: var(--v5-border-strong);
+    background: linear-gradient(180deg, rgba(10, 17, 24, 0.9), rgba(7, 12, 18, 0.74));
+}
+
+.avatar-section {
+    gap: var(--v5-space-3);
+}
+
+.avatar-panel .ai-avatar {
+    width: 64px;
+    height: 64px;
+}
+
+.avatar-panel .avatar-core {
+    width: 28px;
+    height: 28px;
+    background: radial-gradient(circle, rgba(172, 227, 234, 0.9), rgba(91, 201, 220, 0.54) 38%, rgba(23, 55, 70, 0.5) 74%);
+    box-shadow: 0 0 8px rgba(91, 201, 220, 0.16);
+    animation: none;
+}
+
+.avatar-panel .avatar-orbit {
+    width: 54px;
+    height: 54px;
+    border-color: rgba(122, 164, 181, 0.22);
+    animation: none;
+}
+
+.avatar-panel .avatar-info {
+    display: grid;
+    gap: 3px;
+}
+
+.avatar-panel .avatar-info h3 {
+    color: var(--v5-text-primary);
+    font-size: 0.86rem;
+    letter-spacing: 1.3px;
+    text-shadow: none;
+}
+
+.avatar-panel .avatar-info p {
+    color: var(--v5-text-muted);
+    font-size: 0.64rem;
+    line-height: 1.4;
+}
+
+.avatar-panel .avatar-status {
+    display: grid;
+    gap: 5px;
+    padding-top: var(--v5-space-2);
+    border-top: 1px solid var(--v5-border-subtle);
+    color: var(--v5-text-muted);
+    font-family: 'Courier New', monospace;
+    font-size: 0.58rem;
+    line-height: 1.45;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.avatar-status-label {
+    color: rgba(91, 201, 220, 0.72);
+    font-size: 0.52rem;
+    letter-spacing: 1.1px;
+}
+
+@media (max-width: 992px) {
+    .avatar-panel {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .origin-console {
+        min-height: 0;
+    }
+
+    .origin-console-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: var(--v5-space-2);
+    }
+
+    .origin-console-scope {
+        max-width: none;
+        text-align: left;
+    }
+
+    .origin-console .chat-messages-wrapper {
+        min-height: 300px;
+    }
+
+    .origin-console .message {
+        max-width: 96%;
+    }
+
+    .origin-console .chat-input-section {
+        grid-template-columns: 1fr;
+    }
+
+    .origin-console-actions {
+        grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .origin-console .chat-messages-wrapper {
+        min-height: 260px;
+        max-height: 50vh;
     }
 }
 
