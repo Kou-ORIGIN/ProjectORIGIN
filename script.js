@@ -184,6 +184,15 @@ if (dashboardHeader && !isHeaderVisible) {
     dashboardHeader.classList.add('header-hidden');
 }
 
+function setLoginFieldInvalid(input, invalid) {
+    input.setAttribute('aria-invalid', String(invalid));
+}
+
+function clearLoginValidationState() {
+    setLoginFieldInvalid(usernameInput, false);
+    setLoginFieldInvalid(passwordInput, false);
+}
+
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     errorMessage.style.display = 'none';
@@ -191,6 +200,11 @@ loginForm.addEventListener('submit', (e) => {
     
     const username = usernameInput.value.trim();
     const password = passwordInput.value.trim();
+    const usernameInvalid = !username || username.length < 3;
+    const passwordInvalid = !password || password.length < 6;
+
+    setLoginFieldInvalid(usernameInput, usernameInvalid);
+    setLoginFieldInvalid(passwordInput, passwordInvalid);
     
     // Validation
     if (!username) {
@@ -212,6 +226,8 @@ loginForm.addEventListener('submit', (e) => {
         showErrorMessage('パスワードは6文字以上で入力してください');
         return;
     }
+
+    clearLoginValidationState();
     
     // Simulate login
     loginContainer.style.display = 'none';
@@ -279,6 +295,7 @@ function executeLogout() {
     dashboard.style.display = 'none';
     loginContainer.style.display = 'flex';
     loginForm.reset();
+    clearLoginValidationState();
     errorMessage.style.display = 'none';
     localStorage.removeItem('username');
     favoriteIncidentIds = new Set();

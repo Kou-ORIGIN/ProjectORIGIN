@@ -44,15 +44,15 @@
                     <h1>ProjectORIGIN</h1>
                 </div>
                 <form class="login-form" id="loginForm">
-                    <div id="errorMessage" class="error-message" style="display: none;"></div>
+                    <div id="errorMessage" class="error-message" role="alert" aria-atomic="true" style="display: none;"></div>
                     <div class="input-group">
-                        <label>ユーザー名</label>
-                        <input type="text" id="username" placeholder="ユーザー名を入力">
+                        <label for="username">ユーザー名</label>
+                        <input type="text" id="username" autocomplete="username" aria-invalid="false" placeholder="ユーザー名を入力">
                         <div class="input-glow"></div>
                     </div>
                     <div class="input-group">
-                        <label>パスワード</label>
-                        <input type="password" id="password" placeholder="パスワードを入力">
+                        <label for="password">パスワード</label>
+                        <input type="password" id="password" autocomplete="current-password" aria-invalid="false" placeholder="パスワードを入力">
                         <div class="input-glow"></div>
                     </div>
                     <button type="submit" class="login-btn">ログイン</button>
