@@ -633,6 +633,9 @@ function renderMobileNavItems() {
 
         button.addEventListener('click', () => {
             navigateToSection(item.section);
+            requestAnimationFrame(() => {
+                focusDashboardSection(item.section);
+            });
         });
 
         fragment.appendChild(button);
