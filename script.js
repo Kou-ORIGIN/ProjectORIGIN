@@ -302,6 +302,7 @@ function executeLogout() {
     localStorage.removeItem('username');
     favoriteIncidentIds = new Set();
     lockHeaderVisibility(true);
+    usernameInput.focus();
 }
 
 function openLogoutConfirmDialog(trigger = document.activeElement) {
@@ -2329,9 +2330,13 @@ function initializeChatScreen() {
         requestAnimationFrame(() => {
             scrollChatToBottom(false);
         });
+        chatInput.focus();
+        return;
     }
-    
-    chatInput.focus();
+
+    requestAnimationFrame(() => {
+        focusDashboardSection(savedSection);
+    });
 }
 
 // ============================================================
