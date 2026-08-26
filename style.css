@@ -2678,6 +2678,27 @@ body.body-scroll-locked {
     text-shadow: none;
 }
 
+.dashboard-top-page-btn {
+    padding: 3px 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dashboard-top-page-btn:hover {
+    color: var(--v5-accent);
+}
+
+.dashboard-top-page-btn:focus-visible {
+    color: var(--v5-accent);
+    outline: 1px solid var(--v5-accent);
+    outline-offset: 4px;
+}
+
 .system-status {
     gap: 7px;
     color: var(--v5-text-muted);
@@ -4981,6 +5002,1086 @@ body.body-scroll-locked {
 
     .incident-modal-meta-row {
         min-height: 0;
+    }
+}
+
+/* Top Page Shell Foundation */
+.top-page {
+    position: relative;
+    min-height: 100vh;
+    color: #dce4e8;
+    background:
+        radial-gradient(circle at 76% 12%, rgba(83, 105, 112, 0.14), transparent 32rem),
+        linear-gradient(180deg, #080b0d 0%, #0c1114 48%, #07090a 100%);
+    font-family: "Rajdhani", "Segoe UI", sans-serif;
+}
+
+.top-page[hidden] {
+    display: none;
+}
+
+.top-page-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 20;
+    border-bottom: 1px solid rgba(190, 207, 211, 0.1);
+    background: linear-gradient(180deg, rgba(5, 8, 10, 0.86), rgba(5, 8, 10, 0.52));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.top-page-header-inner,
+.top-page-section-inner {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+}
+
+.top-page-header-inner {
+    min-height: 64px;
+    display: grid;
+    grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+    align-items: center;
+    gap: clamp(20px, 3vw, 48px);
+}
+
+.top-page-section-label {
+    display: block;
+    margin: 0 0 8px;
+    color: #819096;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.top-page-identity h1,
+.top-page-main h2,
+.top-page-footer p {
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+.top-page-identity h1 {
+    color: #d7e0e3;
+    font-size: 1rem;
+}
+
+.top-page-navigation ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.top-page-navigation ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px clamp(14px, 1.75vw, 27px);
+    color: #8e9b9f;
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+}
+
+.top-page-nav-button {
+    padding: 8px 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+}
+
+.top-page-nav-button:hover {
+    color: #c6d4d8;
+}
+
+.top-page-nav-button:focus-visible {
+    color: #dce8eb;
+    outline: 1px solid rgba(126, 191, 204, 0.72);
+    outline-offset: 5px;
+}
+
+.top-page-header-end {
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.top-page-menu-boundary {
+    display: none;
+    width: 32px;
+    height: 32px;
+}
+
+.top-page-main section {
+    border-bottom: 1px solid rgba(190, 207, 211, 0.1);
+}
+
+.top-page-main h2 {
+    max-width: 720px;
+    font-size: clamp(2rem, 5vw, 4.7rem);
+    line-height: 0.98;
+}
+
+.top-encounter-layout,
+.top-continue-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(300px, 1.2fr);
+    align-items: center;
+    gap: 56px;
+}
+
+.top-encounter {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background:
+        radial-gradient(ellipse at 72% 42%, rgba(72, 94, 101, 0.12), transparent 42%),
+        radial-gradient(ellipse at 50% 110%, rgba(16, 29, 34, 0.28), transparent 52%),
+        linear-gradient(180deg, rgba(4, 7, 9, 0.3), rgba(8, 12, 14, 0.82));
+}
+
+.top-encounter-layout {
+    min-height: max(720px, 100svh);
+    position: relative;
+    grid-template-columns: minmax(180px, 0.4fr) minmax(580px, 1.6fr);
+    gap: 0;
+    padding-top: 64px;
+}
+
+.top-encounter-copy {
+    position: relative;
+    z-index: 4;
+    align-self: end;
+    padding-bottom: clamp(64px, 10vh, 116px);
+}
+
+.top-encounter-copy h2 {
+    font-size: clamp(1.75rem, 3.5vw, 3.8rem);
+    line-height: 1;
+    color: #e1e7e9;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.65);
+}
+
+.top-encounter-copy h2:focus-visible {
+    outline: 1px solid rgba(126, 191, 204, 0.66);
+    outline-offset: 8px;
+}
+
+.top-encounter-tagline {
+    min-height: 1.5em;
+    max-width: 28rem;
+    margin: 22px 0 0;
+    color: #b2bec1;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    font-size: clamp(1rem, 1.35vw, 1.24rem);
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: 0.055em;
+    white-space: nowrap;
+}
+
+.top-earth-stage {
+    position: relative;
+    min-height: 680px;
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+}
+
+.top-earth-visual,
+.top-earth-interaction {
+    position: absolute;
+    inset: 0;
+}
+
+.top-earth-visual {
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.top-earth-atmosphere,
+.top-earth-surface,
+.top-earth-lights {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(680px, 68vw, 1080px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.top-earth-atmosphere {
+    border: 1px solid rgba(164, 202, 211, 0.24);
+    background:
+        radial-gradient(circle at 34% 29%, rgba(141, 174, 182, 0.1), transparent 47%),
+        radial-gradient(circle at 50% 50%, transparent 65%, rgba(83, 127, 138, 0.07) 70%, transparent 73%);
+    box-shadow:
+        -10px -4px 28px rgba(117, 177, 189, 0.1),
+        0 0 70px rgba(74, 118, 128, 0.06),
+        0 54px 110px rgba(0, 0, 0, 0.58);
+}
+
+.top-earth-surface {
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 28% 23%, rgba(122, 146, 151, 0.2), transparent 18%),
+        radial-gradient(ellipse at 46% 44%, rgba(71, 94, 100, 0.17), transparent 26%),
+        radial-gradient(ellipse at 67% 72%, rgba(43, 62, 68, 0.18), transparent 29%),
+        radial-gradient(circle at 38% 34%, #26343a 0%, #151e22 37%, #090e11 66%, #020405 100%);
+    box-shadow:
+        inset -120px -48px 150px rgba(0, 0, 0, 0.84),
+        inset 18px 6px 32px rgba(107, 151, 160, 0.07);
+}
+
+.top-earth-surface::before,
+.top-earth-surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.top-earth-surface::before {
+    opacity: 0.24;
+    background:
+        radial-gradient(ellipse at 31% 38%, rgba(169, 187, 190, 0.18), transparent 8%),
+        radial-gradient(ellipse at 42% 27%, rgba(157, 178, 182, 0.12), transparent 12%),
+        radial-gradient(ellipse at 55% 54%, rgba(111, 136, 141, 0.1), transparent 15%);
+    filter: blur(8px);
+}
+
+.top-earth-surface::after {
+    background: linear-gradient(108deg, transparent 16%, rgba(0, 0, 0, 0.08) 42%, rgba(0, 0, 0, 0.82) 78%);
+}
+
+.top-earth-lights {
+    z-index: 2;
+    pointer-events: none;
+}
+
+.top-earth-interaction {
+    z-index: 3;
+    min-height: 100%;
+}
+
+.top-origin-content,
+.top-continue-cta {
+    min-height: 1px;
+}
+
+.top-featured-records .top-page-section-inner,
+.top-exploration-paths .top-page-section-inner,
+.top-origin .top-page-section-inner,
+.top-continue-layout {
+    padding-top: 120px;
+    padding-bottom: 120px;
+}
+
+.top-featured-records .top-page-section-inner {
+    padding-top: 88px;
+    padding-bottom: 104px;
+}
+
+.top-featured-records .top-page-section-label {
+    margin-bottom: 6px;
+    color: #6f7c81;
+    font-size: 0.62rem;
+}
+
+.top-featured-records h2 {
+    font-size: clamp(1.65rem, 3vw, 2.8rem);
+    line-height: 1.05;
+}
+
+.top-featured-track {
+    --top-featured-record-width: clamp(420px, 52vw, 620px);
+    --top-featured-record-half-width: clamp(210px, 26vw, 310px);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--top-featured-record-width);
+    align-items: center;
+    gap: clamp(14px, 1.6vw, 22px);
+    margin-top: 32px;
+    padding: 2px max(2px, calc(50% - var(--top-featured-record-half-width))) 20px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline proximity;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(150, 175, 181, 0.32) transparent;
+}
+
+.top-featured-track:focus-visible {
+    outline: 1px solid rgba(126, 191, 204, 0.58);
+    outline-offset: 6px;
+}
+
+.top-featured-record {
+    min-width: 0;
+    overflow: hidden;
+    scroll-snap-align: center;
+    border: 1px solid transparent;
+    background: transparent;
+    transition:
+        border-color 0.28s ease,
+        background-color 0.28s ease;
+}
+
+.top-featured-record.is-featured {
+    z-index: 2;
+    border-color: rgba(190, 207, 211, 0.2);
+    background: #0c1113;
+}
+
+.top-featured-record-visual {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 70% 20%, rgba(91, 111, 117, 0.1), transparent 42%),
+        linear-gradient(145deg, #111719, #070a0c 72%);
+    box-shadow: inset 0 0 0 1px rgba(190, 207, 211, 0.1);
+    filter: brightness(0.72) contrast(0.92);
+    transform: scale(0.66);
+    transform-origin: center bottom;
+    transition:
+        transform 0.28s ease,
+        filter 0.28s ease,
+        box-shadow 0.28s ease;
+}
+
+.top-featured-record.is-featured .top-featured-record-visual {
+    box-shadow: inset 0 0 0 1px rgba(190, 207, 211, 0.08);
+    filter: none;
+    transform: none;
+}
+
+.top-featured-record-visual::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 54%, rgba(5, 8, 10, 0.8));
+    pointer-events: none;
+}
+
+.top-featured-record-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.top-featured-record-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: #96a3a7;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    transform: scale(1.4);
+    transition: transform 0.28s ease;
+}
+
+.top-featured-record.is-featured .top-featured-record-placeholder {
+    transform: none;
+}
+
+.top-featured-record-copy {
+    width: 66%;
+    min-height: 92px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 18px 20px 20px;
+    transition: width 0.28s ease;
+}
+
+.top-featured-record.is-featured .top-featured-record-copy {
+    width: 100%;
+}
+
+.top-featured-record-id,
+.top-featured-record-title {
+    margin: 0;
+}
+
+.top-featured-record-id {
+    color: #8b989d;
+    font-size: 0.64rem;
+    letter-spacing: 0.14em;
+}
+
+.top-featured-record-title {
+    margin-top: 8px;
+    color: #d4dde0;
+    font-size: clamp(1rem, 1.35vw, 1.18rem);
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.top-origin-content,
+.top-continue-visual {
+    border: 1px solid rgba(190, 207, 211, 0.13);
+    background: rgba(255, 255, 255, 0.018);
+}
+
+.top-progressive-exploration {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 34px 28px;
+    margin-top: 48px;
+}
+
+.top-exploration-scene {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.top-exploration-scene h3 {
+    margin: 0 0 14px;
+    color: #9ca9ad;
+    font-size: 0.74rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+}
+
+.top-exploration-surface {
+    min-height: 0;
+    border: 1px solid rgba(190, 207, 211, 0.11);
+    background:
+        radial-gradient(ellipse at 72% 28%, rgba(93, 114, 120, 0.08), transparent 44%),
+        linear-gradient(145deg, rgba(17, 23, 26, 0.72), rgba(7, 10, 12, 0.82));
+}
+
+.top-exploration-map {
+    min-height: 460px;
+    position: relative;
+    grid-column: 1 / 11;
+    display: block;
+    overflow: hidden;
+}
+
+.top-exploration-map-copy {
+    position: absolute;
+    top: 38px;
+    left: 42px;
+    z-index: 3;
+}
+
+.top-exploration-map-copy h3 {
+    color: #c1cdd0;
+    font-size: 0.88rem;
+}
+
+.top-exploration-map-copy p {
+    margin: 13px 0 0;
+    color: #aebbbf;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    font-size: clamp(0.9rem, 1.2vw, 1.08rem);
+    font-weight: 400;
+    letter-spacing: 0.055em;
+}
+
+.top-exploration-map .top-exploration-surface {
+    min-height: 460px;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 76% 14%, rgba(74, 96, 102, 0.09), transparent 37%),
+        linear-gradient(180deg, #080d10, #05080a 72%);
+}
+
+.top-exploration-world-fragment {
+    width: 118%;
+    aspect-ratio: 1;
+    position: absolute;
+    left: 56%;
+    bottom: -91%;
+    border: 1px solid rgba(144, 186, 195, 0.19);
+    border-radius: 50%;
+    background:
+        radial-gradient(ellipse at 38% 22%, rgba(102, 126, 132, 0.16), transparent 16%),
+        radial-gradient(ellipse at 61% 32%, rgba(64, 88, 94, 0.12), transparent 23%),
+        radial-gradient(ellipse at 46% 44%, rgba(42, 61, 67, 0.16), transparent 31%),
+        radial-gradient(circle at 50% 18%, #1e2a2f, #0d1519 38%, #05090b 70%);
+    box-shadow:
+        0 -3px 18px rgba(97, 154, 165, 0.09),
+        inset 120px 36px 180px rgba(118, 151, 157, 0.04),
+        inset -180px -80px 220px rgba(0, 0, 0, 0.76);
+    transform: translateX(-50%);
+}
+
+.top-exploration-world-fragment::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    box-shadow: inset 0 3px 8px rgba(142, 196, 207, 0.08);
+}
+
+.top-exploration-world-foreground {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(3, 6, 8, 0.58), transparent 34%, rgba(2, 4, 6, 0.2)),
+        linear-gradient(180deg, transparent 50%, rgba(2, 4, 5, 0.62));
+}
+
+.top-exploration-cases {
+    min-height: 320px;
+    grid-column: 2 / 8;
+}
+
+.top-exploration-cases-copy {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.top-exploration-cases-copy p {
+    margin: 0 0 14px;
+    color: #87969a;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.055em;
+}
+
+.top-exploration-cases .top-exploration-surface {
+    min-height: 286px;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 32% 28%, rgba(102, 119, 123, 0.08), transparent 42%),
+        linear-gradient(145deg, #111719, #070b0d 74%);
+}
+
+.top-exploration-record-layer {
+    position: absolute;
+    border: 1px solid rgba(181, 195, 198, 0.12);
+    background: #151b1d;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+}
+
+.top-exploration-record-layer-back {
+    width: 62%;
+    height: 72%;
+    top: 12%;
+    right: 5%;
+    background: linear-gradient(155deg, #171d1f, #0c1113);
+    transform: rotate(2.2deg);
+}
+
+.top-exploration-record-layer-primary {
+    width: 72%;
+    height: 78%;
+    left: 8%;
+    bottom: -3%;
+    display: grid;
+    grid-template-columns: 38% 1fr;
+    gap: 8%;
+    padding: 7%;
+    background:
+        linear-gradient(90deg, transparent 0 68%, rgba(4, 7, 8, 0.34) 68% 82%, transparent 82%),
+        linear-gradient(150deg, #1a2123, #101517 66%);
+    transform: rotate(-1.4deg);
+}
+
+.top-exploration-reference-boundary {
+    min-width: 0;
+    border: 1px solid rgba(169, 184, 187, 0.14);
+    background:
+        linear-gradient(145deg, rgba(94, 108, 112, 0.08), transparent 52%),
+        #0c1113;
+}
+
+.top-exploration-record-lines {
+    min-width: 0;
+    opacity: 0.48;
+    background:
+        linear-gradient(90deg, #090d0f 0 46%, transparent 46% 62%, #090d0f 62% 86%, transparent 86%) 0 76% / 100% 10% no-repeat,
+        repeating-linear-gradient(180deg, rgba(151, 166, 169, 0.26) 0 1px, transparent 1px 17px);
+}
+
+.top-exploration-record-shadow {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(3, 6, 7, 0.32), transparent 38%),
+        linear-gradient(180deg, transparent 62%, rgba(2, 4, 5, 0.52));
+}
+
+.top-exploration-timeline {
+    min-height: 270px;
+    grid-column: 8 / 13;
+    margin-top: 72px;
+}
+
+.top-exploration-timeline-copy {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.top-exploration-timeline-copy p {
+    margin: 0 0 14px;
+    color: #87969a;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.045em;
+}
+
+.top-exploration-timeline .top-exploration-surface {
+    min-height: 236px;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(ellipse at 68% 48%, rgba(98, 124, 130, 0.08), transparent 34%),
+        linear-gradient(155deg, #0d1315, #060a0c 76%);
+}
+
+.top-exploration-temporal-axis {
+    height: 1px;
+    position: absolute;
+    top: 56%;
+    right: -16%;
+    left: -12%;
+    background: linear-gradient(90deg, transparent, rgba(157, 177, 181, 0.18) 16%, rgba(166, 188, 192, 0.42) 64%, transparent);
+    transform: rotate(-4deg);
+    transform-origin: center;
+}
+
+.top-exploration-temporal-node {
+    position: absolute;
+    top: 50%;
+    border: 1px solid rgba(167, 190, 194, 0.28);
+    border-radius: 50%;
+    background: #0c1214;
+    box-shadow: 0 0 18px rgba(103, 145, 153, 0.05);
+    transform: translate(-50%, -50%);
+}
+
+.top-exploration-temporal-node-near {
+    width: 11px;
+    height: 11px;
+    left: 28%;
+    opacity: 0.48;
+}
+
+.top-exploration-temporal-node-mid {
+    width: 15px;
+    height: 15px;
+    left: 58%;
+    border-color: rgba(177, 202, 207, 0.38);
+}
+
+.top-exploration-temporal-node-far {
+    width: 8px;
+    height: 8px;
+    left: 82%;
+    opacity: 0.32;
+}
+
+.top-exploration-temporal-depth {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(90deg, rgba(4, 7, 9, 0.58), transparent 22%, transparent 78%, rgba(3, 6, 8, 0.5)),
+        linear-gradient(180deg, rgba(5, 8, 10, 0.12), transparent 50%, rgba(3, 6, 7, 0.4));
+}
+
+.top-exploration-ai {
+    min-height: 176px;
+    grid-column: 5 / 9;
+    margin-top: 22px;
+}
+
+.top-exploration-ai-copy {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.top-exploration-ai-copy p {
+    margin: 0 0 14px;
+    color: #829094;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif;
+    font-size: 0.76rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+}
+
+.top-exploration-ai .top-exploration-surface {
+    min-height: 142px;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 44% 54%, rgba(93, 124, 130, 0.08), transparent 30%),
+        linear-gradient(150deg, rgba(14, 20, 22, 0.86), rgba(6, 10, 12, 0.92));
+}
+
+.top-exploration-relationship-field {
+    position: absolute;
+    inset: 0;
+}
+
+.top-exploration-relationship-node,
+.top-exploration-relationship-line {
+    position: absolute;
+}
+
+.top-exploration-relationship-node {
+    width: 7px;
+    height: 7px;
+    border: 1px solid rgba(169, 195, 200, 0.3);
+    border-radius: 50%;
+    background: #0a1012;
+    box-shadow: 0 0 12px rgba(116, 160, 168, 0.06);
+}
+
+.top-exploration-relationship-node-first {
+    top: 35%;
+    left: 28%;
+}
+
+.top-exploration-relationship-node-second {
+    width: 9px;
+    height: 9px;
+    top: 58%;
+    left: 49%;
+    border-color: rgba(178, 205, 210, 0.38);
+}
+
+.top-exploration-relationship-node-third {
+    top: 31%;
+    left: 68%;
+    opacity: 0.58;
+}
+
+.top-exploration-relationship-node-isolated {
+    width: 5px;
+    height: 5px;
+    top: 72%;
+    left: 82%;
+    opacity: 0.34;
+}
+
+.top-exploration-relationship-line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(151, 178, 183, 0.08), rgba(151, 178, 183, 0.28), transparent);
+    transform-origin: left center;
+}
+
+.top-exploration-relationship-line-first {
+    width: 27%;
+    top: 38%;
+    left: 29%;
+    transform: rotate(26deg);
+}
+
+.top-exploration-relationship-line-second {
+    width: 25%;
+    top: 59%;
+    left: 51%;
+    opacity: 0.62;
+    transform: rotate(-27deg);
+}
+
+.top-origin-content {
+    min-height: 220px;
+    margin-top: 54px;
+}
+
+.top-continue-layout {
+    min-height: 470px;
+}
+
+.top-continue-visual {
+    min-height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(70, 87, 93, 0.2), rgba(8, 11, 13, 0) 68%);
+}
+
+.top-page-footer {
+    padding: 36px 0;
+    color: #6e7c81;
+    background: #07090a;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+@media (max-width: 1040px) {
+    .top-page-header-inner {
+        grid-template-columns: minmax(135px, 1fr) auto minmax(24px, 0.25fr);
+        gap: 18px;
+    }
+
+    .top-page-navigation ul {
+        gap: 10px 14px;
+        font-size: 0.62rem;
+        letter-spacing: 0.09em;
+    }
+
+    .top-featured-track {
+        --top-featured-record-width: min(62vw, 540px);
+        --top-featured-record-half-width: min(31vw, 270px);
+    }
+}
+
+@media (max-width: 860px) {
+    .top-page-header-inner {
+        min-height: 58px;
+        padding-top: 0;
+        padding-bottom: 0;
+        grid-template-columns: 1fr auto;
+    }
+
+    .top-page-navigation {
+        display: none;
+    }
+
+    .top-page-menu-boundary {
+        display: block;
+    }
+
+    .top-encounter-layout,
+    .top-continue-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .top-encounter-layout {
+        min-height: max(720px, 100svh);
+        padding-top: 58px;
+        padding-bottom: 48px;
+        grid-template-rows: minmax(440px, 1fr) auto;
+    }
+
+    .top-encounter-copy {
+        z-index: 4;
+        grid-row: 2;
+        padding-bottom: 0;
+    }
+
+    .top-earth-stage {
+        min-height: 500px;
+        grid-row: 1;
+    }
+
+    .top-earth-atmosphere,
+    .top-earth-surface,
+    .top-earth-lights {
+        width: clamp(610px, 108vw, 820px);
+    }
+
+    .top-featured-track {
+        --top-featured-record-width: min(68vw, 520px);
+        --top-featured-record-half-width: min(34vw, 260px);
+    }
+
+    .top-featured-record-visual {
+        transform: scale(0.72);
+    }
+
+    .top-featured-record-placeholder {
+        transform: scale(1.3);
+    }
+
+    .top-featured-record-copy {
+        width: 72%;
+    }
+
+    .top-exploration-map {
+        grid-column: 1 / 13;
+    }
+
+    .top-exploration-cases {
+        grid-column: 1 / 8;
+    }
+
+    .top-exploration-record-layer-primary {
+        width: 78%;
+        left: 6%;
+    }
+
+    .top-exploration-timeline {
+        grid-column: 8 / 13;
+        margin-top: 48px;
+    }
+
+    .top-exploration-ai {
+        grid-column: 4 / 10;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-page-header-inner,
+    .top-page-section-inner {
+        width: min(100% - 32px, 1180px);
+    }
+
+    .top-progressive-exploration {
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+        margin-top: 38px;
+    }
+
+    .top-exploration-map {
+        min-height: 360px;
+    }
+
+    .top-exploration-map-copy {
+        top: 28px;
+        left: 26px;
+    }
+
+    .top-exploration-map .top-exploration-surface {
+        min-height: 360px;
+    }
+
+    .top-exploration-world-fragment {
+        width: 180%;
+        left: 62%;
+        bottom: -80%;
+    }
+
+    .top-exploration-cases {
+        min-height: 270px;
+    }
+
+    .top-exploration-cases .top-exploration-surface {
+        min-height: 236px;
+    }
+
+    .top-exploration-cases-copy {
+        align-items: flex-start;
+    }
+
+    .top-exploration-record-layer-back {
+        width: 68%;
+        right: -4%;
+    }
+
+    .top-exploration-record-layer-primary {
+        width: 88%;
+        height: 76%;
+        left: 5%;
+        grid-template-columns: 34% 1fr;
+        gap: 7%;
+        padding: 7%;
+    }
+
+    .top-exploration-timeline {
+        min-height: 220px;
+        margin-top: 0;
+    }
+
+    .top-exploration-timeline-copy {
+        align-items: flex-start;
+    }
+
+    .top-exploration-timeline .top-exploration-surface {
+        min-height: 186px;
+    }
+
+    .top-exploration-temporal-axis {
+        top: 58%;
+        right: -24%;
+        left: -20%;
+        transform: rotate(-6deg);
+    }
+
+    .top-exploration-temporal-node-near {
+        left: 31%;
+    }
+
+    .top-exploration-temporal-node-mid {
+        left: 57%;
+    }
+
+    .top-exploration-temporal-node-far {
+        left: 79%;
+    }
+
+    .top-exploration-ai {
+        min-height: 150px;
+        margin-top: 0;
+    }
+
+    .top-exploration-ai-copy {
+        align-items: flex-start;
+    }
+
+    .top-exploration-ai .top-exploration-surface {
+        min-height: 116px;
+    }
+
+    .top-exploration-relationship-node-isolated {
+        left: 86%;
+    }
+
+    .top-featured-track {
+        --top-featured-record-width: min(82vw, 350px);
+        --top-featured-record-half-width: min(41vw, 175px);
+        width: calc(100vw - 16px);
+        gap: 14px;
+    }
+
+    .top-featured-record-visual {
+        filter: brightness(0.78) contrast(0.94);
+        transform: scale(0.82);
+    }
+
+    .top-featured-record-placeholder {
+        transform: scale(1.15);
+    }
+
+    .top-featured-record-copy {
+        width: 82%;
+    }
+
+    .top-encounter-layout {
+        width: 100%;
+        padding-top: 58px;
+        grid-template-rows: minmax(480px, 1fr) auto;
+    }
+
+    .top-encounter-copy {
+        width: calc(100% - 32px);
+        margin: 0 auto;
+    }
+
+    .top-earth-stage {
+        min-height: 480px;
+    }
+
+    .top-earth-atmosphere,
+    .top-earth-surface,
+    .top-earth-lights {
+        width: max(610px, 142vw);
+        transform: translate(-42%, -50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .top-featured-record,
+    .top-featured-record-visual,
+    .top-featured-record-placeholder,
+    .top-featured-record-copy {
+        transition: none;
     }
 }
 

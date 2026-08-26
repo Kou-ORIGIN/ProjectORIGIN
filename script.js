@@ -9,7 +9,9 @@
 
 const loginForm = document.getElementById('loginForm');
 const loginContainer = document.getElementById('loginContainer');
+const topPage = document.getElementById('topPage');
 const dashboard = document.getElementById('dashboard');
+const dashboardTopPageBtn = document.getElementById('dashboardTopPageBtn');
 const desktopLogoutBtn = document.getElementById('desktopLogoutBtn');
 const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 const errorMessage = document.getElementById('errorMessage');
@@ -390,6 +392,7 @@ const navigationConfig = [
     { section: 'favorites', label: 'お気に入り' },
     { section: 'info', label: '情報' }
 ];
+const topPageNavItems = topPage ? Array.from(topPage.querySelectorAll('.top-page-nav-button')) : [];
 
 let mobileNavItems = [];
 let mobileNavHideTimerId = null;
@@ -452,6 +455,74 @@ function navigateToSection(sectionName, options = {}) {
         closeMobileNavDrawer({ restoreFocus: false });
     }
 }
+
+function focusDashboardSection(sectionName) {
+    const normalizedSection = normalizeSectionName(sectionName);
+    const destinationSection = Array.from(chatSections)
+        .find((section) => section.dataset.section === normalizedSection);
+
+    if (!destinationSection || destinationSection.hidden) {
+        return;
+    }
+
+    destinationSection.setAttribute('tabindex', '-1');
+    destinationSection.focus({ preventScroll: true });
+    destinationSection.addEventListener('blur', () => {
+        destinationSection.removeAttribute('tabindex');
+    }, { once: true });
+}
+
+function navigateFromTopPage(sectionName) {
+    if (!topPage || topPage.hidden) {
+        return;
+    }
+
+    topPage.hidden = true;
+    loginContainer.style.display = 'none';
+    dashboard.style.display = 'grid';
+    navigateToSection(sectionName);
+
+    requestAnimationFrame(() => {
+        refreshHeaderLayout();
+        focusDashboardSection(sectionName);
+    });
+}
+
+function showTopPageFromDashboard() {
+    if (!topPage) {
+        return;
+    }
+
+    closeMobileNavDrawer({ restoreFocus: false, immediate: true });
+    dashboard.style.display = 'none';
+    initializeTopFeaturedRecords();
+    topPage.hidden = false;
+    requestTopFeaturedRecordUpdate();
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+    const encounterHeading = document.getElementById('topEncounterHeading');
+    if (!encounterHeading) {
+        return;
+    }
+
+    encounterHeading.setAttribute('tabindex', '-1');
+    requestAnimationFrame(() => {
+        encounterHeading.focus({ preventScroll: true });
+    });
+    encounterHeading.addEventListener('blur', () => {
+        encounterHeading.removeAttribute('tabindex');
+    }, { once: true });
+}
+
+if (dashboardTopPageBtn) {
+    dashboardTopPageBtn.addEventListener('click', showTopPageFromDashboard);
+}
+
+topPageNavItems.forEach((item) => {
+    item.addEventListener('click', () => {
+        navigateFromTopPage(item.dataset.section);
+    });
+});
 
 function setActiveSection(sectionName, options = {}) {
     const normalizedSection = normalizeSectionName(sectionName);
@@ -881,8 +952,114 @@ const favoritesList = document.getElementById('favoritesList');
 const favoritesSummary = document.getElementById('favoritesSummary');
 const originWorldMap = document.getElementById('originWorldMap');
 const originMapInfo = document.getElementById('originMapInfo');
+const topFeaturedRecordsTrack = document.getElementById('topFeaturedRecordsTrack');
 const INCIDENT_FILTER_STORAGE_KEY = 'ProjectORIGIN_incident_filters';
 const FAVORITES_STORAGE_PREFIX = 'ProjectORIGIN_favorites_';
+let activeTopFeaturedRecord = null;
+let topFeaturedUpdateFrameId = null;
+
+function createTopFeaturedRecord(incident) {
+    const record = document.createElement('article');
+    record.className = 'top-featured-record';
+
+    const visual = document.createElement('div');
+    visual.className = 'top-featured-record-visual';
+
+    const imagePath = getIncidentCaseCardImagePath(incident);
+    if (imagePath) {
+        const image = document.createElement('img');
+        image.className = 'top-featured-record-image';
+        image.src = imagePath;
+        image.alt = '';
+        image.loading = 'lazy';
+        image.decoding = 'async';
+        visual.appendChild(image);
+    } else {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'top-featured-record-placeholder';
+        placeholder.setAttribute('aria-hidden', 'true');
+        placeholder.textContent = 'VISUAL RECORD PENDING';
+        visual.appendChild(placeholder);
+    }
+
+    const copy = document.createElement('div');
+    copy.className = 'top-featured-record-copy';
+
+    const incidentId = document.createElement('p');
+    incidentId.className = 'top-featured-record-id';
+    incidentId.textContent = formatIncidentDisplayId(getIncidentId(incident));
+
+    const title = document.createElement('h3');
+    title.className = 'top-featured-record-title';
+    title.textContent = getIncidentCaseName(incident);
+
+    copy.appendChild(incidentId);
+    copy.appendChild(title);
+    record.appendChild(visual);
+    record.appendChild(copy);
+    return record;
+}
+
+function updateTopFeaturedRecord() {
+    topFeaturedUpdateFrameId = null;
+    if (!topFeaturedRecordsTrack) {
+        return;
+    }
+
+    const trackBounds = topFeaturedRecordsTrack.getBoundingClientRect();
+    if (trackBounds.width <= 0) {
+        return;
+    }
+
+    const trackCenter = trackBounds.left + (trackBounds.width / 2);
+    const records = Array.from(topFeaturedRecordsTrack.querySelectorAll('.top-featured-record'));
+    let closestRecord = null;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    records.forEach((record) => {
+        const recordBounds = record.getBoundingClientRect();
+        const recordCenter = recordBounds.left + (recordBounds.width / 2);
+        const distanceFromCenter = Math.abs(trackCenter - recordCenter);
+
+        if (distanceFromCenter < closestDistance) {
+            closestRecord = record;
+            closestDistance = distanceFromCenter;
+        }
+    });
+
+    if (!closestRecord || closestRecord === activeTopFeaturedRecord) {
+        return;
+    }
+
+    activeTopFeaturedRecord?.classList.remove('is-featured');
+    closestRecord.classList.add('is-featured');
+    activeTopFeaturedRecord = closestRecord;
+}
+
+function requestTopFeaturedRecordUpdate() {
+    if (topFeaturedUpdateFrameId !== null) {
+        return;
+    }
+
+    topFeaturedUpdateFrameId = requestAnimationFrame(updateTopFeaturedRecord);
+}
+
+function initializeTopFeaturedRecords() {
+    if (!topFeaturedRecordsTrack || topFeaturedRecordsTrack.dataset.initialized) {
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    incidentData.slice(0, 5).forEach((incident) => {
+        fragment.appendChild(createTopFeaturedRecord(incident));
+    });
+
+    topFeaturedRecordsTrack.replaceChildren(fragment);
+    topFeaturedRecordsTrack.dataset.initialized = 'true';
+    topFeaturedRecordsTrack.addEventListener('scroll', requestTopFeaturedRecordUpdate, { passive: true });
+    window.addEventListener('resize', requestTopFeaturedRecordUpdate);
+    requestTopFeaturedRecordUpdate();
+}
 
 let favoriteIncidentIds = new Set();
 let activeOriginMapIncidentId = null;
@@ -903,6 +1080,15 @@ const originMapMarkerPositions = {
     'FILE-011': { left: 40, top: 42 },
     'FILE-012': { left: 31, top: 43 }
 };
+
+// Preparation boundary only: flat-map positions are intentionally not projected
+// onto the Top Earth until a formally approved projection rule exists.
+function prepareTopEarthIncidentIds() {
+    return Object.freeze(incidentData
+        .map((incident) => getIncidentId(incident))
+        .filter((incidentId) => Boolean(incidentId && originMapMarkerPositions[incidentId]))
+    );
+}
 
 const incidentFilterState = {
     search: '',

@@ -61,6 +61,152 @@
         </div>
     </div>
 
+    <!-- Top Page Foundation (not connected to the current authentication flow) -->
+    <div class="top-page" id="topPage" hidden>
+        <header class="top-page-header">
+            <div class="top-page-header-inner">
+                <div class="top-page-identity">
+                    <h1>ProjectORIGIN</h1>
+                </div>
+                <nav class="top-page-navigation" aria-label="Top page navigation">
+                    <ul>
+                        <li><button type="button" class="top-page-nav-button" data-section="origin-map">ORIGIN MAP</button></li>
+                        <li><button type="button" class="top-page-nav-button" data-section="incident-file">CASE FILES</button></li>
+                        <li><button type="button" class="top-page-nav-button" data-section="timeline">TIMELINE</button></li>
+                        <li><button type="button" class="top-page-nav-button" data-section="chat">ORIGIN AI</button></li>
+                        <li><button type="button" class="top-page-nav-button" data-section="favorites">FAVORITES</button></li>
+                        <li><button type="button" class="top-page-nav-button" data-section="info">INFORMATION</button></li>
+                    </ul>
+                </nav>
+                <div class="top-page-header-end" aria-hidden="true">
+                    <div class="top-page-menu-boundary" data-top-boundary="future-menu-trigger"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="top-page-main">
+            <section class="top-encounter" id="topEncounter" aria-labelledby="topEncounterHeading">
+                <div class="top-page-section-inner top-encounter-layout">
+                    <div class="top-encounter-copy">
+                        <h2 id="topEncounterHeading">ProjectORIGIN</h2>
+                        <p class="top-encounter-tagline" data-top-boundary="tagline">未知は、まだ世界に存在する。</p>
+                    </div>
+                    <div class="top-earth-stage" data-top-boundary="earth-presentation">
+                        <div class="top-earth-visual" aria-hidden="true">
+                            <div class="top-earth-atmosphere"></div>
+                            <div class="top-earth-surface"></div>
+                        </div>
+                        <div class="top-earth-lights" aria-hidden="true"></div>
+                        <div class="top-earth-interaction" data-top-boundary="future-earth-interaction"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="top-featured-records" id="topFeaturedRecords" aria-labelledby="topFeaturedRecordsHeading">
+                <div class="top-page-section-inner">
+                    <p class="top-page-section-label">Archive Selection</p>
+                    <h2 id="topFeaturedRecordsHeading">Featured Records</h2>
+                    <div
+                        class="top-featured-track"
+                        id="topFeaturedRecordsTrack"
+                        data-top-boundary="featured-records"
+                        role="region"
+                        aria-labelledby="topFeaturedRecordsHeading"
+                        tabindex="0"
+                    ></div>
+                </div>
+            </section>
+
+            <section class="top-exploration-paths" id="topExplorationPaths" aria-labelledby="topExplorationPathsHeading">
+                <div class="top-page-section-inner">
+                    <p class="top-page-section-label">Exploration</p>
+                    <h2 id="topExplorationPathsHeading">Exploration Paths</h2>
+                    <div class="top-progressive-exploration">
+                        <section class="top-exploration-scene top-exploration-map" aria-labelledby="topExplorationMapHeading">
+                            <div class="top-exploration-map-copy">
+                                <h3 id="topExplorationMapHeading">ORIGIN MAP</h3>
+                                <p>未知を、場所から探す。</p>
+                            </div>
+                            <div class="top-exploration-surface" data-top-boundary="origin-map" aria-hidden="true">
+                                <div class="top-exploration-world-fragment"></div>
+                                <div class="top-exploration-world-foreground"></div>
+                            </div>
+                        </section>
+                        <section class="top-exploration-scene top-exploration-cases" aria-labelledby="topExplorationCasesHeading">
+                            <div class="top-exploration-cases-copy">
+                                <h3 id="topExplorationCasesHeading">CASE FILES</h3>
+                                <p>記録の奥へ。</p>
+                            </div>
+                            <div class="top-exploration-surface" data-top-boundary="case-files" aria-hidden="true">
+                                <div class="top-exploration-record-layer top-exploration-record-layer-back"></div>
+                                <div class="top-exploration-record-layer top-exploration-record-layer-primary">
+                                    <div class="top-exploration-reference-boundary"></div>
+                                    <div class="top-exploration-record-lines"></div>
+                                </div>
+                                <div class="top-exploration-record-shadow"></div>
+                            </div>
+                        </section>
+                        <section class="top-exploration-scene top-exploration-timeline" aria-labelledby="topExplorationTimelineHeading">
+                            <div class="top-exploration-timeline-copy">
+                                <h3 id="topExplorationTimelineHeading">TIMELINE</h3>
+                                <p>未知を、時間から辿る。</p>
+                            </div>
+                            <div class="top-exploration-surface" data-top-boundary="timeline" aria-hidden="true">
+                                <div class="top-exploration-temporal-axis">
+                                    <span class="top-exploration-temporal-node top-exploration-temporal-node-near"></span>
+                                    <span class="top-exploration-temporal-node top-exploration-temporal-node-mid"></span>
+                                    <span class="top-exploration-temporal-node top-exploration-temporal-node-far"></span>
+                                </div>
+                                <div class="top-exploration-temporal-depth"></div>
+                            </div>
+                        </section>
+                        <section class="top-exploration-scene top-exploration-ai" aria-labelledby="topExplorationAiHeading">
+                            <div class="top-exploration-ai-copy">
+                                <h3 id="topExplorationAiHeading">ORIGIN AI</h3>
+                                <p>未知のつながりを探る。</p>
+                            </div>
+                            <div class="top-exploration-surface" data-top-boundary="origin-ai" aria-hidden="true">
+                                <div class="top-exploration-relationship-field">
+                                    <span class="top-exploration-relationship-line top-exploration-relationship-line-first"></span>
+                                    <span class="top-exploration-relationship-line top-exploration-relationship-line-second"></span>
+                                    <span class="top-exploration-relationship-node top-exploration-relationship-node-first"></span>
+                                    <span class="top-exploration-relationship-node top-exploration-relationship-node-second"></span>
+                                    <span class="top-exploration-relationship-node top-exploration-relationship-node-third"></span>
+                                    <span class="top-exploration-relationship-node top-exploration-relationship-node-isolated"></span>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </section>
+
+            <section class="top-origin" id="topOrigin" aria-labelledby="topOriginHeading">
+                <div class="top-page-section-inner">
+                    <p class="top-page-section-label">Identity</p>
+                    <h2 id="topOriginHeading">ProjectORIGIN</h2>
+                    <div class="top-origin-content" data-top-boundary="origin-content"></div>
+                </div>
+            </section>
+
+            <section class="top-continue-exploring" id="topContinueExploring" aria-labelledby="topContinueExploringHeading">
+                <div class="top-page-section-inner top-continue-layout">
+                    <div>
+                        <p class="top-page-section-label">Continue</p>
+                        <h2 id="topContinueExploringHeading">Continue Exploring</h2>
+                        <div class="top-continue-cta" data-top-boundary="cta"></div>
+                    </div>
+                    <div class="top-continue-visual" data-top-boundary="exploration-visual" aria-hidden="true"></div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="top-page-footer">
+            <div class="top-page-section-inner">
+                <p>ProjectORIGIN</p>
+            </div>
+        </footer>
+    </div>
+
     <!-- Dashboard -->
     <div class="dashboard" id="dashboard" style="display: none;">
         <!-- Header -->
@@ -68,7 +214,9 @@
             <div class="header-left">
                 <div class="header-brand">
                     <span class="header-eyebrow">Intelligence Database</span>
-                    <h1 class="system-title">ProjectORIGIN</h1>
+                    <h1 class="system-title">
+                        <button type="button" class="dashboard-top-page-btn" id="dashboardTopPageBtn">ProjectORIGIN</button>
+                    </h1>
                 </div>
                 <div class="system-status">
                     <span id="systemStatus"></span>
