@@ -1478,37 +1478,13 @@ function handleIncidentCardActivate(incident) {
     openIncidentModal(incident);
 }
 
-function bindIncidentCardInteractions(card, incident, options = {}) {
-    if (options.enableCardModalOpen === false) {
+function bindIncidentCardInteractions(dossierTarget, incident, options = {}) {
+    if (options.enableCardModalOpen === false || !dossierTarget) {
         return;
     }
 
-    card.addEventListener('click', () => {
+    dossierTarget.addEventListener('click', () => {
         handleIncidentCardActivate(incident);
-    });
-
-    card.addEventListener('keydown', (event) => {
-        if (event.target !== card) {
-            return;
-        }
-
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            handleIncidentCardActivate(incident);
-        }
-    });
-
-    card.addEventListener('mousedown', (event) => {
-        const target = event.target;
-        if (!(target instanceof Element)) {
-            return;
-        }
-
-        if (target.closest('.incident-favorite-btn')) {
-            return;
-        }
-
-        event.preventDefault();
     });
 }
 
@@ -1536,10 +1512,13 @@ function createIncidentCard(incident, options = {}) {
 
     applyIncidentCaseCardImage(card, incident);
 
+    let dossierTarget = null;
     if (settings.enableCardModalOpen) {
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `${incidentName}の詳細を表示`);
+        dossierTarget = document.createElement('button');
+        dossierTarget.type = 'button';
+        dossierTarget.className = 'incident-card-dossier-target';
+        dossierTarget.setAttribute('aria-label', `${incidentName}の詳細を表示`);
+        card.appendChild(dossierTarget);
     }
 
     const imageRegion = document.createElement('div');
@@ -1694,7 +1673,7 @@ function createIncidentCard(incident, options = {}) {
         card.appendChild(detailButton);
     }
 
-    bindIncidentCardInteractions(card, incident, settings);
+    bindIncidentCardInteractions(dossierTarget, incident, settings);
 
     return card;
 }

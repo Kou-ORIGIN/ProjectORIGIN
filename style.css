@@ -1334,6 +1334,19 @@ body.body-scroll-locked {
     -webkit-user-select: none;
 }
 
+.incident-card-dossier-target {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    padding: 0;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
 .incident-file-card.has-case-card-image {
     overflow: hidden;
     isolation: isolate;
@@ -1361,11 +1374,11 @@ body.body-scroll-locked {
     top: 10px;
     right: 10px;
     left: auto;
-    z-index: 1;
+    z-index: 4;
 }
 
 .incident-card:hover,
-.incident-card:focus-visible {
+.incident-card:has(.incident-card-dossier-target:focus-visible) {
     border-color: var(--hologram-color);
     box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
     transform: translateY(-2px);
@@ -3308,7 +3321,7 @@ body.body-scroll-locked {
     transform: translateY(-1px);
 }
 
-.incident-card:not(.timeline-log-card):focus-visible {
+.incident-card:not(.timeline-log-card):has(.incident-card-dossier-target:focus-visible) {
     outline: 1px solid var(--v5-accent);
     outline-offset: 2px;
     border-color: var(--v5-border-strong);
@@ -3343,7 +3356,8 @@ body.body-scroll-locked {
     top: var(--v5-space-3);
     right: var(--v5-space-3);
     left: auto;
-    z-index: 2;
+    z-index: 4;
+    pointer-events: auto;
     flex: 0 0 auto;
     width: 26px;
     height: 26px;
@@ -4596,7 +4610,7 @@ body.body-scroll-locked {
     transform: none;
 }
 
-.incident-card.origin-map-info-card:focus-visible {
+.incident-card.origin-map-info-card:has(.incident-card-dossier-target:focus-visible) {
     opacity: 1;
     outline: 1px solid var(--v5-accent);
     outline-offset: 2px;
