@@ -1484,6 +1484,10 @@ function bindIncidentCardInteractions(card, incident, options = {}) {
     });
 
     card.addEventListener('keydown', (event) => {
+        if (event.target !== card) {
+            return;
+        }
+
         if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             handleIncidentCardActivate(incident);
