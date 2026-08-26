@@ -2218,6 +2218,11 @@ function sendMessage() {
     chatInput.focus();
 }
 
+function prefersReducedMotion() {
+    return typeof window.matchMedia === 'function'
+        && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function scrollChatToBottom(animated = true) {
     if (!chatMessagesWrapper) {
         return;
@@ -2228,7 +2233,7 @@ function scrollChatToBottom(animated = true) {
         return;
     }
 
-    if (animated) {
+    if (animated && !prefersReducedMotion()) {
         lastMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return;
     }
@@ -2296,7 +2301,7 @@ function addMessage(text, type, options = {}) {
 
     const messageElement = createMessageElement(text, messageType, time);
     
-    const shouldAnimate = options.animate !== false;
+    const shouldAnimate = options.animate !== false && !prefersReducedMotion();
     if (shouldAnimate) {
         messageElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {

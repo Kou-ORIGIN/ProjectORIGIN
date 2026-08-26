@@ -2981,12 +2981,24 @@ body.body-scroll-locked {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .bg-grid,
+    .bg-glow,
+    .particle,
+    .dashboard *,
+    .dashboard *::before,
+    .dashboard *::after {
+        animation: none !important;
+    }
+
+    .dashboard *,
+    .dashboard *::before,
+    .dashboard *::after,
     .dashboard-header,
     .chat-section.active,
     .mobile-nav-overlay,
     .mobile-nav-drawer {
-        transition-duration: 0.01ms;
-        animation-duration: 0.01ms;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 }
 
