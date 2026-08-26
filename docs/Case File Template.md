@@ -1,6 +1,6 @@
 # ProjectORIGIN Case File Template
 
-**Version:** v1.0
+**Version:** v1.0.1
 **Status:** Official
 **Project:** ProjectORIGIN
 
@@ -422,6 +422,23 @@ Case File Templateは、ProjectORIGINにおけるすべてのCase Fileの品質�
 ---
 
 # Version History
+
+## v1.0.1
+
+### Compatibility Update
+
+* Compatibility referenceを現在の正式互換対象へ更新。
+* Database Rule v2.0からDatabase Rule v3.0へ更新。
+* Case File構造の変更なし。
+* Writing Ruleの変更なし。
+* Database仕様の追加なし。
+* Current formal compatibilityのためのPatch Update。
+
+### Compatibility
+
+* Research Bible v1.0
+* Database Rule v3.0
+* FREE Case File Standard v1.0
 
 ## v1.0
 
