@@ -44,8 +44,510 @@ HOLD管理では、以下を原則とする。
 現在も未解決であること、正式ID、正式Recordその他の必要事項を証拠ベースで確認した後に正式登録を判定する。
 ---
 # 4. Active HOLD / Pending
-現在登録なし。
-**Active HOLD / Pending Count: 0**
+
+## HOLD-AUDIT-PLACEMENT-01 — Audit Artifact Repository Placement
+
+### Status
+
+HOLD
+
+### 発生元
+
+- ProjectORIGIN Repository Rule v1.0
+- Repository Structure設計
+- Audit Artifact Repository Placement検討
+
+### 対象
+
+Audit Artifactの正式な物理Repository Placement。
+
+### 発生理由
+
+ProjectORIGINではAudit LayerおよびAudit Artifactの論理的責務は確認されているが、Audit ArtifactをRepository上のどの物理Directoryへ正式配置するかについて、現時点で確定したSource of Truthを確認できない。
+
+Audit Artifactの存在または論理的なAudit Layerを根拠として、未定義の物理Directoryを推測によって新設すると、Repository Structure、Traceability、Naming、Automationおよび将来のCompatibilityへ影響する可能性がある。
+
+このため、Audit Artifactの物理Repository Placementを未確定事項として正式に追跡する。
+
+### 確認済み事項
+
+- AuditはProjectORIGIN Production Flowにおける正式工程である。
+- Audit Artifactには対象ArtifactとのTraceabilityが必要である。
+- 論理的なAudit Layerの存在だけでは、物理Directoryの存在を意味しない。
+- Production ArtifactのRepository LayerとAudit ArtifactのRepository Placementは同一概念ではない。
+- Audit ArtifactのNamingは、物理Placementとの関係を確認せずに正式化すべきではない。
+- Repository RuleではAudit Artifactの物理Placementを推測によって確定しない方針が採用されている。
+
+### 未確認事項
+
+- Audit ArtifactをCase Directory配下へ保存するか
+- Artifact TypeごとのDirectoryへ保存するか
+- Case共通のAudit Directoryを設けるか
+- Repository全体のAudit領域を設けるか
+- Audit Artifact Filename Convention
+- Audit Artifact Versioning
+- Audit Artifact Retention / Archive Policy
+- Production Artifactとの物理的Relationship
+- AutomationがAudit Artifactを参照する際の正式Path
+
+### 依存関係
+
+- Repository Rule
+- Audit Rule
+- AGENTS.md
+- Artifact Naming and Versioning
+- Repository Integration
+- Traceability
+- Automation
+- 必要に応じてDatabase / Operational Metadata
+
+### 禁止事項
+
+本HOLDがHOLD状態である間、以下を行ってはならない。
+
+- Audit Artifactの物理Directoryを推測によって正式仕様として追加する
+- 論理的なAudit Layerを物理Directoryと同一視する
+- `audit/`その他のDirectory名を根拠なく正式化する
+- Audit Artifact NamingをPlacement確認なしに正式化する
+- 既存Source of Truthに存在しないAudit PathをAutomation前提として固定する
+
+### 次のAction
+
+1. Audit RuleおよびAGENTS.mdからAudit ArtifactのRepository要件を抽出する。
+2. Repository RuleのCase Directory Structureとの整合を確認する。
+3. Audit Artifactと対象Production ArtifactのTraceability要件を確認する。
+4. 必要な物理Placement候補を比較する。
+5. Automation、Naming、VersioningおよびCompatibilityへの影響を確認する。
+6. 必要なHuman Decisionを行う。
+7. 決定内容をApplicable Source of Truthへ正式反映する。
+8. 関連Chapterを再監査する。
+
+### 解消条件
+
+以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
+
+- Audit Artifactの正式な物理Repository Placementが決定されている
+- 対象ArtifactとのTraceabilityが維持されている
+- Namingとの関係が確認されている
+- Versioningとの関係が確認されている
+- Repository Integrationへの影響が確認されている
+- Automationへの影響が確認されている
+- Existing Repository StructureへのCompatibility Impactが確認されている
+- 必要なHuman Decisionが完了している
+- Applicable Source of Truthへ正式反映されている
+- 関連文書の再監査がPASSしている
+
+### 解消根拠
+
+未確定。
+
+HOLD状態では解消根拠を作成しない。
+
+### 反映先
+
+解消時には少なくとも以下への影響を確認する。
+
+- ProjectORIGIN Repository Rule
+- Audit Rule
+- AGENTS.md
+- Artifact Naming and Versioning
+- Repository Integration関連仕様
+- Automation関連仕様
+
+### 最終監査結果
+
+PENDING
+
+本HOLD解消後に最終監査結果を記録する。
+
+---
+## HOLD-ARTIFACT-VERSION-01 — Production Artifact Version Increment Criteria
+
+### Status
+
+HOLD
+
+### 発生元
+
+- ProjectORIGIN Repository Rule v1.0 Chapter 5
+- Production Artifact Naming and Versioning設計
+
+### 対象
+
+Production Artifact Version Increment Criteria。
+
+### 発生理由
+
+Production ArtifactのFilename Identityとして`vX.Y`を使用する方針は確定しているが、`X`および`Y`をどの条件で増加させるかについて正式なProduction Artifact用ルールが確定していない。
+
+公式Documentに存在するVersion Management RuleをProduction Artifactへ自動転用すると、Document VersionとArtifact Versionの責務を混同する可能性がある。
+
+このためProduction Artifact固有のVersion Increment Criteriaを正式な未確定事項として追跡する。
+
+### 確認済み事項
+
+- Production ArtifactはVersionを識別可能である必要がある。
+- 基本Version表記として`vX.Y`を使用する。
+- Artifact VersionとWorkflow Statusは異なる概念である。
+- Artifact VersionとPublication Statusは異なる概念である。
+- FilenameをRenameしただけでは正式なVersion Updateは成立しない。
+- Version更新によって必要なTraceabilityを失ってはならない。
+- 公式DocumentのVersion RuleをProduction Artifactへ自動転用してはならない。
+
+### 未確認事項
+
+- `X`を増加させる具体的条件
+- `Y`を増加させる具体的条件
+- Patch ComponentをProduction Artifactへ導入するか
+- Audit CorrectionとVersion Incrementの関係
+- Content RevisionとVersion Incrementの関係
+- Publication RevisionとVersion Incrementの関係
+- Human Approval後の修正とVersion Incrementの関係
+- Repository Integration後の修正とVersion Incrementの関係
+- Current Versionの正式判定方法
+- 旧VersionのRetention / Archiveとの関係
+
+### 依存関係
+
+- Repository Rule Chapter 5
+- Repository Rule Chapter 6
+- AGENTS.md
+- Audit Rule
+- Research Production
+- Master Production
+- Publication Production
+- Repository Integration
+- Compatibility
+- Automation
+
+### 禁止事項
+
+本HOLDがHOLD状態である間、以下を行ってはならない。
+
+- Semantic Versioningその他の一般慣行をProduction Artifactへ自動適用する
+- Document Version RuleをProduction Artifactへ自動転用する
+- `X`または`Y`のIncrement Criteriaを推測で確定する
+- Patch Componentを根拠なく追加する
+- Status変更だけをVersion Incrementの根拠とする
+- Filename変更だけで正式Version Updateが成立したものと扱う
+
+### 次のAction
+
+1. Production Artifactで実際に発生するRevision Typeを整理する。
+2. Audit Correction、Content Revision、Publication Revisionを分類する。
+3. Human ApprovalおよびRepository Integrationとの関係を確認する。
+4. `X` / `Y` Increment Criteria候補を設計する。
+5. Patch Componentの必要性を判断する。
+6. Existing ArtifactへのCompatibility Impactを確認する。
+7. 必要なHuman Decisionを行う。
+8. Repository Rule Chapter 5その他のApplicable Source of Truthへ正式反映する。
+9. 関連文書を再監査する。
+
+### 解消条件
+
+以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
+
+- Production Artifact Versionの変更単位が正式に決定されている
+- `X`のIncrement Criteriaが正式に決定されている
+- `Y`のIncrement Criteriaが正式に決定されている
+- Patch Componentを使用するか正式に決定されている
+- Audit Correctionとの関係が決定されている
+- Content Revisionとの関係が決定されている
+- Publication Revisionとの関係が決定されている
+- Human ApprovalおよびRepository Integrationとの関係が確認されている
+- Existing ArtifactへのCompatibility Impactが確認されている
+- 必要なHuman Decisionが完了している
+- Applicable Source of Truthへ正式反映されている
+- 関連文書の再監査がPASSしている
+
+### 解消根拠
+
+未確定。
+
+HOLD状態では解消根拠を作成しない。
+
+### 反映先
+
+解消時には少なくとも以下への影響を確認する。
+
+- ProjectORIGIN Repository Rule Chapter 5
+- ProjectORIGIN Repository Rule Chapter 6
+- AGENTS.md
+- Audit Rule
+- Production Artifact関連仕様
+- Repository Integration関連仕様
+- Automation関連仕様
+
+### 最終監査結果
+
+PENDING
+
+本HOLD解消後に最終監査結果を記録する。
+
+---
+## HOLD-PUBLICATION-TRACKING-01 — FREE / CLASSIFIED Artifact-level Tracking
+
+### Status
+
+HOLD
+
+### 発生元
+
+- ProjectORIGIN Repository Rule v1.0 Chapter 6
+- FREE / CLASSIFIED Publication Production設計
+
+### 対象
+
+FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Production / Audit State Tracking。
+
+### 発生理由
+
+FREE Publication ArtifactとCLASSIFIED Publication Artifactは独立したArtifact IdentityおよびAudit工程を持つ。
+
+一方、Case-level Workflow StatusではPublication Phaseを`PUBLICATION_PRODUCTION`および`PUBLICATION_AUDIT`として管理する設計が採用されている。
+
+このため、FREEとCLASSIFIEDが異なるProductionまたはAudit進行状態にある場合、Case-level Workflow Status一値だけでは各Artifactの個別状態を完全には表現できない。
+
+Artifact-level Trackingを正式に必要とするか、その場合どこをSource of Truthとするかが未確定であるため、本HOLDとして追跡する。
+
+### 確認済み事項
+
+- FREEとCLASSIFIEDは異なるPublication Artifact Identityを持つ。
+- FREEとCLASSIFIEDは独立したProduction / Audit対象になり得る。
+- Case-level Workflow StatusではFREE / CLASSIFIED別のStatus Tokenを採用しない。
+- Case-level Publication Phaseは`PUBLICATION_PRODUCTION`および`PUBLICATION_AUDIT`で表す。
+- Case-level Workflow StatusとArtifact-level Stateは同一概念ではない。
+- Publication Statusは公開済みかどうかを表す独立概念である。
+
+### 未確認事項
+
+- FREE個別Production Stateを保持する必要があるか
+- CLASSIFIED個別Production Stateを保持する必要があるか
+- FREE個別Audit Stateを保持する必要があるか
+- CLASSIFIED個別Audit Stateを保持する必要があるか
+- Artifact-level StateのSource of Truth
+- Database Fieldとして保持するか
+- Repository Metadataとして保持するか
+- Audit Artifactから導出するか
+- 一方のみ完了した場合のCase-level Workflow Status
+- Repository Integrationとの関係
+- Automationとの関係
+- Publication Statusとの関係
+
+### 依存関係
+
+- Repository Rule Chapter 4
+- Repository Rule Chapter 5
+- Repository Rule Chapter 6
+- AGENTS.md
+- Audit Rule
+- FREE Production
+- CLASSIFIED Production
+- Database / Operational Metadata
+- Repository Integration
+- Automation
+
+### 禁止事項
+
+本HOLDがHOLD状態である間、以下を行ってはならない。
+
+- FREE / CLASSIFIED用のArtifact-level Status体系を推測で新設する
+- Case-level Workflow StatusをArtifact-level Stateと同一視する
+- FREEとCLASSIFIEDの一方の状態から他方の状態を推測する
+- `PUBLICATION_PRODUCTION`または`PUBLICATION_AUDIT`だけを根拠として両Artifactが同一進行状態にあると判断する
+- 未定義のDatabase FieldまたはMetadataを正式仕様として追加する
+
+### 次のAction
+
+1. FREE / CLASSIFIEDの実Production Flowを確認する。
+2. 各Artifactの個別状態を追跡するOperational Needを確認する。
+3. Case-level Workflow Statusだけで管理可能か検証する。
+4. Artifact-level Trackingが必要な場合、Source of Truth候補を比較する。
+5. Database、Repository Metadata、Audit Resultとの関係を確認する。
+6. AutomationおよびRepository Integrationへの影響を確認する。
+7. 必要なHuman Decisionを行う。
+8. Applicable Source of Truthへ正式反映する。
+9. 関連文書を再監査する。
+
+### 解消条件
+
+以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
+
+- Artifact-level Trackingの必要性が正式に決定されている
+- 必要な場合、管理対象となるStateが決定されている
+- Source of Truthが決定されている
+- Case-level Workflow Statusとの関係が決定されている
+- Publication Statusとの関係が決定されている
+- Audit Resultとの関係が決定されている
+- Repository Integrationへの影響が確認されている
+- Automationへの影響が確認されている
+- Database / Metadataへの影響が確認されている
+- Existing CaseへのCompatibility Impactが確認されている
+- 必要なHuman Decisionが完了している
+- Applicable Source of Truthへ正式反映されている
+- 関連文書の再監査がPASSしている
+
+### 解消根拠
+
+未確定。
+
+HOLD状態では解消根拠を作成しない。
+
+### 反映先
+
+解消時には少なくとも以下への影響を確認する。
+
+- ProjectORIGIN Repository Rule Chapter 6
+- AGENTS.md
+- Audit Rule
+- Database Schema / Database Rule
+- Repository Integration関連仕様
+- Automation関連仕様
+
+### 最終監査結果
+
+PENDING
+
+本HOLD解消後に最終監査結果を記録する。
+
+---
+## HOLD-PUBLICATION-STATUS-COMPAT-01 — Publication Status Cross-Document Compatibility
+
+### Status
+
+HOLD
+
+### 発生元
+
+- ProjectORIGIN Repository Rule v1.0 Chapter 6
+- Audit Rule
+- Publication Status横断Compatibility監査
+
+### 対象
+
+Repository Ruleで定義するPublication Statusと、Audit Ruleに存在する既存Publication Status定義との責務およびControlled Value Compatibility。
+
+### 発生理由
+
+Repository Rule Chapter 6では、Publication状態をProduction Workflowから分離し、Publication Statusとして以下の2値を使用する設計が採用されている。
+
+- `NOT_PUBLISHED`
+- `PUBLISHED`
+
+一方、現行Audit RuleにはPublication Statusとして、Production、Audit、ApprovalおよびPublication進行を含む複数の既存状態値が存在する。
+
+同名の状態概念について異なる責務およびControlled Valueが存在するため、どちらか一方を暗黙に優先または無効化するとSource of Truth Conflictが発生する。
+
+このため、両仕様の正式な責務整理およびCompatibility解消を本HOLDとして追跡する。
+
+### 確認済み事項
+
+- Repository RuleはWorkflow StatusとPublication Statusを分離する設計を採用している。
+- Repository Rule Chapter 6では`NOT_PUBLISHED`および`PUBLISHED`をPublication Statusとして定義している。
+- `APPROVED`と`PUBLISHED`は同一概念ではない。
+- AGENTS.mdではProduction完了とPublication済みを混同しない。
+- Audit RuleにはRepository Rule Chapter 6とは異なるPublication Status状態値が存在する。
+- Audit Rule側の既存状態値にはProduction、AuditまたはApproval進行を示す意味が含まれている。
+- Repository Ruleだけを根拠としてAudit Ruleの既存定義を無効化してはならない。
+- Audit Ruleだけを根拠としてRepository Rule Chapter 6の2値モデルを暗黙に変更してはならない。
+
+### 未確認事項
+
+- Audit Rule側の既存Publication Status各値の最終的な責務分類
+- Workflow Statusへ再分類すべき値
+- Audit Resultへ再分類すべき値
+- Human Approval Decisionへ再分類すべき値
+- Publication Statusとして残すべき値
+- `NOT_PUBLISHED / PUBLISHED`の2値モデルを最終確定するか
+- Audit Rule改訂の必要性
+- Databaseへの影響
+- Existing CaseへのMigration Impact
+- Automationへの影響
+- Operational Metadataへの影響
+
+### 依存関係
+
+- Repository Rule Chapter 6
+- Audit Rule
+- AGENTS.md
+- Database Schema
+- Database Rule
+- Human Approval
+- Repository Integration
+- Publication Flow
+- Automation
+- Compatibility
+
+### 禁止事項
+
+本HOLDがHOLD状態である間、以下を行ってはならない。
+
+- Repository Rule側のPublication StatusがAudit Rule側を自動的に置換したものと扱う
+- Audit Rule側のPublication StatusがRepository Rule側を自動的に置換したものと扱う
+- 両方のControlled Valueを一つのFieldへ無整理で混在させる
+- 同名Statusの意味をContextだけで推測する
+- Audit Ruleの既存状態値を正式Decisionなしに削除または再分類する
+- Repository Rule Chapter 6の2値モデルを正式Decisionなしに変更する
+
+### 次のAction
+
+1. Audit Ruleの既存Publication Status各値を責務別に分析する。
+2. Workflow Status、Audit Result、Human Approval Decision、Publication Statusへ分類候補を整理する。
+3. AGENTS.mdのProduction / Approval / Publication Flowとの整合を確認する。
+4. DatabaseおよびOperational Metadataへの影響を確認する。
+5. Existing CaseおよびAutomationへのCompatibility Impactを確認する。
+6. `NOT_PUBLISHED / PUBLISHED`の2値モデルを維持するかHuman Decisionを行う。
+7. Audit Rule側の正式改訂が必要か判断する。
+8. 必要なSource of Truthを正式更新する。
+9. Repository Rule Chapter 6との横断再監査を行う。
+
+### 解消条件
+
+以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
+
+- Repository Rule側Publication Statusの責務が正式確認されている
+- Audit Rule側既存Publication Statusの責務が正式確認されている
+- 各既存状態値の正式なDispositionが決定されている
+- `NOT_PUBLISHED / PUBLISHED`を維持するか正式決定されている
+- 必要なAudit Rule改訂の有無が決定されている
+- 必要なDatabase / Metadata変更の有無が決定されている
+- Existing CaseへのCompatibility Impactが確認されている
+- Automationへの影響が確認されている
+- 必要なHuman Decisionが完了している
+- Applicable Source of Truthへの必要な変更が正式反映されている
+- Repository Rule Chapter 6との横断再監査がPASSしている
+
+### 解消根拠
+
+未確定。
+
+HOLD状態では解消根拠を作成しない。
+
+### 反映先
+
+解消時には少なくとも以下への影響を確認する。
+
+- ProjectORIGIN Repository Rule Chapter 6
+- Audit Rule
+- AGENTS.md
+- Database Schema
+- Database Rule
+- Repository Integration関連仕様
+- Publication関連仕様
+- Automation関連仕様
+
+### 最終監査結果
+
+PENDING
+
+本HOLD解消後に最終監査結果を記録する。
+
+---
+
+**Active HOLD / Pending Count: 4**
+
+---
+
 ---
 # 5. Resolution Review
 現在登録なし。
@@ -471,41 +973,84 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 本Recovery RecordをActive HOLD / Pendingとして扱わない。
 ---
 # 8. Current Ledger State
+
 ## Active HOLD / Pending
-現在登録なし。
-**Active HOLD / Pending Count: 0**
+
+- `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
+- `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
+- `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
+- `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
+
+**Active HOLD / Pending Count: 4**
+
 ## Resolution Review
+
 現在登録なし。
+
 **Resolution Review Count: 0**
+
 ## RESOLVED Archive
+
 - `HOLD-TAGS-01` — Tags Controlled Values / 正式Tag一覧
 - `HOLD-STATUS-01` — Status Meaning / Data Type / Controlled Values / Nullability
 - `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
 - `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
+
 **RESOLVED Archive Count: 4**
+
 ## Recovery Log
+
 - Category Repository Working Draft / Category HOLD Record — Historical Record Recovery CLOSED / Record NOT RECOVERED
+
 **Recovery Log Count: 1**
 ---
 # 9. Audit Status
-本台帳v1.0は、現時点で確認できたHOLD記録、正式Source of Truth、Human Decision、正式文書への反映、および最終再監査結果に基づいて構成する。
-現在、Active HOLD / Pendingは存在しない。
+
+本台帳v1.0は、現時点で確認できたHOLD記録、正式Source of Truth、Human Decision、正式文書への反映、および監査結果に基づいて構成する。
+
+現在、Active HOLD / Pendingとして以下の4件を正式登録する。
+
+- `HOLD-AUDIT-PLACEMENT-01`
+- `HOLD-ARTIFACT-VERSION-01`
+- `HOLD-PUBLICATION-TRACKING-01`
+- `HOLD-PUBLICATION-STATUS-COMPAT-01`
+
+上記4件は、Repository Rule制作および横断監査の過程で未解決論点の存在を確認し、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
+
+各HOLDは、必要なHuman Decision、Applicable Source of Truthへの反映、依存関係の確認および最終再監査PASSが完了するまでRESOLVEDとして扱わない。
+
 `HOLD-TAGS-01`は、具体的な初期Tag Controlled ValuesのHuman Decision、Database Schema Chapter 6 / Tags Field Definitionへの正式反映、既存Fieldとの責務分離確認、既存Constraintsとの整合性確認、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 `HOLD-STATUS-01`は、必要な仕様確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 `HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 `HOLD-CLASS-01`は、Class Controlled Values、Controlled ValuesのSingle Source of Truth、Categoryとの責務分離および依存関係の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 Category Repository Working Draftおよび旧Category HOLD Recordは回収されていない。
+
 Category関連Historical Record Recoveryは、旧Recordを推測復元せず未回収状態を保持した上でCLOSEDとして扱う。
+
 旧Category Repository Working Draftまたは旧Category HOLD Recordの未回収状態は、現行Category Field Definitionの未解決依存関係として扱わない。
+
 確認できていないHOLD IDまたはHOLD Recordを推測によって追加してはならない。
+
 新規REVISION：0
-新規HOLD：0
+
+新規HOLD：4
+
 BLOCKER：0
+
 **Ledger Structure: PASS**
-**Active HOLD / Pending: 0**
+
+**Active HOLD / Pending: 4**
+
 **Resolution Review: 0**
+
 **RESOLVED Archive: 4**
+
 **Recovery Log: 1**
+
 **Overall Status: PASS**
 ---
 # 10. Version History
@@ -520,3 +1065,18 @@ ProjectORIGIN HOLD管理台帳の正式初版。
 Category Repository Working Draftおよび旧Category HOLD Recordについては、推測復元を行わず、Historical Record Recoveryを未回収状態のままCLOSEDとして保持する。
 `HOLD-STATUS-01`、`HOLD-CLASS-02`、`HOLD-CLASS-01`および`HOLD-TAGS-01`は、正式な解消条件、必要な正式文書への反映、および最終再監査PASSを確認し、RESOLVED Archiveへ保持する。
 現時点のActive HOLD / Pendingは0件とする。
+
+### Active HOLD Registration Update — 2026-08-27
+
+Repository Rule制作および横断監査によって現在も未解決であることを確認した以下の4件を、Active HOLD / Pendingへ正式登録した。
+
+- `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
+- `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
+- `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
+- `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
+
+Active HOLD / Pending Countを0件から4件へ更新した。
+
+既存のRESOLVED Archive 4件およびCategory Historical Recovery Recordは変更せず維持した。
+
+各Active HOLDは、正式な解消条件、必要なHuman Decision、Applicable Source of Truthへの反映、依存関係確認および最終再監査PASSが完了するまでRESOLVEDとして扱わない。
