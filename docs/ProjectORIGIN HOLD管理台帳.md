@@ -411,140 +411,7 @@ PENDING
 本HOLD解消後に最終監査結果を記録する。
 
 ---
-## HOLD-PUBLICATION-STATUS-COMPAT-01 — Publication Status Cross-Document Compatibility
-
-### Status
-
-HOLD
-
-### 発生元
-
-- ProjectORIGIN Repository Rule v1.0 Chapter 6
-- Audit Rule
-- Publication Status横断Compatibility監査
-
-### 対象
-
-Repository Ruleで定義するPublication Statusと、Audit Ruleに存在する既存Publication Status定義との責務およびControlled Value Compatibility。
-
-### 発生理由
-
-Repository Rule Chapter 6では、Publication状態をProduction Workflowから分離し、Publication Statusとして以下の2値を使用する設計が採用されている。
-
-- `NOT_PUBLISHED`
-- `PUBLISHED`
-
-一方、現行Audit RuleにはPublication Statusとして、Production、Audit、ApprovalおよびPublication進行を含む複数の既存状態値が存在する。
-
-同名の状態概念について異なる責務およびControlled Valueが存在するため、どちらか一方を暗黙に優先または無効化するとSource of Truth Conflictが発生する。
-
-このため、両仕様の正式な責務整理およびCompatibility解消を本HOLDとして追跡する。
-
-### 確認済み事項
-
-- Repository RuleはWorkflow StatusとPublication Statusを分離する設計を採用している。
-- Repository Rule Chapter 6では`NOT_PUBLISHED`および`PUBLISHED`をPublication Statusとして定義している。
-- `APPROVED`と`PUBLISHED`は同一概念ではない。
-- AGENTS.mdではProduction完了とPublication済みを混同しない。
-- Audit RuleにはRepository Rule Chapter 6とは異なるPublication Status状態値が存在する。
-- Audit Rule側の既存状態値にはProduction、AuditまたはApproval進行を示す意味が含まれている。
-- Repository Ruleだけを根拠としてAudit Ruleの既存定義を無効化してはならない。
-- Audit Ruleだけを根拠としてRepository Rule Chapter 6の2値モデルを暗黙に変更してはならない。
-
-### 未確認事項
-
-- Audit Rule側の既存Publication Status各値の最終的な責務分類
-- Workflow Statusへ再分類すべき値
-- Audit Resultへ再分類すべき値
-- Human Approval Decisionへ再分類すべき値
-- Publication Statusとして残すべき値
-- `NOT_PUBLISHED / PUBLISHED`の2値モデルを最終確定するか
-- Audit Rule改訂の必要性
-- Databaseへの影響
-- Existing CaseへのMigration Impact
-- Automationへの影響
-- Operational Metadataへの影響
-
-### 依存関係
-
-- Repository Rule Chapter 6
-- Audit Rule
-- AGENTS.md
-- Database Schema
-- Database Rule
-- Human Approval
-- Repository Integration
-- Publication Flow
-- Automation
-- Compatibility
-
-### 禁止事項
-
-本HOLDがHOLD状態である間、以下を行ってはならない。
-
-- Repository Rule側のPublication StatusがAudit Rule側を自動的に置換したものと扱う
-- Audit Rule側のPublication StatusがRepository Rule側を自動的に置換したものと扱う
-- 両方のControlled Valueを一つのFieldへ無整理で混在させる
-- 同名Statusの意味をContextだけで推測する
-- Audit Ruleの既存状態値を正式Decisionなしに削除または再分類する
-- Repository Rule Chapter 6の2値モデルを正式Decisionなしに変更する
-
-### 次のAction
-
-1. Audit Ruleの既存Publication Status各値を責務別に分析する。
-2. Workflow Status、Audit Result、Human Approval Decision、Publication Statusへ分類候補を整理する。
-3. AGENTS.mdのProduction / Approval / Publication Flowとの整合を確認する。
-4. DatabaseおよびOperational Metadataへの影響を確認する。
-5. Existing CaseおよびAutomationへのCompatibility Impactを確認する。
-6. `NOT_PUBLISHED / PUBLISHED`の2値モデルを維持するかHuman Decisionを行う。
-7. Audit Rule側の正式改訂が必要か判断する。
-8. 必要なSource of Truthを正式更新する。
-9. Repository Rule Chapter 6との横断再監査を行う。
-
-### 解消条件
-
-以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
-
-- Repository Rule側Publication Statusの責務が正式確認されている
-- Audit Rule側既存Publication Statusの責務が正式確認されている
-- 各既存状態値の正式なDispositionが決定されている
-- `NOT_PUBLISHED / PUBLISHED`を維持するか正式決定されている
-- 必要なAudit Rule改訂の有無が決定されている
-- 必要なDatabase / Metadata変更の有無が決定されている
-- Existing CaseへのCompatibility Impactが確認されている
-- Automationへの影響が確認されている
-- 必要なHuman Decisionが完了している
-- Applicable Source of Truthへの必要な変更が正式反映されている
-- Repository Rule Chapter 6との横断再監査がPASSしている
-
-### 解消根拠
-
-未確定。
-
-HOLD状態では解消根拠を作成しない。
-
-### 反映先
-
-解消時には少なくとも以下への影響を確認する。
-
-- ProjectORIGIN Repository Rule Chapter 6
-- Audit Rule
-- AGENTS.md
-- Database Schema
-- Database Rule
-- Repository Integration関連仕様
-- Publication関連仕様
-- Automation関連仕様
-
-### 最終監査結果
-
-PENDING
-
-本HOLD解消後に最終監査結果を記録する。
-
----
-
-**Active HOLD / Pending Count: 4**
+**Active HOLD / Pending Count: 3**
 
 ---
 
@@ -943,6 +810,171 @@ BLOCKER：0
 本項目をActive HOLD / Pendingとして扱わない。
 解消後も記録を削除せず、RESOLVED履歴として保持する。
 ---
+## HOLD-PUBLICATION-STATUS-COMPAT-01 — Publication Status Cross-Document Compatibility
+
+### Status
+
+RESOLVED
+
+### 発生元
+
+- ProjectORIGIN Repository Rule v1.0 Chapter 6
+- Audit Rule
+- Publication Status横断Compatibility監査
+
+### 対象
+
+Repository Ruleで定義するPublication Statusと、Audit Ruleに存在していた旧Publication Status体系の責務、Controlled Values、および関連するWorkflow / Approval / Database / Existing Case / Automationとの互換性。
+
+### 発生理由
+
+HOLD登録時点では、Repository Rule Chapter 6がPublication Statusを`NOT_PUBLISHED` / `PUBLISHED`の2値として定義する一方、Audit Ruleでは`Draft`、`Under Audit`、`Awaiting Approval`、`Approved`、`Published`、`Revision Required`、`Rejected`の7値がPublication Statusとして扱われていた。
+
+旧7値にはProduction、Audit、Human Review、Approval、Publication、Revision / Dispositionの責務が混在しており、Repository RuleのWorkflow Status / Publication Status責務分離と競合する可能性があった。
+
+この状態で値の置換、Database移行、Existing Case一括変換またはAutomation変換を行うと、正式な責務境界を推測によって確定することになるため、横断Compatibility監査とHuman Decisionが完了するまでHOLDとして保持した。
+
+### 確認済み事項
+
+Human Decision、Audit Rule改訂、Repository Rule更新、AGENTS.md整合化および横断Compatibility監査により、以下を確定した。
+
+- Publication StatusのSingle Source of TruthはRepository Ruleとする。
+- Publication Statusの正式Controlled Valuesは`NOT_PUBLISHED` / `PUBLISHED`の2値を維持する。
+- Publication StatusとWorkflow Status、Audit Result、Human Approval Decision、Case Resolution Statusを混同しない。
+- `Workflow Status = APPROVED`のみを根拠として`Publication Status = PUBLISHED`としてはならない。
+- Human Approval `APPROVED`のみを根拠として`PUBLISHED`としてはならない。
+- Repository Integration完了のみを根拠として`PUBLISHED`としてはならない。
+- `Workflow Status = APPROVED`かつ`Publication Status = NOT_PUBLISHED`は有効な状態である。
+- Audit Rule旧7値は現行Publication Status Controlled Valuesとして使用しない。
+- `Draft`はProduction / Workflow進行、`Under Audit`はAudit / Workflow進行、`Awaiting Approval`はHuman Review / pre-approval、`Approved`はApproval / Workflow、`Published`はPublication、`Revision Required`はRevision / Workflow exception、`Rejected`はApproval / Dispositionに属する歴史的責務として整理する。
+- 旧値から現行値への自動マッピングを行わない。
+- `Approved`から`PUBLISHED`または`NOT_PUBLISHED`への自動変換を行わない。
+- 歴史的`Published`から現行`PUBLISHED`への自動変換を行わない。
+- 歴史的`Revision Required`から`REVISION_REQUIRED`またはHuman Approval `REVISION REQUESTED`への自動変換を行わない。
+- 歴史的`Rejected`から`BLOCKED`、HOLDまたは`REVISION REQUESTED`への自動変換を行わない。
+- 歴史的Recordの移行が必要な場合は、正式な証拠に基づき個別判断する。
+- Database Schema v1.3の既存`status`はCase Resolution Status専用であり、Workflow StatusまたはPublication Statusとして使用しない。
+- Database Rule / Database Schemaに対する新規Publication Status Field追加または既存`status`のMigrationは、本HOLD解消のためには不要と判断した。
+- Existing Caseの一括Migrationは行わない。
+- Automationによる旧値→新値の自動変換Scriptは作成しない。
+- FREE / CLASSIFIED Artifact-level Trackingは別HOLD `HOLD-PUBLICATION-TRACKING-01`として継続管理する。
+
+### 未確認事項
+
+なし。
+
+`HOLD-PUBLICATION-STATUS-COMPAT-01`が対象としていたPublication Status責務、旧7値のDisposition、Database / Metadata、Existing Case、Automationおよび横断互換性について、解消に必要な未確認事項は残っていない。
+
+### 依存関係
+
+Repository Rule Chapter 6のPublication Status定義に依存した。
+Audit RuleのPublication Status責務分離改訂に依存した。
+AGENTS.mdのWorkflow Status / Publication Status境界整合に依存した。
+Database Schema / Database Ruleにおける既存`status`責務確認に依存した。
+Human Approval DecisionとPublication Statusの責務分離に依存した。
+Repository IntegrationとPublication完了の責務分離に依存した。
+Existing CaseおよびAutomationのMigration方針確認に依存した。
+Human Decisionおよび最終横断再監査PASSに依存した。
+
+これらの依存事項は確認済み。
+
+### 禁止事項
+
+- Audit Rule旧7値を現行Publication Status Controlled Valuesとして再利用してはならない。
+- Publication Status、Workflow Status、Audit Result、Human Approval Decision、Case Resolution Statusを単一Status体系として混在させてはならない。
+- `APPROVED`のみを根拠として`PUBLISHED`へ変換してはならない。
+- Human Approval完了のみを根拠として`PUBLISHED`へ変換してはならない。
+- Repository Integration完了のみを根拠として`PUBLISHED`へ変換してはならない。
+- 旧`Published`を証拠確認なしに現行`PUBLISHED`へ自動変換してはならない。
+- 旧`Revision Required`を`REVISION_REQUIRED`または`REVISION REQUESTED`へ自動変換してはならない。
+- 旧`Rejected`を`BLOCKED`、HOLDまたは`REVISION REQUESTED`へ自動変換してはならない。
+- Database Schemaの既存`status`へPublication StatusまたはWorkflow Statusを格納してはならない。
+- 本HOLD解消のみを理由として、未承認のDatabase Field、Metadata Field、Migration Scriptまたは自動変換Ruleを新設してはならない。
+- FREE / CLASSIFIED Artifact-level Trackingの未解決事項を本HOLDの解消によって解消済みと扱ってはならない。
+
+### 次のAction
+
+なし。
+
+`HOLD-PUBLICATION-STATUS-COMPAT-01`の解消条件は満たされている。
+
+本項目はActive HOLD / Pendingとして追跡せず、RESOLVED履歴として保持する。
+
+### 解消条件
+
+以下の条件をすべて満たしたことを確認した。
+
+1. Repository RuleのPublication Status責務を確認する。
+2. Audit Rule旧Publication Status体系の責務を確認する。
+3. 旧7値それぞれのDispositionを決定する。
+4. `NOT_PUBLISHED` / `PUBLISHED` 2値モデルを維持するか正式決定する。
+5. Audit Rule改訂方針を決定し、必要な改訂を完了する。
+6. Database / Metadataへの影響とMigration要否を決定する。
+7. Existing Case互換性およびMigration要否を決定する。
+8. Automationへの影響と自動変換の可否を決定する。
+9. Human Decisionを完了する。
+10. Applicable Source of Truthへの必要な反映を完了する。
+11. Repository Rule Chapter 6を含む最終横断再監査がPASSする。
+
+**上記11条件：すべて達成済み。**
+
+### 解消根拠
+
+Human Decisionにより、Repository RuleのPublication Status `NOT_PUBLISHED / PUBLISHED` 2値モデルを正式維持し、Audit Ruleの旧7値Publication Status体系を責務分離して改訂することを正式承認した。
+
+Audit Rule v1.3.1へPublication Statusの責務分離を正式反映し、Publication StatusのSingle Source of TruthをRepository Ruleとした。
+
+Repository Ruleでは、Publication Statusの正式Controlled Valuesを`NOT_PUBLISHED` / `PUBLISHED`とし、Workflow Status、Audit ResultおよびHuman Approval Decisionとは独立した状態体系として確定した。
+
+AGENTS.mdについても、Workflow Status、Publication Status、Human Approval DecisionおよびAudit Resultの責務境界を整合させた。
+
+Database Schema v1.3およびDatabase Ruleについて確認し、既存の`status`はCase Resolution Status専用であり、Workflow StatusまたはPublication Statusとして使用しないことを確認した。本HOLD解消のためのDatabase Schema / Database Rule変更、新規Publication Status Field追加またはDatabase Migrationは不要と判断した。
+
+Existing Caseについては一括Migrationを実施せず、旧Publication Status値を現行値へ自動変換しないことを確定した。Historical Recordの対応が必要な場合は、正式な証拠に基づいて個別に判断する。
+
+Automationについても、旧Publication Status値から現行Publication Statusまたは他のStatus体系への自動Mappingを実施しないことを確定した。
+
+Applicable Source of Truthへの反映および依存関係確認後、Publication Status Cross-Document Compatibilityの最終横断再監査を実施し、PASSを確認した。
+
+### 反映先
+
+- ProjectORIGIN Repository Rule v1.0
+- Audit Rule v1.3.1
+- AGENTS.md
+
+Database Schema v1.3およびDatabase Ruleについては、本HOLD解消に伴う変更不要であることを確認した。
+
+### 最終監査結果
+
+PASS
+
+**Repository Rule Publication Status責務: PASS**
+**Audit Rule旧7値責務分離: PASS**
+**旧7値Disposition: PASS**
+**NOT_PUBLISHED / PUBLISHED 2値モデル: PASS**
+**Database / Metadata Compatibility: PASS**
+**Existing Case Compatibility: PASS**
+**Automation Compatibility: PASS**
+**Human Decision: PASS**
+**Applicable Source of Truth反映: PASS**
+**Repository Rule Chapter 6 Cross-Audit: PASS**
+**解消条件: PASS**
+**解消根拠: PASS**
+**依存関係: PASS**
+**最終横断再監査: PASS**
+
+新規REVISION：0
+新規HOLD：0
+BLOCKER：0
+
+### Resolution
+
+**HOLD-PUBLICATION-STATUS-COMPAT-01 — RESOLVED**
+
+本項目をActive HOLD / Pendingとして扱わない。
+
+解消後も記録を削除せず、RESOLVED履歴として保持する。
+---
 # 7. Recovery Log
 ## Category Repository Working Draft / Category HOLD Record Recovery
 ### Recovery Status
@@ -979,9 +1011,8 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 - `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
 - `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
 - `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
-- `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
 
-**Active HOLD / Pending Count: 4**
+**Active HOLD / Pending Count: 3**
 
 ## Resolution Review
 
@@ -996,7 +1027,9 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 - `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
 - `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
 
-**RESOLVED Archive Count: 4**
+- `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
+
+**RESOLVED Archive Count: 5**
 
 ## Recovery Log
 
@@ -1008,16 +1041,15 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 
 本台帳v1.0は、現時点で確認できたHOLD記録、正式Source of Truth、Human Decision、正式文書への反映、および監査結果に基づいて構成する。
 
-現在、Active HOLD / Pendingとして以下の4件を正式登録する。
+現在、Active HOLD / Pendingとして以下の3件を正式登録する。
 
 - `HOLD-AUDIT-PLACEMENT-01`
 - `HOLD-ARTIFACT-VERSION-01`
 - `HOLD-PUBLICATION-TRACKING-01`
-- `HOLD-PUBLICATION-STATUS-COMPAT-01`
 
-上記4件は、Repository Rule制作および横断監査の過程で未解決論点の存在を確認し、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
+上記3件は、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
 
-各HOLDは、必要なHuman Decision、Applicable Source of Truthへの反映、依存関係の確認および最終再監査PASSが完了するまでRESOLVEDとして扱わない。
+各Active HOLDは、必要なHuman Decision、Applicable Source of Truthへの反映、依存関係の確認および最終再監査PASSが完了するまでRESOLVEDとして扱わない。
 
 `HOLD-TAGS-01`は、具体的な初期Tag Controlled ValuesのHuman Decision、Database Schema Chapter 6 / Tags Field Definitionへの正式反映、既存Fieldとの責務分離確認、既存Constraintsとの整合性確認、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 
@@ -1026,6 +1058,8 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 `HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 
 `HOLD-CLASS-01`は、Class Controlled Values、Controlled ValuesのSingle Source of Truth、Categoryとの責務分離および依存関係の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
+`HOLD-PUBLICATION-STATUS-COMPAT-01`は、Publication Status責務分離、旧7値Disposition、`NOT_PUBLISHED / PUBLISHED` 2値モデル維持のHuman Decision、Audit Rule v1.3.1・AGENTS.md・Repository Ruleへの必要な反映、Database / Metadata・Existing Case・Automation互換性判断、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 
 Category Repository Working Draftおよび旧Category HOLD Recordは回収されていない。
 
@@ -1037,17 +1071,17 @@ Category関連Historical Record Recoveryは、旧Recordを推測復元せず未�
 
 新規REVISION：0
 
-新規HOLD：4
+新規HOLD：0
 
 BLOCKER：0
 
 **Ledger Structure: PASS**
 
-**Active HOLD / Pending: 4**
+**Active HOLD / Pending: 3**
 
 **Resolution Review: 0**
 
-**RESOLVED Archive: 4**
+**RESOLVED Archive: 5**
 
 **Recovery Log: 1**
 
@@ -1080,3 +1114,13 @@ Active HOLD / Pending Countを0件から4件へ更新した。
 既存のRESOLVED Archive 4件およびCategory Historical Recovery Recordは変更せず維持した。
 
 各Active HOLDは、正式な解消条件、必要なHuman Decision、Applicable Source of Truthへの反映、依存関係確認および最終再監査PASSが完了するまでRESOLVEDとして扱わない。
+
+### HOLD Resolution Update — 2026-08-28
+
+`HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibilityについて、Repository RuleのPublication Status `NOT_PUBLISHED / PUBLISHED` 2値モデル維持、Audit Rule旧7値体系の責務分離、Human Decision、Applicable Source of Truthへの反映、Database / Metadata・Existing Case・Automation互換性判断、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ移行した。
+
+Active HOLD / Pending Countを4件から3件へ更新し、RESOLVED Archive Countを4件から5件へ更新した。
+
+Resolution Review Countは0件、Recovery Log Countは1件を維持する。
+
+本解消を含む最終横断再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
