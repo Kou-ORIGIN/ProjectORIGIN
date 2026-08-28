@@ -1314,205 +1314,554 @@ Version Auditは、ProjectORIGIN全体の品質保証を長期的に維持する
 これにより、ProjectORIGIN全体で安定した品質管理と継続的な運用を実現する。
 
 # Chapter 8
+
 # Publication Approval
 
 ## Purpose
 
-本章では、ProjectORIGINにおける公開承認（Publication Approval）の基準を定義する。
+本章では、ProjectORIGINにおけるPublication Approvalの監査上の基準、責務境界およびPublicationへ進むための品質保証原則を定義する。
 
-Publication Approvalは、品質監査が完了した成果物について、公開可否を判断するための最終工程である。
+Publication Approvalは、Applicableな品質監査およびFinal Flow Auditの結果を踏まえ、人間が対象Artifactを正式な次工程へ進めることを判断するHuman Approval工程である。
 
-ProjectORIGINでは、「制作」「監査」「承認」を明確に分離し、制作担当AI、監査担当AI（Codexを想定）および人間がそれぞれの責任範囲に従って品質管理を行う。
+ProjectORIGINでは、
 
-公開承認は、監査結果に基づいて実施し、成果物の品質、一貫性および運用基準への適合を最終確認することを目的とする。
+```
+Production
+    ≠
+Audit
+    ≠
+Human Approval
+    ≠
+Repository Integration
+    ≠
+Publication
+```
+
+とする。
+
+これらは相互に関連するが、同一工程として扱ってはならない。
+
+Audit Ruleは、Publication前に必要な品質監査、Audit Result、Audit Evidence、Audit ReportおよびPublication Approvalに必要な監査上の条件を管理する。
+
+Workflow Statusの正式なControlled ValuesはRepository RuleをApplicable Source of Truthとする。
+
+Human Approval Decisionの正式なControlled ValuesおよびProduction FlowはAGENTS.mdをApplicable Source of Truthとする。
+
+Publication Statusの正式なControlled ValuesはRepository RuleをApplicable Source of Truthとする。
+
+Audit Ruleは、それらの専門Source of Truthが管理するControlled Valuesを独自に複製、変更または拡張しない。
 
 ---
 
 ## Approval Principles
 
-公開承認は、以下の原則に基づいて実施する。
+Publication Approvalは、以下の原則に基づいて実施する。
 
-- 品質監査完了後に実施する。
-- Audit Ruleに基づく監査結果を判断基準とする。
-- 監査を省略して公開しない。
-- 制作担当AI、監査担当AIおよび承認者の役割を分離する。
-- 最終的な公開判断は人間が行う。
+* Applicableな品質監査完了後に実施する。
+* Applicable Final Flow Auditが要求される場合、その結果を確認する。
+* Audit Ruleに基づく監査結果を判断材料とする。
+* 必要な監査を省略してHuman Approvalへ進めない。
+* Production、Audit、Human Approval、Repository IntegrationおよびPublicationの責務を分離する。
+* 監査担当AIはHuman Approval Decisionを独自に決定しない。
+* 最終的なHuman Approval Decisionは人間が行う。
+* Human Approval Decisionだけを理由としてPublication完了とみなさない。
+* Publication完了だけを理由として過去のAudit ResultまたはHuman Approval Decisionを推測しない。
 
-公開承認では、個人的な評価や主観ではなく、監査結果および品質基準に基づいて判断する。
+Publication Approvalでは、個人的な評価や主観だけではなく、ApplicableなAudit Result、Audit Evidence、品質基準および正式なProduction Flowに基づいて判断する。
+
+Auditが対象Artifactの品質上の問題を検出した場合、その問題を不可視化してApprovalへ進めてはならない。
+
+同様に、AuditがPASSしたことだけを理由として、人間によるApprovalが成立したものとみなしてはならない。
 
 ---
 
 ## Publication Flow
 
-ProjectORIGINにおける標準的な公開フローは、以下のとおりとする。
+ProjectORIGINにおけるPublicationまでの正式な工程は、Applicable Source of Truthに従う。
 
-1. 制作担当AIによる成果物の制作
-2. 監査担当AIによる品質監査
-3. Audit Reportの作成
-4. 人間による監査結果の確認
-5. 公開承認
-6. 公開
+Audit Rule上の基本的な責務関係は以下とする。
 
-監査で修正が必要と判断された場合は、制作工程へ差し戻し、再監査を実施する。
+```
+Production
+    ↓
+Required Production / Publication Audits
+    ↓
+Applicable Final Flow Audit
+    ↓
+Human Approval
+    ↓
+Repository Integration
+    ↓
+Publication
+```
 
----
+Audit Ruleは、上記FlowにおけるAudit責務を管理する。
 
-## Approval Requirements
+具体的なWorkflow Status Transition、Agent Action、Human Approval Decision、Repository Integration ProcedureおよびPublication Procedureは、それぞれのApplicable Source of Truthに従う。
 
-公開承認を行うためには、以下の条件を満たしている必要がある。
+Required Production / Publication AuditsがPASSしていることだけを理由として、Applicable Final Flow AuditがPASSしているとみなしてはならない。
 
-### 品質監査
+Applicable Final Flow AuditがPASSしていることだけを理由として、Human Approval Decisionが`APPROVED`であるとみなしてはならない。
 
-- 品質監査が完了している。
-- Audit Resultが記録されている。
-- Critical Issueが解消されている。
+Human Approval Decisionが`APPROVED`であることだけを理由として、Repository Integrationが完了しているとみなしてはならない。
 
-### Version管理
+Repository Integrationが完了していることだけを理由として、Publicationが完了しているとみなしてはならない。
 
-- 承認済みの最新Versionを使用している。
-- Version Historyが更新されている。
+したがって、
 
-### Evidence
+```
+Audit PASS
+    ≠
+Human Approval
 
-- Evidence Verificationが完了している。
-- Referencesおよび出典管理が適切である。
+Human Approval Decision = APPROVED
+    ≠
+Repository Integration Completion
 
-### 整合性
+Repository Integration Completion
+    ≠
+Publication Completion
+```
 
-- Researchとの整合性
-- Masterとの整合性
-- Databaseとの整合性
-- Imageとの整合性
-
-### ルール準拠
-
-- テンプレートに準拠している。
-- Rule Documentsと矛盾していない。
-- Image Ruleなど関連ルールへ準拠している。
-
-いずれかの条件を満たさない場合は、公開承認を行わない。
-
----
-
-## Publication Status
-
-公開状態は、以下の区分で管理する。
-
-| Status | 内容 |
-|--------|------|
-| Draft | 制作中 |
-| Under Audit | 品質監査中 |
-| Awaiting Approval | 承認待ち |
-| Approved | 公開承認済み |
-| Published | 公開済み |
-| Revision Required | 修正および再監査が必要 |
-| Rejected | 公開不可 |
-
-公開状態は、成果物およびDatabaseで一貫して管理する。
+とする。
 
 ---
 
-## Approval Decision
+## Audit Readiness for Human Approval
 
-承認者は、監査結果を確認し、以下のいずれかを決定する。
+監査担当AIは、対象ArtifactをHuman Approvalへ進める前に、Applicableな監査条件が満たされているかを確認する。
 
-### Approve
+確認対象には、Applicableな範囲で以下を含む。
 
-品質基準を満たしており、公開を承認する。
+* Required Production / Publication Auditsが実施されている
+* Required Audit Resultが確認可能である
+* Critical Issueが未解決のまま不可視化されていない
+* ApplicableなRevisionが反映されている
+* Re-Auditが必要な場合、その結果が確認されている
+* Applicable Final Flow Auditが要求される場合、その結果が確認されている
+* Artifact Identityが判別可能である
+* Applicable Versionが判別可能である
+* Audit対象VersionとApproval対象VersionのRelationが判別可能である
+* Applicable Dependencyが確認されている
+* Applicable Rule Versionとの重大なConflictが未解決のままになっていない
+* 必要なAudit EvidenceおよびAudit Reportが追跡可能である
 
-### Approve with Minor Revision
+ただし、本ListをすべてのArtifactに対する固定的な新規Audit Checklistとして扱ってはならない。
 
-軽微な改善事項は存在するが、公開を承認する。
+具体的なRequired Auditは、Artifact Type、Production StageおよびApplicable Source of Truthに従う。
 
-改善内容は、次回Versionで反映する。
-
-### Return for Revision
-
-修正が必要であり、制作工程へ差し戻す。
-
-修正後は再監査を実施する。
-
-### Reject
-
-品質基準を満たしておらず、公開を承認しない。
-
-重大な問題を解消した後、再度監査および承認を実施する。
+監査担当AIは、Human Approvalへ進めるために不足している条件を推測によって補完してはならない。
 
 ---
 
-## Audit Report Review
+## Human Approval Boundary
 
-公開承認では、Audit Reportを確認する。
+Human Approvalは、人間がApplicableなAudit Resultおよび対象Artifactを確認した上で行う正式Decisionである。
 
-少なくとも以下を確認対象とする。
+Human Approval Decisionの正式なControlled ValuesはAGENTS.mdをApplicable Source of Truthとする。
 
-- Audit Result
-- Critical Issues
-- Standard Issues
-- 改善提案
-- Version
-- Audit Date
-- Auditor
+Audit RuleはHuman Approval DecisionのControlled Valuesを独自に新設、変更または置換しない。
 
-Audit Reportは公開判断の基礎資料として扱い、監査担当AIの提案をそのまま採用するものではない。
+したがって、Audit Rule上の旧表現またはHistorical Recordに、
+
+* `Approved`
+* `Rejected`
+* `Revision Required`
+* その他のApprovalまたはDispositionを示す表現
+
+が存在する場合、それらを現在のHuman Approval Decisionへ名称の類似性だけを理由として自動Mappingしてはならない。
+
+特に、
+
+```
+Historical `Rejected`
+    ≠
+Automatic HOLD
+
+Historical `Rejected`
+    ≠
+Automatic REVISION REQUESTED
+
+Historical `Rejected`
+    ≠
+Automatic BLOCKED
+```
+
+とする。
+
+旧表現の正式な意味または現在のDecisionとのRelationを確認できない場合、Historical Recordとして維持し、推測によって現在のControlled Valueへ変換してはならない。
+
+Human Approval Decisionが`APPROVED`である場合も、そのDecisionはPublicationそのものを意味しない。
+
+---
+
+## Publication Status Responsibility
+
+Publication Statusは、対象が正式にPublication済みであるかを表す状態概念であり、Production、AuditまたはHuman Approvalの進行段階を表すために使用しない。
+
+Publication Statusの正式なSource of TruthはRepository Ruleとする。
+
+正式なControlled Valuesは、
+
+* `NOT_PUBLISHED`
+* `PUBLISHED`
+
+とする。
+
+Audit Ruleは、この2値とは別のPublication Status Controlled Valuesを独自に定義しない。
+
+したがって、
+
+```
+Publication Status
+    ≠
+Workflow Status
+
+Publication Status
+    ≠
+Audit Result
+
+Publication Status
+    ≠
+Human Approval Decision
+```
+
+とする。
+
+`NOT_PUBLISHED`は、Production開始前、Production中、Audit中、Human Review中、Human Approval完了後であっても正式Publicationがまだ完了していない状態を含み得る。
+
+`PUBLISHED`は、Applicableな正式Publication Processが完了した状態を表す。
+
+Human Approval Decisionが`APPROVED`であることだけを理由として、Publication Statusを`PUBLISHED`とみなしてはならない。
+
+したがって、以下の組み合わせは正式に成立し得る。
+
+```
+Human Approval Decision = APPROVED
+Publication Status      = NOT_PUBLISHED
+```
+
+また、Publication Statusが`PUBLISHED`であることだけを理由として、現在のWorkflow Status、Audit Result、Artifact VersionまたはHuman Approval Historyを推測してはならない。
+
+---
+
+## Legacy Publication Status Compatibility
+
+旧Audit Ruleでは、以下の表現をPublication Statusとして扱っていた。
+
+* `Draft`
+* `Under Audit`
+* `Awaiting Approval`
+* `Approved`
+* `Published`
+* `Revision Required`
+* `Rejected`
+
+これらの旧表現は、本Revision以降、新しいPublication Status Controlled Valuesとして使用しない。
+
+各旧表現のDispositionは以下の責務境界に従う。
+
+### `Draft`
+
+ProductionまたはWorkflow進行を表していた旧表現として扱う。
+
+Publication Statusとして使用しない。
+
+現在のWorkflow Statusへ名称または意味の類似だけを理由として自動Mappingしない。
+
+### `Under Audit`
+
+AuditまたはWorkflow進行を表していた旧表現として扱う。
+
+Publication Statusとして使用しない。
+
+現在のWorkflow StatusまたはAudit Resultへ自動Mappingしない。
+
+### `Awaiting Approval`
+
+Human ReviewまたはApproval前のWorkflow進行を表していた旧表現として扱う。
+
+Publication Statusとして使用しない。
+
+現在のWorkflow Statusへ自動Mappingしない。
+
+### `Approved`
+
+Approval領域を表していた旧表現として扱う。
+
+Publication Statusとして使用しない。
+
+Historical `Approved`が存在することだけを理由として、現在のHuman Approval Decisionが`APPROVED`であるとみなしてはならない。
+
+Applicable Artifact、Applicable Versionおよび正式なDecision Relationを確認する。
+
+### `Published`
+
+Publication完了を表していた旧表現として扱う。
+
+現在のPublication Status `PUBLISHED`とのCompatibility Candidateとなり得るが、
+
+```
+Historical `Published`
+    ≠
+Automatic Current `PUBLISHED`
+```
+
+とする。
+
+Existing CaseまたはHistorical Artifactについて現在のPublication StatusへMigrationまたはMappingする必要がある場合、Applicable Identity、Version、Publication EvidenceおよびSource of Truthを確認する。
+
+### `Revision Required`
+
+RevisionまたはWorkflow上のExceptionを表していた旧表現として扱う。
+
+Publication Statusとして使用しない。
+
+Repository RuleのWorkflow Status `REVISION_REQUIRED`またはHuman Approval Decisionの`REVISION REQUESTED`へ自動Mappingしてはならない。
+
+したがって、
+
+```
+Historical `Revision Required`
+    ≠
+Automatic Workflow Status `REVISION_REQUIRED`
+
+Historical `Revision Required`
+    ≠
+Automatic Human Approval Decision `REVISION REQUESTED`
+```
+
+とする。
+
+### `Rejected`
+
+旧ApprovalまたはDisposition領域のHistorical表現として扱う。
+
+Publication Statusとして使用しない。
+
+現在のHuman Approval Decision、Workflow StatusまたはWorkflow Failure Stateへ自動Mappingしてはならない。
+
+`Rejected`のHistorical Recordが存在する場合、そのRecordを削除または現在の別Statusへ強制変換してCompatibilityを成立させてはならない。
+
+---
+
+## Audit Result Boundary
+
+Audit Resultは、監査対象がApplicableなAudit Criteriaを満たしているかを示す監査上の判定である。
+
+Audit ResultをPublication Statusとして使用してはならない。
+
+同様に、Publication StatusをAudit Resultの代替として使用してはならない。
+
+Audit ResultがPASSであることは、Applicableな下流工程へ進むための必要条件となり得るが、それだけを理由としてHuman Approval Decision、Repository IntegrationまたはPublicationが成立したものとみなしてはならない。
+
+Audit ResultがFAIL、REVISION REQUIREDその他の問題状態を示す場合、その結果をPublication Statusへ変換してはならない。
+
+Audit Resultの正式な区分は、各Applicable Audit SectionおよびApplicable Source of Truthに従う。
+
+---
+
+## Approval Evidence and Traceability
+
+Publication Approvalに関する正式なDecisionは、ApplicableなArtifactおよびVersionとのRelationを追跡可能な状態に維持する。
+
+Applicableな範囲で以下を確認可能にする。
+
+* Approval対象Artifact
+* Approval対象Version
+* Applicable Audit Result
+* Applicable Final Flow Audit Result
+* Human Approval Decision
+* Decisionに必要なAudit Evidence
+* Repository IntegrationとのRelation
+* PublicationとのRelation
+* Applicable Revision History
+
+ただし、本Listを新しいDatabase SchemaまたはRequired Metadata Field一覧として扱ってはならない。
+
+Database Field、Data Type、Controlled Value、Constraint、ValidationおよびMigrationはApplicable Database Source of Truthの責務とする。
+
+Audit RuleはPublication Approvalを理由として新しいDatabase Fieldを独自に追加しない。
+
+---
+
+## Revision and Re-Audit
+
+監査またはHuman ReviewによってRevisionが必要となった場合、対象Artifactを必要なProduction工程へ戻し、Applicableな修正を行う。
+
+Revision後にRe-Auditが必要となる場合、修正前のAudit Resultを修正後Artifactへ自動的に継承してはならない。
+
+同様に、修正前のHuman Approval Decisionを修正後Artifactまたは別Versionへ自動的に継承してはならない。
+
+Re-Audit、Final Flow Auditの再実施、再Human Reviewまたは再Human Approvalが必要となるかどうかは、変更内容およびApplicable Source of Truthから確認する。
+
+監査担当AIは、Revisionが行われたことだけを理由として新しいHuman Approval Decisionを生成しない。
+
+---
+
+## Repository Integration and Publication Boundary
+
+Human Approval後のRepository IntegrationおよびPublicationは、Audit Ruleとは別の正式工程として扱う。
+
+Audit Rule上の監査が完了していることだけを理由として、Repository Integrationを実施済みとみなしてはならない。
+
+Human Approval Decisionが`APPROVED`であることだけを理由として、Repository IntegrationまたはPublicationを自動実行してはならない。
+
+Repository Integrationが完了していることだけを理由としてPublication Statusを`PUBLISHED`へ変更してはならない。
+
+Publication Statusを`PUBLISHED`とするためには、ApplicableなPublication Processが正式に完了していることを確認する。
+
+Publication後も、ApplicableなAudit Result、Human Approval Decision、Artifact VersionおよびPublicationとのTraceabilityを維持する。
+
+---
+
+## FREE / CLASSIFIED Publication Boundary
+
+FREE Publication ArtifactおよびCLASSIFIED Publication Artifactについて、Publication StatusはApplicableな正式仕様に従って管理する。
+
+一方、FREEとCLASSIFIEDが異なるProductionまたはAudit進行状態を持つ場合のArtifact-level Trackingについては、正式HOLD Ledgerの`HOLD-PUBLICATION-TRACKING-01`を確認する。
+
+本章は、FREE / CLASSIFIEDそれぞれの個別Production / Audit Stateを管理する必要性だけを理由として、新しいWorkflow Status、Publication Status、Database Field、Metadata FieldまたはTracking Systemを独自に追加しない。
+
+一方のArtifactのAudit、ApprovalまたはPublication状態を、他方へ自動的に適用してはならない。
+
+---
+
+## AI Audit Responsibility
+
+監査担当AIはPublication Approvalに関連して、Applicableな範囲で以下を確認する。
+
+* Required Auditが実施されている
+* Audit Resultが追跡可能である
+* Applicable Final Flow Auditの状態が確認可能である
+* Critical Issueが未解決のまま不可視化されていない
+* Approval対象ArtifactおよびVersionが判別可能である
+* Audit対象とApproval対象のRelationが判別可能である
+* Applicable Ruleとの重大なConflictが未解決のままになっていない
+* Human Approval DecisionとPublication Statusが混同されていない
+* `APPROVED`と`PUBLISHED`が混同されていない
+* 旧Publication Status表現が現在のStatusへ推測Mappingされていない
+* Publication完了前に`PUBLISHED`として扱われていない
+
+監査担当AIは監査結果および問題点を報告する。
+
+監査担当AIは、Human Approval Decisionを独自に行わない。
+
+監査担当AIは、Publication Statusを正式な根拠なく変更しない。
+
+監査担当AIは、旧Statusと現在StatusのCompatibilityを推測によって確定しない。
 
 ---
 
 ## Responsibilities
 
-Publication Approvalにおける役割を以下のとおり定義する。
+Publication Approvalにおける責務は以下のとおりとする。
 
-| 担当 | 役割 |
-|------|------|
-| 制作担当AI | 成果物を制作し、監査対象として提出する。 |
-| 監査担当AI（Codexを想定） | Audit Ruleに基づき品質監査を実施し、Audit Reportを作成する。 |
-| 人間 | Audit Reportを確認し、公開、差し戻しまたは却下を最終判断する。 |
+| 担当                               | 責務                                                                                 |
+| -------------------------------- | ---------------------------------------------------------------------------------- |
+| 制作担当AI                           | Applicable Source of Truthに従ってArtifactを制作・修正する。                                    |
+| 監査担当AI                           | Applicable Audit Criteriaに基づいて品質を監査し、Audit Result、問題点および必要なEvidenceを報告する。          |
+| 人間                               | Applicable Audit Resultを確認し、正式なHuman Approval Decisionを行う。                         |
+| Repository / Publication Process | Applicable Source of Truthに従ってApproval後のRepository IntegrationおよびPublicationを管理する。 |
 
-監査担当AIは公開可否を決定せず、人間は成果物を制作しない。
+制作担当AIは、自身が制作したことだけを理由としてAudit PASSまたはHuman Approvalを成立させない。
 
----
+監査担当AIは、自身のAudit PASSだけを理由としてHuman ApprovalまたはPublicationを成立させない。
 
-## Re-Audit Policy
-
-以下の場合は、再監査を実施する。
-
-- Researchが更新された場合
-- Master Case Fileが更新された場合
-- Rule Documentsが更新された場合
-- Template Documentsが更新された場合
-- Evidenceが追加または変更された場合
-- Database情報が変更された場合
-- Versionが更新された場合
-- 画像または関連資料が変更された場合
-
-再監査では、変更内容および影響範囲に応じて必要な監査を実施する。
+人間によるApprovalも、それだけを理由としてPublication完了を意味しない。
 
 ---
 
-## Publication Record
+## Compatibility Principle
 
-公開承認後は、公開履歴として以下を記録する。
+本章のPublication Approvalは、Repository Rule、AGENTS.md、Database Rule、Database Schemaその他のApplicable Source of Truthとの責務境界を維持する。
 
-- Publish Date
-- Published Version
-- Approval Date
-- Approver
-- Audit Version
-- Audit ID
-- Related Case
-- Notes
+特に以下を混同してはならない。
 
-公開履歴は、品質保証およびVersion管理の記録として継続的に保存する。
+```
+Workflow Status
+    ≠
+Audit Result
+    ≠
+Human Approval Decision
+    ≠
+Publication Status
+    ≠
+Case Resolution Status
+```
+
+旧Audit RuleでPublication Statusとして使用されていた表現は、Historical Recordとして必要な場合、その履歴を維持する。
+
+ただし、
+
+```
+Historical Status Preservation
+    ≠
+Current Status Applicability
+```
+
+とする。
+
+旧Statusを現在StatusへMigrationする必要がある場合、名称または意味の類似だけで自動Mappingしてはならない。
+
+Applicable Source of Truth、Artifact Identity、Version、Audit Evidence、Approval EvidenceおよびPublication Evidenceを確認する。
+
+Compatibility問題を解消するためにHistorical Recordを削除、改変または強制変換してはならない。
 
 ---
 
-## Long-Term Operation
+## Core Publication Approval Principle
 
-ProjectORIGINでは、1000件以上の事件ファイルを継続的に運用することを前提とする。
+ProjectORIGINにおけるPublication Approvalの基本原則は、
 
-そのため、公開承認は単なる公開手続きではなく、品質保証の最終工程として位置付ける。
+**Applicableな品質監査を完了したArtifactについて、人間が正式なHuman Approval Decisionを行い、そのDecisionとRepository IntegrationおよびPublicationを独立した工程として管理すること**
 
-制作担当AI、監査担当AI（Codexを想定）および人間が、それぞれの責任範囲を維持しながら品質管理を実施することで、成果物の品質、一貫性および信頼性を長期的に維持する。
+とする。
+
+したがって、
+
+```
+Audit PASS
+    ≠
+Human Approval
+
+Human Approval
+    ≠
+Repository Integration
+
+Repository Integration
+    ≠
+Publication
+
+APPROVED
+    ≠
+PUBLISHED
+```
+
+とする。
+
+Publication Statusの正式なControlled ValuesはRepository Ruleに従う。
+
+* `NOT_PUBLISHED`
+* `PUBLISHED`
+
+旧Audit Ruleの、
+
+* `Draft`
+* `Under Audit`
+* `Awaiting Approval`
+* `Approved`
+* `Published`
+* `Revision Required`
+* `Rejected`
+
+を、本Revision以降のPublication Status Controlled Valuesとして使用しない。
+
+旧値がExisting CaseまたはHistorical Recordに存在する場合も、現在のWorkflow Status、Audit Result、Human Approval DecisionまたはPublication Statusへ推測によって変換してはならない。
+
+Audit Ruleの責務は、Publication Statusを使ってProduction Flow全体を表現することではない。
+
+Publicationへ進むために必要な品質監査を独立して実施し、その結果を人間およびApplicableな下流工程へ正確に渡すこととする。
 
 # Chapter 9
 # Continuous Improvement
