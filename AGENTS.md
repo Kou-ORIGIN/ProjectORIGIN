@@ -2059,28 +2059,65 @@ Pipeline Resume
 
 ## 5.19 Workflow Status
 
-各CaseはWorkflow Statusを保持する。
+ProjectORIGINのProduction Workflowでは、Caseの現在のProduction進行状態をWorkflow Statusとして管理する。
 
-例
+Workflow Statusは、Production Workflow上の進行段階を表す状態概念であり、Case Resolution Status、Audit Result、Human Approval DecisionおよびPublication Statusとは区別して管理する。
 
-* REGISTERED
-* RESEARCHING
-* RESEARCH AUDIT
-* APPROVED RESEARCH
-* MASTER PRODUCTION
-* MASTER AUDIT
-* APPROVED MASTER
-* FREE PRODUCTION
-* CLASSIFIED PRODUCTION
-* HUMAN REVIEW
-* APPROVED
-* PUBLISHED
-* REVISION REQUIRED
-* BLOCKED
+```text
+Case Resolution Status
+    ≠
+Workflow Status
+    ≠
+Audit Result
+    ≠
+Human Approval Decision
+    ≠
+Publication Status
+```
 
-正式Statusは、
+Workflow Statusの正式な名称、Controlled ValuesおよびRepository上の状態管理原則は、ProjectORIGIN Repository RuleをSource of Truthとする。
 
-Repository RuleをSource of Truthとする。
+AGENTS.mdは、Workflow Statusの独立したControlled Value一覧を新たに定義または複製しない。
+
+Production Agent、Audit Agent、Repository / Data Agentその他のAI Agentは、Workflow Statusを使用または更新する場合、Applicable VersionのRepository Ruleで定義された正式なWorkflow Statusを参照しなければならない。
+
+Workflow Statusの変更は、対象工程がApplicable Source of Truthで要求される条件を満たしていることを確認した上で行う。
+
+Status Tokenを変更しただけで、Production、Audit、Final Flow Audit、Human Approval、Repository IntegrationまたはPublicationが完了したものとして扱ってはならない。
+
+特に、
+
+```text
+Workflow Status = APPROVED
+    ≠
+Publication Status = PUBLISHED
+```
+
+とする。
+
+`PUBLISHED`はWorkflow Statusとして使用しない。
+
+Publication StatusはWorkflow Statusから独立して管理し、その正式なControlled Valuesおよび状態管理原則はProjectORIGIN Repository RuleをSource of Truthとする。
+
+Human Approval DecisionはWorkflow StatusまたはPublication Statusとは別の責務として管理し、その正式なDecisionは本書で定義されたHuman Approvalの規則に従う。
+
+Workflow Exception StateとHuman Approval Decisionも混同してはならない。
+
+特に、
+
+```text
+Workflow Status = REVISION_REQUIRED
+    ≠
+Human Approval Decision = REVISION REQUESTED
+```
+
+とする。
+
+FREEおよびCLASSIFIEDは独立したPublication Artifact Identityを持つが、FREE / CLASSIFIEDごとのArtifact-level Production / Audit State Trackingについては、正式HOLD Ledgerで管理される未解決事項を推測によって補完してはならない。
+
+Workflow Status、Publication StatusまたはArtifact-level Stateについて、Repository Ruleその他のApplicable Source of Truthに存在しないStatus Token、Controlled ValueまたはMapping RuleをAIが独自に追加してはならない。
+
+Status変更によって必要なAudit Gate、Human ApprovalまたはPublication Processを省略してはならない。
 
 ---
 
