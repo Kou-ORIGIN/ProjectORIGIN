@@ -173,7 +173,7 @@ PENDING
 本HOLD解消後に最終監査結果を記録する。
 
 ---
-**Active HOLD / Pending Count: 2**
+**Active HOLD / Pending Count: 1**
 
 ---
 
@@ -1072,9 +1072,8 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 
 # 8. Current Ledger State
 ## Active HOLD / Pending
-- `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
 - `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
-**Active HOLD / Pending Count: 2**
+**Active HOLD / Pending Count: 1**
 ## Resolution Review
 現在登録なし。
 **Resolution Review Count: 0**
@@ -1085,7 +1084,8 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 - `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
 - `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
 - `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
-**RESOLVED Archive Count: 6**
+- `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
+**RESOLVED Archive Count: 7**
 ## Recovery Log
 - Category Repository Working Draft / Category HOLD Record — Historical Record Recovery CLOSED / Record NOT RECOVERED
 **Recovery Log Count: 1**
@@ -1093,20 +1093,20 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 
 # 9. Audit Status
 本台帳v1.0は、現時点で確認できたHOLD記録、正式Source of Truth、Human Decision、正式文書への反映、および監査結果に基づいて構成する。
-現在、Active HOLD / Pendingとして以下の2件を正式登録する。
-- `HOLD-ARTIFACT-VERSION-01`
+現在、Active HOLD / Pendingとして以下の1件を正式登録する。
 - `HOLD-PUBLICATION-TRACKING-01`
-上記2件は、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
+上記1件は、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
 `HOLD-AUDIT-PLACEMENT-01`は、Human Decision、Repository Rule反映、Audit RuleおよびAGENTS.md Compatibility、Traceability、Naming / Versioning Responsibility Boundary、Repository Integration、Automation Impact、Existing Repository Compatibility、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+`HOLD-ARTIFACT-VERSION-01`は、Human Decision、Approval Boundary、Major / Minor / No Version Increment Criteria、Current Version Selection、Historical Version Preservation、Repository Integration Compatibility、Audit Artifact Versioning Boundary、Applicable Source of Truthへの反映、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ保持する。
 既存のRESOLVED Archive記録およびCategory Historical Recovery Recordは変更せず維持する。
 確認できていないHOLD IDまたはHOLD Recordを推測によって追加してはならない。
 新規REVISION：0
 新規HOLD：0
 BLOCKER：0
 Ledger Structure: PASS
-Active HOLD / Pending: 2
+Active HOLD / Pending: 1
 Resolution Review: 0
-RESOLVED Archive: 6
+RESOLVED Archive: 7
 Recovery Log: 1
 Overall Status: PASS
 ---
@@ -1155,3 +1155,15 @@ Resolution Review Countは0件、Recovery Log Countは1件を維持する。
 Active HOLD / Pending Countを3件から2件へ更新し、RESOLVED Archive Countを5件から6件へ更新した。
 Resolution Review Countは0件、Recovery Log Countは1件を維持する。
 本解消を含む最終再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
+
+### HOLD Resolution Update — 2026-08-29
+
+`HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteriaについて、Human Decision、Approval Boundary、Major / Minor / No Version Increment Criteria、Current Version Selection、Historical Version Preservation、Repository Integration Compatibility、Audit Artifact Versioning Boundary、Applicable Source of Truthへの反映、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ移行した。
+
+Active HOLD / Pending Countを2件から1件へ更新し、RESOLVED Archive Countを6件から7件へ更新した。
+
+Resolution Review Countは0件、Recovery Log Countは1件を維持する。
+
+`HOLD-PUBLICATION-TRACKING-01`は別論点であり、Active HOLD / Pendingとして継続する。
+
+本解消を含む最終横断再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
