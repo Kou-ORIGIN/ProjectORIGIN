@@ -45,122 +45,6 @@ HOLD管理では、以下を原則とする。
 ---
 # 4. Active HOLD / Pending
 
-## HOLD-AUDIT-PLACEMENT-01 — Audit Artifact Repository Placement
-
-### Status
-
-HOLD
-
-### 発生元
-
-- ProjectORIGIN Repository Rule v1.0
-- Repository Structure設計
-- Audit Artifact Repository Placement検討
-
-### 対象
-
-Audit Artifactの正式な物理Repository Placement。
-
-### 発生理由
-
-ProjectORIGINではAudit LayerおよびAudit Artifactの論理的責務は確認されているが、Audit ArtifactをRepository上のどの物理Directoryへ正式配置するかについて、現時点で確定したSource of Truthを確認できない。
-
-Audit Artifactの存在または論理的なAudit Layerを根拠として、未定義の物理Directoryを推測によって新設すると、Repository Structure、Traceability、Naming、Automationおよび将来のCompatibilityへ影響する可能性がある。
-
-このため、Audit Artifactの物理Repository Placementを未確定事項として正式に追跡する。
-
-### 確認済み事項
-
-- AuditはProjectORIGIN Production Flowにおける正式工程である。
-- Audit Artifactには対象ArtifactとのTraceabilityが必要である。
-- 論理的なAudit Layerの存在だけでは、物理Directoryの存在を意味しない。
-- Production ArtifactのRepository LayerとAudit ArtifactのRepository Placementは同一概念ではない。
-- Audit ArtifactのNamingは、物理Placementとの関係を確認せずに正式化すべきではない。
-- Repository RuleではAudit Artifactの物理Placementを推測によって確定しない方針が採用されている。
-
-### 未確認事項
-
-- Audit ArtifactをCase Directory配下へ保存するか
-- Artifact TypeごとのDirectoryへ保存するか
-- Case共通のAudit Directoryを設けるか
-- Repository全体のAudit領域を設けるか
-- Audit Artifact Filename Convention
-- Audit Artifact Versioning
-- Audit Artifact Retention / Archive Policy
-- Production Artifactとの物理的Relationship
-- AutomationがAudit Artifactを参照する際の正式Path
-
-### 依存関係
-
-- Repository Rule
-- Audit Rule
-- AGENTS.md
-- Artifact Naming and Versioning
-- Repository Integration
-- Traceability
-- Automation
-- 必要に応じてDatabase / Operational Metadata
-
-### 禁止事項
-
-本HOLDがHOLD状態である間、以下を行ってはならない。
-
-- Audit Artifactの物理Directoryを推測によって正式仕様として追加する
-- 論理的なAudit Layerを物理Directoryと同一視する
-- `audit/`その他のDirectory名を根拠なく正式化する
-- Audit Artifact NamingをPlacement確認なしに正式化する
-- 既存Source of Truthに存在しないAudit PathをAutomation前提として固定する
-
-### 次のAction
-
-1. Audit RuleおよびAGENTS.mdからAudit ArtifactのRepository要件を抽出する。
-2. Repository RuleのCase Directory Structureとの整合を確認する。
-3. Audit Artifactと対象Production ArtifactのTraceability要件を確認する。
-4. 必要な物理Placement候補を比較する。
-5. Automation、Naming、VersioningおよびCompatibilityへの影響を確認する。
-6. 必要なHuman Decisionを行う。
-7. 決定内容をApplicable Source of Truthへ正式反映する。
-8. 関連Chapterを再監査する。
-
-### 解消条件
-
-以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
-
-- Audit Artifactの正式な物理Repository Placementが決定されている
-- 対象ArtifactとのTraceabilityが維持されている
-- Namingとの関係が確認されている
-- Versioningとの関係が確認されている
-- Repository Integrationへの影響が確認されている
-- Automationへの影響が確認されている
-- Existing Repository StructureへのCompatibility Impactが確認されている
-- 必要なHuman Decisionが完了している
-- Applicable Source of Truthへ正式反映されている
-- 関連文書の再監査がPASSしている
-
-### 解消根拠
-
-未確定。
-
-HOLD状態では解消根拠を作成しない。
-
-### 反映先
-
-解消時には少なくとも以下への影響を確認する。
-
-- ProjectORIGIN Repository Rule
-- Audit Rule
-- AGENTS.md
-- Artifact Naming and Versioning
-- Repository Integration関連仕様
-- Automation関連仕様
-
-### 最終監査結果
-
-PENDING
-
-本HOLD解消後に最終監査結果を記録する。
-
----
 ## HOLD-ARTIFACT-VERSION-01 — Production Artifact Version Increment Criteria
 
 ### Status
@@ -411,7 +295,7 @@ PENDING
 本HOLD解消後に最終監査結果を記録する。
 
 ---
-**Active HOLD / Pending Count: 3**
+**Active HOLD / Pending Count: 2**
 
 ---
 
@@ -421,6 +305,70 @@ PENDING
 **Resolution Review Count: 0**
 ---
 # 6. RESOLVED Archive
+
+## HOLD-AUDIT-PLACEMENT-01 — Audit Artifact Repository Placement
+### Status
+RESOLVED
+### 発生元
+- ProjectORIGIN Repository Rule v1.0
+- Repository Structure設計
+- Audit Artifact Repository Placement検討
+### 対象
+Audit Artifactの正式な物理Repository Placement。
+### 確認済み事項
+Human Decisionにより、Case単位のAudit Artifactの正式な物理Repository Placementとして`cases/FILE-XXX/audit/`を採用した。
+対象ArtifactとのTraceability、Namingとの関係、Versioningとの関係、Repository Integration、Automation Impact、Existing Repository StructureへのCompatibility Impactを確認した。
+Audit Rule CompatibilityはPASSであり、Audit Rule改訂は不要と判定した。
+AGENTS.md CompatibilityはPASSであり、AGENTS.md改訂は不要と判定した。
+### 未確認事項
+本HOLDの解消対象として未確認事項なし。
+Audit Artifact Filename Convention、Audit Artifact Versioning、`audit/`配下のSubdirectory、Retention / Archive Placement、Database / Metadata Field、および具体的なAutomation実装は、本HOLDの解消によって新たに確定するものではない。
+### 次のAction
+なし。
+本項目はActive HOLD / Pendingとして追跡せず、RESOLVED履歴として保持する。
+### 解消条件
+以下の10条件をすべて満たした。
+1. 正式な物理Repository Placementの決定
+2. 対象ArtifactとのTraceability維持
+3. Namingとの関係確認
+4. Versioningとの関係確認
+5. Repository Integrationへの影響確認
+6. Automationへの影響確認
+7. Existing Repository StructureへのCompatibility Impact確認
+8. Human Decision完了
+9. Applicable Source of Truthへの正式反映
+10. 関連文書の最終再監査PASS
+### 解消根拠
+Human Decisionにより`cases/FILE-XXX/audit/`を正式Placementとして承認した。
+ProjectORIGIN Repository Ruleへ正式反映した。
+### 反映先
+- ProjectORIGIN Repository Rule — REFLECTED
+- Audit Rule — Compatibility PASS / UPDATE NOT REQUIRED
+- AGENTS.md — Compatibility PASS / UPDATE NOT REQUIRED
+- Artifact Naming and Versioning — Responsibility Boundary CONFIRMED
+- Repository Integration関連仕様 — Compatibility PASS
+- Automation関連仕様 — Impact CONFIRMED / concrete implementation not newly established
+### 最終監査結果
+PASS
+Traceability: PASS
+Naming Relationship: PASS
+Versioning Relationship: PASS
+Repository Integration: PASS
+Automation Impact: PASS
+Existing Repository Compatibility: PASS
+Human Decision: PASS
+Applicable Source of Truth反映: PASS
+Audit Rule Compatibility: PASS
+AGENTS.md Compatibility: PASS
+最終再監査: PASS
+新規REVISION：0
+新規HOLD：0
+BLOCKER：0
+### Resolution
+HOLD-AUDIT-PLACEMENT-01 — RESOLVED
+本項目をActive HOLD / Pendingとして扱わない。
+解消後も記録を削除せず、RESOLVED履歴として保持する。
+---
 ## HOLD-TAGS-01 — Tags Controlled Values / 正式Tag一覧
 ### Status
 RESOLVED
@@ -1004,88 +952,46 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 なし。
 本Recovery RecordをActive HOLD / Pendingとして扱わない。
 ---
+
 # 8. Current Ledger State
-
 ## Active HOLD / Pending
-
-- `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
 - `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
 - `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
-
-**Active HOLD / Pending Count: 3**
-
+**Active HOLD / Pending Count: 2**
 ## Resolution Review
-
 現在登録なし。
-
 **Resolution Review Count: 0**
-
 ## RESOLVED Archive
-
 - `HOLD-TAGS-01` — Tags Controlled Values / 正式Tag一覧
 - `HOLD-STATUS-01` — Status Meaning / Data Type / Controlled Values / Nullability
 - `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
 - `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
-
 - `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
-
-**RESOLVED Archive Count: 5**
-
+- `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
+**RESOLVED Archive Count: 6**
 ## Recovery Log
-
 - Category Repository Working Draft / Category HOLD Record — Historical Record Recovery CLOSED / Record NOT RECOVERED
-
 **Recovery Log Count: 1**
 ---
+
 # 9. Audit Status
-
 本台帳v1.0は、現時点で確認できたHOLD記録、正式Source of Truth、Human Decision、正式文書への反映、および監査結果に基づいて構成する。
-
-現在、Active HOLD / Pendingとして以下の3件を正式登録する。
-
-- `HOLD-AUDIT-PLACEMENT-01`
+現在、Active HOLD / Pendingとして以下の2件を正式登録する。
 - `HOLD-ARTIFACT-VERSION-01`
 - `HOLD-PUBLICATION-TRACKING-01`
-
-上記3件は、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
-
-各Active HOLDは、必要なHuman Decision、Applicable Source of Truthへの反映、依存関係の確認および最終再監査PASSが完了するまでRESOLVEDとして扱わない。
-
-`HOLD-TAGS-01`は、具体的な初期Tag Controlled ValuesのHuman Decision、Database Schema Chapter 6 / Tags Field Definitionへの正式反映、既存Fieldとの責務分離確認、既存Constraintsとの整合性確認、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
-
-`HOLD-STATUS-01`は、必要な仕様確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
-
-`HOLD-CLASS-02`は、ClassのData Type、Nullability、Unset ValueおよびLifecycle条件の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
-
-`HOLD-CLASS-01`は、Class Controlled Values、Controlled ValuesのSingle Source of Truth、Categoryとの責務分離および依存関係の正式確定、Database Schema Chapter 6への反映、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
-
-`HOLD-PUBLICATION-STATUS-COMPAT-01`は、Publication Status責務分離、旧7値Disposition、`NOT_PUBLISHED / PUBLISHED` 2値モデル維持のHuman Decision、Audit Rule v1.3.1・AGENTS.md・Repository Ruleへの必要な反映、Database / Metadata・Existing Case・Automation互換性判断、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ保持する。
-
-Category Repository Working Draftおよび旧Category HOLD Recordは回収されていない。
-
-Category関連Historical Record Recoveryは、旧Recordを推測復元せず未回収状態を保持した上でCLOSEDとして扱う。
-
-旧Category Repository Working Draftまたは旧Category HOLD Recordの未回収状態は、現行Category Field Definitionの未解決依存関係として扱わない。
-
+上記2件は、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
+`HOLD-AUDIT-PLACEMENT-01`は、Human Decision、Repository Rule反映、Audit RuleおよびAGENTS.md Compatibility、Traceability、Naming / Versioning Responsibility Boundary、Repository Integration、Automation Impact、Existing Repository Compatibility、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+既存のRESOLVED Archive記録およびCategory Historical Recovery Recordは変更せず維持する。
 確認できていないHOLD IDまたはHOLD Recordを推測によって追加してはならない。
-
 新規REVISION：0
-
 新規HOLD：0
-
 BLOCKER：0
-
-**Ledger Structure: PASS**
-
-**Active HOLD / Pending: 3**
-
-**Resolution Review: 0**
-
-**RESOLVED Archive: 5**
-
-**Recovery Log: 1**
-
-**Overall Status: PASS**
+Ledger Structure: PASS
+Active HOLD / Pending: 2
+Resolution Review: 0
+RESOLVED Archive: 6
+Recovery Log: 1
+Overall Status: PASS
 ---
 # 10. Version History
 ## v1.0
@@ -1124,3 +1030,11 @@ Active HOLD / Pending Countを4件から3件へ更新し、RESOLVED Archive Coun
 Resolution Review Countは0件、Recovery Log Countは1件を維持する。
 
 本解消を含む最終横断再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
+
+
+### HOLD Resolution Update — 2026-08-29
+`HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placementについて、Human Decision、Applicable Source of Truthへの反映、Traceability、Naming / Versioning Responsibility Boundary、Repository Integration、Automation Impact、Existing Repository Compatibility、および最終再監査PASSを確認したため、RESOLVED Archiveへ移行した。
+正式な物理Repository Placementは`cases/FILE-XXX/audit/`とする。
+Active HOLD / Pending Countを3件から2件へ更新し、RESOLVED Archive Countを5件から6件へ更新した。
+Resolution Review Countは0件、Recovery Log Countは1件を維持する。
+本解消を含む最終再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
