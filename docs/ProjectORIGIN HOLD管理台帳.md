@@ -45,128 +45,6 @@ HOLD管理では、以下を原則とする。
 ---
 # 4. Active HOLD / Pending
 
-## HOLD-ARTIFACT-VERSION-01 — Production Artifact Version Increment Criteria
-
-### Status
-
-HOLD
-
-### 発生元
-
-- ProjectORIGIN Repository Rule v1.0 Chapter 5
-- Production Artifact Naming and Versioning設計
-
-### 対象
-
-Production Artifact Version Increment Criteria。
-
-### 発生理由
-
-Production ArtifactのFilename Identityとして`vX.Y`を使用する方針は確定しているが、`X`および`Y`をどの条件で増加させるかについて正式なProduction Artifact用ルールが確定していない。
-
-公式Documentに存在するVersion Management RuleをProduction Artifactへ自動転用すると、Document VersionとArtifact Versionの責務を混同する可能性がある。
-
-このためProduction Artifact固有のVersion Increment Criteriaを正式な未確定事項として追跡する。
-
-### 確認済み事項
-
-- Production ArtifactはVersionを識別可能である必要がある。
-- 基本Version表記として`vX.Y`を使用する。
-- Artifact VersionとWorkflow Statusは異なる概念である。
-- Artifact VersionとPublication Statusは異なる概念である。
-- FilenameをRenameしただけでは正式なVersion Updateは成立しない。
-- Version更新によって必要なTraceabilityを失ってはならない。
-- 公式DocumentのVersion RuleをProduction Artifactへ自動転用してはならない。
-
-### 未確認事項
-
-- `X`を増加させる具体的条件
-- `Y`を増加させる具体的条件
-- Patch ComponentをProduction Artifactへ導入するか
-- Audit CorrectionとVersion Incrementの関係
-- Content RevisionとVersion Incrementの関係
-- Publication RevisionとVersion Incrementの関係
-- Human Approval後の修正とVersion Incrementの関係
-- Repository Integration後の修正とVersion Incrementの関係
-- Current Versionの正式判定方法
-- 旧VersionのRetention / Archiveとの関係
-
-### 依存関係
-
-- Repository Rule Chapter 5
-- Repository Rule Chapter 6
-- AGENTS.md
-- Audit Rule
-- Research Production
-- Master Production
-- Publication Production
-- Repository Integration
-- Compatibility
-- Automation
-
-### 禁止事項
-
-本HOLDがHOLD状態である間、以下を行ってはならない。
-
-- Semantic Versioningその他の一般慣行をProduction Artifactへ自動適用する
-- Document Version RuleをProduction Artifactへ自動転用する
-- `X`または`Y`のIncrement Criteriaを推測で確定する
-- Patch Componentを根拠なく追加する
-- Status変更だけをVersion Incrementの根拠とする
-- Filename変更だけで正式Version Updateが成立したものと扱う
-
-### 次のAction
-
-1. Production Artifactで実際に発生するRevision Typeを整理する。
-2. Audit Correction、Content Revision、Publication Revisionを分類する。
-3. Human ApprovalおよびRepository Integrationとの関係を確認する。
-4. `X` / `Y` Increment Criteria候補を設計する。
-5. Patch Componentの必要性を判断する。
-6. Existing ArtifactへのCompatibility Impactを確認する。
-7. 必要なHuman Decisionを行う。
-8. Repository Rule Chapter 5その他のApplicable Source of Truthへ正式反映する。
-9. 関連文書を再監査する。
-
-### 解消条件
-
-以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
-
-- Production Artifact Versionの変更単位が正式に決定されている
-- `X`のIncrement Criteriaが正式に決定されている
-- `Y`のIncrement Criteriaが正式に決定されている
-- Patch Componentを使用するか正式に決定されている
-- Audit Correctionとの関係が決定されている
-- Content Revisionとの関係が決定されている
-- Publication Revisionとの関係が決定されている
-- Human ApprovalおよびRepository Integrationとの関係が確認されている
-- Existing ArtifactへのCompatibility Impactが確認されている
-- 必要なHuman Decisionが完了している
-- Applicable Source of Truthへ正式反映されている
-- 関連文書の再監査がPASSしている
-
-### 解消根拠
-
-未確定。
-
-HOLD状態では解消根拠を作成しない。
-
-### 反映先
-
-解消時には少なくとも以下への影響を確認する。
-
-- ProjectORIGIN Repository Rule Chapter 5
-- ProjectORIGIN Repository Rule Chapter 6
-- AGENTS.md
-- Audit Rule
-- Production Artifact関連仕様
-- Repository Integration関連仕様
-- Automation関連仕様
-
-### 最終監査結果
-
-PENDING
-
-本HOLD解消後に最終監査結果を記録する。
 
 ---
 ## HOLD-PUBLICATION-TRACKING-01 — FREE / CLASSIFIED Artifact-level Tracking
@@ -368,6 +246,245 @@ BLOCKER：0
 HOLD-AUDIT-PLACEMENT-01 — RESOLVED
 本項目をActive HOLD / Pendingとして扱わない。
 解消後も記録を削除せず、RESOLVED履歴として保持する。
+
+## HOLD-ARTIFACT-VERSION-01 — Production Artifact Version Increment Criteria
+
+### Status
+
+RESOLVED
+
+### 発生元
+
+- ProjectORIGIN Repository Rule v1.0 Chapter 5
+- Production Artifact Naming and Versioning設計
+
+### 対象
+
+Production Artifact Version Increment Criteria。
+
+### 発生理由
+
+Production ArtifactのFilename Identityとして`vX.Y`を使用する方針は確定していたが、`X`および`Y`をどの条件で増加させるかについて、正式なProduction Artifact用Version Increment Criteriaが未確定であった。
+
+公式Documentに存在するVersion Management Ruleまたは一般的なSemantic VersioningをProduction Artifactへ自動転用すると、Document VersionとProduction Artifact Versionの責務を混同する可能性があった。
+
+このため、Production Artifact固有のVersion Increment Criteriaを正式な未確定事項として追跡した。
+
+### Human Decision
+
+Production Artifact Versionについて、以下を正式な判断として採用した。
+
+- 正式Version Formatは`vX.Y`とする。
+- `X`はMajor Versionを表す。
+- `Y`はMinor Versionを表す。
+- Production ArtifactにはPatch Componentを導入しない。
+- Production Artifact VersionはApproval Boundary Modelに基づいて判断する。
+- Major / Minor / No Version IncrementはRevision Typeだけで機械的に決定しない。
+- 実際のContent ChangeおよびApproval Boundaryへの影響を基準として判断する。
+- Repository IntegrationまたはRe-Integrationだけを理由としてVersion Incrementを成立させない。
+- Current VersionをVersion番号、Timestamp、FilenameまたはRepository Integration時点だけから自動判定しない。
+- Historical VersionはTraceabilityのため保持する。
+- Historical PreservationとCurrent Applicabilityを同一視しない。
+- Version判断をApplicable Criteriaから一意に確定できない場合は、Automationまたは推測によって決定せずHuman Decisionを要求する。
+
+### Approval Boundary
+
+Production Artifact Version判断におけるApproval Boundaryは、Human Approval Decision単独を意味しない。
+
+Approval Boundaryは、対象Artifactの正式な成立範囲を判断するためにApplicableとなる、
+
+- Artifact Identity
+- Artifactの目的
+- Artifactの責務
+- 主要構成
+- 主要内容
+- Required Audit
+- Applicable Final Flow Audit
+- Human Approval Decision
+- その他Applicable Source of Truthとの関係
+
+を含む判断境界として扱う。
+
+したがって、
+
+`Approval Boundary ≠ Human Approval Decision単独`
+
+とする。
+
+### Major Version Increment
+
+既存VersionのApproval Boundaryを維持できず、対象Artifactを新しいMajor Versionとして再評価する必要がある実質的変更では、Major VersionをIncrementする。
+
+Major Version Incrementは、単なる変更量、Filename変更、Timestamp変更、Workflow Status変更、Publication Status変更またはRepository Integrationだけを根拠として成立させない。
+
+### Minor Version Increment
+
+Artifact Identityおよび基本的なApproval Boundaryを維持しながら、正式内容に実質的変更を加える場合はMinor VersionをIncrementする。
+
+Minor Version Incrementの場合も、Applicable Audit、ApprovalおよびTraceability要件を省略しない。
+
+### No Version Increment
+
+以下の条件をすべて維持する厳密に非実質的な修正については、Version Incrementを要求しない。
+
+- 意味を変更しない
+- 情報を変更しない
+- 論旨を変更しない
+- 構造を実質的に変更しない
+- Approval対象を変更しない
+
+Typographical Correction、Whitespace Correction、Formatting Correctionその他の修正であっても、上記条件を満たさない場合は自動的にNo Version Incrementとはしない。
+
+### Revision Type Boundary
+
+以下のRevision Typeを、固定的にMajor、MinorまたはNo Version Incrementへ割り当てない。
+
+- Audit Correction
+- Content Revision
+- Publication Revision
+- Human Approval後のRevision
+- Repository Integration後のRevision
+
+これらについては、実際に発生したContent ChangeおよびApproval Boundaryへの影響を確認してVersion判断を行う。
+
+### Repository Integration Boundary
+
+Repository IntegrationまたはRe-Integrationそのものは、Production Artifact Version Incrementを意味しない。
+
+Integration対象Artifactに実質的な変更が発生している場合は、その変更内容をChapter 5の正式Version Criteriaに照らして判断する。
+
+Repository Placement変更、Filename変更またはIntegration処理だけを理由としてAutomatic Version Incrementを成立させない。
+
+### Current Version Selection
+
+Current Versionは、以下の単独条件によって自動的に決定しない。
+
+- 最大Version番号
+- 最新Timestamp
+- 最新に見えるFilename
+- 最新Repository Integration
+- 新しいRepository Structure
+- 新しいNaming Convention
+
+Current Versionとして扱うには、対象Artifactが正式にApplicableであり、必要なTraceabilityを確認できなければならない。
+
+新しいVersionが存在することだけを理由として、旧VersionのAudit Result、Human Approval Decisionその他の正式状態を新Versionへ自動継承しない。
+
+### Historical Version
+
+Historical VersionはTraceabilityのため保持する。
+
+新しいVersionが成立したことだけを理由として、旧Versionを上書きまたは削除しない。
+
+ただし、
+
+`Historical Preservation ≠ Current Applicability`
+
+とする。
+
+Historical VersionがRepository上に存在することだけを理由として、そのVersionをCurrent、Approved、IntegratedまたはPublishedとして扱ってはならない。
+
+### Archive / Retention Boundary
+
+本HOLDのResolutionによって、以下を新たに正式化しない。
+
+- 専用`archive/` Directory
+- Retention Period
+- Automatic Deletion Schedule
+- Archive Filename Convention
+- Archive専用Database Field
+- Archive専用Metadata Field
+- Automatic Archive Migration
+
+Historical Versionの保持要件と、未定義のArchive / Retention仕様を混同しない。
+
+### Audit Artifact Boundary
+
+本HOLDはProduction Artifact Version Increment Criteriaを対象とする。
+
+本ResolutionによってAudit Artifact固有のVersioningを正式化しない。
+
+Audit Artifact Filename Convention、Audit Artifact Versioningその他の未承認仕様は、本HOLDのResolutionから推測によって派生させてはならない。
+
+### Compatibility確認
+
+以下とのCompatibilityを確認した。
+
+- ProjectORIGIN Repository Rule Chapter 5
+- ProjectORIGIN Repository Rule Chapter 6
+- Repository Rule Chapter 7
+- Repository Rule Chapter 8
+- Repository Rule Chapter 9
+- AGENTS.md
+- Audit Rule
+- Production Artifact関連仕様
+- Repository Integration
+- Automation Boundary
+- Existing Repository Structure
+- `HOLD-AUDIT-PLACEMENT-01`
+- `HOLD-PUBLICATION-TRACKING-01`
+
+Compatibility確認の結果、本HOLDのResolutionを妨げるBLOCKERまたはREVISIONは確認されなかった。
+
+### Applicable Source of Truthへの反映
+
+Production Artifact Version Increment Criteriaは、ProjectORIGIN Repository Rule Chapter 5を中心とするApplicable Sectionへ正式反映した。
+
+関連ChapterについてもVersion Criteriaを独自に再定義せずChapter 5を参照する責務境界へ整合した。
+
+Chapter 3およびChapter 4に存在したAudit Artifact Placement関連のCompatibility不整合についても修正し、最終横断再監査前に解消した。
+
+### 解消根拠
+
+以下の解消条件がすべて満たされた。
+
+- Production Artifact Versionの変更単位を正式決定
+- `X` / Major Version Increment Criteriaを正式決定
+- `Y` / Minor Version Increment Criteriaを正式決定
+- Patch Component不採用を正式決定
+- Audit Correctionとの関係を決定
+- Content Revisionとの関係を決定
+- Publication Revisionとの関係を決定
+- Human Approvalとの関係を確認
+- Repository Integrationとの関係を確認
+- Current Version Selection Criteriaを決定
+- Historical Versionとの関係を確認
+- Existing ArtifactへのCompatibility Impactを確認
+- 必要なHuman Decisionを完了
+- Applicable Source of Truthへの必要な反映を完了
+- AGENTS.mdとのCompatibility確認を完了
+- Audit RuleとのCompatibility確認を完了
+- Repository IntegrationとのCompatibility確認を完了
+- Automation BoundaryとのCompatibility確認を完了
+- 最終横断再監査を完了
+
+### 他HOLDへの影響
+
+本HOLDのResolutionによって、他のHOLDを自動的に解消しない。
+
+`HOLD-AUDIT-PLACEMENT-01`は既に独立したResolution ProcessによってRESOLVEDであり、本HOLDによって再Openしない。
+
+`HOLD-PUBLICATION-TRACKING-01`は別論点であり、本HOLDのResolution後もActive HOLDとして維持する。
+
+### 最終監査結果
+
+PASS
+
+Production Artifact Version Increment Criteria、Applicable Source of Truthへの反映、Repository Rule内部整合性、Audit Rule、AGENTS.md、Repository Integration、Automation Boundaryおよび関連HOLDとのCompatibilityについて最終横断再監査を実施した。
+
+結果、
+
+- BLOCKER: 0
+- REVISION: 0
+- New HOLD: 0
+
+であることを確認した。
+
+### Resolution
+
+`HOLD-ARTIFACT-VERSION-01`をRESOLVEDとする。
+
+本Recordは削除せず、正式HOLD LedgerのRESOLVED ArchiveにHistorical Recordとして保持する。
 ---
 ## HOLD-TAGS-01 — Tags Controlled Values / 正式Tag一覧
 ### Status
