@@ -45,144 +45,185 @@ HOLD管理では、以下を原則とする。
 ---
 # 4. Active HOLD / Pending
 
+現在登録なし。
 
----
-## HOLD-PUBLICATION-TRACKING-01 — FREE / CLASSIFIED Artifact-level Tracking
-
-### Status
-
-HOLD
-
-### 発生元
-
-- ProjectORIGIN Repository Rule v1.0 Chapter 6
-- FREE / CLASSIFIED Publication Production設計
-
-### 対象
-
-FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Production / Audit State Tracking。
-
-### 発生理由
-
-FREE Publication ArtifactとCLASSIFIED Publication Artifactは独立したArtifact IdentityおよびAudit工程を持つ。
-
-一方、Case-level Workflow StatusではPublication Phaseを`PUBLICATION_PRODUCTION`および`PUBLICATION_AUDIT`として管理する設計が採用されている。
-
-このため、FREEとCLASSIFIEDが異なるProductionまたはAudit進行状態にある場合、Case-level Workflow Status一値だけでは各Artifactの個別状態を完全には表現できない。
-
-Artifact-level Trackingを正式に必要とするか、その場合どこをSource of Truthとするかが未確定であるため、本HOLDとして追跡する。
-
-### 確認済み事項
-
-- FREEとCLASSIFIEDは異なるPublication Artifact Identityを持つ。
-- FREEとCLASSIFIEDは独立したProduction / Audit対象になり得る。
-- Case-level Workflow StatusではFREE / CLASSIFIED別のStatus Tokenを採用しない。
-- Case-level Publication Phaseは`PUBLICATION_PRODUCTION`および`PUBLICATION_AUDIT`で表す。
-- Case-level Workflow StatusとArtifact-level Stateは同一概念ではない。
-- Publication Statusは公開済みかどうかを表す独立概念である。
-
-### 未確認事項
-
-- FREE個別Production Stateを保持する必要があるか
-- CLASSIFIED個別Production Stateを保持する必要があるか
-- FREE個別Audit Stateを保持する必要があるか
-- CLASSIFIED個別Audit Stateを保持する必要があるか
-- Artifact-level StateのSource of Truth
-- Database Fieldとして保持するか
-- Repository Metadataとして保持するか
-- Audit Artifactから導出するか
-- 一方のみ完了した場合のCase-level Workflow Status
-- Repository Integrationとの関係
-- Automationとの関係
-- Publication Statusとの関係
-
-### 依存関係
-
-- Repository Rule Chapter 4
-- Repository Rule Chapter 5
-- Repository Rule Chapter 6
-- AGENTS.md
-- Audit Rule
-- FREE Production
-- CLASSIFIED Production
-- Database / Operational Metadata
-- Repository Integration
-- Automation
-
-### 禁止事項
-
-本HOLDがHOLD状態である間、以下を行ってはならない。
-
-- FREE / CLASSIFIED用のArtifact-level Status体系を推測で新設する
-- Case-level Workflow StatusをArtifact-level Stateと同一視する
-- FREEとCLASSIFIEDの一方の状態から他方の状態を推測する
-- `PUBLICATION_PRODUCTION`または`PUBLICATION_AUDIT`だけを根拠として両Artifactが同一進行状態にあると判断する
-- 未定義のDatabase FieldまたはMetadataを正式仕様として追加する
-
-### 次のAction
-
-1. FREE / CLASSIFIEDの実Production Flowを確認する。
-2. 各Artifactの個別状態を追跡するOperational Needを確認する。
-3. Case-level Workflow Statusだけで管理可能か検証する。
-4. Artifact-level Trackingが必要な場合、Source of Truth候補を比較する。
-5. Database、Repository Metadata、Audit Resultとの関係を確認する。
-6. AutomationおよびRepository Integrationへの影響を確認する。
-7. 必要なHuman Decisionを行う。
-8. Applicable Source of Truthへ正式反映する。
-9. 関連文書を再監査する。
-
-### 解消条件
-
-以下をすべて満たすまで、本HOLDをHOLD状態として維持する。
-
-- Artifact-level Trackingの必要性が正式に決定されている
-- 必要な場合、管理対象となるStateが決定されている
-- Source of Truthが決定されている
-- Case-level Workflow Statusとの関係が決定されている
-- Publication Statusとの関係が決定されている
-- Audit Resultとの関係が決定されている
-- Repository Integrationへの影響が確認されている
-- Automationへの影響が確認されている
-- Database / Metadataへの影響が確認されている
-- Existing CaseへのCompatibility Impactが確認されている
-- 必要なHuman Decisionが完了している
-- Applicable Source of Truthへ正式反映されている
-- 関連文書の再監査がPASSしている
-
-### 解消根拠
-
-未確定。
-
-HOLD状態では解消根拠を作成しない。
-
-### 反映先
-
-解消時には少なくとも以下への影響を確認する。
-
-- ProjectORIGIN Repository Rule Chapter 6
-- AGENTS.md
-- Audit Rule
-- Database Schema / Database Rule
-- Repository Integration関連仕様
-- Automation関連仕様
-
-### 最終監査結果
-
-PENDING
-
-本HOLD解消後に最終監査結果を記録する。
-
----
-**Active HOLD / Pending Count: 1**
+**Active HOLD / Pending Count: 0**
 
 ---
 
----
 # 5. Resolution Review
 現在登録なし。
 **Resolution Review Count: 0**
 ---
 # 6. RESOLVED Archive
+
+## HOLD-PUBLICATION-TRACKING-01 — FREE / CLASSIFIED Artifact-level Tracking
+
+### Status
+
+RESOLVED
+
+### 発生元
+
+* ProjectORIGIN Repository Rule v1.0 Chapter 6
+* FREE / CLASSIFIED Publication Production設計
+
+### 対象
+
+FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Production / Audit State Tracking。
+
+### 確認済み事項
+
+Human DecisionおよびProjectORIGIN Repository Rule v1.0への正式反映により、FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Trackingを正式に採用した。
+
+Artifact-level Trackingの正式なRepository-managed方式として、各Caseの以下のArtifactを使用する。
+
+`cases/FILE-XXX/publication-tracking.json`
+
+`publication-tracking.json`は、Case-level Repository-managed Operational Metadata Artifactとして管理する。
+
+FREEおよびCLASSIFIEDは独立して追跡し、管理対象は以下とする。
+
+* Applicability
+* Production State
+* Applicable Audit Reference
+
+Case-level Workflow StatusとArtifact-level Trackingは独立した概念として管理する。
+
+Publication StatusとArtifact-level Trackingは独立した概念として管理する。
+
+Applicable Audit ReferenceはAudit Resultそのものではなく、Applicable Audit ArtifactへのRepository-relative Referenceとして管理する。
+
+Audit Resultを`publication-tracking.json`へ複製しない。
+
+`publication-tracking.json`はProduction Artifactではない。
+
+`publication-tracking.json`はAudit Artifactではない。
+
+`publication-tracking.json`はDatabase Recordではない。
+
+`publication-tracking.json`の採用によって新しいProduction Layerを設けない。
+
+`publication-tracking.json`の採用だけを理由としてDatabase SchemaへFREE / CLASSIFIED Tracking Fieldを自動追加しない。
+
+Case-level Workflow Status、Publication Status、Audit Result、Human Approval Decision、Repository Integration ResultまたはRepository上のFile存在だけから、Artifact-level Trackingの値を推測または自動導出しない。
+
+FREEとCLASSIFIEDの一方の状態から他方の状態を推測しない。
+
+Repository Integrationでは、`publication-tracking.json`とApplicable Artifact / Audit Artifactとの対応および整合性を確認するが、Repository Integration自体を根拠としてTracking値を生成または変更しない。
+
+Automationは、曖昧または一意に決定できないTracking値、Applicable Audit Referenceその他の状態を推測、補完または自動修復しない。
+
+Existing Caseに`publication-tracking.json`が存在しないことだけを理由として、Workflow Failure、Audit BLOCKER、Human Approval HOLDその他の状態を自動的に導出しない。
+
+### 未確認事項
+
+本HOLDの解消対象として未確認事項なし。
+
+具体的なAutomation実装、Database側の新規Field、未定義のMetadata Schema、新しいProduction Layerその他、本HOLDの正式決定によって定義されていない仕様を新たに確定したものとして扱わない。
+
+### 依存関係
+
+* ProjectORIGIN Repository Rule v1.0 — REFLECTED / Official
+* AGENTS.md — Compatibility確認済み
+* Audit Rule — Compatibility確認済み
+* Database Rule / Database Schema — Responsibility Boundary確認済み
+* FREE Production — Compatibility確認済み
+* CLASSIFIED Production — Compatibility確認済み
+* Repository Integration — Impact確認済み
+* Automation — Impact / Responsibility Boundary確認済み
+* Existing Case Compatibility — Impact確認済み
+
+### 禁止事項
+
+本HOLDの解消によって、以下を新たに許可または確定したものとして扱わない。
+
+* Case-level Workflow StatusをArtifact-level Stateと同一視する
+* Publication StatusをArtifact-level Stateと同一視する
+* Audit ResultをArtifact-level Stateと同一視する
+* Applicable Audit ReferenceをAudit Resultとして扱う
+* FREEとCLASSIFIEDの一方の状態から他方の状態を推測する
+* 未定義のDatabase FieldまたはMetadata Schemaを追加する
+* 新しいProduction Layerを推測によって追加する
+* Repository Integration結果からTracking値を自動導出する
+* Automationによって曖昧なTracking値を推測、補完または自動修復する
+
+### 次のAction
+
+なし。
+
+本項目はActive HOLD / Pendingとして追跡せず、RESOLVED履歴として保持する。
+
+### 解消条件
+
+以下の13条件をすべて満たした。
+
+1. Artifact-level Trackingの必要性の正式決定
+2. 管理対象Stateの正式決定
+3. Source of Truthの正式決定
+4. Case-level Workflow Statusとの関係の正式決定
+5. Publication Statusとの関係の正式決定
+6. Audit Resultとの関係の正式決定
+7. Repository Integrationへの影響確認
+8. Automationへの影響確認
+9. Database / Metadataへの影響確認
+10. Existing CaseへのCompatibility Impact確認
+11. Human Decision完了
+12. Applicable Source of Truthへの正式反映
+13. 関連文書の最終横断再監査PASS
+
+### 解消根拠
+
+Human Decisionにより、`publication-tracking.json`をFREE / CLASSIFIED Artifact-level Trackingの正式方式として承認した。
+
+ProjectORIGIN Repository Rule v1.0へ、Case-level Repository-managed Operational Metadata Artifactとして正式反映した。
+
+FREEおよびCLASSIFIEDを独立して追跡し、Applicability、Production State、Applicable Audit Referenceを管理する責務境界を正式確定した。
+
+Case-level Workflow Status、Publication Status、Audit Result、Database / Metadata、Repository Integration、AutomationおよびExisting Case Compatibilityとの責務境界を確認した。
+
+関連文書および責務境界の最終横断再監査を実施し、PASSを確認した。
+
+### 反映先
+
+* ProjectORIGIN Repository Rule v1.0 — REFLECTED / Official
+* AGENTS.md — Compatibility PASS
+* Audit Rule — Compatibility PASS
+* Database Rule / Database Schema — Responsibility Boundary PASS / automatic schema addition not required
+* FREE / CLASSIFIED Publication Production — Compatibility PASS
+* Repository Integration関連仕様 — Compatibility PASS
+* Automation関連仕様 — Impact CONFIRMED / concrete implementation not newly established
+* Existing Case Compatibility — PASS
+
+### 最終監査結果
+
+PASS
+
+Artifact-level Tracking Necessity: PASS
+Managed State Definition: PASS
+Source of Truth: PASS
+Case-level Workflow Status Relationship: PASS
+Publication Status Relationship: PASS
+Audit Result Relationship: PASS
+Repository Integration Impact: PASS
+Automation Impact: PASS
+Database / Metadata Impact: PASS
+Existing Case Compatibility: PASS
+Human Decision: PASS
+Applicable Source of Truth反映: PASS
+関連文書最終横断再監査: PASS
+
+新規REVISION：0
+新規HOLD：0
+BLOCKER：0
+
+### Resolution
+
+HOLD-PUBLICATION-TRACKING-01 — RESOLVED
+
+本項目をActive HOLD / Pendingとして扱わない。
+
+解消後も記録を削除せず、RESOLVED履歴として保持する。
 
 ## HOLD-AUDIT-PLACEMENT-01 — Audit Artifact Repository Placement
 ### Status
@@ -1071,44 +1112,68 @@ Historical Record Recoveryは、旧Recordを未回収状態のまま保持して
 ---
 
 # 8. Current Ledger State
+
 ## Active HOLD / Pending
-- `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
-**Active HOLD / Pending Count: 1**
-## Resolution Review
+
 現在登録なし。
+
+**Active HOLD / Pending Count: 0**
+
+## Resolution Review
+
+現在登録なし。
+
 **Resolution Review Count: 0**
+
 ## RESOLVED Archive
-- `HOLD-TAGS-01` — Tags Controlled Values / 正式Tag一覧
-- `HOLD-STATUS-01` — Status Meaning / Data Type / Controlled Values / Nullability
-- `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
-- `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
-- `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
-- `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
-- `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
-**RESOLVED Archive Count: 7**
+
+* `HOLD-TAGS-01` — Tags Controlled Values / 正式Tag一覧
+* `HOLD-STATUS-01` — Status Meaning / Data Type / Controlled Values / Nullability
+* `HOLD-CLASS-02` — Class Data Type / Nullability / Lifecycle
+* `HOLD-CLASS-01` — Class Controlled Values / Category依存関係
+* `HOLD-PUBLICATION-STATUS-COMPAT-01` — Publication Status Cross-Document Compatibility
+* `HOLD-AUDIT-PLACEMENT-01` — Audit Artifact Repository Placement
+* `HOLD-ARTIFACT-VERSION-01` — Production Artifact Version Increment Criteria
+* `HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Tracking
+
+**RESOLVED Archive Count: 8**
+
 ## Recovery Log
-- Category Repository Working Draft / Category HOLD Record — Historical Record Recovery CLOSED / Record NOT RECOVERED
+
+* Category Repository Working Draft / Category HOLD Record — Historical Record Recovery CLOSED / Record NOT RECOVERED
+
 **Recovery Log Count: 1**
+
+
 ---
 
 # 9. Audit Status
+
 本台帳v1.0は、現時点で確認できたHOLD記録、正式Source of Truth、Human Decision、正式文書への反映、および監査結果に基づいて構成する。
-現在、Active HOLD / Pendingとして以下の1件を正式登録する。
-- `HOLD-PUBLICATION-TRACKING-01`
-上記1件は、現在も正式な解消条件を満たしていないため、Active HOLD / Pendingとして追跡する。
+
+現在、Active HOLD / Pendingとして正式登録されているHOLDはない。
+
 `HOLD-AUDIT-PLACEMENT-01`は、Human Decision、Repository Rule反映、Audit RuleおよびAGENTS.md Compatibility、Traceability、Naming / Versioning Responsibility Boundary、Repository Integration、Automation Impact、Existing Repository Compatibility、および最終再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 `HOLD-ARTIFACT-VERSION-01`は、Human Decision、Approval Boundary、Major / Minor / No Version Increment Criteria、Current Version Selection、Historical Version Preservation、Repository Integration Compatibility、Audit Artifact Versioning Boundary、Applicable Source of Truthへの反映、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
+`HOLD-PUBLICATION-TRACKING-01`は、Human Decision、Artifact-level Trackingの正式採用、`publication-tracking.json`の責務境界、Applicable Audit Reference、Repository Integration、Automation、Database / Metadata、Existing Case Compatibility、Applicable Source of Truthへの反映、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ保持する。
+
 既存のRESOLVED Archive記録およびCategory Historical Recovery Recordは変更せず維持する。
+
 確認できていないHOLD IDまたはHOLD Recordを推測によって追加してはならない。
+
 新規REVISION：0
 新規HOLD：0
 BLOCKER：0
+
 Ledger Structure: PASS
-Active HOLD / Pending: 1
+Active HOLD / Pending: 0
 Resolution Review: 0
-RESOLVED Archive: 7
+RESOLVED Archive: 8
 Recovery Log: 1
 Overall Status: PASS
+
 ---
 # 10. Version History
 ## v1.0
@@ -1165,5 +1230,15 @@ Active HOLD / Pending Countを2件から1件へ更新し、RESOLVED Archive Coun
 Resolution Review Countは0件、Recovery Log Countは1件を維持する。
 
 `HOLD-PUBLICATION-TRACKING-01`は別論点であり、Active HOLD / Pendingとして継続する。
+
+本解消を含む最終横断再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
+
+### HOLD Resolution Update — 2026-08-30
+
+`HOLD-PUBLICATION-TRACKING-01` — FREE / CLASSIFIED Artifact-level Trackingについて、Human Decision、Artifact-level Trackingの正式採用、`publication-tracking.json`の責務境界、Applicability / Production State / Applicable Audit Referenceの管理境界、Case-level Workflow Status / Publication Status / Audit Resultとの責務分離、Repository Integration、Automation、Database / Metadata、Existing Case Compatibility、Applicable Source of Truthへの反映、および最終横断再監査PASSを確認したため、RESOLVED Archiveへ移行した。
+
+Active HOLD / Pending Countを1件から0件へ更新し、RESOLVED Archive Countを7件から8件へ更新した。
+
+Resolution Review Countは0件、Recovery Log Countは1件を維持する。
 
 本解消を含む最終横断再監査はPASS、BLOCKER 0、REVISION 0、新規HOLD 0とする。
