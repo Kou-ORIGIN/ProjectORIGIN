@@ -379,387 +379,387 @@ Repositoryの成長は、成果物を単に蓄積することではない。
 
 CaseおよびArtifactが増加しても、どの成果物が何であり、どのCaseに属し、どのVersionであり、他の成果物とどのような関係を持つかを確認できる状態を維持することを、Repository管理の基本原則とする。
 
-**\# Chapter 3**
+# Chapter 3
 
-**\# Case Repository Structure**
+# Case Repository Structure
 
-**\## 3.1 Purpose**
+## 3.1 Purpose
 
-**本章は、ProjectORIGINにおけるCase単位の正式なRepository Structureを定義する。**
+本章は、ProjectORIGINにおけるCase単位の正式なRepository Structureを定義する。
 
-**Caseに属するProduction Artifactおよび関連成果物を一貫した物理構造の下で管理し、Case間の混在を防止するとともに、各Caseを独立して識別、制作、監査、更新および追跡できるRepository環境を維持することを目的とする。**
+Caseに属するProduction Artifactおよび関連成果物を一貫した物理構造の下で管理し、Case間の混在を防止するとともに、各Caseを独立して識別、制作、監査、更新および追跡できるRepository環境を維持することを目的とする。
 
-**本章はCase Repositoryの物理構造を定義するものであり、各Production Artifact内部の内容、Production Workflowそのもの、Database SchemaまたはAudit Methodを定義しない。**
+本章はCase Repositoryの物理構造を定義するものであり、各Production Artifact内部の内容、Production Workflowそのもの、Database SchemaまたはAudit Methodを定義しない。
 
-**---**
+---
 
-**\## 3.2 Case Root**
+## 3.2 Case Root
 
-**ProjectORIGINにおけるCase Production Artifactは、Repository上の\`cases/\`をCase管理のRoot Directoryとする。**
+ProjectORIGINにおけるCase Production Artifactは、Repository上の`cases/`をCase管理のRoot Directoryとする。
 
-**各Caseは、\`cases/\`直下に独立したCase Directoryを持つ。**
+各Caseは、`cases/`直下に独立したCase Directoryを持つ。
 
-**基本構造は以下とする。**
+基本構造は以下とする。
 
-** cases/**
-** └── FILE-XXX/**
+ cases/
+ └── FILE-XXX/
 
-**\`FILE-XXX\`は、Repository上で対象Caseを識別する正式なCase Directory Identifierを表す。**
+`FILE-XXX`は、Repository上で対象Caseを識別する正式なCase Directory Identifierを表す。
 
-**Case Directory IdentifierとDatabase上のCase ID、File Numberその他の正式な識別情報との対応関係は、Applicable Database Source of Truthとの整合を維持する。**
+Case Directory IdentifierとDatabase上のCase ID、File Numberその他の正式な識別情報との対応関係は、Applicable Database Source of Truthとの整合を維持する。
 
-**Repository Ruleは、Case Directory Identifierの存在を根拠として、Database上のCase IDとFile Numberが同一の概念であると独自に定義しない。**
+Repository Ruleは、Case Directory Identifierの存在を根拠として、Database上のCase IDとFile Numberが同一の概念であると独自に定義しない。
 
-**各CaseのProduction Artifactは、Applicable Source of Truthによって別の正式配置が定義されている場合を除き、対象CaseのCase Directoryとの関係を識別可能な状態で管理する。**
+各CaseのProduction Artifactは、Applicable Source of Truthによって別の正式配置が定義されている場合を除き、対象CaseのCase Directoryとの関係を識別可能な状態で管理する。
 
-**---**
+---
 
-**\## 3.3 Case Directory Identification**
+## 3.3 Case Directory Identification
 
-**Case Directoryは、対象CaseをRepository上で識別する正式なCase Directory Identifierによって識別する。**
+Case Directoryは、対象CaseをRepository上で識別する正式なCase Directory Identifierによって識別する。
 
-**例：**
+例：
 
-** cases/**
-** ├── FILE-001/**
-** ├── FILE-002/**
-** ├── FILE-003/**
-** └── ...**
+ cases/
+ ├── FILE-001/
+ ├── FILE-002/
+ ├── FILE-003/
+ └── ...
 
-**Case Directory名を、Case Title、略称、表示名その他の可変的な名称だけで管理してはならない。**
+Case Directory名を、Case Title、略称、表示名その他の可変的な名称だけで管理してはならない。
 
-**Case Titleまたは表示名が将来変更された場合でも、同一CaseのRepository上のIdentityを維持できる構造とする。**
+Case Titleまたは表示名が将来変更された場合でも、同一CaseのRepository上のIdentityを維持できる構造とする。
 
-**Case Directory IdentifierとDatabase上のCase ID、File Numberその他の識別情報との正式な対応関係は、Applicable Database Source of Truthとの整合を維持する。**
+Case Directory IdentifierとDatabase上のCase ID、File Numberその他の識別情報との正式な対応関係は、Applicable Database Source of Truthとの整合を維持する。
 
-**Case ID、File Numberその他のDatabase上の識別情報について、その生成規則、Data Type、ValidationまたはRelationshipを本章によって独自に再定義しない。**
+Case ID、File Numberその他のDatabase上の識別情報について、その生成規則、Data Type、ValidationまたはRelationshipを本章によって独自に再定義しない。
 
-**---**
+---
 
-**\## 3.4 Formal Basic Case Structure**
+## 3.4 Formal Basic Case Structure
 
-**各Case Directoryの正式な基本構造は、以下とする。**
+各Case Directoryの正式な基本構造は、以下とする。
 
-** cases/**
-** └── FILE-XXX/**
-** ├── research/**
-** ├── master/**
-** ├── publication/**
-** │ ├── free/**
-** │ └── classified/**
-** ├── assets/**
-** ├── audit/**
-** └── publication-tracking.json**
+ cases/
+ └── FILE-XXX/
+ ├── research/
+ ├── master/
+ ├── publication/
+ │ ├── free/
+ │ └── classified/
+ ├── assets/
+ ├── audit/
+ └── publication-tracking.json
 
-**この構造は、ProjectORIGINのCase Production Artifact、関連成果物および**
-**Repository-managed Operational Metadata ArtifactをCase単位で管理するための**
-**正式な基本Repository Structureとする。**
+この構造は、ProjectORIGINのCase Production Artifact、関連成果物および
+Repository-managed Operational Metadata ArtifactをCase単位で管理するための
+正式な基本Repository Structureとする。
 
-**各Directoryは、異なるProduction責務または関連成果物の管理責務を**
-**物理的に分離するために使用する。**
+各Directoryは、異なるProduction責務または関連成果物の管理責務を
+物理的に分離するために使用する。
 
-**\`publication-tracking.json\`はDirectoryまたは新しいProduction Layerではない。**
+`publication-tracking.json`はDirectoryまたは新しいProduction Layerではない。
 
-**\`publication-tracking.json\`は、対象Caseに属するFREE Publication Artifactおよび**
-**CLASSIFIED Publication ArtifactのArtifact-level Trackingを保持する**
-**Case-level Repository-managed Operational Metadata Artifactとする。**
+`publication-tracking.json`は、対象Caseに属するFREE Publication Artifactおよび
+CLASSIFIED Publication ArtifactのArtifact-level Trackingを保持する
+Case-level Repository-managed Operational Metadata Artifactとする。
 
-**本構造に対する正式な例外または追加が必要となる場合は、**
-**Chapter 2のControlled Expansionおよび本書の正式な変更工程に従う。**
+本構造に対する正式な例外または追加が必要となる場合は、
+Chapter 2のControlled Expansionおよび本書の正式な変更工程に従う。
 
-**具体的な各Directoryの責務、格納対象およびArtifact間の境界は**
-**Chapter 4「Production Artifact and Repository Layers」で定義する。**
+具体的な各Directoryの責務、格納対象およびArtifact間の境界は
+Chapter 4「Production Artifact and Repository Layers」で定義する。
 
-**\`publication-tracking.json\`の管理責務、Controlled Values、**
-**Workflow Statusとの関係、TraceabilityおよびValidationは、**
-**本書のApplicableな後続Sectionで定義する。**
-**---**
-**\## 3.5 Research Directory**
+`publication-tracking.json`の管理責務、Controlled Values、
+Workflow Statusとの関係、TraceabilityおよびValidationは、
+本書のApplicableな後続Sectionで定義する。
+---
+## 3.5 Research Directory
 
-**Caseに属する正式なResearch Artifactは、対象Caseの\`research/\` Directoryとの関係を維持する。**
+Caseに属する正式なResearch Artifactは、対象Caseの`research/` Directoryとの関係を維持する。
 
-**基本配置は以下とする。**
+基本配置は以下とする。
 
-** cases/FILE-XXX/research/**
+ cases/FILE-XXX/research/
 
-**Research Artifact内部の構造、Research Method、Source、Evidence、Fact、Claim、Theory、Hypothesisその他のResearch仕様は、本章では定義しない。**
+Research Artifact内部の構造、Research Method、Source、Evidence、Fact、Claim、Theory、Hypothesisその他のResearch仕様は、本章では定義しない。
 
-**それらはResearch Bible、Research Templateその他のApplicable Source of Truthに従う。**
+それらはResearch Bible、Research Templateその他のApplicable Source of Truthに従う。
 
-**Research Artifactの具体的なFilenameおよびVersion ConventionはChapter 5で定義する。**
+Research Artifactの具体的なFilenameおよびVersion ConventionはChapter 5で定義する。
 
-**---**
+---
 
-**\## 3.6 Master Directory**
+## 3.6 Master Directory
 
-**Caseに属するMaster Case File Artifactは、対象Caseの\`master/\` Directoryとの関係を維持する。**
+Caseに属するMaster Case File Artifactは、対象Caseの`master/` Directoryとの関係を維持する。
 
-**基本配置は以下とする。**
+基本配置は以下とする。
 
-** cases/FILE-XXX/master/**
+ cases/FILE-XXX/master/
 
-**Master Case File内部のSection、Writing Rule、Content Structureその他のMaster Case File仕様は、本章では定義しない。**
+Master Case File内部のSection、Writing Rule、Content Structureその他のMaster Case File仕様は、本章では定義しない。
 
-**それらはApplicable Case File Templateその他の正式なSource of Truthに従う。**
+それらはApplicable Case File Templateその他の正式なSource of Truthに従う。
 
-**Master Artifactの具体的なFilenameおよびVersion ConventionはChapter 5で定義する。**
+Master Artifactの具体的なFilenameおよびVersion ConventionはChapter 5で定義する。
 
-**---**
+---
 
-**\## 3.7 Publication Directory**
+## 3.7 Publication Directory
 
-**Caseに属するPublication Artifactは、対象Caseの\`publication/\` Directoryとの関係を維持する。**
+Caseに属するPublication Artifactは、対象Caseの`publication/` Directoryとの関係を維持する。
 
-**Publication Artifactは、Repository上でFREEとCLASSIFIEDを物理的に区別する。**
+Publication Artifactは、Repository上でFREEとCLASSIFIEDを物理的に区別する。
 
-**基本配置は以下とする。**
+基本配置は以下とする。
 
-** cases/FILE-XXX/publication/**
-** ├── free/**
-** └── classified/**
+ cases/FILE-XXX/publication/
+ ├── free/
+ └── classified/
 
-**FREE Artifactは\`free/\`、CLASSIFIED Artifactは\`classified/\`との関係を維持する。**
+FREE Artifactは`free/`、CLASSIFIED Artifactは`classified/`との関係を維持する。
 
-**本SectionはFREEおよびCLASSIFIEDのContent、Disclosure Boundary、Writing Rule、Access ControlまたはPublication Workflowを定義しない。**
+本SectionはFREEおよびCLASSIFIEDのContent、Disclosure Boundary、Writing Rule、Access ControlまたはPublication Workflowを定義しない。
 
-**それらはApplicable Source of Truthに従う。**
+それらはApplicable Source of Truthに従う。
 
-**具体的なFilenameおよびVersion ConventionはChapter 5で定義する。**
+具体的なFilenameおよびVersion ConventionはChapter 5で定義する。
 
-**---**
+---
 
-**\## 3.8 Assets Directory**
+## 3.8 Assets Directory
 
-**対象Caseに属する正式なAssetは、Case Directory内の\`assets/\`との関係を維持する。**
+対象Caseに属する正式なAssetは、Case Directory内の`assets/`との関係を維持する。
 
-**基本配置は以下とする。**
+基本配置は以下とする。
 
-** cases/FILE-XXX/assets/**
+ cases/FILE-XXX/assets/
 
-**\`assets/\`は、対象Caseに関連し、Applicable Source of Truthによって正式なAssetとして認められた成果物をCase単位で管理するための物理領域とする。**
+`assets/`は、対象Caseに関連し、Applicable Source of Truthによって正式なAssetとして認められた成果物をCase単位で管理するための物理領域とする。
 
-**Assetの分類、Source、License、Caption、Visual Role、Art Direction、生成方法その他の専門仕様は、本章では定義しない。**
+Assetの分類、Source、License、Caption、Visual Role、Art Direction、生成方法その他の専門仕様は、本章では定義しない。
 
-**それらはImage Rule、Art Bibleその他のApplicable Source of Truthに従う。**
+それらはImage Rule、Art Bibleその他のApplicable Source of Truthに従う。
 
-**\`assets/\`の存在だけを根拠として、新しいAsset Type、Metadata Structure、Metadata File Format、Registration Procedureその他の未定義仕様を独自に定義してはならない。**
+`assets/`の存在だけを根拠として、新しいAsset Type、Metadata Structure、Metadata File Format、Registration Procedureその他の未定義仕様を独自に定義してはならない。
 
-**\`assets/\`内部に追加のSubdirectoryが必要となる場合、その構造を一般的慣行または推測だけを根拠として正式仕様に追加してはならない。**
+`assets/`内部に追加のSubdirectoryが必要となる場合、その構造を一般的慣行または推測だけを根拠として正式仕様に追加してはならない。
 
-**---**
+---
 
-**\## 3.9 Case Isolation**
+## 3.9 Case Isolation
 
-**異なるCaseのProduction Artifactを、所属Caseを識別できない状態で同一Case Directory内に混在させてはならない。**
+異なるCaseのProduction Artifactを、所属Caseを識別できない状態で同一Case Directory内に混在させてはならない。
 
-**\`FILE-001\`に属するArtifactを\`FILE-002\`のCase Directoryへ正式Artifactとして配置するなど、Case Identityと物理配置が矛盾する状態を作ってはならない。**
+`FILE-001`に属するArtifactを`FILE-002`のCase Directoryへ正式Artifactとして配置するなど、Case Identityと物理配置が矛盾する状態を作ってはならない。
 
-**Case間で共通利用される情報またはAssetが将来必要となった場合も、既存Case Directoryへ便宜的に所属させて正式管理してはならない。**
+Case間で共通利用される情報またはAssetが将来必要となった場合も、既存Case Directoryへ便宜的に所属させて正式管理してはならない。
 
-**そのような共有構造が必要となる場合は、責務、Source of Truth、Traceabilityおよび既存構造への影響を確認し、正式な変更工程によって定義する。**
+そのような共有構造が必要となる場合は、責務、Source of Truth、Traceabilityおよび既存構造への影響を確認し、正式な変更工程によって定義する。
 
-**---**
+---
 
-**\## 3.10 No Uncontrolled Case-Level Expansion**
+## 3.10 No Uncontrolled Case-Level Expansion
 
-**各Case Directory直下に、本書で正式定義されていないDirectoryを独自に追加し、正式なRepository Structureとして扱ってはならない。**
+各Case Directory直下に、本書で正式定義されていないDirectoryを独自に追加し、正式なRepository Structureとして扱ってはならない。
 
-**例えば、必要性および責務が正式に確認されていない状態で、**
+例えば、必要性および責務が正式に確認されていない状態で、
 
-** notes/**
-** temp/**
-** draft/**
-** misc/**
-** archive/**
+ notes/
+ temp/
+ draft/
+ misc/
+ archive/
 
-**その他のDirectoryを正式なCase Layerとして追加しない。**
+その他のDirectoryを正式なCase Layerとして追加しない。
 
-**作業上の一時ファイルまたは補助的なCopyが必要な場合も、それらを正式なProduction Artifactまたは正式なRepository Layerと混同してはならない。**
+作業上の一時ファイルまたは補助的なCopyが必要な場合も、それらを正式なProduction Artifactまたは正式なRepository Layerと混同してはならない。
 
-**新しいCase-level Directoryが正式に必要となった場合は、Chapter 2のControlled Expansionおよび本書の正式な変更工程に従う。**
+新しいCase-level Directoryが正式に必要となった場合は、Chapter 2のControlled Expansionおよび本書の正式な変更工程に従う。
 
-**---**
+---
 
-**\## 3.11 Audit Artifact Placement**
+## 3.11 Audit Artifact Placement
 
-**Audit ArtifactはProjectORIGINにおける正式な関連成果物として識別し、対象ArtifactとのTraceabilityを維持する。**
+Audit ArtifactはProjectORIGINにおける正式な関連成果物として識別し、対象ArtifactとのTraceabilityを維持する。
 
-**Case単位のAudit Artifactの正式な物理Repository Placementは、Human Decisionにより、**
+Case単位のAudit Artifactの正式な物理Repository Placementは、Human Decisionにより、
 
-** cases/FILE-XXX/audit/**
+ cases/FILE-XXX/audit/
 
-**とする。**
+とする。
 
-**このPlacementはCase Identityを維持するための物理配置を定義するものであり、Audit Artifact Filename Convention、Audit Artifact Versioning、\`audit/\`配下のSubdirectory、Retention / Archive Placement、Database / Metadata Fieldまたは具体的Automation実装を自動的に確定しない。**
+このPlacementはCase Identityを維持するための物理配置を定義するものであり、Audit Artifact Filename Convention、Audit Artifact Versioning、`audit/`配下のSubdirectory、Retention / Archive Placement、Database / Metadata Fieldまたは具体的Automation実装を自動的に確定しない。
 
-**Audit Artifactは少なくとも、**
+Audit Artifactは少なくとも、
 
-**- 所属Case**
-**- 対象Artifact**
-**- Applicable Version**
-**- Audit Result**
+- 所属Case
+- 対象Artifact
+- Applicable Version
+- Audit Result
 
-**とのTraceabilityを維持しなければならない。**
+とのTraceabilityを維持しなければならない。
 
-**具体的なNaming、Versioning、MetadataまたはAutomation仕様はApplicable Source of Truthおよび正式HOLD Ledger上のApplicableな未解決事項に従う。**
+具体的なNaming、Versioning、MetadataまたはAutomation仕様はApplicable Source of Truthおよび正式HOLD Ledger上のApplicableな未解決事項に従う。
 
-**Audit Method、Audit Criteria、PASS、REVISION、BLOCKERその他の監査仕様はAudit Ruleの責務とする。**
+Audit Method、Audit Criteria、PASS、REVISION、BLOCKERその他の監査仕様はAudit Ruleの責務とする。
 
-**---**
+---
 
-**\## 3.12 HOLD-AUDIT-PLACEMENT-01 Resolution State**
+## 3.12 HOLD-AUDIT-PLACEMENT-01 Resolution State
 
-**\`HOLD-AUDIT-PLACEMENT-01\`は、Audit Artifactの正式な物理Repository Placementを決定するために登録されたHOLDである。**
+`HOLD-AUDIT-PLACEMENT-01`は、Audit Artifactの正式な物理Repository Placementを決定するために登録されたHOLDである。
 
-**Human Decisionにより、Case単位の正式Placementとして、**
+Human Decisionにより、Case単位の正式Placementとして、
 
-** cases/FILE-XXX/audit/**
+ cases/FILE-XXX/audit/
 
-**がAPPROVEDとなり、Repository Ruleへ反映された。**
+がAPPROVEDとなり、Repository Ruleへ反映された。
 
-**その後、Applicable Source of TruthとのCompatibility確認、必要な影響確認および最終再監査が完了し、正式HOLD Ledgerにおいて、**
+その後、Applicable Source of TruthとのCompatibility確認、必要な影響確認および最終再監査が完了し、正式HOLD Ledgerにおいて、
 
-** HOLD-AUDIT-PLACEMENT-01 — RESOLVED**
+ HOLD-AUDIT-PLACEMENT-01 — RESOLVED
 
-**として記録されている。**
+として記録されている。
 
-**したがって、本HOLDをActive HOLD、OPENまたは未確定事項として扱ってはならない。**
+したがって、本HOLDをActive HOLD、OPENまたは未確定事項として扱ってはならない。
 
-**ただし、本HOLDのResolutionは、**
+ただし、本HOLDのResolutionは、
 
-**- Audit Artifact Filename Convention**
-**- Audit Artifact Versioning**
-**- \`audit/\`配下のSubdirectory**
-**- Retention / Archive Placement**
-**- Database / Metadata Field**
-**- 具体的Automation実装**
+- Audit Artifact Filename Convention
+- Audit Artifact Versioning
+- `audit/`配下のSubdirectory
+- Retention / Archive Placement
+- Database / Metadata Field
+- 具体的Automation実装
 
-**を新たに確定または承認したことを意味しない。**
+を新たに確定または承認したことを意味しない。
 
-**これらについて正式仕様が必要となる場合は、それぞれのApplicable Source of Truth、既存HOLDおよび正式な変更工程に従う。**
+これらについて正式仕様が必要となる場合は、それぞれのApplicable Source of Truth、既存HOLDおよび正式な変更工程に従う。
 
-**解消済み\`HOLD-AUDIT-PLACEMENT-01\`を、本章または他のRepository Rule Chapterから推測によってActive HOLDへ再Openしてはならない。**
+解消済み`HOLD-AUDIT-PLACEMENT-01`を、本章または他のRepository Rule Chapterから推測によってActive HOLDへ再Openしてはならない。
 
-**Historical Recordおよび正式Resolutionの詳細は正式HOLD Ledgerに従う。**
+Historical Recordおよび正式Resolutionの詳細は正式HOLD Ledgerに従う。
 
-**---**
+---
 
-**\## 3.13 Operational Metadata**
+## 3.13 Operational Metadata
 
-**Operational Metadataについて、本章は独立した物理Directoryを定義しない。**
+Operational Metadataについて、本章は独立した物理Directoryを定義しない。
 
-**Workflow Status、Publication Status、Version、Approvalその他の**
-**Operational Metadataは、それぞれのApplicable Source of Truthおよび**
-**本書の後続Chapterで定義される責務に従って管理する。**
+Workflow Status、Publication Status、Version、Approvalその他の
+Operational Metadataは、それぞれのApplicable Source of Truthおよび
+本書の後続Chapterで定義される責務に従って管理する。
 
-**FREE Publication ArtifactおよびCLASSIFIED Publication Artifactの**
-**Artifact-level Trackingについては、**
+FREE Publication ArtifactおよびCLASSIFIED Publication Artifactの
+Artifact-level Trackingについては、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**を正式なCase-level Repository-managed Operational Metadata Artifactとして使用する。**
+を正式なCase-level Repository-managed Operational Metadata Artifactとして使用する。
 
-**\`publication-tracking.json\`は、FREEおよびCLASSIFIEDについて、**
-**それぞれ独立して、**
+`publication-tracking.json`は、FREEおよびCLASSIFIEDについて、
+それぞれ独立して、
 
-**- Applicability**
-**- Production State**
-**- Applicable Audit Reference**
+- Applicability
+- Production State
+- Applicable Audit Reference
 
-**を管理する。**
+を管理する。
 
-**本ArtifactはProduction Artifact、Audit ArtifactまたはDatabase Recordではなく、**
-**新しいProduction Layerを構成しない。**
+本ArtifactはProduction Artifact、Audit ArtifactまたはDatabase Recordではなく、
+新しいProduction Layerを構成しない。
 
-**\`publication-tracking.json\`の存在から、**
-**Case-level Workflow Status、Publication Status、Audit Result、**
-**Human Approval Decisionまたはその他の専門状態を独自に導出してはならない。**
+`publication-tracking.json`の存在から、
+Case-level Workflow Status、Publication Status、Audit Result、
+Human Approval Decisionまたはその他の専門状態を独自に導出してはならない。
 
-**同様に、Case-level Workflow Status、Publication Status、**
-**Audit Result、Human Approval DecisionまたはRepository上の**
-**ファイル存在状態だけを根拠として、**
-**\`publication-tracking.json\`に保持すべき値を推測してはならない。**
+同様に、Case-level Workflow Status、Publication Status、
+Audit Result、Human Approval DecisionまたはRepository上の
+ファイル存在状態だけを根拠として、
+`publication-tracking.json`に保持すべき値を推測してはならない。
 
-**論理的なOperational Metadata Layerまたは**
-**\`publication-tracking.json\`の存在だけを根拠として、**
+論理的なOperational Metadata Layerまたは
+`publication-tracking.json`の存在だけを根拠として、
 
-** metadata/**
+ metadata/
 
-**その他の物理Directoryを独自に追加してはならない。**
+その他の物理Directoryを独自に追加してはならない。
 
-**Database Field、Data Type、Nullability、Validationその他の**
-**Database Schema仕様はDatabase RuleおよびDatabase Schemaの責務とし、**
-**\`publication-tracking.json\`の正式化だけを理由として**
-**Database Fieldを新設してはならない。**
+Database Field、Data Type、Nullability、Validationその他の
+Database Schema仕様はDatabase RuleおよびDatabase Schemaの責務とし、
+`publication-tracking.json`の正式化だけを理由として
+Database Fieldを新設してはならない。
 
-**---**
+---
 
-**\## 3.14 Case Creation Principle**
+## 3.14 Case Creation Principle
 
-**新しいCaseをRepositoryへ追加する場合は、正式なCase Directory Identifierと対象Caseとの対応を確認し、既存Caseと同一の正式な基本構造に従ってCase Directoryを管理する。**
+新しいCaseをRepositoryへ追加する場合は、正式なCase Directory Identifierと対象Caseとの対応を確認し、既存Caseと同一の正式な基本構造に従ってCase Directoryを管理する。
 
-**例えば\`FILE-001\`、\`FILE-002\`に続いて新しいCaseを追加する場合も、Caseごとに異なる独自構造を便宜的に採用しない。**
+例えば`FILE-001`、`FILE-002`に続いて新しいCaseを追加する場合も、Caseごとに異なる独自構造を便宜的に採用しない。
 
-**Case固有の要件によって正式な基本構造だけでは管理できない成果物が必要となった場合は、Case単独の例外構造を即座に作成するのではなく、その要件がProjectORIGIN全体のRepository Structureへ与える影響を確認する。**
+Case固有の要件によって正式な基本構造だけでは管理できない成果物が必要となった場合は、Case単独の例外構造を即座に作成するのではなく、その要件がProjectORIGIN全体のRepository Structureへ与える影響を確認する。
 
-**例外または拡張が必要な場合は、正式なReviewおよび変更工程を経る。**
+例外または拡張が必要な場合は、正式なReviewおよび変更工程を経る。
 
-**---**
+---
 
-**\## 3.15 Core Structure**
+## 3.15 Core Structure
 
-**ProjectORIGINの正式な基本Case Repository Structureは、以下とする。**
+ProjectORIGINの正式な基本Case Repository Structureは、以下とする。
 
-** cases/**
-** └── FILE-XXX/**
-** ├── research/**
-** ├── master/**
-** ├── publication/**
-** │ ├── free/**
-** │ └── classified/**
-** ├── assets/**
-** ├── audit/**
-** └── publication-tracking.json**
+ cases/
+ └── FILE-XXX/
+ ├── research/
+ ├── master/
+ ├── publication/
+ │ ├── free/
+ │ └── classified/
+ ├── assets/
+ ├── audit/
+ └── publication-tracking.json
 
-**\`FILE-XXX\`は、Repository上で対象Caseを識別する正式な**
-**Case Directory Identifierを表す。**
+`FILE-XXX`は、Repository上で対象Caseを識別する正式な
+Case Directory Identifierを表す。
 
-**本構造は、CaseをRepository管理の基本単位とし、**
-**Research、Master、Publication、AssetおよびAudit関連成果物の**
-**物理的責務を分離するとともに、**
-**FREEおよびCLASSIFIED Publication ArtifactのArtifact-level Trackingを**
-**Case-level Repository-managed Operational Metadataとして管理する。**
+本構造は、CaseをRepository管理の基本単位とし、
+Research、Master、Publication、AssetおよびAudit関連成果物の
+物理的責務を分離するとともに、
+FREEおよびCLASSIFIED Publication ArtifactのArtifact-level Trackingを
+Case-level Repository-managed Operational Metadataとして管理する。
 
-**\`publication-tracking.json\`は新しいProduction Layerではなく、**
-**専用\`metadata/\` Directoryの新設を意味しない。**
+`publication-tracking.json`は新しいProduction Layerではなく、
+専用`metadata/` Directoryの新設を意味しない。
 
-**Audit Artifactの正式な物理Repository Placementは、**
+Audit Artifactの正式な物理Repository Placementは、
 
-** cases/FILE-XXX/audit/**
+ cases/FILE-XXX/audit/
 
-**とする。**
+とする。
 
-**このPlacementはHuman Decisionによって承認され、**
-**Applicable Source of Truthへの必要な反映および最終再監査を経て、**
-**\`HOLD-AUDIT-PLACEMENT-01\`は正式HOLD Ledger上でRESOLVEDとなっている。**
+このPlacementはHuman Decisionによって承認され、
+Applicable Source of Truthへの必要な反映および最終再監査を経て、
+`HOLD-AUDIT-PLACEMENT-01`は正式HOLD Ledger上でRESOLVEDとなっている。
 
-**したがって、Audit Artifact Placementを未確定、OPENまたは**
-**Active HOLDとして扱ってはならない。**
+したがって、Audit Artifact Placementを未確定、OPENまたは
+Active HOLDとして扱ってはならない。
 
-**一方、このResolutionからAudit Artifact Filename Convention、**
-**Audit Artifact Versioning、\`audit/\`配下のSubdirectory、**
-**Retention / Archive Placement、Database / Metadata Fieldまたは**
-**具体的Automation実装を推測によって確定してはならない。**
+一方、このResolutionからAudit Artifact Filename Convention、
+Audit Artifact Versioning、`audit/`配下のSubdirectory、
+Retention / Archive Placement、Database / Metadata Fieldまたは
+具体的Automation実装を推測によって確定してはならない。
 
-**\`publication-tracking.json\`に保持するApplicable Audit Referenceは、**
-**Audit ArtifactのAudit上のApplicabilityまたはAudit Resultそのものを**
-**Repository Ruleが独自に決定することを意味しない。**
+`publication-tracking.json`に保持するApplicable Audit Referenceは、
+Audit ArtifactのAudit上のApplicabilityまたはAudit Resultそのものを
+Repository Ruleが独自に決定することを意味しない。
 
-**Audit上のApplicabilityおよびAudit Resultの意味判断は、**
-**Applicable Audit Source of Truthに従う。**
+Audit上のApplicabilityおよびAudit Resultの意味判断は、
+Applicable Audit Source of Truthに従う。
 
-**本章で正式定義されていない追加構造は、**
-**確認および承認なしに推測して追加しない。**
+本章で正式定義されていない追加構造は、
+確認および承認なしに推測して追加しない。
 ---
 # Chapter 4
 
@@ -1139,11 +1139,9 @@ cases/FILE-XXX/audit/
 - Automation Boundary
 - Existing Case Compatibility Boundary
 
-ただし、本章への反映だけをもって\`HOLD-PUBLICATION-TRACKING-01\`をRESOLVEDとしてはならない。
+Resolution前は、本章への反映だけでは\`HOLD-PUBLICATION-TRACKING-01\`をRESOLVEDとせず、Applicable Source of Truthへの必要な反映、関連文書とのCompatibility確認、Repository Integrationへの影響確認および最終横断再監査のPASSが要求されていた。
 
-Applicable Source of Truthへの必要な反映、関連文書とのCompatibility確認、Repository Integrationへの影響確認および最終横断再監査がPASSした後、正式HOLD LedgerにおいてResolution処理を行う。
-
-本HOLDが正式HOLD LedgerでRESOLVEDとなるまで、その正式状態はActive HOLDとして維持する。
+これらのResolution条件は完了し、\`HOLD-PUBLICATION-TRACKING-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 一方、Human Decisionによって確定済みのArtifact-level Tracking仕様を、未確定であることを理由として独自に変更、縮小、拡張または別体系へ置換してはならない。
 
@@ -1703,11 +1701,13 @@ AutomationによるVersion処理が成功したという事実だけを、Versio
 
 決定内容は本章へ反映されている。
 
-ただし、本章への反映だけをもって\`HOLD-ARTIFACT-VERSION-01\`をRESOLVEDとしてはならない。
+Resolution前は、本章への反映だけでは\`HOLD-ARTIFACT-VERSION-01\`をRESOLVEDとせず、Audit Rule、AGENTS.md、Repository Integration、Compatibility、Automationその他Applicable Source of Truthとの最終Compatibility確認、必要な反映および最終横断再監査のPASSが要求されていた。
 
-Audit Rule、AGENTS.md、Repository Integration、Compatibility、Automationその他Applicable Source of Truthとの最終Compatibility確認、必要な反映および最終横断再監査がPASSした後、正式HOLD LedgerにおいてResolution処理を行う。
+これらのResolution条件は完了し、\`HOLD-ARTIFACT-VERSION-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
 
-本Decisionは、Audit Artifact固有のVersioning、専用\`archive/\` Directory、Retention Period、Automatic Deletion Schedule、追加Database / Metadata Fieldまたは\`HOLD-PUBLICATION-TRACKING-01\`の解消を意味しない。
+本HOLDのResolutionから、Audit Artifact固有のVersioning、専用\`archive/\` Directory、Retention Period、Automatic Deletion Scheduleまたは追加Database / Metadata Fieldを推測してはならない。
+
+\`HOLD-PUBLICATION-TRACKING-01\`は本HOLDとは別個のResolution工程を経ており、現在は正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 ---
 
@@ -1807,66 +1807,71 @@ Chapter 3、Chapter 4および本書のApplicableな後続Sectionに従う。
 
 ---
 
-Chapter 6
-**Workflow Status and Publication Status**
-**6.1 Purpose**
+# Chapter 6
+
+# Workflow Status and Publication Status
+
+## 6.1 Purpose
+
 本章は、ProjectORIGINにおけるCase Workflow StatusおよびPublication StatusのRepository上の正式な管理原則を定義する。
 Workflow Statusは、CaseがProduction Workflow上のどの段階にあるかを表す。
 Publication Statusは、Caseが正式なPublication済み状態にあるかを表す。
 Case Resolution Status、Workflow Status、Audit Result、Human Approval DecisionおよびPublication Statusは、それぞれ異なる責務を持つ独立した状態概念として管理する。
 本章は、AGENTS.mdが管理するProduction Workflowの工程順序、Audit Ruleが管理するAudit Resultおよび品質監査基準、Database RuleおよびDatabase Schemaが管理するDatabase仕様を変更または置換しない。
 
-**\## 6.2 Status Responsibility Separation**
+## 6.2 Status Responsibility Separation
 
-**ProjectORIGINでは、状態に関する異なる責務を一つのStatus体系へ統合しない。**
+ProjectORIGINでは、状態に関する異なる責務を一つのStatus体系へ統合しない。
 
-**少なくとも以下を独立した状態または判断概念として管理する。**
+少なくとも以下を独立した状態または判断概念として管理する。
 
-** Case Resolution Status**
-** ≠**
-** Case-level Workflow Status**
-** ≠**
-** Artifact-level Production State**
-** ≠**
-** Audit Result**
-** ≠**
-** Human Approval Decision**
-** ≠**
-** Publication Status**
+ Case Resolution Status
+ ≠
+ Case-level Workflow Status
+ ≠
+ Artifact-level Production State
+ ≠
+ Audit Result
+ ≠
+ Human Approval Decision
+ ≠
+ Publication Status
 
-**Case Resolution Statusは、Caseそのものの解決状態に関する責務を持つ。**
+Case Resolution Statusは、Caseそのものの解決状態に関する責務を持つ。
 
-**Case-level Workflow Statusは、対象CaseがProduction Workflow上のどの段階にあるかをRepository上で識別する責務を持つ。**
+Case-level Workflow Statusは、対象CaseがProduction Workflow上のどの段階にあるかをRepository上で識別する責務を持つ。
 
-**Artifact-level Production Stateは、ApplicableなFREE Publication ArtifactおよびCLASSIFIED Publication ArtifactそれぞれのProduction進行状態を識別する責務を持つ。**
+Artifact-level Production Stateは、ApplicableなFREE Publication ArtifactおよびCLASSIFIED Publication ArtifactそれぞれのProduction進行状態を識別する責務を持つ。
 
-**Artifact-level Production StateはCase-level Workflow Statusではない。**
+Artifact-level Production StateはCase-level Workflow Statusではない。
 
-**Audit Resultは、Applicable Audit Source of Truthに従って監査結果を表す。**
+Audit Resultは、Applicable Audit Source of Truthに従って監査結果を表す。
 
-**Human Approval Decisionは、人間による正式判断を表す。**
+Human Approval Decisionは、人間による正式判断を表す。
 
-**Publication Statusは、対象CaseまたはApplicableな公開対象がPublication済みであるかをRepository上で識別するための独立した状態概念とする。**
+Publication Statusは、対象CaseまたはApplicableな公開対象がPublication済みであるかをRepository上で識別するための独立した状態概念とする。
 
-**これらの一つの値だけを根拠として、他の状態または判断を自動的に確定してはならない。**
+これらの一つの値だけを根拠として、他の状態または判断を自動的に確定してはならない。
 
-**FREEおよびCLASSIFIEDのArtifact-level Trackingは、**
+FREEおよびCLASSIFIEDのArtifact-level Trackingは、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**をRepository管理領域におけるPrimary Source of Truthとして管理する。**
+をRepository管理領域におけるPrimary Source of Truthとして管理する。
 
-**Artifact-level TrackingのControlled Valuesおよび具体的責務はChapter 3およびChapter 4に従う。**
+Artifact-level TrackingのControlled Valuesおよび具体的責務はChapter 3およびChapter 4に従う。
 
-**本Sectionから新しいCase-level Workflow Status、Artifact-level Production State、Audit Result、Human Approval DecisionまたはPublication StatusのControlled Valueを追加してはならない。**
+本Sectionから新しいCase-level Workflow Status、Artifact-level Production State、Audit Result、Human Approval DecisionまたはPublication StatusのControlled Valueを追加してはならない。
 
-**6.3 Workflow Status Principle**
+## 6.3 Workflow Status Principle
+
 Workflow Statusは、CaseがProduction Workflow上のどの段階にあるかを表す。
 Workflow Statusは、Publication済みかどうかを直接表すものではない。
 また、Workflow Statusだけを根拠として、必要なProduction、Audit、Final Flow Audit、Human Approval、Repository IntegrationまたはPublicationが実際に完了した証拠として扱ってはならない。
 各工程の完了は、Applicable Source of Truthおよび必要なEvidenceによって確認する。
 
-**6.4 Workflow Status Primary States**
+## 6.4 Workflow Status Primary States
+
 ProjectORIGINにおけるCase-level Workflow Statusの正式なPrimary Statesは、以下とする。
  `REGISTERED`
  `RESEARCHING`
@@ -1882,7 +1887,8 @@ ProjectORIGINにおけるCase-level Workflow Statusの正式なPrimary Statesは
 これらのPrimary Statesは、CaseがProduction Workflow上のどの主要段階にあるかを表す。
 Workflow Statusの名称を、一般的な開発慣行または過去のStatus表現だけを根拠として追加、変更または置換してはならない。
 
-**6.5 Workflow Exception States**
+## 6.5 Workflow Exception States
+
 ProjectORIGINにおけるWorkflow Exception Statesは、以下とする。
  `REVISION_REQUIRED`
  `BLOCKED`
@@ -1894,7 +1900,8 @@ Applicableな問題が確認され、Responsible StageでRevisionおよび必要
 `BLOCKED`はPublication Statusではない。
 また、Human Approval Decisionの代替として使用してはならない。
 
-**6.6 Workflow Progression Principle**
+## 6.6 Workflow Progression Principle
+
 Workflow Statusは、Applicable Source of Truthで定義されたProduction Flowに従って管理する。
 Status値を変更しただけで、対象工程が正式に完了したものとして扱ってはならない。
 例えば、
@@ -1904,84 +1911,85 @@ Status値を変更しただけで、対象工程が正式に完了したもの�
  `APPROVED`は、正式なHuman Approval Decisionの根拠なしに設定しない。
 Workflow Statusは工程の状態を表すものであり、工程完了Evidenceそのものではない。
 
-**\## 6.7 PUBLICATION_PRODUCTION**
+## 6.7 PUBLICATION_PRODUCTION
 
-**\`PUBLICATION_PRODUCTION\`は、対象CaseにおけるApplicableなPublication ArtifactのProductionを行うCase-level Workflow Statusとする。**
+`PUBLICATION_PRODUCTION`は、対象CaseにおけるApplicableなPublication ArtifactのProductionを行うCase-level Workflow Statusとする。
 
-**FREE Publication ArtifactおよびCLASSIFIED Publication Artifactは、それぞれ独立したArtifact IdentityおよびArtifact-level Trackingを持つ。**
+FREE Publication ArtifactおよびCLASSIFIED Publication Artifactは、それぞれ独立したArtifact IdentityおよびArtifact-level Trackingを持つ。
 
-**Case-level Workflow StatusとArtifact-level Production Stateを同一概念として扱ってはならない。**
+Case-level Workflow StatusとArtifact-level Production Stateを同一概念として扱ってはならない。
 
-** Case-level Workflow Status**
-** ≠**
-** Artifact-level Production State**
+ Case-level Workflow Status
+ ≠
+ Artifact-level Production State
 
-**FREEおよびCLASSIFIEDそれぞれのApplicabilityおよびProduction Stateは、**
+FREEおよびCLASSIFIEDそれぞれのApplicabilityおよびProduction Stateは、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**によって管理する。**
+によって管理する。
 
-**Applicabilityが\`APPLICABLE\`であるPublication Artifactについて、少なくとも一つのProduction Stateが\`COMPLETE\`ではない場合、Case-level Workflow Statusは\`PUBLICATION_PRODUCTION\`に留まる、またはApplicableな後続工程から\`PUBLICATION_PRODUCTION\`へ戻す。**
+Applicabilityが`APPLICABLE`であるPublication Artifactについて、少なくとも一つのProduction Stateが`COMPLETE`ではない場合、Case-level Workflow Statusは`PUBLICATION_PRODUCTION`に留まる、またはApplicableな後続工程から`PUBLICATION_PRODUCTION`へ戻す。
 
-**すべての\`APPLICABLE\`なPublication ArtifactのProduction Stateが\`COMPLETE\`である場合に限り、Publication Production Gateを満たしたものとして\`PUBLICATION_AUDIT\`への進行を許可できる。**
+すべての`APPLICABLE`なPublication ArtifactのProduction Stateが`COMPLETE`である場合に限り、Publication Production Gateを満たしたものとして`PUBLICATION_AUDIT`への進行を許可できる。
 
-**\`NOT_APPLICABLE\`であるPublication ArtifactについてProduction Stateを要求してはならず、Publication Production GateのProduction Completion判定対象にも含めない。**
+`NOT_APPLICABLE`であるPublication ArtifactについてProduction Stateを要求してはならず、Publication Production GateのProduction Completion判定対象にも含めない。
 
-**一方のPublication Artifactが\`COMPLETE\`であることだけを根拠として、他方のPublication ArtifactのProduction Stateを\`COMPLETE\`と推測してはならない。**
+一方のPublication Artifactが`COMPLETE`であることだけを根拠として、他方のPublication ArtifactのProduction Stateを`COMPLETE`と推測してはならない。
 
-**Repository上にFREEまたはCLASSIFIED Artifactが存在することだけを根拠として、そのProduction Stateを\`COMPLETE\`と判断してはならない。**
+Repository上にFREEまたはCLASSIFIED Artifactが存在することだけを根拠として、そのProduction Stateを`COMPLETE`と判断してはならない。
 
-**本Sectionは、FREE用またはCLASSIFIED用の新しいCase-level Workflow Statusを定義しない。**
+本Sectionは、FREE用またはCLASSIFIED用の新しいCase-level Workflow Statusを定義しない。
 
-**例えば、**
+例えば、
 
-** FREE_PUBLICATION_PRODUCTION**
-** CLASSIFIED_PUBLICATION_PRODUCTION**
-** FREE_COMPLETE**
-** CLASSIFIED_COMPLETE**
+ FREE_PUBLICATION_PRODUCTION
+ CLASSIFIED_PUBLICATION_PRODUCTION
+ FREE_COMPLETE
+ CLASSIFIED_COMPLETE
 
-**その他の未定義TokenをCase-level Workflow Statusとして追加してはならない。**。
+その他の未定義TokenをCase-level Workflow Statusとして追加してはならない。。
 
-**\## 6.8 PUBLICATION_AUDIT**
+## 6.8 PUBLICATION_AUDIT
 
-**\`PUBLICATION_AUDIT\`は、Publication Production Gateを満たした対象Caseについて、ApplicableなPublication Artifactの必要なAuditを行うCase-level Workflow Statusとする。**
+`PUBLICATION_AUDIT`は、Publication Production Gateを満たした対象Caseについて、ApplicableなPublication Artifactの必要なAuditを行うCase-level Workflow Statusとする。
 
-**\`PUBLICATION_AUDIT\`へ進行するためには、すべての\`APPLICABLE\`なPublication Artifactについて、Artifact-level Production Stateが\`COMPLETE\`でなければならない。**
+`PUBLICATION_AUDIT`へ進行するためには、すべての`APPLICABLE`なPublication Artifactについて、Artifact-level Production Stateが`COMPLETE`でなければならない。
 
-**\`NOT_APPLICABLE\`であるPublication ArtifactについてProduction StateまたはAuditの存在を、本Sectionだけを根拠として要求してはならない。**
+`NOT_APPLICABLE`であるPublication ArtifactについてProduction StateまたはAuditの存在を、本Sectionだけを根拠として要求してはならない。
 
-**FREE Publication ArtifactおよびCLASSIFIED Publication Artifactは独立したArtifact Identityを持つため、一方のAudit ResultまたはApplicable Audit Referenceを他方へ流用してはならない。**
+FREE Publication ArtifactおよびCLASSIFIED Publication Artifactは独立したArtifact Identityを持つため、一方のAudit ResultまたはApplicable Audit Referenceを他方へ流用してはならない。
 
-**Applicable Audit Referenceは、**
+Applicable Audit Referenceは、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**において対象Publication Artifactごとに管理する。**
+において対象Publication Artifactごとに管理する。
 
-**Applicable Audit Referenceは、Applicable Audit ArtifactへのRepository-relative Referenceとして扱い、Audit Resultそのものを複製するFieldとして扱ってはならない。**
+Applicable Audit Referenceは、Applicable Audit ArtifactへのRepository-relative Referenceとして扱い、Audit Resultそのものを複製するFieldとして扱ってはならない。
 
-**Applicable Audit Referenceの存在だけを根拠としてAudit Resultを推測してはならない。**
+Applicable Audit Referenceの存在だけを根拠としてAudit Resultを推測してはならない。
 
-**Publication Audit後のRevisionによって、\`APPLICABLE\`なPublication ArtifactがProductionへ差し戻される場合、その対象ArtifactのProduction Stateを\`IN_PROGRESS\`として管理し、Case-level Workflow Statusを\`PUBLICATION_PRODUCTION\`へ戻す。**
+Publication Audit後のRevisionによって、`APPLICABLE`なPublication ArtifactがProductionへ差し戻される場合、その対象ArtifactのProduction Stateを`IN_PROGRESS`として管理し、Case-level Workflow Statusを`PUBLICATION_PRODUCTION`へ戻す。
 
-**このReturn Gateによって、**
+このReturn Gateによって、
 
-** PUBLICATION_AUDIT**
-** ↓**
-** Applicable Artifact Revision**
-** ↓**
-** Artifact-level Production State = IN_PROGRESS**
-** ↓**
-** PUBLICATION_PRODUCTION**
+ PUBLICATION_AUDIT
+ ↓
+ Applicable Artifact Revision
+ ↓
+ Artifact-level Production State = IN_PROGRESS
+ ↓
+ PUBLICATION_PRODUCTION
 
-**の関係を維持する。**
+の関係を維持する。
 
-**修正後、再びすべての\`APPLICABLE\`なPublication Artifactが\`COMPLETE\`となった場合にのみ、\`PUBLICATION_AUDIT\`への再進行を許可できる。**
+修正後、再びすべての`APPLICABLE`なPublication Artifactが`COMPLETE`となった場合にのみ、`PUBLICATION_AUDIT`への再進行を許可できる。
 
-**Audit Result、Audit Method、PASS、REVISION、BLOCKERその他の監査仕様はAudit Ruleの責務とし、本Sectionから新しいAudit Resultを定義してはならない。**
+Audit Result、Audit Method、PASS、REVISION、BLOCKERその他の監査仕様はAudit Ruleの責務とし、本Sectionから新しいAudit Resultを定義してはならない。
 
-**6.9 Publication Status Principle**
+## 6.9 Publication Status Principle
+
 Publication Statusは、対象Caseが正式なPublication済み状態にあるかを表す。
 Publication StatusはProduction Workflowの進行段階、Audit ResultまたはHuman Approval Decisionを表すために使用しない。
 ProjectORIGINにおけるPublication Statusの正式なControlled Valuesは、以下の2値とする。
@@ -1991,7 +1999,8 @@ ProjectORIGINにおけるPublication Statusの正式なControlled Valuesは、�
 Audit Ruleにおいても、Publication StatusはWorkflow Status、Audit ResultおよびHuman Approval Decisionから独立した状態概念として扱い、正式なControlled Valuesとして`NOT_PUBLISHED`および`PUBLISHED`を使用する。
 旧Audit RuleでPublication Statusとして使用されていた状態表現は、現在のPublication Status Controlled Valuesとして使用しない。
 
-**6.10 NOT_PUBLISHED**
+## 6.10 NOT_PUBLISHED
+
 `NOT_PUBLISHED`は、対象Caseについて正式なPublication済み状態が成立していないことを表す。
 `NOT_PUBLISHED`には、以下の状態が含まれ得る。
  Production開始前
@@ -2007,7 +2016,8 @@ Audit Ruleにおいても、Publication StatusはWorkflow Status、Audit Result�
 Production進行状態はWorkflow Statusによって独立して確認する。
 Human Approval Decisionが`APPROVED`であっても、正式なPublicationが完了していない場合、Publication Statusは`NOT_PUBLISHED`であり得る。
 
-**6.11 PUBLISHED**
+## 6.11 PUBLISHED
+
 `PUBLISHED`は、対象CaseについてApplicableなPublication Processが正式に完了し、Publication済み状態が成立していることを表す。
 `PUBLISHED`は、Workflow Statusとして使用しない。
 また、以下だけを根拠として`PUBLISHED`を設定してはならない。
@@ -2040,40 +2050,41 @@ Human Approval Decisionが`APPROVED`であっても、正式なPublicationが完
 `PUBLISHED`
 とする。
 
-**\## 6.12 Publication Status Independence**
+## 6.12 Publication Status Independence
 
-**Publication Statusは、Case-level Workflow Status、Artifact-level Production State、Audit ResultおよびHuman Approval Decisionとは独立して管理する。**
+Publication Statusは、Case-level Workflow Status、Artifact-level Production State、Audit ResultおよびHuman Approval Decisionとは独立して管理する。
 
-**正式なPublication Statusは、**
+正式なPublication Statusは、
 
-** NOT_PUBLISHED**
-** PUBLISHED**
+ NOT_PUBLISHED
+ PUBLISHED
 
-**とする。**
+とする。
 
-**Artifact-level Production Stateが\`COMPLETE\`であることだけを根拠として、Publication Statusを\`PUBLISHED\`へ変更してはならない。**
+Artifact-level Production Stateが`COMPLETE`であることだけを根拠として、Publication Statusを`PUBLISHED`へ変更してはならない。
 
-**同様に、すべてのApplicableなPublication Artifactが\`COMPLETE\`であること、Applicable Audit Referenceが存在すること、Auditが完了していること、またはCase-level Workflow Statusが\`APPROVED\`であることだけを根拠として、Publication Statusを\`PUBLISHED\`と判断してはならない。**
+同様に、すべてのApplicableなPublication Artifactが`COMPLETE`であること、Applicable Audit Referenceが存在すること、Auditが完了していること、またはCase-level Workflow Statusが`APPROVED`であることだけを根拠として、Publication Statusを`PUBLISHED`と判断してはならない。
 
-** Artifact-level Production State**
-** ≠**
-** Publication Status**
+ Artifact-level Production State
+ ≠
+ Publication Status
 
-** Audit Result**
-** ≠**
-** Publication Status**
+ Audit Result
+ ≠
+ Publication Status
 
-** Human Approval Decision**
-** ≠**
-** Publication Status**
+ Human Approval Decision
+ ≠
+ Publication Status
 
-**Publication Statusの変更には、Applicable Source of Truthおよび正式なPublication Evidenceに基づく独立した確認を必要とする。**
+Publication Statusの変更には、Applicable Source of Truthおよび正式なPublication Evidenceに基づく独立した確認を必要とする。
 
-**\`publication-tracking.json\`はFREEおよびCLASSIFIEDのArtifact-level Trackingを管理するが、Publication Statusを自動的に導出するためのSource of Truthとして扱ってはならない。**
+`publication-tracking.json`はFREEおよびCLASSIFIEDのArtifact-level Trackingを管理するが、Publication Statusを自動的に導出するためのSource of Truthとして扱ってはならない。
 
-**本Sectionから新しいPublication Status Controlled Valueを追加してはならない。**
+本Sectionから新しいPublication Status Controlled Valueを追加してはならない。
 
-**6.13 Audit Result Boundary**
+## 6.13 Audit Result Boundary
+
 Audit ResultはPublication Statusではない。
 Audit PASSは、対象Artifactまたは対象工程がApplicable Audit Criteriaを満たしたことを表す。
 Audit PASSだけを理由として、
@@ -2084,7 +2095,8 @@ Audit PASSだけを理由として、
 Audit Resultの正式な判定基準および監査方法はAudit Ruleの責務とする。
 Repository RuleはAudit ResultのControlled Valuesを本章によって新たに定義しない。
 
-**6.14 Human Approval Decision Boundary**
+## 6.14 Human Approval Decision Boundary
+
 Human Approval DecisionはPublication Statusではない。
 正式なHuman Approval DecisionはAGENTS.mdの責務とする。
 Human Approval Decision `APPROVED`は、Publicationへ進むために必要な正式判断であるが、それ自体はPublication完了を意味しない。
@@ -2092,7 +2104,8 @@ Human Approval Decision `APPROVED`は、Publicationへ進むために必要な�
 Human Approval Decision `HOLD`をWorkflow Status `BLOCKED`と自動的に同一視してはならない。
 異なる責務を持つ状態値は、それぞれ独立して管理する。
 
-**6.15 Repository Integration Boundary**
+## 6.15 Repository Integration Boundary
+
 Repository Integrationは、Human Approval後の正式成果物をApplicable Repository Structureへ統合する工程である。
 Repository Integrationの完了だけを理由としてPublication Statusを`PUBLISHED`へ変更してはならない。
 Repository IntegrationとPublicationは独立した工程として扱う。
@@ -2106,161 +2119,161 @@ Repository IntegrationとPublicationは独立した工程として扱う。
 Repository Integrationに必要なArtifact、Version、Metadata、Asset Referenceその他の更新は、Applicable Source of Truthに従う。
 Database FieldまたはOperational Metadataの具体的なSchemaを、本章だけを根拠として新設してはならない。
 
-**\## 6.16 Database and Metadata Boundary**
+## 6.16 Database and Metadata Boundary
 
-**Workflow StatusおよびPublication Statusは、Repository上の状態管理概念として本章で定義する。**
+Workflow StatusおよびPublication Statusは、Repository上の状態管理概念として本章で定義する。
 
-**Artifact-level Trackingについては、**
+Artifact-level Trackingについては、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**をCase-level Repository-managed Operational Metadata Artifactとして使用する。**
+をCase-level Repository-managed Operational Metadata Artifactとして使用する。
 
-**\`publication-tracking.json\`はDatabase Fieldではなく、新しいProduction Layerでもない。**
+`publication-tracking.json`はDatabase Fieldではなく、新しいProduction Layerでもない。
 
-**その正式なRepository Placement、管理対象、Controlled Valuesおよび責務境界はApplicable Repository Rule Sectionに従う。**
+その正式なRepository Placement、管理対象、Controlled Valuesおよび責務境界はApplicable Repository Rule Sectionに従う。
 
-**本章の定義だけを根拠として、新しいDatabase Field、Data Type、Nullability、Metadata Directory、Production LayerまたはStorage Structureを追加してはならない。**
+本章の定義だけを根拠として、新しいDatabase Field、Data Type、Nullability、Metadata Directory、Production LayerまたはStorage Structureを追加してはならない。
 
-**Databaseに保存する正式FieldおよびSchema仕様はDatabase RuleおよびDatabase Schemaの責務とする。**
+Databaseに保存する正式FieldおよびSchema仕様はDatabase RuleおよびDatabase Schemaの責務とする。
 
-**Database Schemaで定義されるCase Resolution status Fieldを、Case-level Workflow Status、Artifact-level Production StateまたはPublication Statusの保存先として使用してはならない。**
+Database Schemaで定義されるCase Resolution status Fieldを、Case-level Workflow Status、Artifact-level Production StateまたはPublication Statusの保存先として使用してはならない。
 
-**\`publication-tracking.json\`の存在を理由として、Database SchemaへFREE / CLASSIFIED Artifact-level Tracking用Fieldを自動的に追加してはならない。**
+`publication-tracking.json`の存在を理由として、Database SchemaへFREE / CLASSIFIED Artifact-level Tracking用Fieldを自動的に追加してはならない。
 
-**Workflow StatusまたはPublication Statusについて別途永続的保存仕様が必要となる場合、その具体的仕様はApplicable Source of Truthまたは必要なHuman Decisionによって正式決定する。**
+Workflow StatusまたはPublication Statusについて別途永続的保存仕様が必要となる場合、その具体的仕様はApplicable Source of Truthまたは必要なHuman Decisionによって正式決定する。
 
-**本Sectionから未定義のMetadata Field、Metadata Versioning SchemeまたはDatabase Mappingを推測してはならない。**
+本Sectionから未定義のMetadata Field、Metadata Versioning SchemeまたはDatabase Mappingを推測してはならない。
 
-**\## 6.17 Evidence and Traceability**
+## 6.17 Evidence and Traceability
 
-**Status値またはArtifact-level Tracking値そのものを、工程完了またはPublication完了のEvidenceとして扱ってはならない。**
+Status値またはArtifact-level Tracking値そのものを、工程完了またはPublication完了のEvidenceとして扱ってはならない。
 
-**必要に応じて、以下を独立して確認可能な状態を維持する。**
+必要に応じて、以下を独立して確認可能な状態を維持する。
 
-** Production対象Artifact**
-** Artifact Identity**
-** Artifact Version**
-** Artifact Applicability**
-** Artifact-level Production State**
-** Applicable Production Stage**
-** Applicable Audit Reference**
-** Required Audit**
-** Audit Result**
-** Final Flow Audit**
-** Human Approval Decision**
-** Repository Integration**
-** Publication**
-** Publication Status**
+ Production対象Artifact
+ Artifact Identity
+ Artifact Version
+ Artifact Applicability
+ Artifact-level Production State
+ Applicable Production Stage
+ Applicable Audit Reference
+ Required Audit
+ Audit Result
+ Final Flow Audit
+ Human Approval Decision
+ Repository Integration
+ Publication
+ Publication Status
 
-**FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Trackingは、**
+FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Trackingは、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**によってTrace可能な状態を維持する。**
+によってTrace可能な状態を維持する。
 
-**Applicable Audit Referenceは、対象ArtifactにApplicableなAudit ArtifactへのRepository-relative Referenceとして扱う。**
+Applicable Audit Referenceは、対象ArtifactにApplicableなAudit ArtifactへのRepository-relative Referenceとして扱う。
 
-**Applicable Audit ReferenceはAudit Resultそのものではなく、Audit Resultを複製するFieldとして使用してはならない。**
+Applicable Audit ReferenceはAudit Resultそのものではなく、Audit Resultを複製するFieldとして使用してはならない。
 
-**Applicable Audit Referenceを検証する場合、少なくとも対象Case、対象Artifact、Applicable Versionおよび実際にApplicableなAuditとの対応を確認する。**
+Applicable Audit Referenceを検証する場合、少なくとも対象Case、対象Artifact、Applicable Versionおよび実際にApplicableなAuditとの対応を確認する。
 
-**Referenceが存在しない、別Caseを参照している、対象Artifactが一致しない、Applicable Versionが一致しない、またはApplicable Auditを一意に確認できない場合は、Reference Validationを成功として扱ってはならない。**
+Referenceが存在しない、別Caseを参照している、対象Artifactが一致しない、Applicable Versionが一致しない、またはApplicable Auditを一意に確認できない場合は、Reference Validationを成功として扱ってはならない。
 
-**Reference Validationの失敗それ自体をAudit Result \`BLOCKER\`と同一視してはならない。**
+Reference Validationの失敗それ自体をAudit Result `BLOCKER`と同一視してはならない。
 
-**曖昧なApplicable Audit ReferenceをAutomationによって推測、補完または自動修復してはならない。**
+曖昧なApplicable Audit ReferenceをAutomationによって推測、補完または自動修復してはならない。
 
-**例えば、Case-level Workflow Statusが\`APPROVED\`であっても、Publication Evidenceが確認できない場合は\`PUBLISHED\`と判断してはならない。**
+例えば、Case-level Workflow Statusが`APPROVED`であっても、Publication Evidenceが確認できない場合は`PUBLISHED`と判断してはならない。
 
-**同様に、Publication Statusが\`PUBLISHED\`であるという値だけを根拠として、必要な上流工程のEvidenceを推測してはならない。**
+同様に、Publication Statusが`PUBLISHED`であるという値だけを根拠として、必要な上流工程のEvidenceを推測してはならない。
 
-**TraceabilityはApplicable Source of Truthおよび正式な記録によって維持する。**
+TraceabilityはApplicable Source of Truthおよび正式な記録によって維持する。
 
-**本SectionからAudit Artifact Filename ConventionまたはAudit Artifact固有のVersioning Schemeを新設してはならない。**
+本SectionからAudit Artifact Filename ConventionまたはAudit Artifact固有のVersioning Schemeを新設してはならない。
 
-**\## 6.18 Core Status Principle**
+## 6.18 Core Status Principle
 
-**ProjectORIGINでは、**
+ProjectORIGINでは、
 
-** Case Resolution Status**
-** Case-level Workflow Status**
-** Artifact-level Production State**
-** Audit Result**
-** Human Approval Decision**
-** Publication Status**
+ Case Resolution Status
+ Case-level Workflow Status
+ Artifact-level Production State
+ Audit Result
+ Human Approval Decision
+ Publication Status
 
-**を、それぞれ独立した責務を持つ状態または判断概念として管理する。**
+を、それぞれ独立した責務を持つ状態または判断概念として管理する。
 
-**Case-level Workflow Statusの正式なPrimary Statesは、**
+Case-level Workflow Statusの正式なPrimary Statesは、
 
-** REGISTERED**
-** RESEARCHING**
-** RESEARCH_AUDIT**
-** APPROVED_RESEARCH**
-** MASTER_PRODUCTION**
-** MASTER_AUDIT**
-** APPROVED_MASTER**
-** PUBLICATION_PRODUCTION**
-** PUBLICATION_AUDIT**
-** HUMAN_REVIEW**
-** APPROVED**
+ REGISTERED
+ RESEARCHING
+ RESEARCH_AUDIT
+ APPROVED_RESEARCH
+ MASTER_PRODUCTION
+ MASTER_AUDIT
+ APPROVED_MASTER
+ PUBLICATION_PRODUCTION
+ PUBLICATION_AUDIT
+ HUMAN_REVIEW
+ APPROVED
 
-**とする。**
+とする。
 
-**Exception Statesは、Applicable Repository Rule Sectionで定義された正式値のみを使用する。**
+Exception Statesは、Applicable Repository Rule Sectionで定義された正式値のみを使用する。
 
-**FREEおよびCLASSIFIEDのArtifact-level Production StateはCase-level Workflow Statusではない。**
+FREEおよびCLASSIFIEDのArtifact-level Production StateはCase-level Workflow Statusではない。
 
-**Artifact-level Production Stateの正式なControlled Valuesは、**
+Artifact-level Production Stateの正式なControlled Valuesは、
 
-** NOT_STARTED**
-** IN_PROGRESS**
-** COMPLETE**
+ NOT_STARTED
+ IN_PROGRESS
+ COMPLETE
 
-**とする。**
+とする。
 
-**Artifact Applicabilityの正式なControlled Valuesは、**
+Artifact Applicabilityの正式なControlled Valuesは、
 
-** APPLICABLE**
-** NOT_APPLICABLE**
+ APPLICABLE
+ NOT_APPLICABLE
 
-**とする。**
+とする。
 
-**\`NOT_APPLICABLE\`をArtifact-level Production Stateとして扱ってはならない。**
+`NOT_APPLICABLE`をArtifact-level Production Stateとして扱ってはならない。
 
-**FREEおよびCLASSIFIEDについて、新しいCase-level Workflow Statusを追加してはならない。**
+FREEおよびCLASSIFIEDについて、新しいCase-level Workflow Statusを追加してはならない。
 
-**ApplicableなPublication ArtifactがProduction未完了である場合、Case-level Workflow Statusは\`PUBLICATION_PRODUCTION\`に留まる、または必要に応じて\`PUBLICATION_PRODUCTION\`へ戻す。**
+ApplicableなPublication ArtifactがProduction未完了である場合、Case-level Workflow Statusは`PUBLICATION_PRODUCTION`に留まる、または必要に応じて`PUBLICATION_PRODUCTION`へ戻す。
 
-**すべてのApplicableなPublication Artifactが\`COMPLETE\`である場合にのみ、Publication Production Gateを満たし、\`PUBLICATION_AUDIT\`への進行を許可できる。**
+すべてのApplicableなPublication Artifactが`COMPLETE`である場合にのみ、Publication Production Gateを満たし、`PUBLICATION_AUDIT`への進行を許可できる。
 
-**Publication Audit後のRevisionによってApplicableなPublication ArtifactがProductionへ戻る場合、そのArtifact-level Production Stateを\`IN_PROGRESS\`として管理し、Case-level Workflow Statusを\`PUBLICATION_PRODUCTION\`へ戻す。**
+Publication Audit後のRevisionによってApplicableなPublication ArtifactがProductionへ戻る場合、そのArtifact-level Production Stateを`IN_PROGRESS`として管理し、Case-level Workflow Statusを`PUBLICATION_PRODUCTION`へ戻す。
 
-**Publication Statusは、**
+Publication Statusは、
 
-** NOT_PUBLISHED**
-** PUBLISHED**
+ NOT_PUBLISHED
+ PUBLISHED
 
-**の独立した状態として管理し、Case-level Workflow Status、Artifact-level Production State、Audit ResultまたはHuman Approval Decisionから自動導出してはならない。**
+の独立した状態として管理し、Case-level Workflow Status、Artifact-level Production State、Audit ResultまたはHuman Approval Decisionから自動導出してはならない。
 
-**Artifact-level TrackingのPrimary Source of Truthは、**
+Artifact-level TrackingのPrimary Source of Truthは、
 
-** cases/FILE-XXX/publication-tracking.json**
+ cases/FILE-XXX/publication-tracking.json
 
-**とする。**
+とする。
 
-**ただし、Artifact-level Trackingの存在によってDatabase Schema Field、Audit Result、Human Approval Decision、Publication Statusまたは未定義のWorkflow Statusを新設または自動生成してはならない。**
+ただし、Artifact-level Trackingの存在によってDatabase Schema Field、Audit Result、Human Approval Decision、Publication Statusまたは未定義のWorkflow Statusを新設または自動生成してはならない。
 
-**Automationは、正式に定義されたControlled Values、Reference、Workflow GateおよびResponsibility Boundaryを検証できる。**
+Automationは、正式に定義されたControlled Values、Reference、Workflow GateおよびResponsibility Boundaryを検証できる。
 
-**Automationは、未確定のApplicability、Production State、Applicable Audit Reference、Audit Result、Publication Statusまたはその他の状態を推測してはならない。**
+Automationは、未確定のApplicability、Production State、Applicable Audit Reference、Audit Result、Publication Statusまたはその他の状態を推測してはならない。
 
-**既存Caseについて、既存Fileの存在だけを根拠としてApplicabilityまたはProduction Stateを一括推定してはならない。**
+既存Caseについて、既存Fileの存在だけを根拠としてApplicabilityまたはProduction Stateを一括推定してはならない。
 
-**曖昧な既存CaseのApplicabilityまたはProduction StateにはHuman Decisionを必要とする。**
+曖昧な既存CaseのApplicabilityまたはProduction StateにはHuman Decisionを必要とする。
 
-**本章のStatus Modelは、Case-level WorkflowとArtifact-level Publication Trackingを分離しながら、正式なWorkflow Gateによって両者を接続することをCore Principleとする。**
+本章のStatus Modelは、Case-level WorkflowとArtifact-level Publication Trackingを分離しながら、正式なWorkflow Gateによって両者を接続することをCore Principleとする。
 
 
 # Chapter 7
@@ -3147,17 +3160,19 @@ Repository IntegrationおよびRe-Integrationは、Chapter 5のVersion Criteria�
 
 Repository IntegrationまたはRe-Integrationが発生したことだけを理由として、Version Incrementを自動決定してはならない。
 
-ただし、本章への反映だけをもって\`HOLD-ARTIFACT-VERSION-01\`をRESOLVEDとしてはならない。
+Resolution前は、本章への反映だけでは\`HOLD-ARTIFACT-VERSION-01\`をRESOLVEDとせず、Applicable Source of Truthへの必要な反映、Compatibility確認および最終横断再監査のPASSが要求されていた。
 
-Applicable Source of Truthへの必要な反映、Compatibility確認および最終横断再監査がPASSした後、正式HOLD LedgerにおいてResolution処理を行う。
+これらのResolution条件は完了し、\`HOLD-ARTIFACT-VERSION-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 ### HOLD-PUBLICATION-TRACKING-01
 
-\`HOLD-PUBLICATION-TRACKING-01\`は、FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Production / Audit State Trackingに関する未確定事項を管理するActive HOLDである。
+\`HOLD-PUBLICATION-TRACKING-01\`は、FREE Publication ArtifactおよびCLASSIFIED Publication ArtifactのArtifact-level Production / Audit State Trackingに関する未確定事項を管理するため、Resolution前はActive HOLDとして管理されていた。
 
-本HOLDがHOLD状態である間、本章はFREE / CLASSIFIED個別State用の新しいWorkflow Status、Metadata Field、Database FieldまたはTracking Systemを独自に確定しない。
+Resolution前は、本章からFREE / CLASSIFIED個別State用の新しいWorkflow Status、Metadata Field、Database FieldまたはTracking Systemを独自に確定せず、Repository Integration上で個別状態の識別が必要な場合も、正式な解消工程を経ずに新しい管理体系を作成しないことが要求されていた。
 
-Repository Integration上で個別状態の識別が必要になった場合も、本HOLDの正式な解消工程を経ずに新しい管理体系を作成してはならない。
+Human Decision、Applicable Source of Truthへの必要な反映、Compatibility確認および最終横断再監査は完了し、\`HOLD-PUBLICATION-TRACKING-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
+
+解消済みの本HOLDを本章からActive HOLDとして再Openしてはならない。
 
 ### HOLD-AUDIT-PLACEMENT-01
 
@@ -3187,12 +3202,14 @@ Publication Statusの責務、\`NOT_PUBLISHED\` / \`PUBLISHED\`の2値モデル�
 
 本章終了時点で継続するActive HOLDは、正式HOLD Ledgerの最新状態に従う。
 
-本章へのVersion Criteria反映中であっても、\`HOLD-ARTIFACT-VERSION-01\`は最終Compatibility確認および最終横断再監査PASS前に自動的にRESOLVEDとしてはならない。
+Resolution前は、Chapter 5へのVersion Criteria反映だけを理由として\`HOLD-ARTIFACT-VERSION-01\`を自動的にRESOLVEDとせず、最終Compatibility確認および最終横断再監査のPASSが要求されていた。
 
-Repository Rule v1.0の最終横断監査では、少なくとも以下を確認する。
+これらのResolution条件は完了し、\`HOLD-ARTIFACT-VERSION-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
+
+Repository Rule v1.0のResolution前の最終横断監査では、少なくとも以下が確認された。
 
 - \`HOLD-ARTIFACT-VERSION-01\`のChapter 5 Criteriaが本章へ正しく反映されていること
-- \`HOLD-PUBLICATION-TRACKING-01\`の未確定事項を本章が暗黙に確定していないこと
+- \`HOLD-PUBLICATION-TRACKING-01\`の承認済みDecisionを超える事項を本章が暗黙に確定していないこと
 - 解消済みHOLDをActive HOLDとして再Openしていないこと
 - Repository IntegrationまたはRe-IntegrationがVersion Incrementの自動Triggerとして扱われていないこと
 - AutomationがVersion Decisionを推測していないこと
@@ -3310,7 +3327,7 @@ Active HOLDの対象となる未確定仕様を、Repository Integration、Autom
 
 本章終了時点のActive HOLDは、正式HOLD Ledgerの最新状態に従う。
 
-\`HOLD-ARTIFACT-VERSION-01\`については、Chapter 5へのCriteria反映が完了していても、必要なCompatibility確認および最終横断再監査がPASSするまで正式Resolutionを行ってはならない。
+\`HOLD-ARTIFACT-VERSION-01\`についてResolution前に必要とされたCompatibility確認および最終横断再監査はPASSしており、正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 \`HOLD-PUBLICATION-TRACKING-01\`については、本章から新しいArtifact-level Tracking体系を推測してはならない。
 
@@ -3858,9 +3875,9 @@ HOLDの正式な状態はHOLD LedgerをSource of Truthとして確認する。
 
 Version変更によって、旧Versionと新VersionのRelation、Applicable Audit、Applicable Final Flow Audit、Human Approval Decision、Repository Integration、Publication Historyその他の必要なTraceabilityを失ってはならない。
 
-ただし、本章への反映だけをもって\`HOLD-ARTIFACT-VERSION-01\`をRESOLVEDとしてはならない。
+Resolution前は、本章への反映だけでは\`HOLD-ARTIFACT-VERSION-01\`をRESOLVEDとせず、Applicable Source of Truthへの必要な反映、Compatibility確認および最終横断再監査のPASSが要求されていた。
 
-Applicable Source of Truthへの必要な反映、Compatibility確認および最終横断再監査がPASSした後、正式HOLD LedgerにおいてResolution処理を行う。
+これらのResolution条件は完了し、\`HOLD-ARTIFACT-VERSION-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 ### HOLD-PUBLICATION-TRACKING-01
 
@@ -3886,11 +3903,11 @@ Artifact-level TrackingとCase-level Workflow Status、Publication Status、Audi
 
 本章は、承認済みHuman Decisionを超えて新しいArtifact-level Production State、Applicability、Workflow Status、Publication Status、Audit Result、Database Field、Audit Filename ConventionまたはTracking Systemを追加してはならない。
 
-本HOLDはHuman Decision未確定を理由としてActiveなのではない。
+Resolution前のActive状態はHuman Decision未確定を理由とするものではなく、Applicable Source of Truthへの必要な反映、Repository Integration、Automation Boundary、Existing Case Compatibilityおよび関連文書の最終横断再監査の完了を確認するためのものであった。
 
-Applicable Source of Truthへの必要な反映、Repository Integration、Automation Boundary、Existing Case Compatibilityおよび関連文書の最終横断再監査が完了するまで、正式HOLD Ledger上ではActive HOLDとして維持する。
+これらのResolution条件は満たされ、最終横断再監査はPASSしている。\`HOLD-PUBLICATION-TRACKING-01\`は正式HOLD Ledger上でRESOLVEDとして管理されている。
 
-これらのResolution条件が満たされ、最終横断再監査がPASSした後にのみ、正式HOLD LedgerにおいてResolution処理を行う。
+解消済みの本HOLDを本章からActive HOLDとして再Openしてはならない。
 
 ### HOLD-AUDIT-PLACEMENT-01
 
@@ -3920,7 +3937,7 @@ Repository / Database ConsistencyまたはPublication Traceabilityを理由と�
 
 本章終了時点のActive HOLDは、正式HOLD Ledgerの最新状態に従う。
 
-\`HOLD-ARTIFACT-VERSION-01\`については、Chapter 5のCriteriaが本章へ反映されていても、必要なCompatibility確認および最終横断再監査がPASSするまで正式Resolutionを行ってはならない。
+\`HOLD-ARTIFACT-VERSION-01\`についてResolution前に必要とされたCompatibility確認および最終横断再監査はPASSしており、正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 \`HOLD-PUBLICATION-TRACKING-01\`については、承認済みArtifact-level Tracking体系をApplicable Source of Truthに従って使用し、その正式Decisionを超える新しいTracking体系、Controlled ValueまたはStorage Structureを推測してはならない。
 
@@ -4028,7 +4045,7 @@ Active HOLDの対象となる未確定仕様を、IntegrityまたはTraceability
 
 本章終了時点のHOLD状態は正式HOLD Ledgerに従う。
 
-\`HOLD-ARTIFACT-VERSION-01\`は、必要なCompatibility確認および最終横断再監査がPASSするまで正式Resolutionしてはならない。
+\`HOLD-ARTIFACT-VERSION-01\`についてResolution前に必要とされたCompatibility確認および最終横断再監査はPASSしており、正式HOLD Ledger上でRESOLVEDとして管理されている。
 
 FREEおよびCLASSIFIEDのArtifact-level Trackingは、Applicable Repository Rule Sectionで正式に定義された範囲に従う。
 
@@ -4066,9 +4083,9 @@ Artifact-level TrackingからCase-level Workflow Status、Publication Status、A
 
 同様に、それらの状態またはFile存在だけを根拠としてArtifact-level Trackingの値を推測してはならない。
 
-\`HOLD-PUBLICATION-TRACKING-01\`は、承認済みDecisionのApplicable Source of Truthへの反映および最終横断再監査が完了するまで正式HOLD Ledger上でActiveとして維持する。
+\`HOLD-PUBLICATION-TRACKING-01\`についてResolution前に必要とされた承認済みDecisionのApplicable Source of Truthへの反映および最終横断再監査は完了しており、正式HOLD Ledger上でRESOLVEDとして管理されている。
 
-Activeであることを理由として、すでに承認されたArtifact-level Tracking Decisionを未確定仕様へ戻してはならない。
+Resolution前にActiveであったこと、または現在RESOLVEDであることを理由として、すでに承認されたArtifact-level Tracking Decisionを未確定仕様へ戻してはならない。
 
 承認済みDecisionを超える新しいTracking体系、Controlled Value、Database Field、Production Layer、Audit Filename ConventionまたはAutomation仕様を本章から推測してはならない。
 
