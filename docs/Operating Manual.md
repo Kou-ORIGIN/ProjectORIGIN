@@ -89,6 +89,37 @@ Webサイトの設計および開発を管理する。
 
 ---
 
+## Publication
+
+Approved Master Case Fileを基礎として、FREEおよびCLASSIFIED Publication Artifactへ変換するPublication Productionを管理する。
+
+Publication BibleがApplicable Governance Processを経てFormal Adoptionされた場合、Publication Productionにおける専門的Source of Truthとして使用する。
+
+Formal Adoption前のPublication BibleはDraftとして扱い、その存在、本文完成、Audit PASSその他を理由としてOfficial Statusを推論しない。
+
+### 管理内容
+
+- Approved Master Case FileからFREE / CLASSIFIEDへのPublication Production
+- FREE / CLASSIFIEDのPublication Role
+- Information Architecture
+- Progressive Disclosure
+- Reader-facing LanguageおよびReader Comprehension
+- Evidence / Claim / Theory / UnknownのReader-facing Presentation
+- Source Traceability Presentation
+- ImageのReader-facing RoleおよびPublication Context
+- CLASSIFIED Investigation Experience
+- Human Read Reviewに関するPublication側基準
+- Publication-level Revision
+- Applicable AuthorityへのUpstream Escalation
+
+Publicationは、Research、Master Case File、Formal Audit、Final Human Approval、Repository、Database、Image Asset Management、UI ImplementationまたはFormal Production FlowのAuthorityを取得しない。
+
+Formal Production Flow、Workflow Status Transition、Agent Action、Human ApprovalへのTransitionその他のAgent / Production Operationに関する事項は、Applicable AGENTS.mdその他の正式なAuthorityに従う。
+
+その他の事項についても、それぞれを正式に所管するDocumentまたはApplicable Authorityに従う。
+
+---
+
 ## Image Rule
 
 画像運用に関する基準を管理する。
@@ -155,6 +186,89 @@ ProjectORIGINでは、すべての作業を適切な順序で進めるため、�
 
 6. Development
    - 設計内容をもとにWebサイトへ実装し、動作確認および品質確認を行う。
+
+上記Standard Workflowは、ProjectORIGIN全体の基本的な作業Routingを示す。
+
+FREEまたはCLASSIFIED Publication Artifactを制作する場合は、上記Standard Workflowだけで工程を完結させず、本ChapterのPublication Workflow ConnectionをApplicableな範囲で併せて適用する。
+
+したがって、
+
+**Standard Workflow ≠ Publication Workflow Exemption**
+
+とする。
+
+PublicationをImage Rule、Art BibleまたはDevelopmentとの固定的な一方向順序へ自動挿入してはならない。
+
+それらとの具体的な工程順序は、Applicable Workflowおよび各専門Authorityに従う。
+
+## Publication Workflow Connection
+
+本Sectionは、Publication ProductionとProjectORIGIN全体の関連工程とのHigh-level Workflow Connectionを示す。
+
+本Sectionは、Formal Production Flow、Workflow Status Transition、Agent Action、Human Approval DecisionまたはそれらのControlled Stateを独自に定義するものではない。
+
+それらはApplicable AGENTS.md、Audit Ruleその他の正式なAuthorityに従う。
+
+したがって、
+
+**Workflow Connection ≠ Formal Production Flow Authority**
+
+とする。
+
+FREEまたはCLASSIFIED Publication Artifactを制作する場合、Publication ProductionはApplicableなApproved Master Case Fileが確認された後に開始する。
+
+Draft Master、未承認Research、Legacy Publication、Database表示内容、UI Placeholderその他をApproved Master Case Fileの代替Basisとして使用してはならない。
+
+Publicationに関する基本的な工程接続は、以下とする。
+
+1. Approved Master Case File Confirmation
+   - ApplicableなMaster Case Fileが承認済みであることを確認する。
+
+2. Publication Production
+   - ApplicableなPublication Bibleに従い、Approved Master Case FileをFREEおよびCLASSIFIED Publication Artifactへ変換する。
+   - FREEとCLASSIFIEDは独立したPublication Artifactとして扱い、一方の状態から他方の状態を推論しない。
+
+3. Applicable Formal Audit
+   - Publication Artifactに必要なFormal AuditおよびRequired Re-Auditは、Audit Ruleその他のApplicable Audit Authorityに従う。
+   - Publication ProductionはFormal Auditを代替しない。
+
+4. Human Read Review
+
+   - ApplicableなPublication Artifactについて、Publication Bibleで定義されたReader Experience上のHuman Read Reviewを行う。
+
+   - Human Read ReviewはFormal AuditまたはFinal Human Approvalを代替しない。
+
+   - Human Read ReviewによってPublication-level Revisionが必要となった場合は、ApplicableなPublication Productionへ戻す。
+
+   - Revision後は、変更内容および影響範囲に応じて、Applicable Audit Authorityが要求するRequired Re-Auditを完了する。
+
+   - Reader Experienceへ影響する変更が行われた場合は、ApplicableなHuman Re-Reviewを必要な範囲で実施する。
+
+   - Revision前のAudit PASS、Human Read Review Resultまたはその他のValidationを、変更後のArtifactへ自動継承してはならない。
+
+   - Required Revision、Required Re-AuditおよびApplicable Human Re-Reviewが完了していない状態で、後続工程へ進んだものとして扱ってはならない。
+
+5. Applicable Final Audit Requirement
+   - Final Flow Auditその他のFinal AuditがApplicable Authorityによって要求される場合、そのRequirementに従う。
+   - Required Final Auditが存在しない場合、その存在を推測によって新設しない。
+
+6. Final Human Approval
+   - Final Human ApprovalはHuman Decisionとして行う。
+   - Audit PASSまたはHuman Read Review ClosureからFinal Human Approvalを自動推論しない。
+
+7. Applicable Downstream Integration
+   - Final Human Approval後のRepository Integration、Database Integration、Developmentその他の工程は、それぞれを正式に所管するApplicable Authorityに従う。
+   - Human ApprovalからRepository Integrationその他の完了状態を自動推論しない。
+
+Publication Productionの工程接続は、他領域のAuthorityをPublicationへ移すものではない。
+
+Image Production、Art Production、Developmentその他との具体的な作業順序は、ApplicableなWorkflowおよび各専門Authorityに従う。
+
+本Sectionだけを根拠として、未確定の工程順序、Audit RequirementまたはIntegration Stateを推測してはならない。
+
+また、本Sectionに記載された工程名称または工程接続だけを根拠として、新しいFormal Workflow Status、Controlled Value、Audit Result、Human Approval DecisionまたはRepository Integration Stateを作成してはならない。
+
+Applicable AGENTS.mdその他のFormal Production Flow Authorityと本Sectionの記述に不一致が確認された場合、本Sectionだけを根拠として独自に解消せず、Applicable Authorityを確認する。
 
 ## Responsibility
 
@@ -303,6 +417,37 @@ Case Fileの構成および執筆形式を管理する。
 - 記述ルール
 - 品質基準
 - 更新ルール
+
+---
+
+## Publication Bible
+
+Approved Master Case FileをFREEおよびCLASSIFIED Publication Artifactへ変換するPublication Production基準を管理する。
+
+Publication BibleがApplicable Governance Processを経てFormal Adoptionされた場合、Publication Productionにおける専門的Source of Truthとして扱う。
+
+Formal Adoption前のCandidateはDraftとして扱い、Official Documentとして推論しない。
+
+### 管理内容
+
+- Publication Production Principle
+- FREE / CLASSIFIED Publication Role
+- Reader-facing Transformation
+- Information Architecture
+- Progressive Disclosure
+- LanguageおよびReader Comprehension
+- Epistemic Presentation
+- Source Traceability Presentation
+- Image and Visual PresentationのPublication側要件
+- CLASSIFIED Investigation Experience
+- Human Read Reviewに関するPublication基準
+- Publication Revision
+- Upstream Escalation
+- Publication Bible自身のGovernanceおよびMaintenance
+
+Publication Bibleは、Research、Master Case File、Case File Template、Image Rule、Art Bible、Audit Rule、Repository、DatabaseまたはDevelopmentのResponsibilityを代替しない。
+
+各事項は、それぞれを正式に所管するSource of TruthのResponsibility Scopeに従う。
 
 ---
 
@@ -608,6 +753,29 @@ ProjectORIGINの拡張は、既存の設計を置き換えるためではなく�
 ---
 
 # Version History
+
+## v1.1
+
+**Date:** 2026-09-06
+
+Publication Production Integration
+
+### Contents
+
+- Added Publication as a dedicated responsibility area in Chat Structure.
+- Added Publication Workflow Connection for FREE and CLASSIFIED Publication Production.
+- Established the high-level connection from Approved Master Case File to Publication Production.
+- Added Publication Bible to Document Structure.
+- Clarified that Publication Workflow Connection does not replace Formal Production Flow authority.
+- Preserved the authority of Applicable AGENTS.md and other formal workflow authorities.
+- Clarified the separation between Publication Production, Formal Audit, Human Read Review, Final Human Approval, and downstream integration.
+- Added the Revision → Required Re-Audit → Applicable Human Re-Review return path.
+- Prevented prior Audit or Review validation from being automatically inherited after Publication-level Revision.
+- Preserved the Draft-to-Official boundary for Publication Bible.
+
+### Reason for Change
+
+Integrated Publication Production and Publication Bible into the ProjectORIGIN operating structure while preserving existing responsibility, audit, approval, repository, database, image, and implementation authority boundaries.
 
 ## v1.0
 
