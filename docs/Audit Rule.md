@@ -2052,7 +2052,38 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 
 監査を通じて得られた知見をルール、テンプレート、制作フローおよびAI運用へ適切に反映することで、品質、一貫性、制作効率および保守性を継続的に向上させ、長期的に安定した品質保証体制を維持する。
 
+---
+
 # Version History
+
+# Audit Rule v1.3.2
+
+**Release Date**
+
+2026-09-06
+
+## Overview
+
+本VersionはApplicable AuditおよびHuman Approvalを経て、正式採用されたVersionである。
+
+Audit Rule v1.3.1を基準として、Compatibility情報を現在の正式文書構成へ更新した。
+
+本Versionでは、ProjectORIGIN全体の監査基準および運用ルールは変更せず、Operating ManualとのVersion整合性のみを修正した。
+
+---
+
+## Changes
+
+### Compatibility Update
+
+Compatibility reference maintenanceとして、Compatibilityに記載するOperating Manualの対応Versionを、現在の正式基準に合わせて更新した。
+
+- Operating Manual **v1.0 → v1.1**
+- Operating Manual v1.1との実質的Compatibility: **PASS**
+
+Audit Ruleの各Chapter、監査ロジック、監査分類、判定基準その他の責務には変更を加えていない。
+
+過去のVersion Historyは変更せず保持した。
 
 ---
 
@@ -2263,7 +2294,7 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 | Case File Template | v1.0.1 |
 | Database Rule | **v3.0** |
 | Image Rule | v1.1 |
-| Operating Manual | v1.0 |
+| Operating Manual | v1.1 |
 
 ---
 
@@ -2279,4 +2310,4 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 ## Status
 
-**Audit Rule v1.3.1** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
+**Audit Rule v1.3.2** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
