@@ -1,5 +1,5 @@
 **ProjectORIGIN Repository Rule**
-Version: v1.0
+Version: v1.1
 **Status:** Official
 **Project:** ProjectORIGIN
 
@@ -538,6 +538,10 @@ FREE Artifactは`free/`、CLASSIFIED Artifactは`classified/`との関係を維�
 
 `assets/`は、対象Caseに関連し、Applicable Source of Truthによって正式なAssetとして認められた成果物をCase単位で管理するための物理領域とする。
 
+Approved Image Asset Registrationでは、`assets/`にApproved Image AssetのBase Fileと同一VersionのSidecar Metadata JSONを保存する。Base FileとSidecar Metadataは同じ`assets/`直下に配置し、新しい`metadata/` Directoryは作成しない。
+
+Asset ID、Asset Filename Convention、Sidecar Metadata FilenameおよびMetadataの必須項目はApplicable Image Ruleに従う。
+
 Assetの分類、Source、License、Caption、Visual Role、Art Direction、生成方法その他の専門仕様は、本章では定義しない。
 
 それらはImage Rule、Art Bibleその他のApplicable Source of Truthに従う。
@@ -967,6 +971,8 @@ cases/FILE-XXX/assets/
 
 Asset Layerでは、Applicable Source of Truthによって正式なAssetとして認められた成果物を、対象Caseとの関係が識別可能な状態で管理する。
 
+Approved Image Asset Registrationの物理成果物として、Approved Image Asset Base FileおよびSidecar Metadata JSONを`cases/FILE-XXXX/assets/`直下で管理する。
+
 Assetの分類、Source、License、Caption、Visual Role、Art Direction、生成方法その他の専門仕様はImage Rule、Art Bibleその他のApplicable Source of Truthに従う。
 
 \`assets/\`の存在だけを根拠として、Asset Type、Subdirectory、Filename Convention、Metadata Structure、Registration Procedureその他の未定義仕様を独自に追加してはならない。
@@ -991,6 +997,14 @@ Audit Artifactは少なくとも、
 - Audit Result
 
 とのTraceabilityを維持しなければならない。
+
+Approved Image Asset Registrationに適用するImage Audit Artifactは、`cases/FILE-XXXX/audit/`に保存する。そのFilenameは以下のImage Audit専用形式とする。
+
+`<Asset-ID>_IMAGE-AUDIT_v<asset-version>.md`
+
+例: `FILE-0001-IMG-0001_IMAGE-AUDIT_v1.0.md`
+
+本形式はApproved Image Asset Registrationに使用するImage Audit Artifactに限定し、一般のAudit Artifact Filename Conventionを定義しない。
 
 \`audit/\`への配置は、Audit Method、Audit Criteria、Audit Resultの意味または監査工程そのものを定義しない。
 
@@ -1497,6 +1511,8 @@ FILE-XXX\_\[ARTIFACT-TYPE\]\_vX.Y.ext
 というProduction Artifact Naming Conventionの存在だけを根拠として、Asset Filename Conventionを推測してはならない。
 
 Asset Filename Conventionが正式に必要となる場合は、Asset Managementに関する未確定事項および関連Source of Truthとの整合を確認した上で定義する。
+
+Approved Image AssetのAsset Filename ConventionはImage Ruleに従う。これはProduction Artifact Naming ConventionをAssetへ自動適用するものではない。
 
 ---
 
@@ -2417,6 +2433,17 @@ Repository Ruleは、それらのProduction Workflow上の処理を独自に再�
 ---
 
 ## 7.4 Human Approval Boundary
+
+### Approved Image Asset Registration Write Exception
+
+Approved Image Asset RegistrationはFinal Human Approval前に実施できる。そのRegistrationに必要なImage Workflow Artifactに限り、以下へのRepository WriteをFinal Human Approval前に許可する。
+
+- `cases/FILE-XXXX/assets/`
+- `cases/FILE-XXXX/audit/`
+
+この限定WriteはApproved Image Asset Registrationの一部であり、Publication Artifact Repository Integrationではない。FREE / CLASSIFIED Publication ArtifactのRepository Integrationは、Applicable Final Flow AuditとHuman Approval Decision = `APPROVED`の後にのみ実施する。
+
+本例外は`assets/`または`audit/`以外へのHuman Approval前Repository Writeを許可せず、Publication Artifact、`publication-tracking.json`、DatabaseまたはPublication Statusの更新を許可しない。
 
 ProjectORIGINの標準Production Flowでは、Repository IntegrationはApplicable Final Flow Audit後のHuman Approvalにおいて、Applicable Human Approval Decisionとして\`APPROVED\`が成立した後に位置する。
 
@@ -4402,6 +4429,16 @@ AssetのPlacement変更だけを理由として、新しいAsset Identityを生�
 
 一方、正式な根拠から同一Assetであることを確認できない場合、Filenameまたは外観の類似だけを理由として統合してはならない。
 
+既存のLegacy Assetは、Approved Image Asset Registration仕様の追加だけを理由として自動Migrationしない。特に、`images/backgrounds/roswell.png`および`images/case-cards/file-0001.webp`を含むLegacy Assetに対し、以下を自動実行しない。
+
+- Approved Image Assetへの自動昇格
+- Mass Rename
+- Asset IDの自動発行
+- Metadataの自動生成
+- Audit PASSの自動継承
+
+Legacy AssetのMigrationは、別途のApplicability / Migration Determinationに従う。
+
 ---
 
 ## 9.17 Cross-Case Compatibility
@@ -4616,6 +4653,18 @@ Active HOLDの未確定仕様をCompatibilityの都合によって暗黙に確�
 --
 
 **Version History**
+v1.1
+Date: 2026-09-07
+Approved Image Asset Registration Specification
+**Contents**
+
+- Clarified physical placement for Approved Image Asset Base Files and sidecar metadata JSON.
+- Clarified placement for Image Audit Artifacts used in Approved Image Asset Registration.
+- Established the limited pre-Human-Approval Image Workflow Repository write.
+- Preserved the Human Approval gate for Publication Artifact Repository Integration.
+- Added the Image Audit-specific Artifact Filename Convention without defining a general Audit Artifact Filename Convention.
+- Prohibited automatic migration of legacy image assets.
+
 v1.0
 Date: 2026-08-30
 Initial Release

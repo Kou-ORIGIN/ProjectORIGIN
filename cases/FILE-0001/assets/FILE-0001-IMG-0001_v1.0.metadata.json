@@ -1,0 +1,97 @@
+{
+  "asset_id": "FILE-0001-IMG-0001",
+  "case_id": "FILE-0001",
+  "requirement_id": "IMGREQ-003",
+  "asset_version": "v1.0",
+  "filename": "FILE-0001-IMG-0001_v1.0.pdf",
+  "classification": "Document Scan",
+  "management_status": "APPROVED",
+  "source": {
+    "institution": "Federal Bureau of Investigation",
+    "repository": "FBI Vault",
+    "document_title": "Roswell UFO Part 01 (Final) — July 8, 1947 Dallas Field Office Teletype",
+    "document_date": "1947-07-08",
+    "source_page": "https://vault.fbi.gov/Roswell%20UFO/Roswell%20UFO%20Part%2001%20%28Final%29/view",
+    "direct_asset": "https://vault.fbi.gov/Roswell%20UFO/Roswell%20UFO%20Part%2001%20%28Final%29/at_download/file",
+    "approved_master_source_id": "SRC-002",
+    "provenance": "VERIFIED"
+  },
+  "rights": {
+    "status": "CLEAR FOR INTENDED USE",
+    "verification": "COMPLETE",
+    "permission_required": false,
+    "noncommercial_restriction": false,
+    "projectorigin_source_attribution": "REQUIRED",
+    "basis": "FBI-created federal government record; preceding Source/Rights Verification referenced 17 U.S.C. §105.",
+    "endorsement_boundary": [
+      "Attribution must not imply FBI sponsorship.",
+      "Attribution must not imply FBI approval.",
+      "Attribution must not imply FBI endorsement.",
+      "Attribution must not imply FBI independent debris identification.",
+      "Attribution must not imply FBI agreement with ProjectORIGIN analysis."
+    ]
+  },
+  "sha256": "3af49303bf8aae790d0b916979851e256dfaf9308d05c9a3e1f327176fabb12d",
+  "caption": "1947年7月8日、FBIダラス支局が送信した電信文。軍から伝えられた情報として、回収物が高高度気象観測気球とレーダー反射器に似ていたとの説明を記録している。FBIによる独立鑑定結果ではない。",
+  "credit": "出典：Federal Bureau of Investigation, FBI Vault, “Roswell UFO Part 01 (Final)”（1947年7月8日、SRC-002）",
+  "evidence_role": "1947年7月8日時点で、軍からFBIへ気球・レーダー反射器系の説明が伝達されたことを同時代文書によって補足するHistorical Evidence Asset。",
+  "evidence_boundary": [
+    "Document existence ≠ FBI independent identification.",
+    "Military-supplied description ≠ FBI laboratory conclusion.",
+    "Balloon / radar-reflector wording ≠ specific Project MOGUL flight identification.",
+    "Document authenticity ≠ independent proof of every statement inside it."
+  ],
+  "derivative_policy": {
+    "scope": "IMGREQ-003-specific",
+    "allowed": [
+      "Full-page raster rendering",
+      "Aspect-ratio-preserving responsive resize",
+      "Reader zoom",
+      "High-resolution page rendering",
+      "Limited reader-facing crop for legibility",
+      "Detail view linked to the complete page",
+      "Minimal non-content-changing format conversion or compression"
+    ],
+    "crop_conditions": [
+      "Identify the crop as a partial display.",
+      "Preserve evidentiary meaning.",
+      "Retain access to the complete page.",
+      "Do not imply FBI independent identification.",
+      "Do not imply identification of a specific Project MOGUL flight."
+    ],
+    "prohibited": [
+      "AI replacement",
+      "Reconstructed FBI document",
+      "Retyped image presented as the original",
+      "OCR presented as the original image",
+      "Addition or deletion of wording or markings",
+      "Misleading crop",
+      "Untraceable IMGREQ-003 derivative",
+      "Theory-strengthening manipulation"
+    ]
+  },
+  "image_audit_reference": "cases/FILE-0001/audit/FILE-0001-IMG-0001_IMAGE-AUDIT_v1.0.md",
+  "image_audit_result": "PASS",
+  "applicable_image_rule": {
+    "audit": "v1.1",
+    "registration": "v1.2"
+  },
+  "intended_placements": [
+    {
+      "artifact": "FILE 01",
+      "section": "同じ日｜『気球』という説明も現れる",
+      "caption": "1947年7月8日のFBI電信文。軍から伝えられた気球・レーダー反射器系の説明を記録したもので、FBIによる独立鑑定ではない。"
+    },
+    {
+      "artifact": "FILE 03",
+      "section": "EVIDENCE 02｜FBI文書",
+      "caption": "FBIダラス支局が1947年7月8日に送信した電信文。軍からFBIへ伝達された説明の存在を示すが、FBIの鑑定結果ではない。"
+    },
+    {
+      "artifact": "Source Archive",
+      "caption": "1947年7月8日、FBIダラス支局が送信した一ページの電信文。軍から伝えられた情報として、回収物が高高度気象観測気球とレーダー反射器に似ていたとの説明が記録されている。この文書はFBIによる独立鑑定や検査結果ではなく、特定のProject MOGUL飛行を同定するものでもない。"
+    }
+  ],
+  "created_at": "2026-09-07T22:52:12+09:00",
+  "updated_at": "2026-09-07T22:52:12+09:00"
+}

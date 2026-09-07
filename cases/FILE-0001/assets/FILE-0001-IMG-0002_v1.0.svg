@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">ブラゼルの残骸記述とMOGUL関連材料の比較</title>
+  <desc id="desc">1947年のブラゼルの証言と、後年のProject MOGULおよびレーダーターゲット関連資料における6種類の材料特徴を比較するProjectORIGIN解説図。</desc>
+  <rect width="1600" height="1000" fill="#f2eee4"/>
+  <rect x="0" y="0" width="58" height="1000" fill="#171717"/>
+  <rect x="58" y="0" width="8" height="1000" fill="#7d1820"/>
+  <text x="31" y="925" transform="rotate(-90 31 925)" fill="#f2eee4" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" letter-spacing="5">PROJECTORIGIN  /  EVIDENCE SHEET</text>
+
+  <g font-family="Arial, 'Hiragino Sans', 'Yu Gothic', sans-serif" fill="#171717">
+    <g transform="translate(100 60)">
+      <text x="0" y="24" font-size="28" font-weight="800" letter-spacing="2">ProjectORIGIN</text>
+      <rect x="0" y="40" width="1400" height="2" fill="#171717"/>
+      <rect x="0" y="40" width="258" height="6" fill="#7d1820"/>
+
+      <g transform="translate(0 70)" font-size="14" font-weight="700" letter-spacing="1.3">
+        <text x="0" y="0" fill="#7d1820">CASE FILE</text>
+        <text x="0" y="28" font-size="22">FILE-0001</text>
+        <text x="178" y="0" fill="#7d1820">EVIDENCE 04</text>
+        <text x="178" y="28" font-size="22">残骸の特徴</text>
+        <text x="380" y="0" fill="#7d1820">REQUIREMENT</text>
+        <text x="380" y="28" font-size="22">IMGREQ-011</text>
+      </g>
+
+      <text x="0" y="155" font-size="38" font-weight="800">ブラゼルの残骸記述とMOGUL関連材料の比較</text>
+      <text x="0" y="186" font-size="16" fill="#55514b">Comparison of Mac Brazel’s 1947 Debris Description and Project MOGUL / Radar-Target Related Materials</text>
+      <text x="1400" y="8" text-anchor="end" font-size="14" font-weight="700" fill="#7d1820">ProjectORIGIN Comparison Diagram（解説図）</text>
+      <text x="1400" y="30" text-anchor="end" font-size="13" fill="#55514b">史料写真または回収物の再現ではありません</text>
+    </g>
+
+    <g transform="translate(100 285)">
+      <rect width="1400" height="46" fill="#171717"/>
+      <rect x="0" width="405" height="46" fill="#242424"/>
+      <rect x="405" width="465" height="46" fill="#7d1820"/>
+      <text x="20" y="20" fill="#f7f3e9" font-size="15" font-weight="700">ブラゼルの1947年証言</text>
+      <text x="20" y="37" fill="#c9c3b8" font-size="11">1947年同時代証言 ・ SRC-007</text>
+      <text x="425" y="20" fill="#fff7ef" font-size="15" font-weight="700">材料適合性の評価</text>
+      <text x="425" y="37" fill="#ead3d0" font-size="11">ANALYTICAL COMPARISON / 直接同定ではない</text>
+      <text x="890" y="20" fill="#f7f3e9" font-size="15" font-weight="700">MOGUL／レーダーターゲット関連材料</text>
+      <text x="890" y="37" fill="#c9c3b8" font-size="11">後年の公式再構成・技術分析を含む ・ SRC-005 / SRC-013</text>
+
+      <g transform="translate(0 46)">
+        <rect width="1400" height="426" fill="#f8f5ed" stroke="#171717" stroke-width="1.5"/>
+        <line x1="405" y1="0" x2="405" y2="426" stroke="#8b857b"/>
+        <line x1="870" y1="0" x2="870" y2="426" stroke="#8b857b"/>
+        <line x1="0" y1="71" x2="1400" y2="71" stroke="#c9c3b8"/>
+        <line x1="0" y1="142" x2="1400" y2="142" stroke="#c9c3b8"/>
+        <line x1="0" y1="213" x2="1400" y2="213" stroke="#c9c3b8"/>
+        <line x1="0" y1="284" x2="1400" y2="284" stroke="#c9c3b8"/>
+        <line x1="0" y1="355" x2="1400" y2="355" stroke="#c9c3b8"/>
+
+        <g font-size="15">
+          <g transform="translate(0 0)">
+            <circle cx="28" cy="35" r="16" fill="#171717"/><text x="28" y="40" text-anchor="middle" fill="#f8f5ed" font-size="12" font-weight="700">01</text>
+            <text x="58" y="29" font-weight="700">ゴム状素材</text><text x="58" y="51" fill="#55514b">ゴム片 / rubber strips</text>
+            <rect x="425" y="14" width="274" height="42" rx="2" fill="#e8e0d4"/><rect x="425" y="14" width="5" height="42" fill="#7d1820"/>
+            <text x="444" y="31" font-size="11" fill="#7d1820" font-weight="700">MATERIAL COMPATIBILITY</text><text x="444" y="49" font-size="14" font-weight="700">強いが非固有</text>
+            <text x="890" y="40" font-weight="700">ゴム／ネオプレン系素材</text>
+          </g>
+          <g transform="translate(0 71)">
+            <circle cx="28" cy="35" r="16" fill="#171717"/><text x="28" y="40" text-anchor="middle" fill="#f8f5ed" font-size="12" font-weight="700">02</text>
+            <text x="58" y="29" font-weight="700">金属箔状素材</text><text x="58" y="51" fill="#55514b">金属箔 / tinfoil</text>
+            <rect x="425" y="14" width="274" height="42" rx="2" fill="#e8e0d4"/><rect x="425" y="14" width="5" height="42" fill="#7d1820"/>
+            <text x="444" y="31" font-size="11" fill="#7d1820" font-weight="700">MATERIAL COMPATIBILITY</text><text x="444" y="49" font-size="14" font-weight="700">強い材料適合性</text>
+            <text x="890" y="40" font-weight="700">アルミ色の箔状レーダー反射材</text>
+          </g>
+          <g transform="translate(0 142)">
+            <circle cx="28" cy="35" r="16" fill="#171717"/><text x="28" y="40" text-anchor="middle" fill="#f8f5ed" font-size="12" font-weight="700">03</text>
+            <text x="58" y="29" font-weight="700">紙状素材</text><text x="58" y="51" fill="#55514b">丈夫な紙 / tough paper</text>
+            <rect x="425" y="14" width="274" height="42" rx="2" fill="#e8e0d4"/><rect x="425" y="14" width="5" height="42" fill="#7d1820"/>
+            <text x="444" y="31" font-size="11" fill="#7d1820" font-weight="700">MATERIAL COMPATIBILITY</text><text x="444" y="49" font-size="14" font-weight="700">強い材料適合性</text>
+            <text x="890" y="40" font-weight="700">紙状／裏打ちされた反射材</text>
+          </g>
+          <g transform="translate(0 213)">
+            <circle cx="28" cy="35" r="16" fill="#171717"/><text x="28" y="40" text-anchor="middle" fill="#f8f5ed" font-size="12" font-weight="700">04</text>
+            <text x="58" y="29" font-weight="700">棒状構造材</text><text x="58" y="51" fill="#55514b">棒状の部材 / sticks</text>
+            <rect x="425" y="14" width="314" height="42" rx="2" fill="#e8e0d4"/><rect x="425" y="14" width="5" height="42" fill="#7d1820"/>
+            <text x="444" y="31" font-size="11" fill="#7d1820" font-weight="700">RETROSPECTIVE COMPARISON</text><text x="444" y="49" font-size="14" font-weight="700">後年資料に基づく比較</text>
+            <text x="890" y="40" font-weight="700">バルサ製構造棒</text>
+          </g>
+          <g transform="translate(0 284)">
+            <circle cx="28" cy="35" r="16" fill="#171717"/><text x="28" y="40" text-anchor="middle" fill="#f8f5ed" font-size="12" font-weight="700">05</text>
+            <text x="58" y="29" font-weight="700">テープ</text><text x="58" y="51" fill="#55514b">テープ / tape</text>
+            <rect x="425" y="14" width="314" height="42" rx="2" fill="#e8e0d4"/><rect x="425" y="14" width="5" height="42" fill="#7d1820"/>
+            <text x="444" y="31" font-size="11" fill="#7d1820" font-weight="700">RETROSPECTIVE COMPARISON</text><text x="444" y="49" font-size="14" font-weight="700">後年資料に基づく比較</text>
+            <text x="890" y="40" font-weight="700">レーダーターゲット組立用テープ</text>
+          </g>
+          <g transform="translate(0 355)">
+            <circle cx="28" cy="35" r="16" fill="#171717"/><text x="28" y="40" text-anchor="middle" fill="#f8f5ed" font-size="12" font-weight="700">06</text>
+            <text x="58" y="29" font-weight="700">ハトメ</text><text x="58" y="51" fill="#55514b">紙製のハトメ / paper eyelets</text>
+            <rect x="425" y="14" width="314" height="42" rx="2" fill="#e8e0d4"/><rect x="425" y="14" width="5" height="42" fill="#7d1820"/>
+            <text x="444" y="31" font-size="11" fill="#7d1820" font-weight="700">RETROSPECTIVE COMPARISON</text><text x="444" y="49" font-size="14" font-weight="700">後年資料に基づく比較</text>
+            <text x="890" y="40" font-weight="700">反射器構成部のハトメ</text>
+          </g>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(100 786)">
+      <rect width="1400" height="108" fill="#171717"/>
+      <rect width="8" height="108" fill="#7d1820"/>
+      <text x="30" y="27" fill="#d4a2a5" font-size="12" font-weight="700" letter-spacing="1.5">EVIDENCE BOUNDARY / 直接同定の限界</text>
+      <text x="30" y="57" fill="#f7f3e9" font-size="19" font-weight="700">複数の材料特徴には強い適合性がありますが、この比較だけでブラゼルの残骸を</text>
+      <text x="30" y="84" fill="#f7f3e9" font-size="19" font-weight="700">特定のProject MOGUL Flight 4と直接同定することはできません。</text>
+      <text x="1370" y="83" text-anchor="end" fill="#d4a2a5" font-size="13">COMPATIBILITY ≠ IDENTIFICATION</text>
+    </g>
+
+    <g transform="translate(100 925)" font-size="12">
+      <text x="0" y="0" font-weight="700" fill="#7d1820">SOURCES</text>
+      <text x="78" y="0">SRC-007  Roswell Daily Record, 1947-07-09</text>
+      <text x="465" y="0">SRC-005  U.S. Air Force, 1995</text>
+      <text x="780" y="0">SRC-013  Charles B. Moore, 1995</text>
+      <line x1="0" y1="16" x2="1400" y2="16" stroke="#8b857b"/>
+      <text x="0" y="39" fill="#55514b">Material compatibility ≠ direct identification  /  Similarity ≠ proof of provenance</text>
+      <text x="1400" y="39" text-anchor="end" font-weight="700">FILE-0001  ·  EVIDENCE 04  ·  IMGREQ-011</text>
+    </g>
+  </g>
+</svg>

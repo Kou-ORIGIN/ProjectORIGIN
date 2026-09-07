@@ -1,0 +1,88 @@
+{
+  "asset_id": "FILE-0001-IMG-0002",
+  "case_id": "FILE-0001",
+  "requirement_id": "IMGREQ-011",
+  "asset_version": "v1.0",
+  "filename": "FILE-0001-IMG-0002_v1.0.svg",
+  "classification": "Diagram",
+  "management_status": "APPROVED",
+  "source": {
+    "asset_origin": "ProjectORIGIN-produced diagram",
+    "production_method": "Hand-authored deterministic standalone SVG using native vector shapes and inspectable text",
+    "provenance": "VERIFIED",
+    "references": [
+      {
+        "source_id": "SRC-007",
+        "creator_or_publisher": "Roswell Daily Record",
+        "title_or_role": "Mac Brazel contemporary published testimony",
+        "date": "1947-07-09",
+        "temporal_role": "1947 contemporary source"
+      },
+      {
+        "source_id": "SRC-005",
+        "creator_or_publisher": "U.S. Air Force",
+        "title_or_role": "The Roswell Report: Fact Versus Fiction in the New Mexico Desert",
+        "date": "1995",
+        "temporal_role": "retrospective official comparison source"
+      },
+      {
+        "source_id": "SRC-013",
+        "creator_or_publisher": "Charles B. Moore",
+        "title_or_role": "The New York University Balloon Flights During Early June 1947",
+        "date": "1995",
+        "temporal_role": "retrospective technical comparison source"
+      }
+    ]
+  },
+  "rights": {
+    "status": "CLEAR FOR INTENDED USE",
+    "verification": "COMPLETE",
+    "asset_basis": "ProjectORIGIN-produced diagram containing only native vector geometry and inspectable text",
+    "third_party_visual_material": "NONE",
+    "embedded_photographs_scans_logos_icons_stock_art_fonts_or_raster_material": false,
+    "source_use_boundary": "Referenced source materials are identified textually as evidentiary support; this record makes no ownership claim over underlying source texts.",
+    "endorsement_boundary": "Source citation does not imply institutional or author endorsement of ProjectORIGIN analysis."
+  },
+  "sha256": "9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905",
+  "caption": "ブラゼルの同時代素材記述とMOGUL／radar-target関連材料の材料上の適合性を比較するProjectORIGIN解説図。この比較だけでは、ブラゼルの残骸を特定のProject MOGUL Flight 4と直接同定できない。",
+  "credit": "ProjectORIGIN comparison diagram. Evidence references: SRC-007, SRC-005, SRC-013.",
+  "evidence_role": "Material compatibility comparison diagram",
+  "evidence_boundary": [
+    "Material compatibility does not establish direct identification.",
+    "Similarity does not prove provenance.",
+    "Brazel's description does not establish confirmed specific Project MOGUL Flight 4 debris.",
+    "The existence of Project MOGUL does not directly prove that the Foster Ranch debris was MOGUL.",
+    "This Diagram is not a Historical Evidence Asset."
+  ],
+  "derivative_policy": {
+    "scope": "IMGREQ-011-specific",
+    "allowed": [
+      "Responsive SVG display",
+      "Raster rendering for delivery",
+      "Aspect-ratio-preserving resize",
+      "Reader zoom",
+      "Format conversion that does not change content"
+    ],
+    "required_boundaries": [
+      "Do not introduce a historical-looking reconstruction.",
+      "Do not alter labels.",
+      "Do not remove the uncertainty disclosure.",
+      "Do not remove source traceability.",
+      "Do not promote compatibility into identification.",
+      "Do not imply Historical Evidence status."
+    ]
+  },
+  "image_audit_reference": "cases/FILE-0001/audit/FILE-0001-IMG-0002_IMAGE-AUDIT_v1.0.md",
+  "image_audit_result": "PASS",
+  "applicable_image_rule": "Image Rule v1.2",
+  "intended_placements": [
+    {
+      "artifact": "FILE-0001_CLASSIFIED_v1.2.md",
+      "section": "EVIDENCE 04｜残骸の特徴",
+      "slot": "[ COMPARISON VISUAL ]",
+      "placement_status": "NOT PERFORMED"
+    }
+  ],
+  "created_at": "2026-09-08T00:36:41+09:00",
+  "updated_at": "2026-09-08T00:36:41+09:00"
+}

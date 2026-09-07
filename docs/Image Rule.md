@@ -504,6 +504,122 @@ ProjectORIGINで使用するすべての画像は、正式な画像資産とし�
 
 Asset Managementは、1000件以上のCase Fileを継続的に運用することを前提として運用する。
 
+## Asset State Distinction
+
+画像の状態は以下のとおり区別する。
+
+- Candidate: Image Audit前またはImage Audit対象として準備中の画像。
+- Audited Candidate: Image Auditの対象となり、Audit Resultが記録された画像。
+- Approved Image Asset: Image Audit PASS後、本章のApproved Image Asset Registrationを完了し、すべての成立条件を満たした正式画像資産。
+
+Image Audit PASSだけでApproved Image Assetは自動成立しない。
+
+## Approved Image Asset Registration
+
+Image Audit PASS後、Approved Image Assetを成立させるには、独立したApproved Image Asset Registrationを完了しなければならない。
+
+正式な状態遷移は以下とする。
+
+Image Audit PASS
+
+↓
+
+Approved Image Asset Registration
+
+↓
+
+Approved Image Asset
+
+↓
+
+Placement
+
+Approved Image Asset RegistrationはFinal Human Approval前に実施できる。ただし、このRegistrationはPublication Artifact Repository Integrationではない。
+
+Approved Image AssetはHuman Approval、Repository IntegrationまたはPublicationの成立を意味しない。
+
+## Asset Identity
+
+Approved Image Assetには、以下の形式でAsset IDを発行する。
+
+`FILE-XXXX-IMG-XXXX`
+
+例: `FILE-0001-IMG-0001`
+
+Asset IDはCase単位の4-digit連番とし、一度発行したAsset IDは再利用しない。Asset IDはRequirement IDと異なるIdentityであり、`IMGREQ-003`などのRequirement IDをAsset IDとして使用しない。
+
+## Approved Asset Filename Convention
+
+Approved Image AssetのBase Asset Filenameは以下の形式とする。
+
+`<Asset-ID>_v<version>.<ext>`
+
+例: `FILE-0001-IMG-0001_v1.0.pdf`
+
+Filenameに説明文を追加せず、詳細情報はSidecar Metadataで管理する。
+
+## Sidecar Metadata
+
+Approved Asset Metadataは、Base Assetと同じ`cases/FILE-XXXX/assets/`にSidecar JSONとして保存する。
+
+Sidecar Filenameは以下の形式とする。
+
+`<Asset-ID>_v<version>.metadata.json`
+
+新しい`metadata/` Directoryは作成しない。
+
+Sidecar Metadataは以下のFieldを必須とする。
+
+- `asset_id`: Approved Image AssetのAsset ID。
+- `case_id`: Assetが属するCase ID。
+- `requirement_id`: Assetが対応するImage Requirement ID。
+- `asset_version`: Assetの適用Version。
+- `filename`: Base AssetのFilename。
+- `classification`: Image Ruleに従ったImage Classification。
+- `management_status`: Asset Management上の管理状態。
+- `source`: Source Provenanceに必要なSubfieldを保持できるObject。
+- `rights`: Rights Verificationに必要なSubfieldを保持できるObject。
+- `sha256`: Base AssetのOriginal bytesに対するSHA-256。
+- `caption`: 適用する読者向けCaption。
+- `credit`: 適用するSource / Credit表示。
+- `evidence_role`: AssetのEvidence上の役割。
+- `evidence_boundary`: Assetから推論してはならない範囲を含むEvidence Boundary。
+- `derivative_policy`: Derivativeの作成・利用・追跡条件。
+- `image_audit_reference`: 適用されるImage Audit ArtifactへのRepository-relative Reference。
+- `image_audit_result`: 適用されるImage Audit Result。
+- `applicable_image_rule`: AuditおよびRegistrationに適用したImage Rule Version。
+- `intended_placements`: 予定されるPlacementを識別する情報。
+- `created_at`: 対象Assetの登録作成日時。
+- `updated_at`: 対象Asset Metadataの最終更新日時。
+
+本Versionは各FieldのRequired Statusと意味を定義するが、具体的なData TypeまたはJSON Schema Draftは定義しない。
+
+## Image Audit Artifact Reference
+
+Image Audit Resultは独立したAudit Artifactとして`cases/FILE-XXXX/audit/`へ保存し、Sidecar Metadataの`image_audit_reference`から追跡できる状態を維持する。
+
+Approved Image Asset Registrationに使用するImage Audit ArtifactのFilenameは以下の形式とする。
+
+`<Asset-ID>_IMAGE-AUDIT_v<asset-version>.md`
+
+例: `FILE-0001-IMG-0001_IMAGE-AUDIT_v1.0.md`
+
+Image Audit Artifactは少なくとも以下とのTraceabilityを維持する。
+
+- Case ID
+- Asset ID
+- Asset Version
+- Base Asset Filename
+- SHA-256
+- Audit Type
+- Applicable Image Rule
+- Audit Result
+- Findings
+- Re-Audit Required
+- Audit Date
+
+本命名規則はApproved Image Asset Registrationに使用するImage Audit Artifactに限定し、一般のAudit Artifact Filename Conventionを定義しない。
+
 ## Asset Information
 
 画像ごとに、必要に応じて以下の情報を管理する。
@@ -532,11 +648,34 @@ Asset Managementは、1000件以上のCase Fileを継続的に運用すること
 
 ## Version Management
 
-画像の差し替え、修正または管理情報の更新を行った場合は、バージョンを更新する。
+Initial RegistrationのAsset Versionは`v1.0`とする。
 
-変更内容は履歴として管理し、必要に応じて過去の状態を確認できるよう維持する。
+Base AssetのOriginal bytesを変更せず、Metadata、CaptionまたはRightsのみを更新する場合はMinor Versionとし、`v1.1`、`v1.2`のように更新する。
 
-画像そのものに変更がない場合でも、出典やライセンスなどの管理情報を更新した場合は、その履歴を記録する。
+Base Assetのbyte contentを変更する場合はMajor Versionとし、`v2.0`、`v3.0`のように更新する。Base AssetのSHA-256が変更される場合はMajor Versionを必須とする。
+
+Version変更時は旧VersionをSilent Overwriteせず、変更内容と新旧Versionの追跡可能性を維持する。
+
+## Approved Image Asset Criteria
+
+以下がすべて成立した場合に限り、`management_status = APPROVED`とする。
+
+- Source Provenanceが`VERIFIED`である。
+- Rights Verificationが完了している。
+- Classificationが完了している。
+- Metadataが完了している。
+- Captionが完了している。
+- Image Audit Resultが`PASS`である。
+- unresolved blockerが存在しない。
+- unresolved HOLDが存在しない。
+- Base Assetの正確なSHA-256が固定されている。
+- Image Audit Artifactを一意に追跡できる。
+
+Human ApprovalはApproved Image Assetの成立条件に含めない。
+
+## Original Base Asset Preservation
+
+Approved Image Assetとして登録したBase AssetのOriginal bytesを保持する。Derivativeのみを残してBase Assetを失ってはならない。
 
 ## Update Management
 
@@ -609,6 +748,8 @@ Case Card Imageについても、本章で定める品質基準を適用し、�
 
 画像を公開する前に、以下の項目を確認する。
 
+Publication ArtifactへのPlacementは、対象画像のApproved Image Asset Registrationが完了し、`management_status = APPROVED`となった後にのみ行う。
+
 - Image Classificationが適切に設定されている。
 - 掲載目的が明確であり、本文との関連性がある。
 - 出典およびライセンスが確認されている。
@@ -655,6 +796,19 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 ---
 
 # Version History
+
+## v1.2
+
+### Approved Image Asset Registration
+
+- Approved Image Asset Registrationを正式化した。
+- Candidate、Audited CandidateおよびApproved Image Assetの状態境界を定義した。
+- Asset ID FormatおよびAsset Filename Conventionを追加した。
+- Sidecar Metadataの管理とRequired Metadata Fieldsを定義した。
+- Image Asset Version RuleとOriginal Base Asset Preservationを定義した。
+- Image Audit Artifact ReferenceとImage Audit専用Filename Conventionを追加した。
+- Approved Image Assetの成立条件とPlacement Boundaryを明確化した。
+- Human Approval、Publication Artifact Repository IntegrationおよびPublicationとの責務境界を維持した。
 
 ## v1.1
 
@@ -709,12 +863,6 @@ ProjectORIGINにおける画像運用の正式設計書として、Image Rule v1
 
 ### Version Update Format
 
-#### v1.2
-
-- 軽微な運用ルールの改善
-- 品質基準の調整
-- 文言の統一および明確化
-
 #### v1.3
 
 - 新しい画像カテゴリへの対応
@@ -726,4 +874,3 @@ ProjectORIGINにおける画像運用の正式設計書として、Image Rule v1
 - 大規模な構成変更
 - 管理方針の改訂
 - 長期運用方針の更新
-

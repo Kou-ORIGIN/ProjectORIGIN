@@ -2056,6 +2056,35 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 
 # Version History
 
+# Audit Rule v1.3.3
+
+**Release Date**
+
+2026-09-07
+
+## Overview
+
+本VersionはHuman Version Decisionに基づき、Audit Rule v1.3.2のCompatibility参照を現行の正式Versionへ更新したVersionである。
+
+本Versionでは、ProjectORIGIN全体の監査基準、監査方法、監査分類、判定基準およびDecision Semanticsに変更を加えていない。
+
+---
+
+## Changes
+
+### Compatibility Update
+
+Compatibility reference maintenanceとして、Compatibilityに記載する対応Versionを現在の正式基準に合わせて更新した。
+
+- AGENTS.md **v1.0 → v1.1**
+- Image Rule **v1.1 → v1.2**
+
+Audit Method、Severity、Audit Result、Finding、Re-Audit、HOLD、Human Approval Gate、Repository Integration Boundary、Publication Boundaryその他の監査上の意味には変更を加えていない。
+
+過去のVersion Historyは変更せず保持した。
+
+---
+
 # Audit Rule v1.3.2
 
 **Release Date**
@@ -2287,13 +2316,13 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 | Document | Compatible Version |
 |----------|--------------------|
-| AGENTS.md | v1.0 |
+| AGENTS.md | v1.1 |
 | Research Bible | v1.0 |
 | Research Template | v1.0 |
 | Master Case File Template | v1.0.0 |
 | Case File Template | v1.0.1 |
 | Database Rule | **v3.0** |
-| Image Rule | v1.1 |
+| Image Rule | v1.2 |
 | Operating Manual | v1.1 |
 
 ---
@@ -2310,4 +2339,4 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 ## Status
 
-**Audit Rule v1.3.2** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
+**Audit Rule v1.3.3** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。

@@ -1,8 +1,8 @@
 # ProjectORIGIN AGENTS.md
 
-**Version:** v1.0
+**Version:** v1.1
 **Status:** APPROVED
-**Release:** Initial Release
+**Release:** Approved Image Asset Registration Specification
 
 ---
 
@@ -1641,6 +1641,10 @@ Image Audit
 
 ↓
 
+Approved Image Asset Registration
+
+↓
+
 Approved Image Assets
 
 ↓
@@ -1713,6 +1717,10 @@ Image Audit
 
 ↓
 
+Approved Image Asset Registration
+
+↓
+
 Approved Image Asset
 
 ↓
@@ -1726,6 +1734,10 @@ Approved Assetとして扱わない。
 Image Audit PASS前の画像は、
 
 正式公開成果物へ配置してはならない。
+
+Image AuditがPASSしたことだけで、Approved Image Assetは成立しない。
+
+Image Ruleに従うApproved Image Asset Registrationを完了し、Approved Image Assetとしての成立条件をすべて満たした後にのみPlacementへ進む。
 
 具体的なImage運用は、
 
@@ -1991,6 +2003,15 @@ Master Audit
 Human Approval後、
 
 Repository / Databaseへ反映する。
+
+例外として、Approved Image Asset Registrationに必要なImage Workflow Artifactに限り、Final Human Approval前であっても以下へのRepository Writeを許可する。
+
+* `cases/FILE-XXXX/assets/`
+* `cases/FILE-XXXX/audit/`
+
+この限定WriteはApproved Image Asset Registrationの一部であり、Publication Artifact Repository Integrationではない。
+
+FREE / CLASSIFIED Publication ArtifactのRepository Integrationは、従来どおりHuman Approval後にのみ実施する。
 
 Repository Agentは、
 
@@ -4176,6 +4197,18 @@ AIが失敗しないSystemではなく、
 を目指す。
 
 # Version History
+
+## v1.1
+
+**Status:** APPROVED
+**Release:** Approved Image Asset Registration Specification
+
+### Changes
+
+* Image WorkflowにApproved Image Asset Registration工程を追加した。
+* Image Audit PASSとApproved Image Asset成立の状態境界を明確化した。
+* Final Human Approval前に許可されるImage Workflow用の限定Repository Writeを明確化した。
+* FREE / CLASSIFIED Publication ArtifactのRepository Integrationに対するHuman Approval Gateを維持した。
 
 ## v1.0
 
