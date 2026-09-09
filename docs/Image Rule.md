@@ -220,6 +220,31 @@ AI Visualizationについては、生成画像であることを明確に管理�
 
 著作権、肖像権およびその他の権利を十分に確認した上で運用する。
 
+## Rights Inquiry Lifecycle
+
+SourceまたはRightsの追加確認が必要な場合、以下の責務を分離して管理する。
+
+1. Rights status determination
+2. Institution / contact verification
+3. AI inquiry preparation
+4. Human send
+5. External response wait
+6. Response evidence capture
+7. AI-assisted response extraction
+8. Human-controlled interpretation when ambiguous
+9. Rights Verification
+10. Continuation / stop / alternative-source decision
+
+Inquiry DraftはInquiry Sentを意味しない。Inquiry SentはRights Verifiedを意味しない。Response ReceivedはRights Clearを意味しない。External silenceをPermissionとして扱ってはならない。
+
+Institutionへ連絡したことは、当該InstitutionによるProjectORIGINの承認またはendorsementを意味しない。AIによるresponse extractionはHuman consent、contractual acceptanceまたは曖昧なRights条件の最終解釈を意味しない。
+
+AIは公開情報の収集、contact候補の確認、Inquiry draft、responseの構造化および制限条件の抽出を実行できる。ただし、legal permission、contractual acceptance、Human consentまたは曖昧なRights interpretationを独自に成立させてはならない。
+
+Rights Workflowの進行記録とApproved Image Asset Sidecar Metadataの`rights` fieldは異なる責務を持つ。Sidecar MetadataはApplicableな検証済みRights結論を保持し、Rights Evidence本文またはExternal correspondenceを複製しない。
+
+本Lifecycleは責務と状態の意味を定義するものであり、新しいProject-wide Controlled Value一覧を制定しない。
+
 ## Long-term Operation
 
 画像の出典およびライセンス情報は継続的に管理する。
@@ -340,6 +365,31 @@ Reconstructionは、既存資料、証言または研究成果に基づいて制
 読者が本文を読みながら画像を参照できるよう、掲載位置は内容との対応関係を明確にする。
 
 複数の画像を掲載する場合は、本文の流れに沿った順序で配置する。
+
+### Placement Transaction
+
+Placementは、Approved Image AssetのAsset ID、Asset VersionおよびBase Asset SHA referenceを、特定のPublication Artifact identity、Version、SectionおよびSlotへ結び付ける正式な変更操作として扱う。
+
+Placement Transactionでは、少なくとも以下を識別可能にする。
+
+- `asset_id`
+- `asset_version`
+- Base Asset SHA reference
+- Target Publication Artifact identity
+- Target Publication Artifact version
+- Target Section / Slot
+- Caption / Credit reference
+- Placement operation date
+- Placement result
+- Affected Audit references
+- Re-Audit determination
+- Rollback / failure state
+
+Placement後はChange Impact Assessmentを行い、影響するPublication ArtifactについてApplicable Audit Authorityに従うRe-Auditを実施する。Reader-facing meaningへMaterialな影響がある場合は、Applicable Publication Authorityに従うHuman Re-Reviewも実施する。
+
+Placement失敗時は、部分的な参照、壊れたAsset referenceまたはTarget ArtifactとのVersion不整合を正常状態として残さない。安全に完了できない場合は変更を完了扱いにせず、確認可能な直前状態へ戻すか、明示的なfailure stateとして停止する。
+
+PlacementはApproved Image Asset、Human Approval、Publication Artifact Repository IntegrationまたはPublicationを成立させない。
 
 ## Reading Flow
 
@@ -504,6 +554,42 @@ ProjectORIGINで使用するすべての画像は、正式な画像資産とし�
 
 Asset Managementは、1000件以上のCase Fileを継続的に運用することを前提として運用する。
 
+## Image Requirement Management
+
+Image Requirementは、CaseまたはPublication Artifactで必要または候補となる画像のReader Purpose、Production Route、Dependencyおよび完了条件を識別する管理単位である。
+
+Image RequirementにはCase内で一意のRequirement IDを付与する。Requirement IDはApproved Image Asset Registrationで発行されるAsset IDとは異なるIdentityである。
+
+**Requirement ID ≠ Asset ID**
+
+Requirementが存在することだけを理由としてAsset IDを発行してはならない。Asset IDは本章のApproved Image Asset Registration条件を満たす段階でのみ発行する。
+
+Case単位のImage Requirement Registerは、以下に保存する。
+
+`cases/FILE-XXXX/image-requirements.json`
+
+Registerは、少なくともApplicableな範囲で以下を管理できる。
+
+- `requirement_id`
+- `case_id`
+- Required / Optional distinction
+- `reader_purpose`
+- `classification_candidate`
+- `production_route`
+- `dependency_references`
+- Source / Rights reference
+- Intended Placement reference
+- Current orchestration state
+- Blocking reason
+- Resulting Asset reference
+- Completion condition
+
+Registerのformat versionは内部に保持できるが、Caseの進行、Requirementの増減または通常の状態更新だけを理由としてformat versionを増加させてはならない。
+
+RegisterはRights Evidence、Image Sidecar Metadata、Image Audit Result、Human Review DecisionまたはPublication Trackingを複製、置換または推測しない。Case Workflow Orchestration ManifestはRegisterを参照できるが、Image Requirement管理のSource of Truthにはならない。
+
+Required Requirementは、定義されたCompletion Conditionが確認されるまで完了扱いにしない。DependencyまたはRightsが未解決の場合、そのBlocking reasonを不可視化してAsset成立またはPlacementへ進めてはならない。
+
 ## Asset State Distinction
 
 画像の状態は以下のとおり区別する。
@@ -537,6 +623,27 @@ Placement
 Approved Image Asset RegistrationはFinal Human Approval前に実施できる。ただし、このRegistrationはPublication Artifact Repository Integrationではない。
 
 Approved Image AssetはHuman Approval、Repository IntegrationまたはPublicationの成立を意味しない。
+
+## Mandatory Registration Mechanical Validation
+
+すべてのApproved Image Asset Registrationは、完了前に次のmechanical validationを実施する。
+
+- Base AssetおよびRequired Registration Artifactの存在
+- Applicable Filename Convention
+- Case-scoped Asset IDの一意性
+- Asset Versionの一貫性
+- CandidateとRepository Base AssetのSHA-256またはbyte identity
+- Sidecar Metadata JSONの妥当性
+- Required Metadata Fieldの存在
+- Image Audit Artifact Referenceの解決
+- `management_status = APPROVED`成立条件
+- Existing Approved Assetの非破壊
+
+Mechanical ValidationはFormal Auditそのものではない。ValidationがPASSしたことだけでImage Audit、Human Visual Review、Human Approval、Repository IntegrationまたはPublicationを成立させてはならない。
+
+独立したFormal Registration Verification Auditはconditionalとし、initial implementation、manual registration、migration、ID／Version conflict、Rights conflict、high-risk exception、Rule transitionその他Applicable Audit Authorityが定義するrisk triggerがある場合に実施する。
+
+FILE-0001で実施された既存Registration Verification Auditは有効なEvidenceとして保持するが、その存在だけを理由として全RegistrationへのUniversal Formal Audit要件を成立させない。
 
 ## Asset Identity
 
@@ -744,6 +851,20 @@ Asset Managementは、ProjectORIGIN全体の品質管理の一部として継続
 
 Case Card Imageについても、本章で定める品質基準を適用し、他の画像種別と同等の品質管理を行う。
 
+## Human Visual Review
+
+Human Visual Reviewは、reader-facing visual meaning、構成、誤認可能性および可読性について人間が確認するconditional quality gateである。すべての画像へ一律に要求しない。
+
+Applicable候補には、ProjectORIGIN-produced Diagram、AI Visualization、Reconstruction、composite comparison layout、material crop／transformation、およびvisual treatmentによってReaderの理解が変化し得るその他のAssetを含む。
+
+ApplicabilityはImage Classificationだけで自動確定せず、Transformation、Visual Interpretation、Evidentiary RiskおよびReader Impactを考慮する。
+
+Reviewはexact Candidate identityまたはSHA-256へ結び付ける。Review後にCandidateへMaterial Changeが行われた場合、旧Review Resultを変更後Candidateへ自動継承せず、ApplicableなHuman Re-Reviewを行う。
+
+Human Visual ReviewとFormal Image Auditの前後関係をUniversalな固定順序として定義しない。いずれかの後にCandidateがMaterialに変更された場合、影響を受けるReviewまたはAuditのApplicabilityを再評価する。
+
+Human Visual ReviewはPublication Artifact全体を対象とするHuman Read ReviewでもFinal Human Approvalでもない。
+
 ## Publication Criteria
 
 画像を公開する前に、以下の項目を確認する。
@@ -796,6 +917,21 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 ---
 
 # Version History
+
+## v1.3
+
+### Case Production Workflow Formalization
+
+- Image Requirement RegisterとRequirement ID／Asset ID boundaryを定義した。
+- Rights Inquiry LifecycleのAI、Human、External WaitおよびVerification責務を分離した。
+- Human Visual Reviewをrisk／classification-based conditional gateとして定義した。
+- 全Registrationのmandatory mechanical validationとconditional Formal Registration Verification Auditを分離した。
+- Placement Transaction、Change Impact Assessment、Re-AuditおよびHuman Re-Review境界を定義した。
+- Human Approval、Publication Artifact Repository IntegrationおよびPublicationとの責務分離を維持した。
+
+### Status
+
+OFFICIAL。Current Official Versionはv1.3とする。Human Formal Adoption Decision = `APPROVED`により正式採用された。
 
 ## v1.2
 

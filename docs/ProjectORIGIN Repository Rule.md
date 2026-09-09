@@ -1,6 +1,7 @@
 **ProjectORIGIN Repository Rule**
-Version: v1.1
+Version: v1.2
 **Status:** Official
+**Current Official Version:** v1.2
 **Project:** ProjectORIGIN
 
 ---
@@ -696,6 +697,40 @@ Database Schema仕様はDatabase RuleおよびDatabase Schemaの責務とし、
 `publication-tracking.json`の正式化だけを理由として
 Database Fieldを新設してはならない。
 
+### Image Requirement Register
+
+Case-scoped Image Requirement management artifactは、次のpathで管理する。
+
+`cases/FILE-XXXX/image-requirements.json`
+
+本Artifactは`assets/`、`audit/`または`publication-tracking.json`へ配置しない。Image Requirementの意味、Requirement ID、Dependency、Blocking stateおよびRequirement CompletionはApplicable Image Ruleの責務とする。
+
+本ArtifactはRights Evidence、Image Sidecar Metadata、Image Audit Result、Human Review DecisionまたはPublication Trackingを複製または置換しない。
+
+### Case Workflow Orchestration Manifest
+
+Case Workflow Orchestration Manifestは、次のpathで管理する。
+
+`cases/FILE-XXXX/orchestration-manifest.json`
+
+本Manifestはnon-authoritativeなexecution cursor、dependency aggregator、external-wait reference layer、human-gate reference layerおよびformal-artifact reference layerである。
+
+ManifestはCase-level Workflow Status、Publication Status、Audit Result、Audit Findings、Rights Evidence、Image Metadata、Human Read Review Decision、Human Approval Decision、Repository Integration Result、Publication Completion Evidenceまたは`publication-tracking.json`のSource of Truthにならない。
+
+`workflow_version`はApplicable Case Production Workflow definitionのVersionを表し、AGENTS.md Version、Case progressまたはCase Artifact Versionを表さない。
+
+`manifest_version`はManifest formatのVersionを表し、Case progress、Case RevisionまたはWorkflow Versionを表さない。Manifest contentの通常更新だけを理由として`manifest_version`を増加させない。
+
+### Human Review Package
+
+Case-wide Human Review Packageは、次のpathおよびfilenameで管理する。
+
+`cases/FILE-XXXX/human-review-package_v<version>.json`
+
+本Packageはreference-only、version-boundかつimmutableなHuman Review snapshotである。Silent Overwriteを禁止し、参照対象へのMaterial Change後は旧PackageのApplicabilityを自動継承しない。
+
+Packageの存在は、新しいREADY state、Human Approval、Repository IntegrationまたはPublicationを成立させない。Audit、Rights EvidenceまたはHuman Decisionの内容を権威的に複製しない。
+
 ---
 
 ## 3.14 Case Creation Principle
@@ -723,6 +758,9 @@ ProjectORIGINの正式な基本Case Repository Structureは、以下とする。
  │ └── classified/
  ├── assets/
  ├── audit/
+ ├── image-requirements.json
+ ├── orchestration-manifest.json
+ ├── human-review-package_v<version>.json
  └── publication-tracking.json
 
 `FILE-XXX`は、Repository上で対象Caseを識別する正式な
@@ -975,6 +1013,10 @@ Approved Image Asset Registrationの物理成果物として、Approved Image As
 
 Assetの分類、Source、License、Caption、Visual Role、Art Direction、生成方法その他の専門仕様はImage Rule、Art Bibleその他のApplicable Source of Truthに従う。
 
+Approved Image AssetのPlacementは、Applicable Image Ruleに従い、Asset ID、Asset VersionおよびSHA referenceを特定Publication Artifact identity、Version、SectionおよびSlotへ結び付ける変更操作として扱う。
+
+Repository上では、Placementに使用するAsset Referenceが実在するApproved Image AssetおよびTarget Artifact identityと一致することを確認する。Placementだけを理由としてPublication Artifact Repository Integration、Human Approval、PublicationまたはPublication Status変更を成立させない。
+
 \`assets/\`の存在だけを根拠として、Asset Type、Subdirectory、Filename Convention、Metadata Structure、Registration Procedureその他の未定義仕様を独自に追加してはならない。
 
 ---
@@ -1005,6 +1047,20 @@ Approved Image Asset Registrationに適用するImage Audit Artifactは、`cases
 例: `FILE-0001-IMG-0001_IMAGE-AUDIT_v1.0.md`
 
 本形式はApproved Image Asset Registrationに使用するImage Audit Artifactに限定し、一般のAudit Artifact Filename Conventionを定義しない。
+
+Approved ResearchおよびApproved Master Case FileのPre-Approval Persistenceに対応するAudit Artifactは、次の限定形式を使用する。
+
+Research Audit Artifact:
+
+`FILE-XXXX_RESEARCH_v<artifact-version>_AUDIT-XXXX.md`
+
+Master Audit Artifact:
+
+`FILE-XXXX_MASTER_v<artifact-version>_AUDIT-XXXX.md`
+
+`v<artifact-version>`は監査対象Artifact Versionであり、`AUDIT-XXXX`は4-digitのAudit run identityである。Re-Auditは新しいAudit run identityを持つ新しいAudit Artifactを作成し、既存Audit ArtifactをSilent Overwriteしない。
+
+本形式はResearch Audit ArtifactおよびMaster Audit Artifactに限定する。その他の一般Audit Artifact Filename Conventionを自動的に定義しない。FILE-0001に存在する旧Audit Referenceは、命名形式の差だけを理由として無効化しない。
 
 \`audit/\`への配置は、Audit Method、Audit Criteria、Audit Resultの意味または監査工程そのものを定義しない。
 
@@ -1212,16 +1268,27 @@ ProjectORIGINのCase Production Artifactは、以下をFilename IdentityのCore�
 
 FILE-XXX\_\[ARTIFACT-TYPE\]\_vX.Y.ext
 
-例：
+旧来の例示（legacy illustrative examples。current canonical exampleではない）：
 
 FILE-001_RESEARCH_v1.0.md
 FILE-001_MASTER_v1.0.md
 FILE-001_FREE_v1.0.md
 FILE-001_CLASSIFIED_v1.0.md
 
+現行canonical Case IDを使用する例：
+
+FILE-0001_RESEARCH_v1.0.md
+FILE-0002_MASTER_v1.0.md
+
 本Naming Conventionは、ProjectORIGIN RepositoryにおけるProduction Artifactの基本命名方式として使用する。
 
 \`FILE-XXX\`、\`\[ARTIFACT-TYPE\]\`、\`vX.Y\`および\`.ext\`は、それぞれ異なる識別責務を持つ。
+
+旧来の汎用Naming例に現れる\`FILE-XXX\`、\`FILE-001\`、\`FILE-002\`その他の3桁具体例は、Case Identifier Componentを説明するsymbolicかつlegacyなillustrative notationであり、文字通りの3桁Case ID要件またはcurrent canonical Case IDを示すものではない。旧来の\`FILE-001\`は現行ルール上の\`FILE-0001\`に、\`FILE-002\`は\`FILE-0002\`に対応する。
+
+現行ProjectORIGINのcanonical Case IDは4桁番号の\`FILE-XXXX\`形式とし、例は\`FILE-0001\`とする。実際のArtifact Filenameでは、\`FILE-XXX\`というplaceholder文字列または3桁固定値を使用せず、対象Caseのcanonical Case IDを使用する。
+
+したがって、Approved ResearchおよびApproved Master Case Fileに対する\`FILE-XXXX_RESEARCH_v<artifact-version>.md\`および\`FILE-XXXX_MASTER_v<artifact-version>.md\`は、本Core Naming Conventionと整合する。本Compatibility clarificationはFREE、CLASSIFIEDその他のArtifact TypeのNaming仕様を再定義しない。
 
 Filenameの各構成要素は、単なる表示上の文字列としてではなく、対象ArtifactをRepository上で識別するための情報として扱う。
 
@@ -1231,17 +1298,21 @@ Filenameの各構成要素は、単なる表示上の文字列としてではな
 
 Filenameの\`FILE-XXX\`部分は、対象Artifactが属するCaseのCase Directory Identifierと整合しなければならない。
 
-例えば、以下のArtifactは、
+本Sectionの\`FILE-XXX\`表記も旧来のsymbolic placeholder notationである。現行の実際のCase Identifier Componentは、Case Directoryと一致する4桁のcanonical Case ID、すなわち\`FILE-XXXX\`形式（例：\`FILE-0001\`）を使用する。
 
-FILE-001_RESEARCH_v1.0.md
+本Compatibility clarificationは、FILE-0001の既存Artifact、legacy Audit Reference、Approved Image Asset、FREE／CLASSIFIED ArtifactまたはRepository HistoryのRename、Migration、Regeneration、Re-registrationまたは過去遡及的無効化を要求しない。歴史的に有効だったConventionに従う既存Artifactを、本clarificationのみを理由として無効としてはならない。
 
-原則として\`FILE-001\`として識別されるCaseとの関係を維持する。
+例えば、現行の以下のArtifactは、
+
+FILE-0001_RESEARCH_v1.0.md
+
+原則として\`FILE-0001\`として識別されるCaseとの関係を維持する。
 
 Case Directory IdentifierとFilename内のCase Identifierが矛盾する状態を正式なRepository管理として許容しない。
 
 例えば、
 
-cases/FILE-001/research/FILE-002_RESEARCH_v1.0.md
+cases/FILE-0001/research/FILE-0002_RESEARCH_v1.0.md
 
 のように、Directory上のCase IdentityとFilename上のCase Identityが一致しない状態を正式Artifactとして扱ってはならない。
 
@@ -2133,6 +2204,10 @@ Repository IntegrationとPublicationは独立した工程として扱う。
 `    ``≠`
 `Publication`
 Repository Integrationに必要なArtifact、Version、Metadata、Asset Referenceその他の更新は、Applicable Source of Truthに従う。
+
+Publication execution、Publication completion evidence、Publication Statusおよびartifact-level publication trackingは、それぞれ異なる責務として管理する。
+
+`publication-tracking.json`はPublication StatusのSource of Truthではなく、Publication completion evidenceでもない。Repository Integrationまたはtracking metadataの更新だけを理由としてPublication完了を推測してはならない。
 Database FieldまたはOperational Metadataの具体的なSchemaを、本章だけを根拠として新設してはならない。
 
 ## 6.16 Database and Metadata Boundary
@@ -2444,6 +2519,39 @@ Approved Image Asset RegistrationはFinal Human Approval前に実施できる。
 この限定WriteはApproved Image Asset Registrationの一部であり、Publication Artifact Repository Integrationではない。FREE / CLASSIFIED Publication ArtifactのRepository Integrationは、Applicable Final Flow AuditとHuman Approval Decision = `APPROVED`の後にのみ実施する。
 
 本例外は`assets/`または`audit/`以外へのHuman Approval前Repository Writeを許可せず、Publication Artifact、`publication-tracking.json`、DatabaseまたはPublication Statusの更新を許可しない。
+
+### Approved Research / Master Pre-Approval Persistence Exception
+
+Approved Image Asset Registration Write Exceptionとは別に、Applicable AuditがPASSした次のArtifactに限り、Final Human Approval前のRepository persistenceを許可する。
+
+- Approved Research: `cases/FILE-XXXX/research/FILE-XXXX_RESEARCH_v<artifact-version>.md`
+- Approved Master Case File: `cases/FILE-XXXX/master/FILE-XXXX_MASTER_v<artifact-version>.md`
+- Research Audit Artifact: `cases/FILE-XXXX/audit/FILE-XXXX_RESEARCH_v<artifact-version>_AUDIT-XXXX.md`
+- Master Audit Artifact: `cases/FILE-XXXX/audit/FILE-XXXX_MASTER_v<artifact-version>_AUDIT-XXXX.md`
+
+Pre-Approval Persistenceには、Applicable Audit PASS、固定Artifact Identity、固定Version、SHA-256または同等のexact identity、Applicable Audit Reference、Silent Overwrite禁止および旧Version保持を必要とする。
+
+Re-Auditは新しい4-digit Audit run identityを持つAudit Artifactとして保持する。既存Audit Artifactを上書きしてはならない。
+
+Pre-Approval PersistenceはHuman Approval、Publication Artifact Repository IntegrationまたはPublicationを成立させない。ResearchまたはMasterのRepository上の存在だけを根拠として、下流工程の完了または正式Approvalを推測してはならない。
+
+Final Repository Integration時には、Artifact Identity、Version、exact identity、Applicable Audit Referenceおよび既存ArtifactとのConflictを再検証する。
+
+本例外はFREE／CLASSIFIED Publication Artifact、`publication-tracking.json`、Database、Publication Status、Human Review Package、Image Requirement RegisterまたはOrchestration ManifestへHuman Approval前write権限を自動拡張しない。
+
+### Case Workflow Management Artifact Write Boundary
+
+前項のPre-Approval Persistence Exceptionから自動拡張するのではなく、承認されたCase Workflow management責務に基づき、次のCase-scoped management artifactはFinal Human Approval前のApplicable Workflow中に作成または更新できる。
+
+- `cases/FILE-XXXX/image-requirements.json`
+- `cases/FILE-XXXX/orchestration-manifest.json`
+- `cases/FILE-XXXX/human-review-package_v<version>.json`
+
+Image Requirement RegisterおよびOrchestration Manifestの更新は、それぞれのApplicable Authorityが許可する責務とfield boundaryに限定する。
+
+Human Review Packageはversion-boundかつimmutableなsnapshotであるため、既存PackageをSilent Overwriteしない。Material Change後は必要な再検証を行い、新しいApplicable Package Versionを作成する。
+
+これらのwriteはOperational Workflow managementであり、Publication Artifact Repository Integration、Database Integration、Human ApprovalまたはPublicationではない。これらのArtifactの存在または更新だけを根拠として、正式StateまたはDecisionを変更してはならない。
 
 ProjectORIGINの標準Production Flowでは、Repository IntegrationはApplicable Final Flow Audit後のHuman Approvalにおいて、Applicable Human Approval Decisionとして\`APPROVED\`が成立した後に位置する。
 
@@ -4653,6 +4761,21 @@ Active HOLDの未確定仕様をCompatibilityの都合によって暗黙に確�
 --
 
 **Version History**
+v1.2
+Date: 2026-09-09
+Case Production Workflow Formalization
+**Contents**
+
+- Added the limited pre-Human-Approval persistence boundary for Approved Research, Approved Master, and their corresponding Audit Artifacts.
+- Added approved Research and Master Artifact and Audit Artifact naming conventions.
+- Clarified that legacy `FILE-XXX` examples are symbolic Case Identifier placeholders, while the current canonical Case ID uses four-digit `FILE-XXXX` form such as `FILE-0001`.
+- Added the formal paths and responsibility boundaries for `image-requirements.json`, `orchestration-manifest.json`, and versioned Human Review Packages.
+- Preserved the non-authoritative nature of the Orchestration Manifest and the independent authority of `publication-tracking.json`.
+- Clarified that Publication execution, completion evidence, Publication Status, and artifact-level tracking remain separate.
+- Preserved existing FILE-0001 Artifact validity and prohibited automatic migration.
+
+**Status:** OFFICIAL. Current Official Version is v1.2. Formally adopted by Human Formal Adoption Decision = `APPROVED`.
+
 v1.1
 Date: 2026-09-07
 Approved Image Asset Registration Specification

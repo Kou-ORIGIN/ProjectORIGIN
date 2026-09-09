@@ -1,7 +1,8 @@
 # ProjectORIGIN Publication Bible
 
 - Document Status: Official
-- Formal Version Identity: v1.0
+- Formal Version Identity: v1.1
+- Current Official Version Identity: v1.1
 ---
 
 # Chapter 1 — Purpose and Authority
@@ -60,7 +61,7 @@ Formal Audit、Final Human Approval、Repository Integration、Database Integrat
 
 本BibleのScope外に属する事項については、Applicable Source of Truthの定義および決定が優先される。
 
-本Bibleは、Applicable Governance ProcessおよびApplicable Human Decisionを経てFormal Adoptionされており、現在のDocument StatusはOfficial、Formal Version Identityはv1.0である。
+本Bibleは、Applicable Governance ProcessおよびApplicable Human Decisionを経てFormal Adoptionされており、現在のDocument StatusはOfficial、Formal Version Identityはv1.1である。
 
 将来のRevision、Audit Result、Repository Integrationその他のWorkflow Stateを、本Formal Adoptionから自動推論してはならない。
 
@@ -522,6 +523,16 @@ Acceptance Evidenceには、Applicableな範囲で以下を含む。
 - Applicable Final Flow Auditが要求される場合、そのAuditが完了しPASSしていること
 - Material Revision後に旧Auditまたは旧Review結果を不適切に継承していないことの確認
 - Human Approval Handoffを妨げるApplicableな未解決BLOCKER、HOLD、Material Revision、Blocking Dependencyその他のIssueが残っていないことの確認
+
+ApplicableなAcceptance EvidenceをHuman Approval Authorityへ渡す場合、次のCase-scoped Human Review Packageを使用できる。
+
+`cases/FILE-XXXX/human-review-package_v<version>.json`
+
+Human Review Packageはreference-only、version-boundかつimmutableなAcceptance Evidence snapshotである。Case identity、Approved Master、FREE／CLASSIFIED identityとVersion、Applicable Audit、Human Read Review、Final Flow Audit、Required Asset／Placement、未解決Dependency／Issue、Applicable Formal Versionおよびvalidation dateへのReferenceを保持する。
+
+PackageはAudit内容、Rights EvidenceまたはHuman Decision内容を全文複製しない。Silent Overwriteを禁止し、参照対象へMaterial Changeが生じた場合は旧PackageのApplicabilityを変更後Artifactへ継承せず、新しいApplicable Package Versionを作成する。
+
+Packageの存在は、新しいREADY state、Human Approval、Repository IntegrationまたはPublicationを成立させない。
 
 Applicable Final Flow Auditが要求される場合、そのPASSはHuman Approval Handoff Readinessを構成する必要条件の一つとして確認する。
 
@@ -2508,6 +2519,12 @@ Visual Materialを本文から離して配置した結果、別のClaim、Theory
 
 とする。
 
+Approved Image AssetのPlacementは、Applicable Image Ruleに従い、特定Asset ID／Version／SHAを特定Publication Artifact identity／Version／Section／Slotへ結び付ける正式な変更操作として扱う。
+
+Placement後はReader-facing Meaning、Information Hierarchy、Caption／Credit、Evidence RelationshipおよびPublication Artifact VersionへのChange Impactを確認する。Materialな変更がある場合はApplicable Audit Authorityに従うRe-Auditを行い、Human Read Reviewへ影響する場合は必要なHuman Re-Reviewを行う。
+
+PlacementはApproved Image Asset、Human Approval、Publication Artifact Repository IntegrationまたはPublicationを成立させない。
+
 ---
 
 ## 8.7 Captions, Labels & Visual Disclosure
@@ -2531,6 +2548,8 @@ Image Captionが画像そのものより強いClaimを行ってはならない�
 Formal Caption Content、Source Attribution、License Informationその他のImage Management事項はApplicable Image Authorityに従う。
 
 Publication側がCaption Presentationを簡潔にする場合も、MaterialなTruth BoundaryまたはSource Relationshipを失わせてはならない。
+
+Applicable Image AuthorityがHuman Visual Reviewを要求する場合、そのReviewはindividual visual candidateのReader-facing visual meaningを対象とする。これは本BibleのPublication Human Read ReviewまたはFinal Human Approvalを代替しない。
 
 ---
 
@@ -3551,6 +3570,8 @@ Human Read Review自体も、変更によって影響を受けたReader Experien
 とする。
 
 変更されたArtifactは、変更後の状態として確認する。
+
+Human Read Review後にImage Placement、Crop、Composite Layout、Captionその他のReader-facing visual treatmentがMaterialに変更された場合も、影響するPublication ExperienceについてHuman Re-Reviewの必要性を確認する。個別画像に対するHuman Visual Review PASSだけを理由としてPublication Artifact全体のHuman Re-Reviewを省略しない。
 
 ---
 
@@ -5059,12 +5080,12 @@ Publication Bibleの最終Governance Principleは、
 
 ProjectORIGIN Publication Bibleは、Applicable Governance ProcessおよびApplicable Human Decisionを経て、Official DocumentとしてFormal Adoptionされた。
 
-Formal Version Identityはv1.0とする。
+Formal Version Identityはv1.1とする。
 
 ### Current State
 
 - Document Status: Official
-- Formal Version Identity: v1.0
+- Formal Version Identity: v1.1
 
 本DocumentのOfficial StatusおよびFormal Version Identityは、2026-09-06のApplicable Human Decisionによって確定された。
 
@@ -5092,6 +5113,22 @@ Formal Version Identityはv1.0とする。
 ---
 
 ## Formal Version History
+
+### v1.1
+
+**Date:** 2026-09-09
+
+### Changes
+
+- Human Review Packageをreference-only、version-bound、immutableなAcceptance Evidence snapshotとして定義した。
+- Image PlacementをPublication Artifactへの正式なreader-facing changeとして接続した。
+- Placement後のChange Impact、Applicable Re-AuditおよびMaterialな場合のHuman Re-Review境界を追加した。
+- Human Visual Review、Publication Human Read ReviewおよびFinal Human Approvalの責務を分離した。
+- PackageまたはReviewの存在からHuman Approval、Repository IntegrationまたはPublicationを推論しない境界を維持した。
+
+### Status
+
+OFFICIAL。Current Official Formal Version Identityはv1.1とする。Human Formal Adoption Decision = `APPROVED`により正式採用された。
 
 ### v1.0
 

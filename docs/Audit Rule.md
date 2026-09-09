@@ -402,6 +402,30 @@ Databaseは、ProjectORIGIN全体の基盤情報を管理する。
 
 監査では、Image Ruleに基づき、ライセンス、出典、品質、キャプション、配置および本文との整合性を確認する。
 
+### Registration Verification Audit
+
+Approved Image Asset Registrationに対するmechanical validationはApplicable Image Ruleが管理する。Mechanical validationはFormal Auditではない。
+
+独立したFormal Registration Verification Auditはconditionalとし、initial implementation、manual registration、migration、Asset ID／Version conflict、Rights conflict、high-risk exception、Rule transitionその他、Applicableなrisk triggerが存在する場合に実施する。
+
+監査では、Applicableな範囲で、file existence、Filename、Asset ID uniqueness、Version consistency、SHA-256／byte identity、JSON validity、Required Metadata、Audit Reference、management status eligibilityおよびExisting Approved Asset preservationを確認する。
+
+FILE-0001の既存Registration Verification Auditは有効なAudit Evidenceとして保持する。ただし、その存在だけから全Registrationに対するUniversal Formal Audit requirementを推論してはならない。
+
+### Human Visual Review and Image Audit Boundary
+
+Applicable Image RuleがHuman Visual Reviewを要求する場合、そのReviewはexact Candidate identityまたはSHA-256へ結び付いていることを確認する。Human Visual ReviewはFormal Image Audit、Publication Human Read ReviewまたはFinal Human Approvalを代替しない。
+
+Human Visual ReviewとFormal Image Auditの前後関係をUniversalな固定順序として監査要件化しない。ReviewまたはAudit後にCandidateがMaterialに変更された場合、変更内容に応じて影響するReviewまたはAuditのApplicabilityを再評価する。
+
+### Placement Change Impact Audit
+
+Approved Image AssetがPublication ArtifactへPlacementされた場合、Asset ID、Asset Version、SHA reference、Target Artifact identity／Version、Section／Slot、Caption／Credit referenceおよびPlacement resultの整合性を確認する。
+
+PlacementによってPublication ArtifactまたはReader-facing Meaningが変更された場合、Change Impact Assessmentに基づき影響するPublication AuditのRe-Audit要否を判断する。MaterialなReader Experience変更についてはApplicable Publication AuthorityがHuman Re-Review要否を判断する。
+
+Placementだけを理由としてApproved Image Asset、Human Approval、Publication Artifact Repository IntegrationまたはPublicationが成立したものと扱ってはならない。
+
 ---
 
 ## Rule Document Audit
@@ -452,6 +476,10 @@ ProjectORIGIN全体で使用するルール文書を監査対象とする。
 9. 公開
 
 監査では、各工程が所定の順序で実施され、必要な監査および承認が完了していることを確認する。
+
+Final Flow Auditで問題が確認された場合、その問題を自動的にHOLDへ分類してはならない。原因に応じてResponsible StageへのREVISE（REVISION REQUIRED）、影響するArtifactまたは工程のRE-AUDIT、または安全な進行ができない場合のBLOCKとして扱う。
+
+HOLDはApplicable Authorityが明示的に要求する場合、または明示的なHuman DecisionがHOLDを成立させた場合に限り使用する。
 
 ---
 
@@ -1452,6 +1480,14 @@ Publication Completion
 
 監査担当AIは、Human Approvalへ進めるために不足している条件を推測によって補完してはならない。
 
+### Human Review Package Verification
+
+Applicable Human Review Packageを使用する場合、監査担当AIは、当該PackageがCase identity、Approved Master、FREE／CLASSIFIED identityとVersion、Applicable Audits、Human Read Reviews、Final Flow Audit、Required Assets／Placements、未解決Issue／Dependency、Applicable Formal Versionsおよびvalidation dateへの解決可能なReferenceを保持しているか確認する。
+
+Packageはreference-onlyなAcceptance Evidence snapshotであり、Audit内容、Rights EvidenceまたはHuman Decision内容を権威的に複製しない。参照対象にMaterial Changeが生じた場合、旧PackageのApplicabilityを変更後Artifactへ自動継承しない。
+
+Packageの存在または検証成功は、新しいREADY state、Human Approval、Repository IntegrationまたはPublicationを成立させない。
+
 ---
 
 ## Human Approval Boundary
@@ -2056,6 +2092,33 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 
 # Version History
 
+# Audit Rule v1.4.0
+
+**Candidate Date**
+
+2026-09-09
+
+**Formal Adoption Date**
+
+2026-09-09
+
+## Overview
+
+本Versionは、承認済みCase Production Workflow Formalization DecisionsをAudit responsibilityへ反映し、Applicable Formal AuditおよびHuman Formal Adoption Decision = `APPROVED`を経て正式採用された。
+
+## Changes
+
+- Mandatory Registration mechanical validationとconditional Formal Registration Verification Auditを分離した。
+- Placement後のChange Impactに基づくApplicable Re-Audit確認を監査責務へ接続した。
+- Final Flow problemからHOLDを自動生成せず、原因別にREVISION、RE-AUDITまたはBLOCKへ処理する境界を明確化した。
+- Human Review Packageをreference-only Acceptance Evidenceとして検証する境界を追加した。
+- Human Visual Review、Formal Image Audit、Publication Human Read ReviewおよびHuman Approvalの責務分離を維持した。
+- Publication execution、completion evidence、Publication Statusおよびartifact-level trackingの独立性を維持した。
+
+本VersionはCurrent Official Audit Rule v1.4.0とする。Audit Rule v1.3.3はHistorical Official Versionとして保持する。
+
+---
+
 # Audit Rule v1.3.3
 
 **Release Date**
@@ -2316,14 +2379,18 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 | Document | Compatible Version |
 |----------|--------------------|
-| AGENTS.md | v1.1 |
+| AGENTS.md | v1.2 |
 | Research Bible | v1.0 |
 | Research Template | v1.0 |
 | Master Case File Template | v1.0.0 |
 | Case File Template | v1.0.1 |
 | Database Rule | **v3.0** |
-| Image Rule | v1.2 |
-| Operating Manual | v1.1 |
+| Image Rule | v1.3 |
+| ProjectORIGIN Repository Rule | v1.2 |
+| ProjectORIGIN Publication Bible | v1.1 |
+| Operating Manual | v1.2 |
+
+Audit Rule v1.4.0のCompatibility対象は、AGENTS.md v1.2、Image Rule v1.3、ProjectORIGIN Repository Rule v1.2、ProjectORIGIN Publication Bible v1.1およびOperating Manual v1.2とする。
 
 ---
 
@@ -2339,4 +2406,4 @@ Version管理、更新履歴、互換性および関連文書への反映状況�
 
 ## Status
 
-**Audit Rule v1.3.3** を、ProjectORIGINにおける品質監査および品質保証の正式設計書として採用する。
+**Audit Rule v1.4.0** を、ProjectORIGINにおける品質監査および品質保証のCurrent Official Versionとして採用する。

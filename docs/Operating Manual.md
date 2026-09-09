@@ -128,8 +128,13 @@ Formal Production Flow、Workflow Status Transition、Agent Action、Human Appro
 
 - 画像分類
 - ライセンス管理
+- Image Requirement Register
+- Rights Inquiry Lifecycle
+- Conditional Human Visual Review
 - キャプションルール
 - Asset Management
+- Registration mechanical validation
+- Placement transaction
 - 品質基準
 
 ---
@@ -270,6 +275,22 @@ Image Production、Art Production、Developmentその他との具体的な作業
 
 Applicable AGENTS.mdその他のFormal Production Flow Authorityと本Sectionの記述に不一致が確認された場合、本Sectionだけを根拠として独自に解消せず、Applicable Authorityを確認する。
 
+## Case Workflow Operational Routing
+
+Case Production Workflowの正式な工程、Agent責務、Automation BoundaryおよびHuman GateはApplicable AGENTS.mdをSource of Truthとする。本Sectionは各工程を担当領域へRoutingするための運用接続のみを定義する。
+
+Approved Research、Approved Masterおよび対応Audit ArtifactのPre-Approval Persistenceは、Applicable AGENTS.mdおよびRepository Ruleに従う。これはHuman Approval、Publication Artifact Repository IntegrationまたはPublicationではない。
+
+Image Requirement、Rights Inquiry、Human Visual Review、Approved Image Asset Registration validationおよびPlacementはImage Ruleへ引き渡す。Formal Audit、conditional Registration Verification Audit、Re-AuditおよびFinal Flow failureはAudit Ruleへ引き渡す。
+
+Rights Workflowでは、AI inquiry preparation、Human send、External response wait、response assessment、必要なHuman interpretationおよびRights Verificationを混同しない。External silenceをPermissionとして扱わない。
+
+Orchestration Agentは`cases/FILE-XXXX/orchestration-manifest.json`をnon-authoritativeなexecution cursorおよびreference aggregatorとして使用できる。Manifestは正式Status、Audit Result、Rights Evidence、Human DecisionまたはPublication EvidenceのSource of Truthではない。
+
+Human ApprovalへのHandoffでは、`cases/FILE-XXXX/human-review-package_v<version>.json`をreference-only snapshotとして使用できる。Packageの存在はREADY state、Human Approval、Repository IntegrationまたはPublicationを成立させない。
+
+Publication execution、Publication completion evidence、Publication Statusおよびartifact-level trackingは別の責務として扱う。`publication-tracking.json`からPublication StatusまたはPublication completionを推測しない。
+
 ## Responsibility
 
 各チャットは、自身の担当範囲のみを管理する。
@@ -349,7 +370,6 @@ ProjectORIGINは、1000件以上の事件ファイルと継続的な機能追加
 すべての成果物は、公開速度よりも品質を優先する。
 
 内容・構成・設計・画像・実装を十分に確認し、ProjectORIGINの品質基準を満たしたもののみを正式版として採用する。
-```
 
 # Chapter 5
 
@@ -566,7 +586,6 @@ Version Managementの目的は、変更内容を追跡し、各ドキュメン�
 各ドキュメントの更新は、担当チャットで管理する。
 
 Operating Manualは、ProjectORIGIN全体のVersion Management方針を定義し、各ドキュメントは本方針に従って運用する。
-```
 
 # Chapter 7
 
@@ -692,7 +711,6 @@ ProjectORIGINでは、すべての成果物において品質を最優先とす�
 ProjectORIGINにおける品質とは、単に誤りがないことではなく、長期的な運営・保守・拡張に耐えられる設計と運用が維持されている状態を指す。
 
 すべての成果物は、この品質基準に基づいて管理・更新・公開する。
-```
 
 # Chapter 9
 
@@ -753,6 +771,25 @@ ProjectORIGINの拡張は、既存の設計を置き換えるためではなく�
 ---
 
 # Version History
+
+## v1.2
+
+**Date:** 2026-09-09
+
+Case Production Workflow Formalization
+
+### Contents
+
+- Added operational routing for Approved Research／Master pre-approval persistence.
+- Added routing for Image Requirement management, Rights Inquiry, conditional Human Visual Review, registration validation, and Placement transactions.
+- Added the non-authoritative Orchestration Manifest connection.
+- Added the reference-only Human Review Package connection.
+- Clarified Final Flow failure routing and the separation of Publication execution, evidence, status, and tracking.
+- Preserved all specialist-document authority boundaries.
+
+### Status
+
+OFFICIAL。Current Official Versionはv1.2とする。Human Formal Adoption Decision = `APPROVED`により正式採用された。
 
 ## v1.1
 

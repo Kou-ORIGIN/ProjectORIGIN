@@ -1,8 +1,9 @@
 # ProjectORIGIN AGENTS.md
 
-**Version:** v1.1
-**Status:** APPROVED
-**Release:** Approved Image Asset Registration Specification
+**Version:** v1.2
+**Status:** OFFICIAL
+**Current Official Version:** v1.2
+**Revision Scope:** Case Production Workflow Formalization
 
 ---
 
@@ -770,6 +771,33 @@ Orchestration Agentは以下を行ってはならない。
 * HUMAN REVIEW REQUIRED
 
 のいずれかへ移行する。
+
+### Case Workflow Orchestration Manifest
+
+Orchestration Agentは、Case単位の実行位置、依存関係、External Wait、Human Gateおよび正式Artifactへの参照を機械的に管理するため、次のCase-scoped Artifactを使用する。
+
+`cases/FILE-XXXX/orchestration-manifest.json`
+
+本Manifestは、non-authoritativeなexecution cursorおよびreference aggregatorである。Orchestration Agentは正式状態をApplicable Source of Truthから読み取り、Manifestへの集約によって新しいAuthorityを成立させてはならない。
+
+Manifestは概念上、少なくとも以下を保持する。
+
+* `case_id`
+* `workflow_version`
+* `current_phase`
+* `step_states`
+* `blocking_dependency_references`
+* `external_wait_references`
+* `pending_human_gate_references`
+* `artifact_references`
+* `last_validated_at`
+* `manifest_version`
+
+`workflow_version`はApplicableなCase Production Workflow definitionのVersionであり、AGENTS.md Version、Case進行回数またはCase Artifact Versionではない。
+
+`manifest_version`はManifest formatのVersionであり、Case進行回数、Case Revisionまたは`workflow_version`ではない。Manifest contentの通常更新だけを理由として`manifest_version`を増加させてはならない。
+
+Manifestは、Case-level Workflow Status、Publication Status、Audit Result、Audit Findings、Rights Evidence、Image Metadata、Human Read Review Decision、Human Approval Decision、Repository Integration Result、Publication Completion Evidenceまたは`publication-tracking.json`を複製、置換または推測してはならない。
 
 ### Standard Workflow
 
@@ -1727,6 +1755,10 @@ Approved Image Asset
 
 Placement
 
+Human Visual Reviewは、Applicable Image Ruleが要求する場合にのみ実施するconditional gateであり、すべての画像へ一律に適用しない。Human Visual ReviewとImage Auditの前後関係をUniversalな固定順序として扱ってはならない。
+
+Rights Workflowでは、AI preparation、Human send、External response wait、response assessment、必要な場合のHuman-controlled interpretationおよびRights Verificationを異なる責務として扱う。Rights Workflow全体を一つのExternal Dependencyとして扱ってはならない。
+
 権利確認前の画像は、
 
 Approved Assetとして扱わない。
@@ -1950,6 +1982,10 @@ Responsible Stageへ返却
 
 Human Approval禁止
 
+Final Flow Auditで問題が確認された場合、その問題を自動的にHOLDへ変換してはならない。原因とApplicable Authorityに従い、Responsible StageへのREVISE（REVISION REQUIRED）、必要なRE-AUDIT、または安全な進行が不可能な場合のBLOCKとして処理する。
+
+HOLDはApplicable Authorityが明示的に要求する場合、または明示的なHuman Decisionによって成立する場合に限り使用する。
+
 Final Flow Auditは、
 
 制作工程ではなく、
@@ -1979,6 +2015,16 @@ AIは必要に応じて、
 * Applicable Versions
 
 を整理して提示する。
+
+Human Review Packageは、次のCase-scoped形式で管理するreference-onlyかつversion-boundなAcceptance Evidence snapshotとする。
+
+`cases/FILE-XXXX/human-review-package_v<version>.json`
+
+PackageはCase identity、Approved Master、FREE／CLASSIFIED identityとVersion、Applicable Audit、Human Read Review、Final Flow Audit、Required Asset／Placement、未解決Dependency／Issue、Applicable Formal Versionおよびvalidation dateへの参照を保持できる。
+
+Packageは作成後にSilent Overwriteしない。参照対象へMaterial Changeが生じた場合、旧PackageのApplicabilityを変更後Artifactへ自動継承せず、必要な再検証後に新しいApplicable Package Versionを作成する。
+
+PackageはAudit内容、Rights EvidenceまたはHuman Decision内容を全文複製しない。Packageの存在は、新しいREADY state、Human Approval、Repository IntegrationまたはPublicationを成立させない。
 
 ### Decision
 
@@ -2010,6 +2056,16 @@ Repository / Databaseへ反映する。
 * `cases/FILE-XXXX/audit/`
 
 この限定WriteはApproved Image Asset Registrationの一部であり、Publication Artifact Repository Integrationではない。
+
+これとは別に、Applicable AuditがPASSしたApproved Research、Approved Master Case Fileおよびそれぞれに対応するAudit Artifactについて、次の限定的なPre-Approval Persistenceを許可する。
+
+* Approved Research: `cases/FILE-XXXX/research/`
+* Approved Master Case File: `cases/FILE-XXXX/master/`
+* 対応Audit Artifact: `cases/FILE-XXXX/audit/`
+
+Pre-Approval Persistenceには、Applicable Audit PASS、固定されたArtifact IdentityとVersion、SHA-256または同等のexact identity、Applicable Audit Reference、Silent Overwrite禁止、旧Version保持およびFinal Integration時の再検証を必要とする。
+
+本Persistenceは、Human Approval、Publication Artifact Repository IntegrationまたはPublicationを成立させない。Approved Image Asset Registration用の限定Writeとも異なる責務として扱う。
 
 FREE / CLASSIFIED Publication ArtifactのRepository Integrationは、従来どおりHuman Approval後にのみ実施する。
 
@@ -2043,6 +2099,10 @@ Human Approval完了後、
 を記録する。
 
 AIはHuman Approvalなしに公開状態へ変更してはならない。
+
+Publication execution、Publication completion evidence、Publication Statusおよびartifact-level publication trackingは論理的に分離する。
+
+`publication-tracking.json`はPublication StatusのSource of TruthでもPublication completion evidenceでもない。Repository Integrationの完了だけを理由としてPublicationを成立させてはならない。
 
 ---
 
@@ -4197,6 +4257,25 @@ AIが失敗しないSystemではなく、
 を目指す。
 
 # Version History
+
+## v1.2
+
+**Status:** OFFICIAL
+**Revision Scope:** Case Production Workflow Formalization
+
+### Changes
+
+* Approved Research、Approved Masterおよび対応Audit ArtifactのPre-Approval Persistence境界を追加した。
+* Case Workflow Orchestration Manifestのnon-authoritative責務とVersion境界を追加した。
+* Rights WorkflowのAI、Human、External WaitおよびVerification責務を分離した。
+* Human Visual Reviewをconditional gateとして整理した。
+* Human Review Packageをreference-only snapshotとして定義した。
+* Final Flow problemからHOLDを自動生成しないFailure routingを明確化した。
+* Publication execution、completion evidence、Publication Statusおよびartifact-level trackingを分離した。
+
+### Formal Boundary
+
+本VersionはApplicable Formal Audit、Compatibility Cross-Audit、FILE-0001 Regression AuditおよびHuman Formal Adoption Decision = `APPROVED`を経て正式採用された。AGENTS.md v1.1はHistorical Official Versionとして保持する。
 
 ## v1.1
 
