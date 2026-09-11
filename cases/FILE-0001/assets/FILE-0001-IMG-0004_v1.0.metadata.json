@@ -1,0 +1,113 @@
+{
+  "asset_id": "FILE-0001-IMG-0004",
+  "case_id": "FILE-0001",
+  "requirement_id": "IMGREQ-004",
+  "asset_version": "v1.0",
+  "filename": "FILE-0001-IMG-0004_v1.0.png",
+  "classification": "Historical Photo",
+  "management_status": "APPROVED",
+  "source": {
+    "digital_source_institution": "Utah Digital Newspapers, J. Willard Marriott Library, University of Utah",
+    "publication": "Ogden Standard-Examiner",
+    "publication_date": "1947-07-11",
+    "printed_page_designation": "6B",
+    "udn_digital_record_label": "Page 20",
+    "page_numbering_relationship": "UNDETERMINED",
+    "numbering_boundary": "Page 20 is the Human-supplied UDN digital record label; it was not independently recaptured in the audit. Printed 6B is directly observed. Do not equate these numbering systems.",
+    "source_pdf_reference": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001/IMGREQ-004/FILE-0001_IMGREQ-004_CANDIDATE_Ogden-Standard-Examiner_1947-07-11_p20.pdf",
+    "source_pdf_sha256": "48979fbeaea34e6401b84ec35bba5adc363b850d4ba1eba33c358e6bcb873e0c",
+    "embedded_raster_reference": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001/IMGREQ-004/FILE-0001_IMGREQ-004_SOURCE_EMBEDDED_PAGE.jpg",
+    "embedded_raster_sha256": "d076aa033d503215bb4d15af9660261907a545f25b5c89e2b5a578e7c811cb3a",
+    "embedded_raster_dimensions": {
+      "width": 3676,
+      "height": 4586
+    },
+    "production_route": "direct crop only",
+    "crop_rectangle": {
+      "x": 120,
+      "y": 1240,
+      "width": 770,
+      "height": 1055
+    },
+    "coordinate_convention": "Top-left origin, source pixels; x=[120,890), y=[1240,2295).",
+    "pixel_identity": "PASS",
+    "pixel_identity_evidence": "812,350 / 812,350 pixels identical, as recorded in the preserved pre-registration audit; exact source and candidate hashes are unchanged.",
+    "provenance": "VERIFIED",
+    "verification_scope": "registered PNG → exact crop → extracted institutional page raster → exact institutional PDF",
+    "limitations": [
+      "Institutional source acquisition is traced through the supplied upstream evidence; no new independent institution-record capture is asserted.",
+      "Original photographic negative provenance is not verified.",
+      "Newspaper reproduction is not the original negative.",
+      "Exact wire-service origin is NOT INDEPENDENTLY ESTABLISHED.",
+      "Neither UTA nor Getty supplied this PNG."
+    ]
+  },
+  "rights": {
+    "status": "CLEAR FOR INTENDED USE",
+    "verification": "COMPLETE",
+    "human_interpretation": "APPROVED",
+    "human_interpretation_date": "2026-09-10",
+    "permission_required": false,
+    "uta_paid_route": "NOT USED",
+    "uta_permission": "NOT RELIED UPON",
+    "basis": [
+      "UDN browser record displayed No Copyright - United States (NoC-US), as supplied by Human.",
+      "Exact-work renewal search: no relevant match located.",
+      "INP / INS renewal search: no relevant match located.",
+      "LOC International News Photos analysis retained.",
+      "Exact wire-service attribution remains not independently established.",
+      "Static curl snapshot of UDN NoC-US metadata was not successfully obtained.",
+      "Human reviewed residual uncertainty and approved Rights Verification PASS."
+    ],
+    "scope": "Preserve the previously Human-approved decision for the identified historical source/content and intended ProjectORIGIN use. No new legal conclusion or scope expansion. NoC-US does not independently prove the status of every possible embedded third-party contribution without qualification.",
+    "decision_reference": "/Users/uchikurakou/.codex/attachments/b8ca36e8-a8a4-4794-9681-dc0fbdeed4dc/pasted-text.txt",
+    "registration_instruction_reference": "/Users/uchikurakou/.codex/attachments/e0060b9c-eaaf-4aa0-afb7-da7df9207074/pasted-text.txt",
+    "candidate_sha256": "d30ce7e2470c6c32d2ad8b1c0b1bf8e76a9d9f6326c4583e2a6e999cdfddbc48"
+  },
+  "sha256": "d30ce7e2470c6c32d2ad8b1c0b1bf8e76a9d9f6326c4583e2a6e999cdfddbc48",
+  "caption": "1947年7月、フォートワースで撮影されたロジャー・レイミー准将とトーマス・J・デュボーズ大佐、および展示された残骸。写真は1947年7月11日付『Ogden Standard-Examiner』に掲載された。同写真だけでは、残骸の回収地点や由来、すり替えの有無を確定できない。",
+  "credit": "出典：Ogden Standard-Examiner, 1947-07-11, 紙面表記6B／Utah Digital Newspapers, J. Willard Marriott Library, University of Utah。",
+  "evidence_role": "Historical Evidence Asset showing the Fort Worth photographic scene, Roger Ramey, Thomas J. DuBose and displayed debris, within the documented evidentiary limits.",
+  "evidence_boundary": [
+    "Displayed debris ≠ independently proven Foster Ranch provenance.",
+    "Displayed debris ≠ confirmed specific Project MOGUL Flight 4 identification.",
+    "Photograph ≠ proof of extraterrestrial origin.",
+    "Photograph alone ≠ proof of debris substitution.",
+    "Photograph alone ≠ proof that debris substitution did not occur.",
+    "Newspaper reproduction ≠ original photographic negative.",
+    "Cropped candidate ≠ full newspaper page.",
+    "Absence of visible wire-service credit ≠ proof that no wire service supplied the photograph.",
+    "UDN NoC-US item-level statement ≠ independently proven status of every embedded third-party contribution without qualification."
+  ],
+  "derivative_policy": {
+    "allowed": [
+      "Responsive display",
+      "Aspect-ratio-preserving resize",
+      "Reader zoom",
+      "Non-content-changing format conversion",
+      "Further limited crop only if evidentiary meaning is preserved and applicable review/audit requirements are reassessed"
+    ],
+    "prohibited": [
+      "AI reconstruction",
+      "AI replacement",
+      "Invented detail",
+      "Debris addition/deletion",
+      "Theory-strengthening manipulation",
+      "Misleading crop",
+      "Restoration presented as original",
+      "Derivative represented as original photographic negative"
+    ],
+    "preservation": "Preserve registered Base Asset bytes unchanged; do not overwrite the Base Asset with a derivative.",
+    "traceability": "Track derivatives to Asset ID, Asset Version and Base Asset SHA; retain source, caption, credit and evidence boundaries.",
+    "change_control": "Assess change impact, applicable Re-Audit and Human Re-Review. Changes to Base Asset SHA require Major Version under Image Rule v1.3."
+  },
+  "image_audit_reference": "cases/FILE-0001/audit/FILE-0001-IMG-0004_IMAGE-AUDIT_v1.0.md",
+  "image_audit_result": "PASS",
+  "applicable_image_rule": {
+    "audit": "v1.3",
+    "registration": "v1.3"
+  },
+  "intended_placements": [],
+  "created_at": "2026-09-10T22:49:53+09:00",
+  "updated_at": "2026-09-10T22:49:53+09:00"
+}

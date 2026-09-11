@@ -1,0 +1,89 @@
+{
+  "asset_id": "FILE-0001-IMG-0003",
+  "case_id": "FILE-0001",
+  "requirement_id": "IMGREQ-010",
+  "asset_version": "v1.0",
+  "filename": "FILE-0001-IMG-0003_v1.0.png",
+  "classification": "Historical Photo",
+  "management_status": "APPROVED",
+  "source": {
+    "photographer": "J. Bond Johnson",
+    "collection": "Fort Worth Star-Telegram Collection",
+    "capture_date": "1947-07-08",
+    "original_negative_repository": "UTA Libraries Special Collections",
+    "digital_repository": "Wikimedia Commons",
+    "commons_file_title": "General Ramey with Roswell Memo.png",
+    "commons_publication_reference": "Fort Worth Star-Telegram, Evening edition, 1947-07-09, p.1",
+    "publication_date": "1947-07-09",
+    "commons_sha1": "78bcef091b4936d650beedbb710db74290c97f68",
+    "commons_reference": "https://commons.wikimedia.org/w/index.php?title=File:General_Ramey_with_Roswell_Memo.png&oldid=1131872206",
+    "provenance": "VERIFIED",
+    "verification_scope": "VERIFIED applies to the adopted local candidate → identified Commons digital-file identity and the documented source attribution chain used by this registration.",
+    "lineage_limitation": "Original negative → intermediate scan → Commons derivative lineage: NOT INDEPENDENTLY ESTABLISHED. No complete original-negative provenance or direct UTA delivery is asserted.",
+    "verification_basis": "Exact candidate SHA-256 and Commons metadata SHA-1, dimensions and byte size matched in the pre-registration audit. Original newspaper and UTA holdings were not independently re-examined in that audit.",
+    "historical_context_basis": "Capture date and original-negative repository rely on supplied upstream evidence in the original audit request; photographic event date and newspaper publication date are distinct.",
+    "recorded_processing": "Commons file history dated 2024-10-04 records cropped, levels.",
+    "metadata_evidence_reference": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001/IMGREQ-010/FILE-0001_IMGREQ-010_RIGHTS_EVIDENCE_Commons_metadata.json"
+  },
+  "rights": {
+    "status": "CLEAR FOR INTENDED USE",
+    "verification": "COMPLETE",
+    "permission_required": false,
+    "noncommercial_restriction": false,
+    "basis": "Public Domain determination for the exact candidate and intended ProjectORIGIN use, based on the completed Rights Verification and human-approved interpretation",
+    "human_interpretation": "APPROVED",
+    "human_interpretation_date": "2026-09-10",
+    "uta_paid_reproduction_route": "NOT USED",
+    "uta_permission": "NOT RELIED UPON",
+    "attribution_policy": "Source attribution remains required by ProjectORIGIN editorial/source-traceability policy even where Commons metadata does not require attribution.",
+    "scope": "Previously human-approved decision for this exact SHA-256 and intended ProjectORIGIN use only; no new legal interpretation, worldwide blanket permission, or institutional endorsement is created.",
+    "candidate_sha256": "24ffbf62f33e358e180a3c942157259b87b2595f967464c4f522ba7ef7558926",
+    "decision_reference": "/Users/uchikurakou/.codex/attachments/36ed2a2c-4fdf-4c34-8bab-978cedc9181f/pasted-text.txt",
+    "registration_instruction_reference": "/Users/uchikurakou/.codex/attachments/a35e34ef-e209-4da9-beb9-37524eb0b007/pasted-text.txt"
+  },
+  "sha256": "24ffbf62f33e358e180a3c942157259b87b2595f967464c4f522ba7ef7558926",
+  "caption": "1947年7月8日、フォートワースで撮影されたロジャー・レイミー准将の写真。レイミーは展示された残骸のそばで文書を手にしている。文書の文字列は現在も判読が決着しておらず、この写真だけでは残骸の由来を確定できない。",
+  "credit": "撮影：J. Bond Johnson／Fort Worth Star-Telegram Collection。原ネガ所蔵：UTA Libraries Special Collections。デジタル候補：Wikimedia Commons。",
+  "evidence_role": "Historical Evidence Asset showing the Fort Worth photographic scene, Roger Ramey, the visible text-bearing document, and displayed debris, within the documented evidentiary limits. Suitable as historical scene evidence, not authenticated memo transcription.",
+  "evidence_boundary": [
+    "Photograph existence ≠ authenticated reading of the Ramey document.",
+    "Visible document ≠ confirmed transcription.",
+    "Displayed debris ≠ independently proven Foster Ranch provenance.",
+    "Displayed debris ≠ confirmed specific Project MOGUL Flight 4 identification.",
+    "Historical photograph ≠ extraterrestrial-origin evidence.",
+    "Commons digital derivative ≠ original negative.",
+    "Crop / levels adjustment ≠ unchanged original-negative bytes.",
+    "Photograph alone ≠ proof of debris substitution.",
+    "Photograph alone ≠ proof that debris substitution did not occur."
+  ],
+  "derivative_policy": {
+    "allowed": [
+      "Responsive display",
+      "Aspect-ratio-preserving resize",
+      "Reader zoom",
+      "Format conversion where content does not change",
+      "Limited crop only where evidentiary meaning is preserved"
+    ],
+    "prohibited": [
+      "AI reconstruction or replacement",
+      "AI text completion",
+      "Invented memo lettering",
+      "Misleading crop",
+      "Content addition/deletion",
+      "Theory-strengthening manipulation",
+      "Any derivative presented as the original negative"
+    ],
+    "preservation": "Preserve these adopted PNG Base Asset bytes unchanged. Original Base Asset bytes means this digital file, not original-negative bytes.",
+    "traceability": "Track derivatives to Asset ID, version and Base Asset SHA-256; retain caption, credit and evidence boundaries. Derivatives do not overwrite the Base Asset.",
+    "review": "Assess change impact and applicable Re-Audit for changed content or reader-facing meaning; material visual changes require assessment of Human Re-Review. Base Asset SHA changes require Major Version under Image Rule v1.3."
+  },
+  "image_audit_reference": "cases/FILE-0001/audit/FILE-0001-IMG-0003_IMAGE-AUDIT_v1.0.md",
+  "image_audit_result": "PASS",
+  "applicable_image_rule": {
+    "audit": "v1.3",
+    "registration": "v1.3"
+  },
+  "intended_placements": [],
+  "created_at": "2026-09-10T21:07:54+09:00",
+  "updated_at": "2026-09-10T21:07:54+09:00"
+}
