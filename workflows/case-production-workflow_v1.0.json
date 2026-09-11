@@ -1,0 +1,920 @@
+{
+  "definition_type": "CASE_PRODUCTION_WORKFLOW",
+  "workflow_id": "PROJECTORIGIN-CASE-PRODUCTION-WORKFLOW",
+  "workflow_version": "v1.0",
+  "definition_format_version": "v1.0",
+  "title": "ProjectORIGIN Case Production Workflow",
+  "status": "PROPOSED",
+  "applicable_governance": [
+    { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+    { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true },
+    { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true },
+    { "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true },
+    { "authority_id": "PUBLICATION-BIBLE", "document": "docs/ProjectORIGIN Publication Bible.md", "version": "v1.1", "required": true },
+    { "authority_id": "OPERATING-MANUAL", "document": "docs/Operating Manual.md", "version": "v1.2", "required": true },
+    { "authority_id": "CASE-FILE-TEMPLATE", "document": "docs/Case File Template.md", "version": "v1.0.1", "required": true },
+    { "authority_id": "DATABASE-RULE", "document": "docs/Database Rule.md", "version": "v3.0", "required": true },
+    { "authority_id": "DATABASE-SCHEMA", "document": "docs/Database Schema.md", "version": "v1.3", "required": true }
+  ],
+  "entry_step": "CPW-001",
+  "terminal_step": "CPW-029",
+  "steps": [
+    {
+      "id": "CPW-001",
+      "name": "Case Intake",
+      "purpose": "Receive a case-production request without inventing a case identity or subject.",
+      "primary_authority": [{ "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true }],
+      "actors": { "primary": ["Orchestration Agent"], "supporting": ["Human Requester"] },
+      "inputs": [{ "ref_id": "case-production-request", "artifact_type": "CASE_PRODUCTION_REQUEST", "required": true, "applicability": "REQUIRED" }],
+      "actions": ["Capture the supplied case request and preserve unknown information as unknown."],
+      "outputs": [{ "ref_id": "intake-record", "artifact_type": "CASE_INTAKE_RECORD", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [],
+      "exit_conditions": ["The request is sufficiently identified for registration or an explicit blocking condition is recorded."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-002" }] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "missing-or-ambiguous-case-request" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-002",
+      "name": "Case Registration and Applicable Baseline Resolution",
+      "purpose": "Establish a unique case identity and resolve the applicable formal baseline before production.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [{ "ref_id": "intake-record", "artifact_type": "CASE_INTAKE_RECORD", "required": true, "applicability": "REQUIRED", "source_step": "CPW-001" }],
+      "actions": ["Check duplication, allocate or confirm Case ID and File Number, and resolve applicable versions."],
+      "outputs": [{ "ref_id": "case-registration-record", "artifact_type": "CASE_REGISTRATION_RECORD", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "CASE_IDENTITY", "source_ref": "case-registration-record", "source_type": "CASE_REGISTRATION_RECORD", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["A unique case identity and applicable baseline are confirmed without unresolved Source-of-Truth conflict."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-003" }] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "case-identity-or-baseline-conflict" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-003",
+      "name": "Research Planning",
+      "purpose": "Define evidence needs, source priorities, uncertainties, and research tasks for the registered case.",
+      "primary_authority": [{ "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true }],
+      "actors": { "primary": ["Research Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [{ "ref_id": "case-registration-record", "artifact_type": "CASE_REGISTRATION_RECORD", "required": true, "applicability": "REQUIRED", "source_step": "CPW-002" }],
+      "actions": ["Plan source collection, verification, uncertainty handling, and research task routing."],
+      "outputs": [{ "ref_id": "research-plan", "artifact_type": "RESEARCH_PLAN", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [],
+      "exit_conditions": ["Research scope and required tasks are explicit and traceable to the registered case."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-004" }] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "research-plan-cannot-be-established" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-004",
+      "name": "Source Collection",
+      "purpose": "Collect sources required by the research plan while preserving source provenance.",
+      "primary_authority": [{ "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true }],
+      "actors": { "primary": ["Research Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "research-plan", "artifact_type": "RESEARCH_PLAN", "required": true, "applicability": "REQUIRED", "source_step": "CPW-003" }],
+      "actions": ["Collect primary and secondary sources and preserve provenance and access limitations."],
+      "outputs": [{ "ref_id": "source-collection", "artifact_type": "SOURCE_COLLECTION", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "EXTERNAL_SOURCE_CONTENT", "source_ref": "source-collection", "source_type": "SOURCE_COLLECTION", "authority_ref": "AGENTS", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Required available sources and explicit source gaps are recorded."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-005" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-003", "condition_ref": "research-plan-revision-required" }, { "route_kind": "BLOCK", "blocking_ref": "required-source-unavailable" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-005",
+      "name": "Source Verification",
+      "purpose": "Verify source identity, reliability, provenance, and evidentiary classification without fabricating certainty.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }
+      ],
+      "actors": { "primary": ["Research Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "source-collection", "artifact_type": "SOURCE_COLLECTION", "required": true, "applicability": "REQUIRED", "source_step": "CPW-004" }],
+      "actions": ["Verify source provenance and separate Fact, Testimony, Theory, Unverified Information, and AI Analysis."],
+      "outputs": [{ "ref_id": "verified-source-set", "artifact_type": "VERIFIED_SOURCE_SET", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "SOURCE_VERIFICATION", "source_ref": "verified-source-set", "source_type": "VERIFIED_SOURCE_SET", "authority_ref": "AGENTS", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Each material statement has an explicit verification and classification position or remains marked unverified."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-006" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-004", "condition_ref": "additional-source-required" }, { "route_kind": "BLOCK", "blocking_ref": "material-source-conflict" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-006",
+      "name": "Research Artifact Production",
+      "purpose": "Produce the versioned Research artifact from verified sources without silent overwrite.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Research Agent"], "supporting": ["Repository / Data Agent"] },
+      "inputs": [{ "ref_id": "verified-source-set", "artifact_type": "VERIFIED_SOURCE_SET", "required": true, "applicability": "REQUIRED", "source_step": "CPW-005" }],
+      "actions": ["Create FILE-XXXX_RESEARCH_v<artifact-version>.md and preserve artifact version independently from audit-run identity."],
+      "outputs": [{ "ref_id": "research-artifact", "artifact_type": "RESEARCH", "required": true, "applicability": "REQUIRED", "repository_path": "cases/FILE-XXXX/research/FILE-XXXX_RESEARCH_v<artifact-version>.md" }],
+      "source_of_truth": [{ "result_kind": "RESEARCH_CONTENT", "source_ref": "research-artifact", "source_type": "RESEARCH", "authority_ref": "AGENTS", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["The Research artifact is complete, version-identified, source-traceable, and ready for independent audit."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-007" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-005", "condition_ref": "source-verification-gap" }, { "route_kind": "BLOCK", "blocking_ref": "research-production-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-007",
+      "name": "Research Audit",
+      "purpose": "Independently audit the Research artifact under the applicable Audit authority.",
+      "primary_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+      "actors": { "primary": ["Audit Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [{ "ref_id": "research-artifact", "artifact_type": "RESEARCH", "required": true, "applicability": "REQUIRED", "source_step": "CPW-006" }],
+      "actions": ["Audit evidence, classification, completeness, consistency, version, and applicable requirements without editing the target."],
+      "outputs": [{ "ref_id": "research-audit-artifact", "artifact_type": "RESEARCH_AUDIT", "required": true, "applicability": "REQUIRED", "repository_path": "cases/FILE-XXXX/audit/FILE-XXXX_RESEARCH_v<artifact-version>_AUDIT-XXXX.md" }],
+      "source_of_truth": [{ "result_kind": "AUDIT_RESULT", "source_ref": "research-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "audit_applicability": {
+        "audit_required": true,
+        "audit_category": "FORMAL_AUDIT",
+        "audit_type": "RESEARCH_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "research-artifact", "artifact_type": "RESEARCH", "required": true, "applicability": "REQUIRED", "source_step": "CPW-006" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-008", "result_ref": "research-audit-artifact" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-006", "result_ref": "research-audit-artifact" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "research-audit-blocked" }
+      },
+      "exit_conditions": ["The authoritative Research Audit artifact establishes the applicable routing result."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-008", "result_ref": "research-audit-artifact" }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-006", "result_ref": "research-audit-artifact" }, { "route_kind": "BLOCK", "blocking_ref": "research-audit-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-008",
+      "name": "Approved Research Pre-Approval Persistence",
+      "purpose": "Persist the Research artifact and applicable PASS audit reference before Human Approval without implying downstream completion.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "research-artifact", "artifact_type": "RESEARCH", "required": true, "applicability": "REQUIRED", "source_step": "CPW-006" },
+        { "ref_id": "research-audit-artifact", "artifact_type": "RESEARCH_AUDIT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-007" }
+      ],
+      "actions": ["Persist the approved Research identity, version, and audit reference without silent overwrite."],
+      "outputs": [{ "ref_id": "approved-research-reference", "artifact_type": "APPROVED_RESEARCH_REFERENCE", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "APPROVED_RESEARCH", "source_ref": "research-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Approved Research and Audit references are persistently resolvable; no Human Approval, Repository Integration, or Publication is inferred."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-009" }] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "approved-research-persistence-failed" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-009",
+      "name": "Master Case File Production",
+      "purpose": "Produce the versioned Master Case File using only Approved Research as its case-information basis.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "CASE-FILE-TEMPLATE", "document": "docs/Case File Template.md", "version": "v1.0.1", "required": true }
+      ],
+      "actors": { "primary": ["Master Case File Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "approved-research-reference", "artifact_type": "APPROVED_RESEARCH_REFERENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-008" }],
+      "actions": ["Structure Approved Research using the applicable Master requirements without adding unsupported case information."],
+      "outputs": [{ "ref_id": "master-artifact", "artifact_type": "MASTER_CASE_FILE", "required": true, "applicability": "REQUIRED", "repository_path": "cases/FILE-XXXX/master/FILE-XXXX_MASTER_v<artifact-version>.md" }],
+      "source_of_truth": [{ "result_kind": "MASTER_CASE_CONTENT", "source_ref": "master-artifact", "source_type": "MASTER_CASE_FILE", "authority_ref": "AGENTS", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["The versioned Master artifact is traceable to Approved Research and ready for independent audit."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-010" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-006", "condition_ref": "research-revision-required" }, { "route_kind": "BLOCK", "blocking_ref": "master-production-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-010",
+      "name": "Master Audit",
+      "purpose": "Independently audit the Master Case File against Approved Research and applicable requirements.",
+      "primary_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+      "actors": { "primary": ["Audit Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "master-artifact", "artifact_type": "MASTER_CASE_FILE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-009" },
+        { "ref_id": "approved-research-reference", "artifact_type": "APPROVED_RESEARCH_REFERENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-008" }
+      ],
+      "actions": ["Audit Master fidelity, evidence balance, consistency, structure, and version identity without editing the target."],
+      "outputs": [{ "ref_id": "master-audit-artifact", "artifact_type": "MASTER_AUDIT", "required": true, "applicability": "REQUIRED", "repository_path": "cases/FILE-XXXX/audit/FILE-XXXX_MASTER_v<artifact-version>_AUDIT-XXXX.md" }],
+      "source_of_truth": [{ "result_kind": "AUDIT_RESULT", "source_ref": "master-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "audit_applicability": {
+        "audit_required": true,
+        "audit_category": "FORMAL_AUDIT",
+        "audit_type": "MASTER_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "master-artifact", "artifact_type": "MASTER_CASE_FILE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-009" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-011", "result_ref": "master-audit-artifact" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-009", "result_ref": "master-audit-artifact" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "master-audit-blocked" }
+      },
+      "exit_conditions": ["The authoritative Master Audit artifact establishes the applicable routing result."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-011", "result_ref": "master-audit-artifact" }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-009", "result_ref": "master-audit-artifact" }, { "route_kind": "BLOCK", "blocking_ref": "master-audit-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-011",
+      "name": "Approved Master Pre-Approval Persistence",
+      "purpose": "Persist the approved Master identity and audit reference without implying Final Human Approval or publication completion.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "master-artifact", "artifact_type": "MASTER_CASE_FILE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-009" },
+        { "ref_id": "master-audit-artifact", "artifact_type": "MASTER_AUDIT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-010" }
+      ],
+      "actions": ["Persist Approved Master and Audit references with identity and version traceability."],
+      "outputs": [{ "ref_id": "approved-master-reference", "artifact_type": "APPROVED_MASTER_REFERENCE", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "APPROVED_MASTER", "source_ref": "master-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Approved Master and Audit references are resolvable and no downstream state is inferred."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-012" }] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "approved-master-persistence-failed" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-012",
+      "name": "Publication and Image Branch Planning",
+      "purpose": "Determine applicability and dependencies for distinct FREE, CLASSIFIED, and Image production branches.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "PUBLICATION-BIBLE", "document": "docs/ProjectORIGIN Publication Bible.md", "version": "v1.1", "required": true },
+        { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true }
+      ],
+      "actors": { "primary": ["Orchestration Agent"], "supporting": ["Publication Agent", "Image Agent"] },
+      "inputs": [{ "ref_id": "approved-master-reference", "artifact_type": "APPROVED_MASTER_REFERENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-011" }],
+      "actions": ["Create separate logical branch requirements and dependencies without inferring branch completion from cursor position."],
+      "outputs": [
+        { "ref_id": "free-branch-plan", "artifact_type": "BRANCH_PLAN", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "classified-branch-plan", "artifact_type": "BRANCH_PLAN", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "image-branch-plan", "artifact_type": "BRANCH_PLAN", "required": false, "applicability": "CONDITIONAL" }
+      ],
+      "source_of_truth": [],
+      "exit_conditions": ["Each branch has explicit applicability and dependency references."],
+      "routing": { "routes": [
+        { "route_kind": "CONDITIONAL", "target": "CPW-013", "condition_ref": "free-branch-applicable" },
+        { "route_kind": "CONDITIONAL", "target": "CPW-016", "condition_ref": "classified-branch-applicable" },
+        { "route_kind": "CONDITIONAL", "target": "CPW-019", "condition_ref": "image-branch-applicable" }
+      ] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "branch-applicability-conflict" }] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-013",
+      "name": "FREE Production",
+      "purpose": "Produce the FREE publication artifact from Approved Master with standalone meaning and progressive disclosure.",
+      "primary_authority": [{ "authority_id": "PUBLICATION-BIBLE", "document": "docs/ProjectORIGIN Publication Bible.md", "version": "v1.1", "required": true }],
+      "actors": { "primary": ["Publication Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "approved-master-reference", "artifact_type": "APPROVED_MASTER_REFERENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-011" }],
+      "actions": ["Produce the FREE artifact without adding case information outside Approved Master."],
+      "outputs": [{ "ref_id": "free-artifact", "artifact_type": "FREE_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "FREE_CONTENT", "source_ref": "approved-master-reference", "source_type": "APPROVED_MASTER_REFERENCE", "authority_ref": "PUBLICATION-BIBLE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["The FREE artifact is complete and ready for independent audit."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-014" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-009", "condition_ref": "approved-master-correction-required" }, { "route_kind": "BLOCK", "blocking_ref": "free-production-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-014",
+      "name": "FREE Audit",
+      "purpose": "Independently audit the FREE artifact against Approved Master and applicable publication requirements.",
+      "primary_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+      "actors": { "primary": ["Audit Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "free-artifact", "artifact_type": "FREE_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-013" }],
+      "actions": ["Audit FREE accuracy, standalone meaning, evidence balance, readability, and progressive disclosure."],
+      "outputs": [{ "ref_id": "free-audit-artifact", "artifact_type": "FREE_AUDIT", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "AUDIT_RESULT", "source_ref": "free-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "audit_applicability": {
+        "audit_required": true, "audit_category": "FORMAL_AUDIT", "audit_type": "FREE_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "free-artifact", "artifact_type": "FREE_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-013" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-015", "result_ref": "free-audit-artifact" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-013", "result_ref": "free-audit-artifact" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "free-audit-blocked" }
+      },
+      "exit_conditions": ["The authoritative FREE Audit artifact establishes the applicable routing result."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-015", "result_ref": "free-audit-artifact" }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-013", "result_ref": "free-audit-artifact" }, { "route_kind": "BLOCK", "blocking_ref": "free-audit-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-015",
+      "name": "FREE Human Read Review",
+      "purpose": "Obtain a reader-facing Human review of the exact FREE artifact version without establishing Final Human Approval.",
+      "primary_authority": [{ "authority_id": "PUBLICATION-BIBLE", "document": "docs/ProjectORIGIN Publication Bible.md", "version": "v1.1", "required": true }],
+      "actors": { "primary": ["Human Reviewer"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "free-artifact", "artifact_type": "FREE_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-013" },
+        { "ref_id": "free-audit-artifact", "artifact_type": "FREE_AUDIT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-014" }
+      ],
+      "actions": ["Review reader experience and record an authoritative Human Read Review decision bound to the artifact version."],
+      "outputs": [{ "ref_id": "free-human-read-review", "artifact_type": "HUMAN_READ_REVIEW_RECORD", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "HUMAN_READ_REVIEW_RESULT", "source_ref": "free-human-read-review", "source_type": "HUMAN_REVIEW_RECORD", "authority_ref": "PUBLICATION-BIBLE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "human_gate": {
+        "gate_required": true, "gate_type": "FREE_HUMAN_READ_REVIEW", "gate_owner": { "actor_type": "Human Reviewer", "authority_ref": "PUBLICATION-BIBLE" },
+        "gate_input_refs": [{ "ref_id": "free-artifact", "artifact_type": "FREE_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-013" }],
+        "allowed_decisions": ["FREE_HUMAN_READ_REVIEW_COMPLETE", "FREE_HUMAN_READ_REVIEW_REVISION_REQUESTED"],
+        "decision_source": { "reference": { "ref_id": "free-human-read-review", "artifact_type": "HUMAN_READ_REVIEW_RECORD", "required": true, "applicability": "REQUIRED" }, "authoritative": true },
+        "resume_rule": { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-027", "condition_ref": "FREE_HUMAN_READ_REVIEW_COMPLETE", "resume_rule": "Resume only when the authoritative review record contains FREE_HUMAN_READ_REVIEW_COMPLETE." },
+        "automatic_crossing_prohibited": true
+      },
+      "exit_conditions": ["The applicable Human Read Review record is closed for the exact FREE artifact version."],
+      "routing": { "routes": [{ "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-027", "condition_ref": "FREE_HUMAN_READ_REVIEW_COMPLETE", "resume_rule": "Resume only when the authoritative review record contains FREE_HUMAN_READ_REVIEW_COMPLETE." }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-013", "condition_ref": "FREE_HUMAN_READ_REVIEW_REVISION_REQUESTED", "result_ref": "free-human-read-review" }, { "route_kind": "BLOCK", "blocking_ref": "free-human-read-review-blocked" }] },
+      "automation_classification": "HUMAN_GATED",
+      "human_action_required": "YES"
+    },
+    {
+      "id": "CPW-016",
+      "name": "CLASSIFIED Production",
+      "purpose": "Produce the CLASSIFIED publication artifact from Approved Master with the applicable detailed evidence and analysis.",
+      "primary_authority": [{ "authority_id": "PUBLICATION-BIBLE", "document": "docs/ProjectORIGIN Publication Bible.md", "version": "v1.1", "required": true }],
+      "actors": { "primary": ["Publication Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "approved-master-reference", "artifact_type": "APPROVED_MASTER_REFERENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-011" }],
+      "actions": ["Produce the CLASSIFIED artifact without adding unsupported case information."],
+      "outputs": [{ "ref_id": "classified-artifact", "artifact_type": "CLASSIFIED_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "CLASSIFIED_CONTENT", "source_ref": "approved-master-reference", "source_type": "APPROVED_MASTER_REFERENCE", "authority_ref": "PUBLICATION-BIBLE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["The CLASSIFIED artifact is complete and ready for independent audit."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-017" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-009", "condition_ref": "approved-master-correction-required" }, { "route_kind": "BLOCK", "blocking_ref": "classified-production-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-017",
+      "name": "CLASSIFIED Audit",
+      "purpose": "Independently audit the CLASSIFIED artifact against Approved Master and applicable publication requirements.",
+      "primary_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+      "actors": { "primary": ["Audit Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "classified-artifact", "artifact_type": "CLASSIFIED_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-016" }],
+      "actions": ["Audit CLASSIFIED accuracy, evidence depth, uncertainty, counterarguments, readability, and Master fidelity."],
+      "outputs": [{ "ref_id": "classified-audit-artifact", "artifact_type": "CLASSIFIED_AUDIT", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "AUDIT_RESULT", "source_ref": "classified-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "audit_applicability": {
+        "audit_required": true, "audit_category": "FORMAL_AUDIT", "audit_type": "CLASSIFIED_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "classified-artifact", "artifact_type": "CLASSIFIED_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-016" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-018", "result_ref": "classified-audit-artifact" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-016", "result_ref": "classified-audit-artifact" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "classified-audit-blocked" }
+      },
+      "exit_conditions": ["The authoritative CLASSIFIED Audit artifact establishes the applicable routing result."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-018", "result_ref": "classified-audit-artifact" }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-016", "result_ref": "classified-audit-artifact" }, { "route_kind": "BLOCK", "blocking_ref": "classified-audit-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-018",
+      "name": "CLASSIFIED Human Read Review",
+      "purpose": "Obtain a reader-facing Human review of the exact CLASSIFIED artifact version without establishing Final Human Approval.",
+      "primary_authority": [{ "authority_id": "PUBLICATION-BIBLE", "document": "docs/ProjectORIGIN Publication Bible.md", "version": "v1.1", "required": true }],
+      "actors": { "primary": ["Human Reviewer"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "classified-artifact", "artifact_type": "CLASSIFIED_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-016" },
+        { "ref_id": "classified-audit-artifact", "artifact_type": "CLASSIFIED_AUDIT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-017" }
+      ],
+      "actions": ["Review reader experience and record an authoritative Human Read Review decision bound to the artifact version."],
+      "outputs": [{ "ref_id": "classified-human-read-review", "artifact_type": "HUMAN_READ_REVIEW_RECORD", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "HUMAN_READ_REVIEW_RESULT", "source_ref": "classified-human-read-review", "source_type": "HUMAN_REVIEW_RECORD", "authority_ref": "PUBLICATION-BIBLE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "human_gate": {
+        "gate_required": true, "gate_type": "CLASSIFIED_HUMAN_READ_REVIEW", "gate_owner": { "actor_type": "Human Reviewer", "authority_ref": "PUBLICATION-BIBLE" },
+        "gate_input_refs": [{ "ref_id": "classified-artifact", "artifact_type": "CLASSIFIED_PUBLICATION_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-016" }],
+        "allowed_decisions": ["CLASSIFIED_HUMAN_READ_REVIEW_COMPLETE", "CLASSIFIED_HUMAN_READ_REVIEW_REVISION_REQUESTED"],
+        "decision_source": { "reference": { "ref_id": "classified-human-read-review", "artifact_type": "HUMAN_READ_REVIEW_RECORD", "required": true, "applicability": "REQUIRED" }, "authoritative": true },
+        "resume_rule": { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-027", "condition_ref": "CLASSIFIED_HUMAN_READ_REVIEW_COMPLETE", "resume_rule": "Resume only when the authoritative review record contains CLASSIFIED_HUMAN_READ_REVIEW_COMPLETE." },
+        "automatic_crossing_prohibited": true
+      },
+      "exit_conditions": ["The applicable Human Read Review record is closed for the exact CLASSIFIED artifact version."],
+      "routing": { "routes": [{ "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-027", "condition_ref": "CLASSIFIED_HUMAN_READ_REVIEW_COMPLETE", "resume_rule": "Resume only when the authoritative review record contains CLASSIFIED_HUMAN_READ_REVIEW_COMPLETE." }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-016", "condition_ref": "CLASSIFIED_HUMAN_READ_REVIEW_REVISION_REQUESTED", "result_ref": "classified-human-read-review" }, { "route_kind": "BLOCK", "blocking_ref": "classified-human-read-review-blocked" }] },
+      "automation_classification": "HUMAN_GATED",
+      "human_action_required": "YES"
+    },
+    {
+      "id": "CPW-019",
+      "name": "Image Requirement Management",
+      "purpose": "Create and manage Case-unique Image Requirements independently from Approved Image Asset identity.",
+      "primary_authority": [
+        { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Image Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "approved-master-reference", "artifact_type": "APPROVED_MASTER_REFERENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-011" },
+        { "ref_id": "image-branch-plan", "artifact_type": "BRANCH_PLAN", "required": false, "applicability": "CONDITIONAL", "source_step": "CPW-012" }
+      ],
+      "actions": ["Record Requirement IDs, reader purposes, routes, dependencies, and completion conditions in the Image Requirement Register."],
+      "outputs": [{ "ref_id": "image-requirement-register", "artifact_type": "IMAGE_REQUIREMENT_REGISTER", "required": false, "applicability": "CONDITIONAL", "repository_path": "cases/FILE-XXXX/image-requirements.json" }],
+      "source_of_truth": [{ "result_kind": "IMAGE_REQUIREMENT_STATE", "source_ref": "image-requirement-register", "source_type": "IMAGE_REQUIREMENT_REGISTER", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Every applicable image need has a distinct Requirement ID, route, dependency, and completion condition; Requirement ID is not Asset ID."],
+      "routing": { "routes": [
+        { "route_kind": "CONDITIONAL", "target": "CPW-020", "condition_ref": "image-requirement-applicable" },
+        { "route_kind": "CONDITIONAL", "target": "CPW-027", "condition_ref": "image-requirement-not-applicable" }
+      ] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "image-requirement-unresolved" }] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-020",
+      "name": "Image Candidate Collection and Authorized Production",
+      "purpose": "Collect or produce image candidates only through routes authorized by the applicable Image Requirement and Governance.",
+      "primary_authority": [{ "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true }],
+      "actors": { "primary": ["Image Agent"], "supporting": [] },
+      "inputs": [{ "ref_id": "image-requirement-register", "artifact_type": "IMAGE_REQUIREMENT_REGISTER", "required": true, "applicability": "REQUIRED", "source_step": "CPW-019" }],
+      "actions": ["Collect source candidates or produce authorized visualizations while preserving classification and provenance."],
+      "outputs": [{ "ref_id": "image-candidate-set", "artifact_type": "IMAGE_CANDIDATE_SET", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "IMAGE_CANDIDATE_IDENTITY", "source_ref": "image-candidate-set", "source_type": "IMAGE_CANDIDATE_SET", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Candidate identity, source route, and applicable Rights-verification need are explicit."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-021" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-019", "condition_ref": "requirement-route-revision" }, { "route_kind": "BLOCK", "blocking_ref": "no-authorized-image-candidate" }] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-021",
+      "name": "Rights Inquiry and Verification Lifecycle",
+      "purpose": "Determine and verify source and Rights conditions through distinct AI, Human, and External Wait responsibilities.",
+      "primary_authority": [{ "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true }],
+      "actors": { "primary": ["Image Agent"], "supporting": ["Human Rights Reviewer", "External Rights Holder", "Orchestration Agent"] },
+      "inputs": [{ "ref_id": "image-candidate-set", "artifact_type": "IMAGE_CANDIDATE_SET", "required": true, "applicability": "REQUIRED", "source_step": "CPW-020" }],
+      "actions": ["Execute RIGHTS-01 through RIGHTS-10 without treating draft, dispatch, response, extraction, verification, or approval as equivalent states."],
+      "outputs": [{ "ref_id": "rights-evidence", "artifact_type": "RIGHTS_EVIDENCE", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "RIGHTS_RESULT", "source_ref": "rights-evidence", "source_type": "RIGHTS_EVIDENCE", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["An authoritative Rights determination supports Continue, Stop, or Alternative Source routing without implying Human Approval."],
+      "routing": { "routes": [
+        { "route_kind": "CONDITIONAL", "target": "CPW-022", "result_ref": "rights-evidence", "condition_ref": "rights-continue" },
+        { "route_kind": "ALTERNATIVE_SOURCE", "target": "CPW-020", "result_ref": "rights-evidence", "condition_ref": "alternative-source-required" }
+      ] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "rights-stop-or-unresolved" }] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL",
+      "substates": [
+        {
+          "id": "RIGHTS-01", "name": "Rights Determination", "purpose": "Determine whether additional Rights verification is required.",
+          "actors": { "primary": ["Image Agent"], "supporting": [] },
+          "exit_conditions": ["Rights-verification requirements and unknowns are explicit."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "NO"
+        },
+        {
+          "id": "RIGHTS-02", "name": "Institution / Contact Verification", "purpose": "Verify the institution or contact without treating contactability as permission.",
+          "actors": { "primary": ["Image Agent"], "supporting": [] },
+          "exit_conditions": ["A contact candidate is verified or the absence remains explicit."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "NO"
+        },
+        {
+          "id": "RIGHTS-03", "name": "Inquiry Draft Preparation", "purpose": "Prepare an inquiry draft without representing it as sent.",
+          "actors": { "primary": ["Image Agent"], "supporting": [] },
+          "exit_conditions": ["A reviewable draft exists and remains distinct from dispatch evidence."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "NO"
+        },
+        {
+          "id": "RIGHTS-04", "name": "Human Send Gate", "purpose": "Require Human-controlled dispatch and applicable dispatch evidence before external wait begins.",
+          "actors": { "primary": ["Human Rights Reviewer"], "supporting": ["Image Agent"] },
+          "exit_conditions": ["HUMAN_SEND_CONFIRMED is recorded and applicable dispatch evidence is referenced."],
+          "routing": { "routes": [] }, "automation_classification": "HUMAN_GATED", "human_action_required": "YES",
+          "human_gate": {
+            "gate_required": true, "gate_type": "RIGHTS_INQUIRY_SEND", "gate_owner": { "actor_type": "Human Rights Reviewer", "authority_ref": "IMAGE-RULE" },
+            "gate_input_refs": [{ "ref_id": "rights-inquiry-draft", "artifact_type": "RIGHTS_INQUIRY_DRAFT", "required": true, "applicability": "REQUIRED" }],
+            "allowed_decisions": ["HUMAN_SEND_CONFIRMED"],
+            "decision_source": { "reference": { "ref_id": "human-send-confirmation-record", "artifact_type": "HUMAN_SEND_CONFIRMATION_RECORD", "required": true, "applicability": "REQUIRED" }, "authoritative": true },
+            "resume_rule": { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-021", "condition_ref": "HUMAN_SEND_CONFIRMED_AND_DISPATCH_EVIDENCE_REFERENCED", "resume_rule": "Resume within CPW-021 toward RIGHTS-05 only after HUMAN_SEND_CONFIRMED and applicable dispatch evidence is referenced." },
+            "automatic_crossing_prohibited": true
+          }
+        },
+        {
+          "id": "RIGHTS-05", "name": "External Wait", "purpose": "Wait resumably for an external response without interpreting silence or timeout.",
+          "actors": { "primary": ["Orchestration Agent"], "supporting": ["External Rights Holder"] },
+          "exit_conditions": ["An external response is captured or an authorized fallback route becomes applicable."],
+          "routing": { "routes": [] }, "automation_classification": "EXTERNAL_WAIT", "human_action_required": "CONDITIONAL",
+          "external_dependency": {
+            "wait_type": "RIGHTS_RESPONSE", "trigger_event": "RIGHTS_INQUIRY_DISPATCHED", "resume_condition": "AUTHORITATIVE_RESPONSE_EVIDENCE_CAPTURED",
+            "resumable": true, "silence_is_permission": false, "timeout_is_rejection": false
+          }
+        },
+        {
+          "id": "RIGHTS-06", "name": "Response Evidence Capture", "purpose": "Capture the external response as evidence without equating response with permission.",
+          "actors": { "primary": ["Image Agent"], "supporting": [] },
+          "exit_conditions": ["Response evidence is preserved with identity and provenance."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "NO"
+        },
+        {
+          "id": "RIGHTS-07", "name": "AI-Assisted Factual Extraction", "purpose": "Extract factual conditions without creating Human consent or binding interpretation.",
+          "actors": { "primary": ["Image Agent"], "supporting": [] },
+          "exit_conditions": ["Extracted facts remain traceable to response evidence and are not treated as consent."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "NO"
+        },
+        {
+          "id": "RIGHTS-08", "name": "Human Ambiguous / Binding Interpretation", "purpose": "Require Human interpretation for ambiguous or binding Rights terms.",
+          "actors": { "primary": ["Human Rights Reviewer"], "supporting": ["Image Agent"] },
+          "exit_conditions": ["An authoritative Human interpretation exists where required."],
+          "routing": { "routes": [] }, "automation_classification": "HUMAN_GATED", "human_action_required": "CONDITIONAL",
+          "human_gate": {
+            "gate_required": true, "gate_type": "RIGHTS_BINDING_INTERPRETATION", "gate_owner": { "actor_type": "Human Rights Reviewer", "authority_ref": "IMAGE-RULE" },
+            "gate_input_refs": [{ "ref_id": "rights-response-evidence", "artifact_type": "RIGHTS_RESPONSE_EVIDENCE", "required": true, "applicability": "CONDITIONAL" }],
+            "allowed_decisions": ["HUMAN_RIGHTS_INTERPRETATION_RECORDED"],
+            "decision_source": { "reference": { "ref_id": "rights-interpretation-record", "artifact_type": "HUMAN_DECISION_RECORD", "required": true, "applicability": "CONDITIONAL" }, "authoritative": true },
+            "resume_rule": { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-021", "condition_ref": "HUMAN_RIGHTS_INTERPRETATION_RECORDED", "resume_rule": "Resume within CPW-021 toward RIGHTS-09 only from the authoritative HUMAN_RIGHTS_INTERPRETATION_RECORDED record; it does not establish permission or Rights Verification." },
+            "automatic_crossing_prohibited": true
+          }
+        },
+        {
+          "id": "RIGHTS-09", "name": "Rights Verification Decision", "purpose": "Establish the applicable Rights decision without establishing Final Human Approval.",
+          "actors": { "primary": ["Image Agent"], "supporting": ["Human Rights Reviewer"] },
+          "exit_conditions": ["The Rights decision is evidence-bound and does not imply Human Approval."],
+          "routing": { "routes": [] }, "automation_classification": "CONDITIONAL", "human_action_required": "CONDITIONAL",
+          "source_of_truth": [{ "result_kind": "RIGHTS_RESULT", "source_ref": "rights-evidence", "source_type": "RIGHTS_EVIDENCE", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }]
+        },
+        {
+          "id": "RIGHTS-10", "name": "Continue / Stop / Alternative Source", "purpose": "Route the candidate from the authoritative Rights decision.",
+          "actors": { "primary": ["Orchestration Agent"], "supporting": [] },
+          "exit_conditions": ["Continue, Stop, or Alternative Source routing is explicit."],
+          "routing": { "routes": [
+            { "route_kind": "CONDITIONAL", "target": "CPW-022", "result_ref": "rights-evidence", "condition_ref": "rights-continue" },
+            { "route_kind": "ALTERNATIVE_SOURCE", "target": "CPW-020", "result_ref": "rights-evidence", "condition_ref": "alternative-source-required" },
+            { "route_kind": "BLOCK", "blocking_ref": "rights-stop" }
+          ] },
+          "automation_classification": "CONDITIONAL", "human_action_required": "CONDITIONAL"
+        }
+      ]
+    },
+    {
+      "id": "CPW-022",
+      "name": "Image Classification, Metadata and Caption Preparation",
+      "purpose": "Prepare image classification, metadata, caption, credits, and Rights references without changing case information.",
+      "primary_authority": [{ "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true }],
+      "actors": { "primary": ["Image Agent"], "supporting": [] },
+      "inputs": [
+        { "ref_id": "image-candidate-set", "artifact_type": "IMAGE_CANDIDATE_SET", "required": true, "applicability": "REQUIRED", "source_step": "CPW-020" },
+        { "ref_id": "rights-evidence", "artifact_type": "RIGHTS_EVIDENCE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-021" }
+      ],
+      "actions": ["Classify the image and prepare required metadata, caption, credits, and evidence references."],
+      "outputs": [{ "ref_id": "image-candidate-package", "artifact_type": "IMAGE_CANDIDATE_PACKAGE", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [
+        { "result_kind": "IMAGE_METADATA", "source_ref": "image-candidate-package", "source_type": "IMAGE_METADATA", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false },
+        { "result_kind": "RIGHTS_RESULT", "source_ref": "rights-evidence", "source_type": "RIGHTS_EVIDENCE", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }
+      ],
+      "exit_conditions": ["The exact candidate has complete applicable classification, metadata, caption, credits, and Rights references."],
+      "routing": { "routes": [{ "route_kind": "DEFAULT", "target": "CPW-023" }] },
+      "failure_routing": { "routes": [{ "route_kind": "RETURN", "target": "CPW-020", "condition_ref": "candidate-revision-required" }, { "route_kind": "ALTERNATIVE_SOURCE", "target": "CPW-020", "condition_ref": "candidate-replacement-required" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-023",
+      "name": "Conditional Human Visual Review",
+      "purpose": "Perform Human Visual Review only when required by the applicable authority and bind it to the exact candidate identity.",
+      "primary_authority": [{ "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true }],
+      "actors": { "primary": ["Human Visual Reviewer"], "supporting": ["Image Agent", "Orchestration Agent"] },
+      "inputs": [{ "ref_id": "image-candidate-package", "artifact_type": "IMAGE_CANDIDATE_PACKAGE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-022" }],
+      "actions": ["Determine applicability and, when required, obtain a Human Visual Review bound to the exact candidate identity or SHA-256."],
+      "outputs": [{ "ref_id": "human-visual-review-record", "artifact_type": "HUMAN_VISUAL_REVIEW_RECORD", "required": false, "applicability": "CONDITIONAL" }],
+      "source_of_truth": [{ "result_kind": "HUMAN_VISUAL_REVIEW_RESULT", "source_ref": "human-visual-review-record", "source_type": "HUMAN_REVIEW_RECORD", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "human_gate": {
+        "gate_required": true, "gate_type": "HUMAN_VISUAL_REVIEW", "gate_owner": { "actor_type": "Human Visual Reviewer", "authority_ref": "IMAGE-RULE" },
+        "gate_input_refs": [{ "ref_id": "image-candidate-package", "artifact_type": "IMAGE_CANDIDATE_PACKAGE", "required": true, "applicability": "CONDITIONAL", "source_step": "CPW-022" }],
+        "allowed_decisions": ["HUMAN_VISUAL_REVIEW_COMPLETE", "HUMAN_VISUAL_REVIEW_REVISION_REQUESTED"],
+        "decision_source": { "reference": { "ref_id": "human-visual-review-record", "artifact_type": "HUMAN_VISUAL_REVIEW_RECORD", "required": false, "applicability": "CONDITIONAL" }, "authoritative": true },
+        "resume_rule": { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-024", "condition_ref": "HUMAN_VISUAL_REVIEW_COMPLETE", "resume_rule": "Resume from the authoritative HUMAN_VISUAL_REVIEW_COMPLETE record when the gate is applicable." },
+        "automatic_crossing_prohibited": true
+      },
+      "exit_conditions": ["Applicable Human Visual Review is closed, or an authority-backed determination records it as not applicable."],
+      "routing": { "routes": [
+        { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-024", "condition_ref": "HUMAN_VISUAL_REVIEW_COMPLETE", "resume_rule": "Resume from the authoritative HUMAN_VISUAL_REVIEW_COMPLETE record when applicable." },
+        { "route_kind": "CONDITIONAL", "target": "CPW-024", "condition_ref": "visual-review-not-applicable" }
+      ] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-022", "condition_ref": "HUMAN_VISUAL_REVIEW_REVISION_REQUESTED", "result_ref": "human-visual-review-record" }, { "route_kind": "BLOCK", "blocking_ref": "human-visual-review-blocked" }] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-024",
+      "name": "Formal Image Audit",
+      "purpose": "Independently audit the exact image candidate package under the applicable Image and Audit authorities.",
+      "primary_authority": [
+        { "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true },
+        { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true }
+      ],
+      "actors": { "primary": ["Audit Agent"], "supporting": [] },
+      "inputs": [
+        { "ref_id": "image-candidate-package", "artifact_type": "IMAGE_CANDIDATE_PACKAGE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-022" },
+        { "ref_id": "human-visual-review-record", "artifact_type": "HUMAN_VISUAL_REVIEW_RECORD", "required": false, "applicability": "CONDITIONAL", "source_step": "CPW-023" }
+      ],
+      "actions": ["Audit source, Rights, classification, integrity, caption, metadata, and applicable Human Visual Review binding without editing the candidate."],
+      "outputs": [{ "ref_id": "image-audit-artifact", "artifact_type": "IMAGE_AUDIT_ARTIFACT", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "AUDIT_RESULT", "source_ref": "image-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "audit_applicability": {
+        "audit_required": true, "audit_category": "FORMAL_AUDIT", "audit_type": "IMAGE_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "image-candidate-package", "artifact_type": "IMAGE_CANDIDATE_PACKAGE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-022" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-025", "result_ref": "image-audit-artifact" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-022", "result_ref": "image-audit-artifact" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "image-audit-blocked" }
+      },
+      "exit_conditions": ["The authoritative Image Audit artifact establishes the applicable routing result."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-025", "result_ref": "image-audit-artifact" }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-022", "result_ref": "image-audit-artifact" }, { "route_kind": "ALTERNATIVE_SOURCE", "target": "CPW-020", "condition_ref": "candidate-replacement-required" }, { "route_kind": "BLOCK", "blocking_ref": "image-audit-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-025",
+      "name": "Approved Image Asset Registration and Validation",
+      "purpose": "Register an Image Audit PASS candidate as an Approved Image Asset after mandatory mechanical validation and any applicable conditional formal verification audit.",
+      "primary_authority": [
+        { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Image Agent", "Audit Agent"] },
+      "inputs": [
+        { "ref_id": "image-candidate-package", "artifact_type": "IMAGE_CANDIDATE_PACKAGE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-022" },
+        { "ref_id": "image-audit-artifact", "artifact_type": "IMAGE_AUDIT_ARTIFACT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-024" }
+      ],
+      "actions": [
+        "Perform mandatory mechanical validation of registration artifacts, identity, version, checksum, and sidecar consistency.",
+        "Perform an independent Formal Registration Verification Audit only when an applicable risk trigger exists.",
+        "Register the Approved Image Asset without implying Human Approval, Publication Artifact Repository Integration, or Publication."
+      ],
+      "outputs": [
+        { "ref_id": "approved-image-asset", "artifact_type": "APPROVED_IMAGE_ASSET", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "registration-mechanical-validation", "artifact_type": "MECHANICAL_VALIDATION_RECORD", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "registration-verification-audit", "artifact_type": "REGISTRATION_VERIFICATION_AUDIT", "required": false, "applicability": "CONDITIONAL" }
+      ],
+      "source_of_truth": [
+        { "result_kind": "APPROVED_IMAGE_ASSET_IDENTITY", "source_ref": "approved-image-asset", "source_type": "IMAGE_SIDECAR", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false },
+        { "result_kind": "MECHANICAL_VALIDATION_RESULT", "source_ref": "registration-mechanical-validation", "source_type": "MECHANICAL_VALIDATION_RECORD", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false },
+        { "result_kind": "AUDIT_RESULT", "source_ref": "registration-verification-audit", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }
+      ],
+      "audit_applicability": {
+        "audit_required": false, "audit_category": "FORMAL_AUDIT", "audit_type": "REGISTRATION_VERIFICATION_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "approved-image-asset", "artifact_type": "APPROVED_IMAGE_ASSET", "required": false, "applicability": "CONDITIONAL" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-026", "result_ref": "registration-verification-audit" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-025", "result_ref": "registration-verification-audit" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "registration-verification-blocked" },
+        "re_audit_trigger": ["Applicable risk trigger under Audit Rule or Image Rule"]
+      },
+      "exit_conditions": ["Mandatory mechanical validation passes and any applicable conditional Formal Registration Verification Audit is closed."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-026", "condition_ref": "registration-valid-and-applicable-audit-closed" }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-025", "result_ref": "registration-mechanical-validation" }, { "route_kind": "BLOCK", "blocking_ref": "approved-image-registration-blocked" }] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "CONDITIONAL"
+    },
+    {
+      "id": "CPW-026",
+      "name": "Placement Transaction and Change Impact Handling",
+      "purpose": "Bind an Approved Image Asset identity to an exact publication artifact placement and close applicable downstream impacts.",
+      "primary_authority": [
+        { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true },
+        { "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }
+      ],
+      "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Image Agent", "Publication Agent", "Audit Agent", "Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "approved-image-asset", "artifact_type": "APPROVED_IMAGE_ASSET", "required": true, "applicability": "REQUIRED", "source_step": "CPW-025" },
+        { "ref_id": "free-artifact", "artifact_type": "FREE_PUBLICATION_ARTIFACT", "required": false, "applicability": "CONDITIONAL", "source_step": "CPW-013" },
+        { "ref_id": "classified-artifact", "artifact_type": "CLASSIFIED_PUBLICATION_ARTIFACT", "required": false, "applicability": "CONDITIONAL", "source_step": "CPW-016" }
+      ],
+      "actions": ["Bind Asset ID, Asset Version, and SHA-256 to target artifact identity, artifact version, section, and slot; assess each possible downstream impact independently."],
+      "outputs": [
+        { "ref_id": "placement-record", "artifact_type": "PLACEMENT_RECORD", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "change-impact-assessment", "artifact_type": "CHANGE_IMPACT_ASSESSMENT", "required": true, "applicability": "REQUIRED" }
+      ],
+      "source_of_truth": [{ "result_kind": "PLACEMENT_IDENTITY", "source_ref": "placement-record", "source_type": "PLACEMENT_RECORD", "authority_ref": "IMAGE-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "exit_conditions": ["Placement identity is complete and all applicable audit, review, placement, and package impacts are closed without global automatic invalidation."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-027", "condition_ref": "all-applicable-placement-impacts-closed" }] },
+      "failure_routing": { "routes": [
+        { "route_kind": "REVISION", "target": "CPW-013", "condition_ref": "free-artifact-impact" },
+        { "route_kind": "REVISION", "target": "CPW-016", "condition_ref": "classified-artifact-impact" },
+        { "route_kind": "REVISION", "target": "CPW-022", "condition_ref": "image-metadata-or-caption-impact" },
+        { "route_kind": "RE_AUDIT", "target": "CPW-024", "condition_ref": "image-re-audit-applicable" },
+        { "route_kind": "BLOCK", "blocking_ref": "placement-impact-unresolved" }
+      ] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL",
+      "change_impact": {
+        "placement_identity_fields": ["TARGET_ARTIFACT", "ASSET_ID", "ASSET_VERSION", "SHA256", "SECTION", "SLOT", "CAPTION_REFERENCE", "CREDIT_REFERENCE"],
+        "possible_impacts": ["AUDIT", "HUMAN_READ_REVIEW", "HUMAN_VISUAL_REVIEW", "PLACEMENT", "HUMAN_REVIEW_PACKAGE"],
+        "automatic_global_invalidation": false
+      }
+    },
+    {
+      "id": "CPW-027",
+      "name": "Final Flow Validation and Human Review Package",
+      "purpose": "Validate end-to-end applicable branch readiness and produce a version-bound, immutable, reference-only Human Review Package.",
+      "primary_authority": [
+        { "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true },
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Audit Agent"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "free-branch-acceptance-references", "artifact_type": "BRANCH_ACCEPTANCE_REFERENCES", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "classified-branch-acceptance-references", "artifact_type": "BRANCH_ACCEPTANCE_REFERENCES", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "image-branch-acceptance-references", "artifact_type": "BRANCH_ACCEPTANCE_REFERENCES", "required": false, "applicability": "CONDITIONAL" }
+      ],
+      "actions": ["Validate authoritative references for every applicable branch and create or validate the immutable Human Review Package snapshot."],
+      "outputs": [
+        { "ref_id": "final-flow-audit-artifact", "artifact_type": "FINAL_FLOW_AUDIT", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "human-review-package", "artifact_type": "HUMAN_REVIEW_PACKAGE", "required": true, "applicability": "REQUIRED", "repository_path": "cases/FILE-XXXX/human-review-package_v<version>.json" }
+      ],
+      "source_of_truth": [
+        { "result_kind": "AUDIT_RESULT", "source_ref": "final-flow-audit-artifact", "source_type": "AUDIT_ARTIFACT", "authority_ref": "AUDIT-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false },
+        { "result_kind": "HUMAN_REVIEW_PACKAGE_REFERENCE_SET", "source_ref": "human-review-package", "source_type": "HUMAN_REVIEW_PACKAGE", "authority_ref": "AGENTS", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }
+      ],
+      "audit_applicability": {
+        "audit_required": true, "audit_category": "FORMAL_AUDIT", "audit_type": "FINAL_FLOW_AUDIT",
+        "audit_authority": [{ "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }],
+        "audit_input_refs": [{ "ref_id": "applicable-branch-acceptance-references", "artifact_type": "BRANCH_ACCEPTANCE_REFERENCES", "required": true, "applicability": "REQUIRED" }],
+        "on_pass": { "route_kind": "CONDITIONAL", "target": "CPW-028", "result_ref": "final-flow-audit-artifact" },
+        "on_revision_required": { "route_kind": "REVISION", "target": "CPW-013", "result_ref": "final-flow-audit-artifact" },
+        "on_blocked": { "route_kind": "BLOCK", "blocking_ref": "final-flow-cannot-progress-safely" }
+      },
+      "exit_conditions": ["Final Flow Audit routing is established and the exact version-bound Human Review Package references resolve; package existence does not establish READY, Human Approval, Repository Integration, or Publication."],
+      "routing": { "routes": [{ "route_kind": "CONDITIONAL", "target": "CPW-028", "result_ref": "final-flow-audit-artifact", "condition_ref": "final-flow-pass-and-package-valid" }] },
+      "failure_routing": { "routes": [
+        { "route_kind": "REVISION", "target": "CPW-013", "condition_ref": "free-responsible-stage" },
+        { "route_kind": "REVISION", "target": "CPW-016", "condition_ref": "classified-responsible-stage" },
+        { "route_kind": "REVISION", "target": "CPW-022", "condition_ref": "image-responsible-stage" },
+        { "route_kind": "RE_AUDIT", "target": "CPW-014", "condition_ref": "free-re-audit-required" },
+        { "route_kind": "RE_AUDIT", "target": "CPW-017", "condition_ref": "classified-re-audit-required" },
+        { "route_kind": "RE_AUDIT", "target": "CPW-024", "condition_ref": "image-re-audit-required" },
+        { "route_kind": "BLOCK", "blocking_ref": "final-flow-cannot-progress-safely" }
+      ] },
+      "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION",
+      "human_action_required": "NO"
+    },
+    {
+      "id": "CPW-028",
+      "name": "Final Human Approval",
+      "purpose": "Obtain the authoritative final Human Approval Decision for the exact applicable publication artifacts and versions.",
+      "primary_authority": [
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
+        { "authority_id": "AUDIT-RULE", "document": "docs/Audit Rule.md", "version": "v1.4.0", "required": true }
+      ],
+      "actors": { "primary": ["Human Approver"], "supporting": ["Orchestration Agent"] },
+      "inputs": [
+        { "ref_id": "final-flow-audit-artifact", "artifact_type": "FINAL_FLOW_AUDIT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-027" },
+        { "ref_id": "human-review-package", "artifact_type": "HUMAN_REVIEW_PACKAGE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-027" }
+      ],
+      "actions": ["Present the exact version-bound review package and record the Human Approval Decision without inferring publication completion."],
+      "outputs": [{ "ref_id": "final-human-approval-decision", "artifact_type": "HUMAN_APPROVAL_DECISION_RECORD", "required": true, "applicability": "REQUIRED" }],
+      "source_of_truth": [{ "result_kind": "HUMAN_APPROVAL_DECISION", "source_ref": "final-human-approval-decision", "source_type": "HUMAN_DECISION_RECORD", "authority_ref": "AGENTS", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }],
+      "human_gate": {
+        "gate_required": true, "gate_type": "FINAL_HUMAN_APPROVAL", "gate_owner": { "actor_type": "Human Approver", "authority_ref": "AGENTS" },
+        "gate_input_refs": [
+          { "ref_id": "final-flow-audit-artifact", "artifact_type": "FINAL_FLOW_AUDIT", "required": true, "applicability": "REQUIRED", "source_step": "CPW-027" },
+          { "ref_id": "human-review-package", "artifact_type": "HUMAN_REVIEW_PACKAGE", "required": true, "applicability": "REQUIRED", "source_step": "CPW-027" }
+        ],
+        "allowed_decisions": ["APPROVED"],
+        "decision_source": { "reference": { "ref_id": "final-human-approval-decision", "artifact_type": "HUMAN_APPROVAL_DECISION_RECORD", "required": true, "applicability": "REQUIRED" }, "authoritative": true },
+        "resume_rule": { "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-029", "condition_ref": "applicable-authoritative-decision-is-approved", "resume_rule": "Resume only from the authoritative applicable APPROVED decision bound to the exact artifacts and versions." },
+        "automatic_crossing_prohibited": true
+      },
+      "exit_conditions": ["An authoritative applicable Human Approval Decision is recorded for the exact artifacts and versions."],
+      "routing": { "routes": [{ "route_kind": "HUMAN_GATE_RESUME", "target": "CPW-029", "condition_ref": "applicable-authoritative-decision-is-approved", "result_ref": "final-human-approval-decision", "resume_rule": "Only an authoritative applicable APPROVED decision may enter CPW-029." }] },
+      "failure_routing": { "routes": [{ "route_kind": "REVISION", "target": "CPW-027", "result_ref": "final-human-approval-decision" }, { "route_kind": "BLOCK", "blocking_ref": "final-human-approval-not-established" }] },
+      "automation_classification": "HUMAN_GATED",
+      "human_action_required": "YES"
+    },
+    {
+      "id": "CPW-029",
+      "name": "Repository Integration and Publication Lifecycle",
+      "purpose": "Execute post-approval Repository Integration and Publication responsibilities as five distinct evidence-bound substates.",
+      "primary_authority": [
+        { "authority_id": "REPOSITORY-RULE", "document": "docs/ProjectORIGIN Repository Rule.md", "version": "v1.2", "required": true },
+        { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true }
+      ],
+      "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Orchestration Agent", "Publication Process"] },
+      "inputs": [{ "ref_id": "final-human-approval-decision", "artifact_type": "HUMAN_APPROVAL_DECISION_RECORD", "required": true, "applicability": "REQUIRED", "source_step": "CPW-028" }],
+      "actions": ["Execute DELIVERY-01 through DELIVERY-05 without collapsing integration, execution, evidence, status, or tracking."],
+      "outputs": [
+        { "ref_id": "repository-integration-evidence", "artifact_type": "REPOSITORY_INTEGRATION_EVIDENCE", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "publication-completion-evidence", "artifact_type": "PUBLICATION_COMPLETION_EVIDENCE", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "publication-status-source", "artifact_type": "PUBLICATION_STATUS_RECORD", "required": true, "applicability": "REQUIRED" },
+        { "ref_id": "publication-tracking-record", "artifact_type": "PUBLICATION_TRACKING_RECORD", "required": true, "applicability": "REQUIRED" }
+      ],
+      "source_of_truth": [
+        { "result_kind": "REPOSITORY_INTEGRATION_RESULT", "source_ref": "repository-integration-evidence", "source_type": "REPOSITORY_INTEGRATION_EVIDENCE", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false },
+        { "result_kind": "PUBLICATION_COMPLETION", "source_ref": "publication-completion-evidence", "source_type": "PUBLICATION_COMPLETION_EVIDENCE", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false },
+        { "result_kind": "PUBLICATION_STATUS", "source_ref": "publication-status-source", "source_type": "PUBLICATION_STATUS_RECORD", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }
+      ],
+      "exit_conditions": ["All applicable delivery substates are independently evidenced and traceable without cross-inference."],
+      "routing": { "routes": [] },
+      "failure_routing": { "routes": [{ "route_kind": "BLOCK", "blocking_ref": "delivery-substate-cannot-progress-safely" }] },
+      "automation_classification": "CONDITIONAL",
+      "human_action_required": "CONDITIONAL",
+      "substates": [
+        {
+          "id": "DELIVERY-01", "name": "Publication Artifact Repository Integration", "purpose": "Integrate the exact Human-approved publication artifacts into the formal Repository without establishing Publication.",
+          "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Orchestration Agent"] },
+          "exit_conditions": ["Repository Integration evidence exists for the exact approved artifacts and versions."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "CONDITIONAL",
+          "source_of_truth": [{ "result_kind": "REPOSITORY_INTEGRATION_RESULT", "source_ref": "repository-integration-evidence", "source_type": "REPOSITORY_INTEGRATION_EVIDENCE", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }]
+        },
+        {
+          "id": "DELIVERY-02", "name": "Publication Execution", "purpose": "Execute the applicable Publication process without treating an execution response as completion evidence.",
+          "actors": { "primary": ["Publication Process"], "supporting": ["Orchestration Agent"] },
+          "exit_conditions": ["Publication execution has completed sufficiently to proceed to independent evidence capture."],
+          "routing": { "routes": [] }, "automation_classification": "CONDITIONAL", "human_action_required": "CONDITIONAL"
+        },
+        {
+          "id": "DELIVERY-03", "name": "Publication Completion Evidence Capture", "purpose": "Capture authoritative completion evidence independently from Publication Status.",
+          "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Publication Process"] },
+          "exit_conditions": ["Publication completion evidence is captured and bound to the exact published artifacts."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "CONDITIONAL",
+          "source_of_truth": [{ "result_kind": "PUBLICATION_COMPLETION", "source_ref": "publication-completion-evidence", "source_type": "PUBLICATION_COMPLETION_EVIDENCE", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }]
+        },
+        {
+          "id": "DELIVERY-04", "name": "Publication Status Establishment", "purpose": "Establish Publication Status under Repository Rule authority from applicable evidence, not automatically from execution or tracking.",
+          "actors": { "primary": ["Repository / Data Agent"], "supporting": [] },
+          "exit_conditions": ["Publication Status is established by its authoritative source under the applicable Repository Rule."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "CONDITIONAL",
+          "source_of_truth": [{ "result_kind": "PUBLICATION_STATUS", "source_ref": "publication-status-source", "source_type": "PUBLICATION_STATUS_RECORD", "authority_ref": "REPOSITORY-RULE", "read_mode": "REFERENCE_ONLY", "cache_is_authoritative": false }]
+        },
+        {
+          "id": "DELIVERY-05", "name": "publication-tracking update", "purpose": "Update artifact-level publication tracking without treating tracking as evidence or Publication Status.",
+          "actors": { "primary": ["Repository / Data Agent"], "supporting": ["Orchestration Agent"] },
+          "exit_conditions": ["Tracking references are updated without becoming Publication evidence or Publication Status."],
+          "routing": { "routes": [] }, "automation_classification": "AI_AUTOMATABLE_WITH_VALIDATION", "human_action_required": "NO"
+        }
+      ]
+    }
+  ],
+  "controlled_vocabularies": {
+    "automation_classification": ["AI_AUTOMATABLE_WITH_VALIDATION", "HUMAN_GATED", "EXTERNAL_WAIT", "CONDITIONAL"],
+    "human_action_required": ["YES", "NO", "CONDITIONAL"],
+    "execution_controller_states": ["NOT_STARTED", "READY", "IN_PROGRESS", "WAITING_EXTERNAL", "WAITING_HUMAN", "BLOCKED", "REVISION_REQUIRED", "RE_AUDIT_REQUIRED", "COMPLETED"],
+    "epistemic_states": ["CONFIRMED", "UNCONFIRMED", "UNDETERMINED"],
+    "applicability": ["REQUIRED", "CONDITIONAL", "NOT_APPLICABLE", "UNDETERMINED"],
+    "audit_categories": ["FORMAL_AUDIT", "MECHANICAL_VALIDATION", "HUMAN_REVIEW"],
+    "human_gate_types": ["RIGHTS_INQUIRY_SEND", "RIGHTS_BINDING_INTERPRETATION", "FREE_HUMAN_READ_REVIEW", "CLASSIFIED_HUMAN_READ_REVIEW", "HUMAN_VISUAL_REVIEW", "FINAL_HUMAN_APPROVAL"],
+    "route_kinds": ["DEFAULT", "CONDITIONAL", "RETURN", "REVISION", "RE_AUDIT", "BLOCK", "ALTERNATIVE_SOURCE", "EXTERNAL_WAIT_RESUME", "HUMAN_GATE_RESUME"]
+  },
+  "interfaces": {
+    "orchestration_manifest": {
+      "interface_id": "ORCHESTRATION_MANIFEST_V1",
+      "artifact_type": "ORCHESTRATION_MANIFEST",
+      "path_pattern": "cases/FILE-XXXX/orchestration-manifest.json",
+      "direction": "REFERENCE_ONLY",
+      "required_fields": ["manifest_version", "case_id", "workflow_binding", "execution_cursor"],
+      "format_binding": {
+        "field": "manifest_version",
+        "value": "v1.0"
+      },
+      "responsibility_boundary": "The manifest_version is v1.0. The Manifest is a non-authoritative runtime cursor and reference aggregator; it cannot establish or replace domain results."
+    },
+    "image_requirement_register": {
+      "interface_id": "IMAGE_REQUIREMENT_REGISTER",
+      "artifact_type": "IMAGE_REQUIREMENT_REGISTER",
+      "path_pattern": "cases/FILE-XXXX/image-requirements.json",
+      "direction": "REFERENCE_ONLY",
+      "required_fields": ["Requirement ID", "Reader Purpose", "Production Route", "Dependency", "Completion Condition"],
+      "responsibility_boundary": "Requirement ID is not Asset ID. The interface does not duplicate Rights Evidence, Image Audit Result, Human Approval, or Publication Status."
+    },
+    "human_review_package": {
+      "interface_id": "HUMAN_REVIEW_PACKAGE",
+      "artifact_type": "HUMAN_REVIEW_PACKAGE",
+      "path_pattern": "cases/FILE-XXXX/human-review-package_v<version>.json",
+      "direction": "REFERENCE_ONLY",
+      "required_fields": ["case identity", "artifact identity and version references", "applicable audit references", "open issue or HOLD references when applicable"],
+      "snapshot_contract": {
+        "reference_only": true,
+        "version_bound": true,
+        "immutable": true,
+        "material_change_requires_new_version": true
+      },
+      "responsibility_boundary": "The package is a version-bound immutable reference-only snapshot. Its existence does not establish READY, Human Approval, Repository Integration, or Publication."
+    }
+  },
+  "graph_constraints": {
+    "exact_top_level_step_count": 29,
+    "entry_step": "CPW-001",
+    "terminal_step": "CPW-029",
+    "human_gate_auto_cross_prohibited": true,
+    "external_wait_resume_required": true,
+    "automatic_final_flow_hold_prohibited": true,
+    "final_human_approval_required_before_delivery": true,
+    "domain_result_inference_prohibited": true
+  },
+  "notes": [
+    "This operational Workflow Definition is non-authoritative and does not replace Official Governance.",
+    "The lifecycle mechanism defines PROPOSED and ADOPTED; this definition remains PROPOSED and Formal Adoption has not been performed.",
+    "Execution-controller states are not Case Workflow Status, Audit Result, Rights Result, Human Review Result, Human Approval Decision, Repository Integration Result, or Publication Status.",
+    "Exact identity-set, ordering, reachability, routing-semantic, and authority-content validation remains assigned to later validators."
+  ]
+}

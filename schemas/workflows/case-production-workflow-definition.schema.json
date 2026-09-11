@@ -1,0 +1,1427 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "projectorigin://schemas/workflows/case-production-workflow-definition/v1.0",
+  "title": "ProjectORIGIN Case Production Workflow Definition Schema v1.0",
+  "description": "Structural schema for the non-authoritative ProjectORIGIN machine-readable Case Production Workflow Definition. Official Governance remains authoritative. This schema does not establish case status, audit results, rights decisions, human decisions, repository integration, or publication status.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "definition_type",
+    "workflow_id",
+    "workflow_version",
+    "definition_format_version",
+    "title",
+    "status",
+    "applicable_governance",
+    "entry_step",
+    "terminal_step",
+    "steps",
+    "controlled_vocabularies",
+    "interfaces",
+    "graph_constraints"
+  ],
+  "properties": {
+    "definition_type": {
+      "const": "CASE_PRODUCTION_WORKFLOW"
+    },
+    "workflow_id": {
+      "const": "PROJECTORIGIN-CASE-PRODUCTION-WORKFLOW"
+    },
+    "workflow_version": {
+      "type": "string",
+      "pattern": "^v[1-9][0-9]*\\.(0|[1-9][0-9]*)$(?![\\s\\S])"
+    },
+    "definition_format_version": {
+      "const": "v1.0"
+    },
+    "title": {
+      "$ref": "#/$defs/nonEmptyString"
+    },
+    "status": {
+      "enum": [
+        "PROPOSED",
+        "ADOPTED"
+      ],
+      "description": "Formal transition is PROPOSED to ADOPTED only, with explicit Human decision and validated adoption record. Validation does not execute adoption."
+    },
+    "applicable_governance": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/authorityReference"
+      }
+    },
+    "created_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "effective_from": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "supersedes": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/workflowDefinitionIdentityReference"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "entry_step": {
+      "const": "CPW-001"
+    },
+    "terminal_step": {
+      "const": "CPW-029"
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 29,
+      "maxItems": 29,
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "controlled_vocabularies": {
+      "$ref": "#/$defs/controlledVocabularies"
+    },
+    "interfaces": {
+      "$ref": "#/$defs/interfaces"
+    },
+    "graph_constraints": {
+      "$ref": "#/$defs/graphConstraints"
+    },
+    "notes": {
+      "$ref": "#/$defs/notes"
+    },
+    "extensions": {
+      "$ref": "#/$defs/extensions"
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Isolated, non-authoritative extension namespace. Extensions cannot override normative routing, authority, Human Gate, decision, or controlled-vocabulary semantics.",
+      "additionalProperties": true
+    },
+    "relativeRepositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$(?![\\s\\S])"
+    },
+    "cpwId": {
+      "type": "string",
+      "pattern": "^CPW-(00[1-9]|0[12][0-9])$(?![\\s\\S])"
+    },
+    "automationClassification": {
+      "enum": [
+        "AI_AUTOMATABLE_WITH_VALIDATION",
+        "HUMAN_GATED",
+        "EXTERNAL_WAIT",
+        "CONDITIONAL"
+      ]
+    },
+    "humanActionRequired": {
+      "enum": [
+        "YES",
+        "NO",
+        "CONDITIONAL"
+      ]
+    },
+    "executionControllerState": {
+      "description": "Execution-controller state only; it does not establish Case Workflow Status, Audit Result, Rights Result, Human Review Result, Human Approval, or Publication Status.",
+      "enum": [
+        "NOT_STARTED",
+        "READY",
+        "IN_PROGRESS",
+        "WAITING_EXTERNAL",
+        "WAITING_HUMAN",
+        "BLOCKED",
+        "REVISION_REQUIRED",
+        "RE_AUDIT_REQUIRED",
+        "COMPLETED"
+      ]
+    },
+    "epistemicState": {
+      "enum": [
+        "CONFIRMED",
+        "UNCONFIRMED",
+        "UNDETERMINED"
+      ]
+    },
+    "applicability": {
+      "enum": [
+        "REQUIRED",
+        "CONDITIONAL",
+        "NOT_APPLICABLE",
+        "UNDETERMINED"
+      ]
+    },
+    "auditCategory": {
+      "enum": [
+        "FORMAL_AUDIT",
+        "MECHANICAL_VALIDATION",
+        "HUMAN_REVIEW"
+      ]
+    },
+    "humanGateType": {
+      "enum": [
+        "RIGHTS_INQUIRY_SEND",
+        "RIGHTS_BINDING_INTERPRETATION",
+        "FREE_HUMAN_READ_REVIEW",
+        "CLASSIFIED_HUMAN_READ_REVIEW",
+        "HUMAN_VISUAL_REVIEW",
+        "FINAL_HUMAN_APPROVAL"
+      ]
+    },
+    "routeKind": {
+      "enum": [
+        "DEFAULT",
+        "CONDITIONAL",
+        "RETURN",
+        "REVISION",
+        "RE_AUDIT",
+        "BLOCK",
+        "ALTERNATIVE_SOURCE",
+        "EXTERNAL_WAIT_RESUME",
+        "HUMAN_GATE_RESUME"
+      ]
+    },
+    "actorObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary",
+        "supporting"
+      ],
+      "properties": {
+        "primary": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "supporting": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "authorityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_id",
+        "version",
+        "required"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "document"
+          ]
+        },
+        {
+          "required": [
+            "authority_identifier"
+          ]
+        }
+      ],
+      "properties": {
+        "authority_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "document": {
+          "$ref": "#/$defs/relativeRepositoryPath"
+        },
+        "authority_identifier": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "chapter": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "section": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "section_locator": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "artifactReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref_id",
+        "artifact_type",
+        "required",
+        "applicability"
+      ],
+      "properties": {
+        "ref_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artifact_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "applicability": {
+          "$ref": "#/$defs/applicability"
+        },
+        "artifact_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artifact_version": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "repository_path": {
+          "$ref": "#/$defs/relativeRepositoryPath"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+        },
+        "source_step": {
+          "$ref": "#/$defs/cpwId"
+        },
+        "authority": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/authorityReference"
+          }
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "sourceOfTruthReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result_kind",
+        "source_ref",
+        "source_type",
+        "authority_ref",
+        "read_mode",
+        "cache_is_authoritative"
+      ],
+      "properties": {
+        "result_kind": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "authority_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "read_mode": {
+          "const": "REFERENCE_ONLY"
+        },
+        "cache_is_authoritative": {
+          "const": false
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "decisionSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference",
+        "authoritative"
+      ],
+      "properties": {
+        "reference": {
+          "$ref": "#/$defs/artifactReference"
+        },
+        "authoritative": {
+          "const": true
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route_kind"
+      ],
+      "properties": {
+        "target": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/cpwId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "route_kind": {
+          "$ref": "#/$defs/routeKind"
+        },
+        "condition_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "result_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "blocking_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "resume_rule": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "route_kind": {
+                "const": "BLOCK"
+              }
+            },
+            "required": [
+              "route_kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "blocking_ref"
+            ]
+          },
+          "else": {
+            "required": [
+              "target"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "route_kind": {
+                "enum": [
+                  "EXTERNAL_WAIT_RESUME",
+                  "HUMAN_GATE_RESUME"
+                ]
+              }
+            },
+            "required": [
+              "route_kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "resume_rule"
+            ]
+          }
+        }
+      ]
+    },
+    "routing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "routes"
+      ],
+      "properties": {
+        "routes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/route"
+          }
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "gateOwner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_type"
+      ],
+      "properties": {
+        "actor_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "authority_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "humanGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gate_required",
+        "gate_type",
+        "gate_owner",
+        "gate_input_refs",
+        "allowed_decisions",
+        "decision_source",
+        "resume_rule",
+        "automatic_crossing_prohibited"
+      ],
+      "properties": {
+        "gate_required": {
+          "const": true
+        },
+        "gate_type": {
+          "$ref": "#/$defs/humanGateType"
+        },
+        "gate_owner": {
+          "$ref": "#/$defs/gateOwner"
+        },
+        "gate_input_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/artifactReference"
+          }
+        },
+        "allowed_decisions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "decision_source": {
+          "$ref": "#/$defs/decisionSource"
+        },
+        "resume_rule": {
+          "$ref": "#/$defs/route"
+        },
+        "automatic_crossing_prohibited": {
+          "const": true
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "externalWait": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wait_type",
+        "trigger_event",
+        "resume_condition",
+        "resumable",
+        "silence_is_permission",
+        "timeout_is_rejection"
+      ],
+      "properties": {
+        "wait_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "trigger_event": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "resume_condition": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "resumable": {
+          "const": true
+        },
+        "silence_is_permission": {
+          "const": false
+        },
+        "timeout_is_rejection": {
+          "const": false
+        },
+        "timeout_policy_ref": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "fallback_route": {
+          "$ref": "#/$defs/route"
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "auditRouting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "audit_required",
+        "audit_category",
+        "audit_type",
+        "audit_authority",
+        "audit_input_refs",
+        "on_pass",
+        "on_revision_required",
+        "on_blocked"
+      ],
+      "properties": {
+        "audit_required": {
+          "type": "boolean"
+        },
+        "audit_category": {
+          "$ref": "#/$defs/auditCategory"
+        },
+        "audit_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "audit_authority": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/authorityReference"
+          }
+        },
+        "audit_input_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifactReference"
+          }
+        },
+        "audit_result_ref": {
+          "$ref": "#/$defs/artifactReference"
+        },
+        "re_audit_trigger": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "on_pass": {
+          "$ref": "#/$defs/route"
+        },
+        "on_revision_required": {
+          "$ref": "#/$defs/route"
+        },
+        "on_blocked": {
+          "$ref": "#/$defs/route"
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "substate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "purpose",
+        "actors",
+        "exit_conditions",
+        "routing",
+        "automation_classification",
+        "human_action_required"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)+$(?![\\s\\S])"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "purpose": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "actors": {
+          "$ref": "#/$defs/actorObject"
+        },
+        "exit_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "routing": {
+          "$ref": "#/$defs/routing"
+        },
+        "automation_classification": {
+          "$ref": "#/$defs/automationClassification"
+        },
+        "human_action_required": {
+          "$ref": "#/$defs/humanActionRequired"
+        },
+        "human_gate": {
+          "$ref": "#/$defs/humanGate"
+        },
+        "external_dependency": {
+          "$ref": "#/$defs/externalWait"
+        },
+        "audit_applicability": {
+          "$ref": "#/$defs/auditRouting"
+        },
+        "source_of_truth": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceOfTruthReference"
+          }
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "enum": [
+                  "RIGHTS-04",
+                  "RIGHTS-08"
+                ]
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "human_gate"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "RIGHTS-05"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "external_dependency"
+            ]
+          }
+        }
+      ]
+    },
+    "changeImpact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "placement_identity_fields",
+        "possible_impacts",
+        "automatic_global_invalidation"
+      ],
+      "properties": {
+        "placement_identity_fields": {
+          "type": "array",
+          "minItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "TARGET_ARTIFACT",
+              "ASSET_ID",
+              "ASSET_VERSION",
+              "SHA256",
+              "SECTION",
+              "SLOT",
+              "CAPTION_REFERENCE",
+              "CREDIT_REFERENCE"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "TARGET_ARTIFACT"
+              }
+            },
+            {
+              "contains": {
+                "const": "ASSET_ID"
+              }
+            },
+            {
+              "contains": {
+                "const": "ASSET_VERSION"
+              }
+            },
+            {
+              "contains": {
+                "const": "SHA256"
+              }
+            },
+            {
+              "contains": {
+                "const": "SECTION"
+              }
+            },
+            {
+              "contains": {
+                "const": "SLOT"
+              }
+            }
+          ]
+        },
+        "possible_impacts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "AUDIT",
+              "HUMAN_READ_REVIEW",
+              "HUMAN_VISUAL_REVIEW",
+              "PLACEMENT",
+              "HUMAN_REVIEW_PACKAGE"
+            ]
+          }
+        },
+        "automatic_global_invalidation": {
+          "const": false
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "formatBinding": {
+      "type": "object",
+      "description": "Interface format-version contract only; it does not establish runtime state or domain authority.",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "value"
+      ],
+      "properties": {
+        "field": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "value": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "snapshotContract": {
+      "type": "object",
+      "description": "Reference snapshot property contract only; it does not establish Human Approval, Repository Integration, or Publication.",
+      "additionalProperties": false,
+      "required": [
+        "reference_only",
+        "version_bound",
+        "immutable",
+        "material_change_requires_new_version"
+      ],
+      "properties": {
+        "reference_only": {
+          "const": true
+        },
+        "version_bound": {
+          "const": true
+        },
+        "immutable": {
+          "const": true
+        },
+        "material_change_requires_new_version": {
+          "const": true
+        }
+      }
+    },
+    "interfaceDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interface_id",
+        "artifact_type",
+        "path_pattern",
+        "direction",
+        "required_fields",
+        "responsibility_boundary"
+      ],
+      "properties": {
+        "interface_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "artifact_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "path_pattern": {
+          "$ref": "#/$defs/relativeRepositoryPath"
+        },
+        "direction": {
+          "enum": [
+            "READ",
+            "WRITE",
+            "READ_WRITE",
+            "REFERENCE_ONLY"
+          ]
+        },
+        "required_fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "format_binding": {
+          "$ref": "#/$defs/formatBinding"
+        },
+        "snapshot_contract": {
+          "$ref": "#/$defs/snapshotContract"
+        },
+        "responsibility_boundary": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          ],
+          "description": "Informational text only; it does not override normative structured interface fields."
+        },
+        "execution_states": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/executionControllerState"
+          }
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "interfaces": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "orchestration_manifest",
+        "image_requirement_register",
+        "human_review_package"
+      ],
+      "properties": {
+        "orchestration_manifest": {
+          "$ref": "#/$defs/interfaceDeclaration"
+        },
+        "image_requirement_register": {
+          "$ref": "#/$defs/interfaceDeclaration"
+        },
+        "human_review_package": {
+          "$ref": "#/$defs/interfaceDeclaration"
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      }
+    },
+    "controlledVocabularies": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Descriptive declaration of schema-controlled values. UNIT-03 must confirm it exactly matches the normative schema enums.",
+      "required": [
+        "automation_classification",
+        "human_action_required",
+        "execution_controller_states",
+        "epistemic_states",
+        "applicability",
+        "audit_categories",
+        "human_gate_types",
+        "route_kinds"
+      ],
+      "properties": {
+        "automation_classification": {
+          "const": [
+            "AI_AUTOMATABLE_WITH_VALIDATION",
+            "HUMAN_GATED",
+            "EXTERNAL_WAIT",
+            "CONDITIONAL"
+          ]
+        },
+        "human_action_required": {
+          "const": [
+            "YES",
+            "NO",
+            "CONDITIONAL"
+          ]
+        },
+        "execution_controller_states": {
+          "const": [
+            "NOT_STARTED",
+            "READY",
+            "IN_PROGRESS",
+            "WAITING_EXTERNAL",
+            "WAITING_HUMAN",
+            "BLOCKED",
+            "REVISION_REQUIRED",
+            "RE_AUDIT_REQUIRED",
+            "COMPLETED"
+          ]
+        },
+        "epistemic_states": {
+          "const": [
+            "CONFIRMED",
+            "UNCONFIRMED",
+            "UNDETERMINED"
+          ]
+        },
+        "applicability": {
+          "const": [
+            "REQUIRED",
+            "CONDITIONAL",
+            "NOT_APPLICABLE",
+            "UNDETERMINED"
+          ]
+        },
+        "audit_categories": {
+          "const": [
+            "FORMAL_AUDIT",
+            "MECHANICAL_VALIDATION",
+            "HUMAN_REVIEW"
+          ]
+        },
+        "human_gate_types": {
+          "const": [
+            "RIGHTS_INQUIRY_SEND",
+            "RIGHTS_BINDING_INTERPRETATION",
+            "FREE_HUMAN_READ_REVIEW",
+            "CLASSIFIED_HUMAN_READ_REVIEW",
+            "HUMAN_VISUAL_REVIEW",
+            "FINAL_HUMAN_APPROVAL"
+          ]
+        },
+        "route_kinds": {
+          "const": [
+            "DEFAULT",
+            "CONDITIONAL",
+            "RETURN",
+            "REVISION",
+            "RE_AUDIT",
+            "BLOCK",
+            "ALTERNATIVE_SOURCE",
+            "EXTERNAL_WAIT_RESUME",
+            "HUMAN_GATE_RESUME"
+          ]
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "graphConstraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exact_top_level_step_count",
+        "entry_step",
+        "terminal_step",
+        "human_gate_auto_cross_prohibited",
+        "external_wait_resume_required",
+        "automatic_final_flow_hold_prohibited",
+        "final_human_approval_required_before_delivery",
+        "domain_result_inference_prohibited"
+      ],
+      "properties": {
+        "exact_top_level_step_count": {
+          "const": 29
+        },
+        "entry_step": {
+          "const": "CPW-001"
+        },
+        "terminal_step": {
+          "const": "CPW-029"
+        },
+        "human_gate_auto_cross_prohibited": {
+          "const": true
+        },
+        "external_wait_resume_required": {
+          "const": true
+        },
+        "automatic_final_flow_hold_prohibited": {
+          "const": true
+        },
+        "final_human_approval_required_before_delivery": {
+          "const": true
+        },
+        "domain_result_inference_prohibited": {
+          "const": true
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        }
+      }
+    },
+    "workflowDefinitionIdentityReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "workflow_id",
+        "workflow_version",
+        "definition_format_version",
+        "repository_path",
+        "adoption_record_id",
+        "adoption_record_path",
+        "adoption_record_sha256",
+        "adopted_definition_sha256"
+      ],
+      "properties": {
+        "workflow_id": {
+          "const": "PROJECTORIGIN-CASE-PRODUCTION-WORKFLOW"
+        },
+        "workflow_version": {
+          "type": "string",
+          "pattern": "^v[1-9][0-9]*\\.(0|[1-9][0-9]*)$(?![\\s\\S])"
+        },
+        "definition_format_version": {
+          "const": "v1.0"
+        },
+        "repository_path": {
+          "type": "string",
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))[^/]+(?:/[^/]+)*$(?![\\s\\S])"
+        },
+        "adoption_record_id": {
+          "type": "string",
+          "pattern": "^WFADOPT-(?!0000)[0-9]{4}$(?![\\s\\S])"
+        },
+        "adoption_record_path": {
+          "type": "string",
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))[^/]+(?:/[^/]+)*$(?![\\s\\S])"
+        },
+        "adoption_record_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+        },
+        "adopted_definition_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+        }
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "purpose",
+        "primary_authority",
+        "actors",
+        "inputs",
+        "actions",
+        "outputs",
+        "source_of_truth",
+        "exit_conditions",
+        "routing",
+        "failure_routing",
+        "automation_classification",
+        "human_action_required"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/cpwId"
+        },
+        "name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "purpose": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "primary_authority": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/authorityReference"
+          }
+        },
+        "actors": {
+          "$ref": "#/$defs/actorObject"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifactReference"
+          }
+        },
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifactReference"
+          }
+        },
+        "source_of_truth": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sourceOfTruthReference"
+          }
+        },
+        "human_gate": {
+          "$ref": "#/$defs/humanGate"
+        },
+        "external_dependency": {
+          "$ref": "#/$defs/externalWait"
+        },
+        "audit_applicability": {
+          "$ref": "#/$defs/auditRouting"
+        },
+        "exit_conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "routing": {
+          "$ref": "#/$defs/routing"
+        },
+        "failure_routing": {
+          "$ref": "#/$defs/routing"
+        },
+        "automation_classification": {
+          "$ref": "#/$defs/automationClassification"
+        },
+        "human_action_required": {
+          "$ref": "#/$defs/humanActionRequired"
+        },
+        "substates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/substate"
+          }
+        },
+        "change_impact": {
+          "$ref": "#/$defs/changeImpact"
+        },
+        "epistemic_status": {
+          "$ref": "#/$defs/epistemicState"
+        },
+        "notes": {
+          "$ref": "#/$defs/notes"
+        },
+        "extensions": {
+          "$ref": "#/$defs/extensions"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "automation_classification": {
+                "const": "HUMAN_GATED"
+              }
+            },
+            "required": [
+              "automation_classification"
+            ]
+          },
+          "then": {
+            "required": [
+              "human_gate"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "automation_classification": {
+                "const": "EXTERNAL_WAIT"
+              }
+            },
+            "required": [
+              "automation_classification"
+            ]
+          },
+          "then": {
+            "required": [
+              "external_dependency"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CPW-021"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "substates"
+            ],
+            "properties": {
+              "substates": {
+                "minItems": 10,
+                "maxItems": 10,
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/substate"
+                    },
+                    {
+                      "properties": {
+                        "id": {
+                          "pattern": "^RIGHTS-(0[1-9]|10)$(?![\\s\\S])"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CPW-026"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "change_impact"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CPW-028"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "human_gate"
+            ],
+            "properties": {
+              "human_gate": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/humanGate"
+                  },
+                  {
+                    "properties": {
+                      "gate_type": {
+                        "const": "FINAL_HUMAN_APPROVAL"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "id": {
+                "const": "CPW-029"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "then": {
+            "required": [
+              "substates"
+            ],
+            "properties": {
+              "substates": {
+                "minItems": 5,
+                "maxItems": 5,
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/$defs/substate"
+                    },
+                    {
+                      "properties": {
+                        "id": {
+                          "pattern": "^DELIVERY-0[1-5]$(?![\\s\\S])"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
