@@ -4,7 +4,7 @@
   "workflow_version": "v1.0",
   "definition_format_version": "v1.0",
   "title": "ProjectORIGIN Case Production Workflow",
-  "status": "PROPOSED",
+  "status": "ADOPTED",
   "applicable_governance": [
     { "authority_id": "AGENTS", "document": "AGENTS.md", "version": "v1.2", "required": true },
     { "authority_id": "IMAGE-RULE", "document": "docs/Image Rule.md", "version": "v1.3", "required": true },
