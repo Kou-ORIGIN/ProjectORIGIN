@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:transaction-allocation:v0.1",
+  "title": "transaction-allocation v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "transaction_id",
+    "case_id",
+    "allocated_by_actor_id",
+    "allocated_by_actor_role",
+    "allocated_at",
+    "transaction_origin"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "TRANSACTION_ALLOCATION"
+    },
+    "transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "allocated_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "allocated_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "allocated_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "transaction_origin": {
+      "enum": [
+        "NORMAL",
+        "RECOVERY_CONTINUATION"
+      ]
+    },
+    "recovery_context": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryContext"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "transaction_origin": {
+            "const": "RECOVERY_CONTINUATION"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "recovery_context"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "recovery_context"
+          ]
+        }
+      }
+    }
+  ]
+}

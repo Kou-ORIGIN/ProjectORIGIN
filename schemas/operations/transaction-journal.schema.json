@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:transaction-journal:v0.1",
+  "title": "transaction-journal v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "transaction_id",
+    "case_id",
+    "state",
+    "initiated_by_actor_id",
+    "initiated_by_actor_role",
+    "created_at",
+    "updated_at",
+    "write_intent",
+    "preconditions",
+    "lease_binding",
+    "semantic_event_requirement",
+    "required_semantic_events",
+    "commit_window",
+    "write_progress"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "TRANSACTION_JOURNAL"
+    },
+    "transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "state": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/journalState"
+    },
+    "initiated_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "initiated_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "created_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "updated_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "write_intent": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/writeIntent"
+      }
+    },
+    "preconditions": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/precondition"
+      }
+    },
+    "lease_binding": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/leaseBinding"
+    },
+    "semantic_event_requirement": {
+      "enum": [
+        "REQUIRED",
+        "NOT_REQUIRED"
+      ]
+    },
+    "required_semantic_events": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/requiredEvent"
+      }
+    },
+    "commit_window": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/commitWindow"
+    },
+    "write_progress": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/writeProgress"
+      }
+    },
+    "recovery_context": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryContext"
+    }
+  }
+}

@@ -1,0 +1,1389 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:operational-defs:v0.1",
+  "title": "Operational definitions v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {},
+  "$defs": {
+    "humanActorId": {
+      "$ref": "projectorigin://schemas/workflows/workflow-adoption-decision/v1.0#/properties/human_authority/properties/human_actor_id"
+    },
+    "nonHumanOperationalActorId": {
+      "type": "string",
+      "pattern": "^ACTOR-[0-9]{4}$(?![\\s\\S])"
+    },
+    "operationalActorId": {
+      "anyOf": [
+        {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/humanActorId"
+        },
+        {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/nonHumanOperationalActorId"
+        }
+      ]
+    },
+    "operationalActorRole": {
+      "enum": [
+        "Audit Agent",
+        "External Rights Holder",
+        "Human Approver",
+        "Human Requester",
+        "Human Reviewer",
+        "Human Rights Reviewer",
+        "Human Visual Reviewer",
+        "Image Agent",
+        "Master Case File Agent",
+        "Orchestration Agent",
+        "Publication Agent",
+        "Publication Process",
+        "Repository / Data Agent",
+        "Research Agent"
+      ]
+    },
+    "humanAuthority": {
+      "$ref": "projectorigin://schemas/workflows/workflow-adoption-decision/v1.0#/properties/human_authority"
+    },
+    "artifactReference": {
+      "$ref": "projectorigin://schemas/workflows/case-production-workflow-definition/v1.0#/$defs/artifactReference"
+    },
+    "authorityReference": {
+      "$ref": "projectorigin://schemas/workflows/case-production-workflow-definition/v1.0#/$defs/authorityReference"
+    },
+    "relativeRepositoryPath": {
+      "$ref": "projectorigin://schemas/workflows/case-production-workflow-definition/v1.0#/$defs/relativeRepositoryPath"
+    },
+    "applicability": {
+      "$ref": "projectorigin://schemas/workflows/case-production-workflow-definition/v1.0#/$defs/applicability"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+    },
+    "caseId": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operation": {
+      "enum": [
+        "CREATE",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    "journalState": {
+      "enum": [
+        "PREPARED",
+        "VALIDATING",
+        "COMMITTED",
+        "ABORTED",
+        "RECOVERY_REQUIRED"
+      ]
+    },
+    "terminalOutcome": {
+      "enum": [
+        "COMMITTED",
+        "ABORTED",
+        "RECOVERY_REQUIRED"
+      ]
+    },
+    "determination": {
+      "enum": [
+        "SAFE_TO_START_NEW_TXN",
+        "UNSAFE_TO_PROCEED",
+        "UNDETERMINED"
+      ]
+    },
+    "eventType": {
+      "enum": [
+        "RECORD_CREATED",
+        "STATE_TRANSITION",
+        "HUMAN_DECISION_RECORDED",
+        "EVIDENCE_ATTACHED",
+        "IDENTITY_FIXED",
+        "RIGHTS_STATE_CHANGED",
+        "DEPENDENCY_CHANGED",
+        "GATE_CHANGED",
+        "LIFECYCLE_CHANGED",
+        "CORRECTION_RECORDED",
+        "RECORD_SUPERSEDED",
+        "RECORD_RETIRED",
+        "RECORD_VOIDED"
+      ]
+    },
+    "consistency": {
+      "enum": [
+        "MATCHES_PRE_TRANSACTION_STATE",
+        "MATCHES_COMMITTED_STATE",
+        "CONFLICTING_STATE",
+        "INSUFFICIENT_EVIDENCE",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "recoveryContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prior_transaction_id",
+        "recovery_determination_ref",
+        "recovery_determination_sha256",
+        "recovery_authorization_ref",
+        "recovery_authorization_sha256"
+      ],
+      "properties": {
+        "prior_transaction_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+        },
+        "recovery_determination_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "recovery_determination_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        },
+        "recovery_authorization_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "recovery_authorization_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        }
+      }
+    },
+    "preState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "existence",
+        "sha256"
+      ],
+      "properties": {
+        "existence": {
+          "enum": [
+            "EXISTS",
+            "ABSENT"
+          ]
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "postState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "existence",
+        "sha256"
+      ],
+      "properties": {
+        "existence": {
+          "enum": [
+            "EXISTS",
+            "ABSENT",
+            "UNDETERMINED"
+          ]
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "precondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "existence",
+        "sha256"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "existence": {
+          "enum": [
+            "MUST_EXIST",
+            "MUST_NOT_EXIST"
+          ]
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "writeIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "operation",
+        "role",
+        "prospective_sha256"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "operation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operation"
+        },
+        "role": {
+          "enum": [
+            "CANONICAL_TARGET",
+            "SEMANTIC_EVENT",
+            "MANIFEST"
+          ]
+        },
+        "prospective_sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "writeProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "operation",
+        "role",
+        "progress_state",
+        "last_observed_at"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "operation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operation"
+        },
+        "role": {
+          "enum": [
+            "CANONICAL_TARGET",
+            "SEMANTIC_EVENT",
+            "MANIFEST"
+          ]
+        },
+        "progress_state": {
+          "enum": [
+            "NOT_STARTED",
+            "MATERIALIZED",
+            "VERIFIED",
+            "FAILED",
+            "UNKNOWN"
+          ]
+        },
+        "last_observed_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        }
+      }
+    },
+    "commitWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entered",
+        "entered_at"
+      ],
+      "properties": {
+        "entered": {
+          "type": "boolean"
+        },
+        "entered_at": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "requiredEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "event_type",
+        "record_ref"
+      ],
+      "properties": {
+        "event_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/eventId"
+        },
+        "event_type": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/eventType"
+        },
+        "record_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+        }
+      }
+    },
+    "emittedEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "event_type",
+        "record_ref",
+        "event_sha256"
+      ],
+      "properties": {
+        "event_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/eventId"
+        },
+        "event_type": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/eventType"
+        },
+        "record_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+        },
+        "event_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        }
+      }
+    },
+    "validationFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "severity",
+        "blocking",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "ERROR",
+            "WARNING",
+            "INFO"
+          ]
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "validationResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "layers",
+        "findings"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "PASS_WITH_WARNINGS",
+            "FAIL",
+            "VALIDATION_LIMITED"
+          ]
+        },
+        "layers": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "SCHEMA",
+            "SEMANTIC",
+            "CROSS_ARTIFACT",
+            "GOVERNANCE"
+          ],
+          "properties": {
+            "SCHEMA": {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "VALIDATION_LIMITED"
+              ]
+            },
+            "SEMANTIC": {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "VALIDATION_LIMITED"
+              ]
+            },
+            "CROSS_ARTIFACT": {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "VALIDATION_LIMITED"
+              ]
+            },
+            "GOVERNANCE": {
+              "enum": [
+                "PASS",
+                "FAIL",
+                "VALIDATION_LIMITED"
+              ]
+            }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/validationFinding"
+          }
+        }
+      }
+    },
+    "writeResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "operation",
+        "pre_write_state",
+        "post_write_state",
+        "result",
+        "role"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "operation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operation"
+        },
+        "pre_write_state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/preState"
+        },
+        "post_write_state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "result": {
+          "enum": [
+            "CREATED",
+            "UPDATED",
+            "DELETED",
+            "UNCHANGED",
+            "UNDETERMINED"
+          ]
+        },
+        "role": {
+          "enum": [
+            "CANONICAL_TARGET",
+            "SEMANTIC_EVENT",
+            "MANIFEST"
+          ]
+        }
+      }
+    },
+    "leaseBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lease_path",
+        "lease_sha256",
+        "allocation_record_ref",
+        "allocation_record_sha256",
+        "acquired_at",
+        "expires_at"
+      ],
+      "properties": {
+        "lease_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "lease_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        },
+        "allocation_record_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "allocation_record_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        },
+        "acquired_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        }
+      }
+    },
+    "leaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lease_path",
+        "lease_sha256",
+        "allocation_record_ref",
+        "allocation_record_sha256",
+        "holder_actor_id",
+        "holder_actor_role",
+        "acquired_at",
+        "expires_at"
+      ],
+      "properties": {
+        "lease_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "lease_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        },
+        "allocation_record_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "allocation_record_sha256": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+        },
+        "holder_actor_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+        },
+        "holder_actor_role": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+        },
+        "acquired_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        },
+        "expires_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "state"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        }
+      }
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observed_at",
+        "exact_instance_verified",
+        "safe_delete_performed",
+        "post_observation",
+        "finding_code"
+      ],
+      "properties": {
+        "observed_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        },
+        "exact_instance_verified": {
+          "type": "boolean"
+        },
+        "safe_delete_performed": {
+          "type": "boolean"
+        },
+        "post_observation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "finding_code": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "transactionId": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}-TXN-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "recoveryDeterminationId": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}-RDET-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "recoveryAuthorizationId": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}-RAUTH-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "leaseReleaseResolutionId": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}-LRRES-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "eventId": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}-EVT-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "inspectionEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allocation_record_ref",
+        "allocation_record_sha256",
+        "journal_state",
+        "journal_sha256",
+        "receipt_ref",
+        "receipt_sha256",
+        "lease_observation",
+        "canonical_observations",
+        "prior_determination_references",
+        "consistency",
+        "inspected_at",
+        "inspected_by_actor_id",
+        "inspected_by_actor_role",
+        "allocation_observation",
+        "journal_observation",
+        "receipt_observation",
+        "integrity_results",
+        "prior_observation_findings"
+      ],
+      "properties": {
+        "allocation_record_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "allocation_record_sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "journal_state": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/journalState"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "journal_sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "receipt_ref": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "receipt_sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lease_observation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryLeaseObservation"
+        },
+        "canonical_observations": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryPath"
+          }
+        },
+        "prior_determination_references": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+          }
+        },
+        "consistency": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/consistency"
+        },
+        "inspected_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        },
+        "inspected_by_actor_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+        },
+        "inspected_by_actor_role": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+        },
+        "allocation_observation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryAllocationObservation"
+        },
+        "journal_observation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryJournalObservation"
+        },
+        "receipt_observation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryReceiptObservation"
+        },
+        "integrity_results": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryIntegrity"
+          }
+        },
+        "prior_observation_findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "semanticEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "occurred_at",
+        "event_type",
+        "record_ref",
+        "actor_id",
+        "actor_role",
+        "authority_type",
+        "authority_reference",
+        "previous_state",
+        "new_state",
+        "evidence_references"
+      ],
+      "properties": {
+        "event_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/eventId"
+        },
+        "occurred_at": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+        },
+        "event_type": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/eventType"
+        },
+        "record_ref": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+        },
+        "actor_id": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+        },
+        "actor_role": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+        },
+        "authority_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "authority_reference": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "previous_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "new_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_references": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+          }
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "recoveryValidation": {
+      "enum": [
+        "VALID",
+        "INVALID",
+        "UNAVAILABLE",
+        "ABSENT"
+      ]
+    },
+    "recoveryAllocationObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "state",
+        "validation",
+        "data",
+        "findings"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "validation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryValidation"
+        },
+        "data": {
+          "title": "transaction-allocation v0.1",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "record_format_version",
+            "artifact_type",
+            "transaction_id",
+            "case_id",
+            "allocated_by_actor_id",
+            "allocated_by_actor_role",
+            "allocated_at",
+            "transaction_origin"
+          ],
+          "properties": {
+            "record_format_version": {
+              "const": "v0.1"
+            },
+            "artifact_type": {
+              "const": "TRANSACTION_ALLOCATION"
+            },
+            "transaction_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+            },
+            "case_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+            },
+            "allocated_by_actor_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+            },
+            "allocated_by_actor_role": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+            },
+            "allocated_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            "transaction_origin": {
+              "enum": [
+                "NORMAL",
+                "RECOVERY_CONTINUATION"
+              ]
+            },
+            "recovery_context": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryContext"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "transaction_origin": {
+                    "const": "RECOVERY_CONTINUATION"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "recovery_context"
+                ]
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "recovery_context"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recoveryJournalObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "state",
+        "validation",
+        "data",
+        "findings"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "validation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryValidation"
+        },
+        "data": {
+          "title": "transaction-journal v0.1",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "record_format_version",
+            "artifact_type",
+            "transaction_id",
+            "case_id",
+            "state",
+            "initiated_by_actor_id",
+            "initiated_by_actor_role",
+            "created_at",
+            "updated_at",
+            "write_intent",
+            "preconditions",
+            "lease_binding",
+            "semantic_event_requirement",
+            "required_semantic_events",
+            "commit_window",
+            "write_progress"
+          ],
+          "properties": {
+            "record_format_version": {
+              "const": "v0.1"
+            },
+            "artifact_type": {
+              "const": "TRANSACTION_JOURNAL"
+            },
+            "transaction_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+            },
+            "case_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+            },
+            "state": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/journalState"
+            },
+            "initiated_by_actor_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+            },
+            "initiated_by_actor_role": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+            },
+            "created_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            "updated_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            "write_intent": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/writeIntent"
+              }
+            },
+            "preconditions": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/precondition"
+              }
+            },
+            "lease_binding": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/leaseBinding"
+            },
+            "semantic_event_requirement": {
+              "enum": [
+                "REQUIRED",
+                "NOT_REQUIRED"
+              ]
+            },
+            "required_semantic_events": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/requiredEvent"
+              }
+            },
+            "commit_window": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/commitWindow"
+            },
+            "write_progress": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/writeProgress"
+              }
+            },
+            "recovery_context": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryContext"
+            }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recoveryReceiptObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "state",
+        "validation",
+        "data",
+        "findings"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "validation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryValidation"
+        },
+        "data": {
+          "title": "transaction-receipt v0.1",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "record_format_version",
+            "artifact_type",
+            "transaction_id",
+            "case_id",
+            "terminal_outcome",
+            "initiated_by_actor_id",
+            "initiated_by_actor_role",
+            "recorded_by_actor_id",
+            "recorded_by_actor_role",
+            "terminal_at",
+            "receipt_created_at",
+            "lease_evidence",
+            "write_results",
+            "validation_evidence",
+            "semantic_event_requirement",
+            "required_semantic_events",
+            "emitted_semantic_event_refs"
+          ],
+          "properties": {
+            "record_format_version": {
+              "const": "v0.1"
+            },
+            "artifact_type": {
+              "const": "TRANSACTION_RECEIPT"
+            },
+            "transaction_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+            },
+            "case_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+            },
+            "terminal_outcome": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/terminalOutcome"
+            },
+            "initiated_by_actor_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+            },
+            "initiated_by_actor_role": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+            },
+            "recorded_by_actor_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+            },
+            "recorded_by_actor_role": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+            },
+            "terminal_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            "receipt_created_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            "lease_evidence": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/leaseEvidence"
+            },
+            "write_results": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/writeResult"
+              }
+            },
+            "validation_evidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "prospective_validation",
+                "post_write_verification"
+              ],
+              "properties": {
+                "prospective_validation": {
+                  "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/validationResult"
+                },
+                "post_write_verification": {
+                  "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/validationResult"
+                }
+              }
+            },
+            "semantic_event_requirement": {
+              "enum": [
+                "REQUIRED",
+                "NOT_REQUIRED"
+              ]
+            },
+            "required_semantic_events": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/requiredEvent"
+              }
+            },
+            "emitted_semantic_event_refs": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/emittedEvent"
+              }
+            }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recoveryLeaseObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "state",
+        "validation",
+        "data",
+        "findings"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "validation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryValidation"
+        },
+        "data": {
+          "title": "case-write-lease v0.1",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "record_format_version",
+            "artifact_type",
+            "transaction_id",
+            "case_id",
+            "allocation_record_ref",
+            "allocation_record_sha256",
+            "holder_actor_id",
+            "holder_actor_role",
+            "acquired_at",
+            "expires_at"
+          ],
+          "properties": {
+            "record_format_version": {
+              "const": "v0.1"
+            },
+            "artifact_type": {
+              "const": "CASE_WRITE_LEASE"
+            },
+            "transaction_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+            },
+            "case_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+            },
+            "allocation_record_ref": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+            },
+            "allocation_record_sha256": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            "holder_actor_id": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+            },
+            "holder_actor_role": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+            },
+            "acquired_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            },
+            "expires_at": {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+            }
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recoveryPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "operation",
+        "role",
+        "actual_state",
+        "expected_pre_transaction_state",
+        "expected_committed_state",
+        "comparison"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "operation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operation"
+        },
+        "role": {
+          "enum": [
+            "CANONICAL_TARGET",
+            "SEMANTIC_EVENT",
+            "MANIFEST"
+          ]
+        },
+        "actual_state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "expected_pre_transaction_state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "expected_committed_state": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/postState"
+        },
+        "comparison": {
+          "enum": [
+            "MATCHES_PRE",
+            "MATCHES_COMMITTED",
+            "MATCHES_BOTH",
+            "CONFLICTING",
+            "INSUFFICIENT"
+          ]
+        }
+      }
+    },
+    "recoveryIntegrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "target_path",
+        "status",
+        "sha256",
+        "findings"
+      ],
+      "properties": {
+        "target_path": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+        },
+        "status": {
+          "enum": [
+            "VALID",
+            "INVALID",
+            "UNAVAILABLE",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

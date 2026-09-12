@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:recovery-determination:v0.1",
+  "title": "recovery-determination v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "recovery_determination_id",
+    "case_id",
+    "prior_transaction_id",
+    "determination",
+    "determined_by_actor_id",
+    "determined_by_actor_role",
+    "determined_at",
+    "evidence",
+    "rationale"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "RECOVERY_DETERMINATION"
+    },
+    "recovery_determination_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryDeterminationId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "prior_transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "determination": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/determination"
+    },
+    "determined_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "determined_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "determined_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "evidence": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/inspectionEvidence"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "supersedes": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+    }
+  }
+}

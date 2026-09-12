@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:transaction-receipt:v0.1",
+  "title": "transaction-receipt v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "transaction_id",
+    "case_id",
+    "terminal_outcome",
+    "initiated_by_actor_id",
+    "initiated_by_actor_role",
+    "recorded_by_actor_id",
+    "recorded_by_actor_role",
+    "terminal_at",
+    "receipt_created_at",
+    "lease_evidence",
+    "write_results",
+    "validation_evidence",
+    "semantic_event_requirement",
+    "required_semantic_events",
+    "emitted_semantic_event_refs"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "TRANSACTION_RECEIPT"
+    },
+    "transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "terminal_outcome": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/terminalOutcome"
+    },
+    "initiated_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "initiated_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "recorded_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "recorded_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "terminal_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "receipt_created_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "lease_evidence": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/leaseEvidence"
+    },
+    "write_results": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/writeResult"
+      }
+    },
+    "validation_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "prospective_validation",
+        "post_write_verification"
+      ],
+      "properties": {
+        "prospective_validation": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/validationResult"
+        },
+        "post_write_verification": {
+          "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/validationResult"
+        }
+      }
+    },
+    "semantic_event_requirement": {
+      "enum": [
+        "REQUIRED",
+        "NOT_REQUIRED"
+      ]
+    },
+    "required_semantic_events": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/requiredEvent"
+      }
+    },
+    "emitted_semantic_event_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/emittedEvent"
+      }
+    }
+  }
+}

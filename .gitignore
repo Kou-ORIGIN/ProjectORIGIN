@@ -1,0 +1,7 @@
+# Case Bootstrap Kit: ephemeral execution state only (Decision 124).
+/.projectorigin/allocation-locks/
+/.projectorigin/id-allocation-locks/
+/.projectorigin/lease-release-resolution-locks/
+/.projectorigin/journals/
+/.projectorigin/leases/
+/.projectorigin/index/

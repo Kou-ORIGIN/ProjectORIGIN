@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:lease-release-resolution:v0.1",
+  "title": "lease-release-resolution v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "lease_release_resolution_id",
+    "case_id",
+    "transaction_id",
+    "lease_release_record_ref",
+    "lease_release_record_sha256",
+    "predecessor_ref",
+    "predecessor_sha256",
+    "resolution_status",
+    "observed_by_actor_id",
+    "observed_by_actor_role",
+    "release_evidence"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "LEASE_RELEASE_RESOLUTION"
+    },
+    "lease_release_resolution_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/leaseReleaseResolutionId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "lease_release_record_ref": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+    },
+    "lease_release_record_sha256": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+    },
+    "predecessor_ref": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+    },
+    "predecessor_sha256": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+    },
+    "resolution_status": {
+      "enum": [
+        "RESOLVED_RELEASED",
+        "RESOLVED_ABSENT",
+        "STILL_PRESENT",
+        "FOREIGN_OR_REPLACEMENT_LEASE",
+        "UNDETERMINED"
+      ]
+    },
+    "observed_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "observed_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "release_evidence": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/releaseEvidence"
+    }
+  }
+}

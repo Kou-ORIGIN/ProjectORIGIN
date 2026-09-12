@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:recovery-authorization:v0.1",
+  "title": "recovery-authorization v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "recovery_authorization_id",
+    "case_id",
+    "prior_transaction_id",
+    "recovery_determination_ref",
+    "recovery_determination_sha256",
+    "authorization",
+    "authorized_by_actor_id",
+    "authorized_by_actor_role",
+    "authorized_at",
+    "human_authority",
+    "human_decision_reference",
+    "rationale"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "RECOVERY_AUTHORIZATION"
+    },
+    "recovery_authorization_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/recoveryAuthorizationId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "prior_transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "recovery_determination_ref": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+    },
+    "recovery_determination_sha256": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+    },
+    "authorization": {
+      "enum": [
+        "AUTHORIZED",
+        "DENIED"
+      ]
+    },
+    "authorized_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "authorized_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "authorized_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "human_authority": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/humanAuthority"
+    },
+    "human_decision_reference": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/artifactReference"
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

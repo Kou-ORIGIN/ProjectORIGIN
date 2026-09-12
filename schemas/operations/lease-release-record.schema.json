@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:lease-release-record:v0.1",
+  "title": "lease-release-record v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "transaction_id",
+    "case_id",
+    "receipt_ref",
+    "receipt_sha256",
+    "expected_lease",
+    "release_outcome",
+    "release_attempted_by_actor_id",
+    "release_attempted_by_actor_role",
+    "release_evidence"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "LEASE_RELEASE_RECORD"
+    },
+    "transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "receipt_ref": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+    },
+    "receipt_sha256": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+    },
+    "expected_lease": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/leaseEvidence"
+    },
+    "release_outcome": {
+      "enum": [
+        "RELEASED",
+        "ALREADY_ABSENT",
+        "FAILED",
+        "AMBIGUOUS",
+        "OWNERSHIP_MISMATCH"
+      ]
+    },
+    "release_attempted_by_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "release_attempted_by_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "release_evidence": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/releaseEvidence"
+    }
+  }
+}

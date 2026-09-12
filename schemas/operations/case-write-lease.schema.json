@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:operations:case-write-lease:v0.1",
+  "title": "case-write-lease v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "transaction_id",
+    "case_id",
+    "allocation_record_ref",
+    "allocation_record_sha256",
+    "holder_actor_id",
+    "holder_actor_role",
+    "acquired_at",
+    "expires_at"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v0.1"
+    },
+    "artifact_type": {
+      "const": "CASE_WRITE_LEASE"
+    },
+    "transaction_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/transactionId"
+    },
+    "case_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/caseId"
+    },
+    "allocation_record_ref": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/relativeRepositoryPath"
+    },
+    "allocation_record_sha256": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/sha256"
+    },
+    "holder_actor_id": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorId"
+    },
+    "holder_actor_role": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/operationalActorRole"
+    },
+    "acquired_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    },
+    "expires_at": {
+      "$ref": "urn:projectorigin:schema:operations:operational-defs:v0.1#/$defs/timestamp"
+    }
+  }
+}
