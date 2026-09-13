@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:cases:image-requirement-register:v1.0",
+  "title": "Image Requirement Register v1.0",
+  "$comment": "Decisions 126 and 142. Properties define canonical key order. Descriptive references, blocking reasons and orchestration state create no authority. Empty arrays establish only that no entry is recorded. Asset binding is not registration evidence. Validation is not an Audit Result or approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "register_format_version",
+    "artifact_type",
+    "case_id",
+    "requirements"
+  ],
+  "properties": {
+    "register_format_version": {
+      "const": "v1.0"
+    },
+    "artifact_type": {
+      "const": "IMAGE_REQUIREMENT_REGISTER"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirement_id",
+          "case_id",
+          "requirement_status",
+          "reader_purpose",
+          "classification_candidate",
+          "production_route",
+          "dependency_references",
+          "source_rights_references",
+          "intended_placement_references",
+          "current_orchestration_state",
+          "blocking_reasons",
+          "resulting_asset_reference",
+          "completion_condition"
+        ],
+        "properties": {
+          "requirement_id": {
+            "type": "string",
+            "pattern": "^IMGREQ-(?!000)[0-9]{3}$(?![\\s\\S])"
+          },
+          "case_id": {
+            "type": "string",
+            "pattern": "^FILE-(?!0000)[0-9]{4}$(?![\\s\\S])"
+          },
+          "requirement_status": {
+            "enum": [
+              "REQUIRED",
+              "OPTIONAL"
+            ]
+          },
+          "reader_purpose": {
+            "type": "string",
+            "minLength": 1
+          },
+          "classification_candidate": {
+            "enum": [
+              "Historical Photo",
+              "Document Scan",
+              "Map",
+              "Diagram",
+              "AI Visualization",
+              "Reconstruction",
+              "Background Image",
+              "Case Card Image",
+              null
+            ]
+          },
+          "production_route": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dependency_references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "source_rights_references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "intended_placement_references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "current_orchestration_state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "blocking_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "resulting_asset_reference": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "asset_id",
+              "asset_version",
+              "repository_path",
+              "sha256"
+            ],
+            "properties": {
+              "asset_id": {
+                "type": "string",
+                "pattern": "^FILE-(?!0000)[0-9]{4}-IMG-[0-9]{4}$(?![\\s\\S])"
+              },
+              "asset_version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "repository_path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+              }
+            }
+          },
+          "completion_condition": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}
