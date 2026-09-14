@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, FormatChecker
+from jsonschema.validators import extend
 from referencing import Registry, Resource
 from . import storage as s
 
@@ -113,8 +114,18 @@ class Contracts:
         return s.serialize(value, self.schema(value), self.resolve)
 
     def validate(self, value):
-        errors = list(Draft202012Validator(self.schema(value), registry=self.registry,
-                                           format_checker=FormatChecker()).iter_errors(value))
+        # Decision 162: only schema-validated artifactReference objects qualify.
+        artifact_references = set()
+        def track_reference(validator, reference, instance, schema):
+            errors = list(Draft202012Validator.VALIDATORS['$ref'](
+                validator, reference, instance, schema))
+            if (not errors and isinstance(instance, dict)
+                    and reference.endswith('#/$defs/artifactReference')):
+                artifact_references.add(id(instance))
+            yield from errors
+        validator_type = extend(Draft202012Validator, {'$ref': track_reference})
+        errors = list(validator_type(self.schema(value), registry=self.registry,
+                                     format_checker=FormatChecker()).iter_errors(value))
         require(not errors, 'SCHEMA_ERROR', '; '.join(e.message for e in errors))
         case = value['case_id']
         def walk(node):
@@ -129,7 +140,10 @@ class Contracts:
                     if key in ('target_path', 'lease_path', 'repository_path') or key.endswith('_ref') and isinstance(child, str):
                         s.canonical_ref(child)
                     if key != 'case_id' and key.endswith('_id') and isinstance(child, str) and child.startswith('FILE-'):
-                        require(child.startswith(case + '-'), 'CROSS_CASE_IDENTITY', key)
+                        singleton_reference = (key == 'artifact_id' and child == case
+                                               and id(node) in artifact_references)
+                        require(singleton_reference or child.startswith(case + '-'),
+                                'CROSS_CASE_IDENTITY', key)
                     walk(child)
                 if 'existence' in node and 'sha256' in node:
                     exists = node['existence'] == 'EXISTS'
