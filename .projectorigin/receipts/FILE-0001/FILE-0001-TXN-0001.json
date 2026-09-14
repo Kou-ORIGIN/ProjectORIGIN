@@ -1,0 +1,109 @@
+{
+  "record_format_version": "v0.1",
+  "artifact_type": "TRANSACTION_RECEIPT",
+  "transaction_id": "FILE-0001-TXN-0001",
+  "case_id": "FILE-0001",
+  "terminal_outcome": "COMMITTED",
+  "initiated_by_actor_id": "ACTOR-0001",
+  "initiated_by_actor_role": "Image Agent",
+  "recorded_by_actor_id": "ACTOR-0001",
+  "recorded_by_actor_role": "Image Agent",
+  "terminal_at": "2026-09-14T16:57:57.849648Z",
+  "receipt_created_at": "2026-09-14T16:57:57.894071Z",
+  "lease_evidence": {
+    "lease_path": ".projectorigin/leases/FILE-0001.json",
+    "lease_sha256": "21e2dcb11adac05ba200916a5870ae738f7c864e60415f2dc10ac7b87421256f",
+    "allocation_record_ref": ".projectorigin/transaction-allocations/FILE-0001/FILE-0001-TXN-0001.json",
+    "allocation_record_sha256": "317cec0aa650eaecb53f27ccb1b92312fe01fc6f4a3c7f6998b235349511873b",
+    "holder_actor_id": "ACTOR-0001",
+    "holder_actor_role": "Image Agent",
+    "acquired_at": "2026-09-14T16:57:54.684011Z",
+    "expires_at": "2026-09-14T17:57:54.676454Z"
+  },
+  "write_results": [
+    {
+      "target_path": "cases/FILE-0001/image-requirements.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "ab76dc0a0b580f505c9b7f325b06e460b1631fd75b3a30d65a2887c58dacbd6b"
+      },
+      "result": "CREATED",
+      "role": "CANONICAL_TARGET"
+    },
+    {
+      "target_path": "cases/FILE-0001/semantic-events/FILE-0001-EVT-0001.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "ea982908796a415f530ae37d6dc18ddbabd2757cfb6bfd22aa652568235c77b8"
+      },
+      "result": "CREATED",
+      "role": "SEMANTIC_EVENT"
+    }
+  ],
+  "validation_evidence": {
+    "prospective_validation": {
+      "status": "PASS",
+      "layers": {
+        "SCHEMA": "PASS",
+        "SEMANTIC": "PASS",
+        "CROSS_ARTIFACT": "PASS",
+        "GOVERNANCE": "PASS"
+      },
+      "findings": []
+    },
+    "post_write_verification": {
+      "status": "PASS",
+      "layers": {
+        "SCHEMA": "PASS",
+        "SEMANTIC": "PASS",
+        "CROSS_ARTIFACT": "PASS",
+        "GOVERNANCE": "PASS"
+      },
+      "findings": []
+    }
+  },
+  "semantic_event_requirement": "REQUIRED",
+  "required_semantic_events": [
+    {
+      "event_id": "FILE-0001-EVT-0001",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "image-requirement-register",
+        "artifact_type": "IMAGE_REQUIREMENT_REGISTER",
+        "required": false,
+        "applicability": "CONDITIONAL",
+        "artifact_id": "FILE-0001",
+        "repository_path": "cases/FILE-0001/image-requirements.json",
+        "sha256": "ab76dc0a0b580f505c9b7f325b06e460b1631fd75b3a30d65a2887c58dacbd6b",
+        "source_step": "CPW-019"
+      }
+    }
+  ],
+  "emitted_semantic_event_refs": [
+    {
+      "event_id": "FILE-0001-EVT-0001",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "image-requirement-register",
+        "artifact_type": "IMAGE_REQUIREMENT_REGISTER",
+        "required": false,
+        "applicability": "CONDITIONAL",
+        "artifact_id": "FILE-0001",
+        "repository_path": "cases/FILE-0001/image-requirements.json",
+        "sha256": "ab76dc0a0b580f505c9b7f325b06e460b1631fd75b3a30d65a2887c58dacbd6b",
+        "source_step": "CPW-019"
+      },
+      "event_sha256": "ea982908796a415f530ae37d6dc18ddbabd2757cfb6bfd22aa652568235c77b8"
+    }
+  ]
+}

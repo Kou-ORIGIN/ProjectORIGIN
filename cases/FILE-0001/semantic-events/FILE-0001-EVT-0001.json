@@ -1,0 +1,23 @@
+{
+  "event_id": "FILE-0001-EVT-0001",
+  "occurred_at": "2026-09-14T16:57:54.749312Z",
+  "event_type": "RECORD_CREATED",
+  "record_ref": {
+    "ref_id": "image-requirement-register",
+    "artifact_type": "IMAGE_REQUIREMENT_REGISTER",
+    "required": false,
+    "applicability": "CONDITIONAL",
+    "artifact_id": "FILE-0001",
+    "repository_path": "cases/FILE-0001/image-requirements.json",
+    "sha256": "ab76dc0a0b580f505c9b7f325b06e460b1631fd75b3a30d65a2887c58dacbd6b",
+    "source_step": "CPW-019"
+  },
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Image Agent",
+  "authority_type": "NONE",
+  "authority_reference": null,
+  "previous_state": null,
+  "new_state": null,
+  "evidence_references": [],
+  "note": "Creation of the FILE-0001 Image Requirement Register; this event records record creation only and does not assert CPW-019 closure."
+}
