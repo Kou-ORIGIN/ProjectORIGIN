@@ -1276,14 +1276,51 @@ class HistoricalProductionEvidenceTests(unittest.TestCase):
         self.assertEqual("PASS", report["historical_adoption_integrity"])
         self.assertEqual("NOT_CHECKED", report["current_applicability"])
 
-    def test_real_candidate_additions_preserve_v1_current(self):
-        record = ROOT / "workflows/adoptions/WFADOPT-0001.json"
-        report = VALIDATOR.run_validation(
-            SCHEMA, DEFINITION, ROOT, True, [record],
+    def test_real_successor_cutover_preserves_v1_historical_and_makes_v11_current(self):
+        old_record = ROOT / "workflows/adoptions/WFADOPT-0001.json"
+        self.assertEqual(
+            "9d7a8d73706b1b2db2188d1d29e874bc092431e0405f95ea8164b747689fac47",
+            VALIDATOR._sha(old_record.read_bytes()),
+        )
+
+        historical = VALIDATOR.run_validation(
+            SCHEMA, DEFINITION, ROOT, False, [old_record],
+            validation_mode="historical",
+        )
+        self.assertEqual(0, historical["exit_code"], historical)
+        self.assertEqual(
+            "PASS", historical["historical_adoption_integrity"]
+        )
+        self.assertEqual(
+            "NOT_CHECKED", historical["current_applicability"]
+        )
+
+        old_current = VALIDATOR.run_validation(
+            SCHEMA, DEFINITION, ROOT, True, [old_record],
             validation_mode="current",
         )
-        self.assertEqual(0, report["exit_code"], report)
-        self.assertEqual("PASS", report["current_applicability"])
+        self.assertEqual(1, old_current["exit_code"], old_current)
+        self.assertEqual(
+            "FAIL", old_current["current_applicability"]
+        )
+
+        new_definition = (
+            ROOT / "workflows/case-production-workflow_v1.1.json"
+        )
+        new_record = ROOT / "workflows/adoptions/WFADOPT-0002.json"
+        self.assertTrue(new_record.is_file())
+
+        new_current = VALIDATOR.run_validation(
+            SCHEMA, new_definition, ROOT, True, [new_record],
+            validation_mode="current",
+        )
+        self.assertEqual(0, new_current["exit_code"], new_current)
+        self.assertEqual(
+            "PASS", new_current["current_applicability"]
+        )
+        self.assertEqual(
+            "PASS", new_current["historical_adoption_integrity"]
+        )
 
 
 if __name__ == "__main__":

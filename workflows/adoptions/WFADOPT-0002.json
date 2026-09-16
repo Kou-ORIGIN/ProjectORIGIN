@@ -1,0 +1,119 @@
+{
+  "record_format_version": "v1.0",
+  "adoption_record_id": "WFADOPT-0002",
+  "record_type": "WORKFLOW_FORMAL_ADOPTION_RECORD",
+  "target": {
+    "workflow_path": "workflows/case-production-workflow_v1.1.json",
+    "workflow_version": "v1.1",
+    "definition_format_version": "v1.0",
+    "candidate_definition_sha256": "75ed6411ff37fb77f6fa5af315941dc757ce84972c00f74c7402fc0bcc41aa16",
+    "candidate_git_commit_sha": "7e520908de5f82fc3c1312048215f8a703188f32",
+    "adopted_definition_sha256": "8c0e4758237743733a68d62feac3254d5a23646413c222998ea545fd2a95af11"
+  },
+  "transition": {
+    "from_status": "PROPOSED",
+    "to_status": "ADOPTED"
+  },
+  "human_decision": {
+    "decision_id": "WFADOPTDEC-0002",
+    "decision_path": "workflows/adoptions/decisions/WFADOPTDEC-0002.json",
+    "decision_sha256": "56ab4536d85356abf716ffb09105006b913ef295f167ec17dce9311ef284a3bd"
+  },
+  "adopted_at": "2026-09-16T13:07:41Z",
+  "adopted_state_validation_evidence": {
+    "definition_sha256": "8c0e4758237743733a68d62feac3254d5a23646413c222998ea545fd2a95af11",
+    "result": "PASS_WITH_WARNINGS",
+    "json_integrity": "PASS",
+    "schema_validation": "PASS",
+    "semantic_validation": "PASS",
+    "governance_compatibility": "PASS",
+    "tests": {
+      "total": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "expected_failures": 0
+    },
+    "validator_exit_code": 0,
+    "controlled_artifact_integrity": "PASS",
+    "controlled_artifacts": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "2e949c83e8f665b1c7d5e34c27e38b3f28a4ebf00006c3fc6909d13afcea4f4d"
+      },
+      {
+        "path": "docs/Audit Rule.md",
+        "sha256": "ae60caa4861437212b21569891edfc6c638bbd73b33003050ac5cdb2fb81fcb8"
+      },
+      {
+        "path": "docs/Case File Template.md",
+        "sha256": "70ed9d7dbd790f7984b4067bf48c32bfac079ef91513ba54d4433e3d3bb28e5e"
+      },
+      {
+        "path": "docs/Database Rule.md",
+        "sha256": "5d53d6dab7709be520ef41098b39722a3e56c879b2b3a25aade917cf9f62eb6b"
+      },
+      {
+        "path": "docs/Database Schema.md",
+        "sha256": "5084dc8929b43b33d87aab28bee9d1fa9c22adf3c96e7a6dafe4cd5ac707082e"
+      },
+      {
+        "path": "docs/Image Rule.md",
+        "sha256": "3a14da11088bc223443b0eebdc17df48a6f94da34b4d098857f1b3237045a3ad"
+      },
+      {
+        "path": "docs/Operating Manual.md",
+        "sha256": "dede99b81428c822784eca606270c07f1fed55aaf8e44b95e527fba4e3184a27"
+      },
+      {
+        "path": "docs/ProjectORIGIN Publication Bible.md",
+        "sha256": "fda7d02011825c11734bad0616d3989cf9faebb15f2a019df77de53ea0a75cdc"
+      },
+      {
+        "path": "docs/ProjectORIGIN Repository Rule.md",
+        "sha256": "c03a93e495ba3d367a20f341e4b59a595987b316b54645338d412e73ff3beb9a"
+      },
+      {
+        "path": "schemas/workflows/case-production-workflow-definition.schema.json",
+        "sha256": "6d147f041dec4e0325d78b2aba299c22ba7e82424087c5b8ca2749a6b0ed1ba3"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-decision.schema.json",
+        "sha256": "f999c5429ceb57eb08d21d7291318b5d19069756ae3cfcd5166f84bc3c5d3af4"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-record.schema.json",
+        "sha256": "9d366d4b11418b00c1f01f709fb85f8f690c14b0bb14aee5a167f4c366c70081"
+      },
+      {
+        "path": "schemas/workflows/workflow-deprecation-record.schema.json",
+        "sha256": "54ca50cc50fffb10e7488c8d65ad09edf2d977b779e2ce377fb571d0fa1b437f"
+      },
+      {
+        "path": "scripts/validate-workflow.py",
+        "sha256": "0cb7710beed4dd7b06a532b0684d71d1a767fa8fd039dd430c0c7a650279fd7a"
+      },
+      {
+        "path": "tests/workflows/test_validate_workflow.py",
+        "sha256": "283f34a7af610a286e9d8441c901126187bc778f31ca7f5d059d403e09cecbf2"
+      }
+    ],
+    "warnings": [
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Operating Manual.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Rule.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Schema.md",
+        "blocking": false
+      }
+    ]
+  }
+}

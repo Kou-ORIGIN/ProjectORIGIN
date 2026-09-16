@@ -946,7 +946,7 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 
 ### Formal Adoption Date
 
-NOT PERFORMED
+2026-09-16
 
 ### Changes
 
@@ -962,10 +962,9 @@ Rule Versionの差や過去のmanual registrationの可能性のみから、新�
 
 ### Status
 
-CANDIDATE / NOT FORMALLY ADOPTED。
-v1.3は後継の正式採用までCurrent Official Versionとして維持する。
+OFFICIAL。Current Official Versionはv1.4とする。Human Formal Adoption Decision = `APPROVED`により正式採用された。
+Historical Official Version: v1.3
 以下のv1.3以前のVersion Historyは変更しない。
-Human exact-byte acceptance、Formal Adoptionおよび後継Workflow v1.1と後継Rulesの協調したcurrent-applicability cutoverは別工程であり、本候補は実行しない。
 
 ## v1.3
 

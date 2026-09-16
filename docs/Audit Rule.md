@@ -2118,7 +2118,7 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 
 **Formal Adoption Date**
 
-NOT PERFORMED
+2026-09-16
 
 ## Overview
 
@@ -2140,10 +2140,10 @@ Rule Versionの差や過去のmanual registrationの可能性のみから、新�
 
 ## Status
 
-CANDIDATE / NOT FORMALLY ADOPTED。
-Audit Rule v1.4.0は後継の正式採用までCurrent Official Versionとして維持する。
+OFFICIAL。Human Formal Adoption Decision = `APPROVED`により正式採用された。
+本VersionはCurrent Official Audit Rule v1.4.1とする。
+Historical Official Version: v1.4.0
 以下のv1.4.0以前のVersion Historyは変更しない。
-Human exact-byte acceptance、Formal Adoptionおよび後継Workflow v1.1と後継Rulesの協調したcurrent-applicability cutoverは別工程であり、本候補は実行しない。
 
 ---
 
