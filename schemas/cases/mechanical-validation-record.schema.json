@@ -1,0 +1,535 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:cases:mechanical-validation-record:v1.0",
+  "title": "Mechanical Validation Record v1.0",
+  "$comment": "Canonical mechanical validation evidence only. It is not Formal Audit, Rights review, Image Audit, Registration Verification, Human Approval, CPW closure, or placement authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "case_id",
+    "source_step",
+    "transaction_id",
+    "requirement_id",
+    "asset_id",
+    "asset_version",
+    "register_evidence",
+    "base_asset_evidence",
+    "sidecar_evidence",
+    "image_audit_evidence",
+    "management_status_observation",
+    "governing_references",
+    "validator_identity",
+    "runtime_identity",
+    "validated_at",
+    "actor_id",
+    "actor_role",
+    "checks",
+    "result",
+    "findings",
+    "prior_record_reference"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v1.0"
+    },
+    "artifact_type": {
+      "const": "MECHANICAL_VALIDATION_RECORD"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^FILE-[0-9]{4}$"
+    },
+    "source_step": {
+      "const": "CPW-025"
+    },
+    "transaction_id": {
+      "type": "string",
+      "pattern": "^FILE-[0-9]{4}-TXN-[0-9]{4}$"
+    },
+    "requirement_id": {
+      "type": "string",
+      "pattern": "^IMGREQ-[0-9]{3}$"
+    },
+    "asset_id": {
+      "type": "string",
+      "pattern": "^FILE-[0-9]{4}-IMG-[0-9]{4}$"
+    },
+    "asset_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "register_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "expected_sha256",
+        "observed_sha256",
+        "existence"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "existence": {
+          "type": "string",
+          "enum": [
+            "EXISTS",
+            "ABSENT",
+            "UNDETERMINED"
+          ]
+        }
+      }
+    },
+    "base_asset_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "expected_sha256",
+        "observed_sha256",
+        "existence"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "existence": {
+          "type": "string",
+          "enum": [
+            "EXISTS",
+            "ABSENT",
+            "UNDETERMINED"
+          ]
+        }
+      }
+    },
+    "sidecar_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "expected_sha256",
+        "observed_sha256",
+        "existence"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "existence": {
+          "type": "string",
+          "enum": [
+            "EXISTS",
+            "ABSENT",
+            "UNDETERMINED"
+          ]
+        }
+      }
+    },
+    "image_audit_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "expected_sha256",
+        "observed_sha256",
+        "existence",
+        "observed_result"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "expected_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "existence": {
+          "type": "string",
+          "enum": [
+            "EXISTS",
+            "ABSENT",
+            "UNDETERMINED"
+          ]
+        },
+        "observed_result": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "management_status_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_path",
+        "source_sha256",
+        "observed_status"
+      ],
+      "properties": {
+        "source_path": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "observed_status": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "governing_references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "document_path",
+          "applicable_version",
+          "sha256"
+        ],
+        "properties": {
+          "document_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "applicable_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "validator_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementation_path",
+        "sha256"
+      ],
+      "properties": {
+        "implementation_path": {
+          "const": "scripts/validate-image-registration.py"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python_version",
+        "libraries"
+      ],
+      "properties": {
+        "python_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "libraries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "version"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "validated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor_id": {
+      "type": "string",
+      "pattern": "^(?:ACTOR|HUMAN)-[0-9]{4}$"
+    },
+    "actor_role": {
+      "type": "string",
+      "minLength": 1
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check_id",
+          "result",
+          "evidence_references"
+        ],
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "enum": [
+              "FILE_EXISTENCE",
+              "FILENAME",
+              "IDENTITY_UNIQUENESS",
+              "VERSION_CONSISTENCY",
+              "BYTE_IDENTITY",
+              "SIDECAR_JSON",
+              "REQUIRED_METADATA",
+              "IMAGE_AUDIT_BINDING",
+              "APPROVED_ELIGIBILITY",
+              "ASSET_PRESERVATION"
+            ]
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "PASS_WITH_WARNINGS",
+              "FAIL",
+              "VALIDATION_LIMITED"
+            ]
+          },
+          "evidence_references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        }
+      }
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "PASS_WITH_WARNINGS",
+        "FAIL",
+        "VALIDATION_LIMITED"
+      ]
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "severity",
+          "blocking",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z0-9][A-Z0-9_-]*$"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "INFO",
+              "WARNING",
+              "ERROR"
+            ]
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "prior_record_reference": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_type",
+            "case_id",
+            "asset_id",
+            "transaction_id",
+            "repository_path",
+            "sha256"
+          ],
+          "properties": {
+            "artifact_type": {
+              "const": "MECHANICAL_VALIDATION_RECORD"
+            },
+            "case_id": {
+              "type": "string",
+              "pattern": "^FILE-[0-9]{4}$"
+            },
+            "asset_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "transaction_id": {
+              "type": "string",
+              "pattern": "^FILE-[0-9]{4}-TXN-[0-9]{4}$"
+            },
+            "repository_path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
