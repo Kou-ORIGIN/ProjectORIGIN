@@ -664,42 +664,210 @@ def _observe_version(path: str, text: str) -> str | None:
     return match.group(1) if match else None
 
 
-def validate_governance(definition: dict[str, Any], repository_root: Path) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
-    errors, warnings = [], []
-    declarations = definition.get("applicable_governance", [])
-    observed: dict[str, str] = {}
-    authority_ids: list[str] = []
-    for item in declarations:
-        if not isinstance(item, dict):
-            errors.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-ENTRY-TYPE", "Governance entry must be an object"))
+RULE_PATHS = {"docs/Image Rule.md", "docs/Audit Rule.md"}
+
+
+def governance_expectations(definition):
+    expected = dict(EXPECTED_GOVERNANCE)
+    if definition.get("workflow_version") == "v1.1":
+        expected["docs/Image Rule.md"] = "v1.4"
+        expected["docs/Audit Rule.md"] = "v1.4.1"
+    return expected
+
+
+def rule_entries(path, text):
+    """Index explicitly named entries. Ordering is never version authority."""
+    marker = "# Version History\n\n"
+    _require(text.count(marker) == 1, "Rule Version History must be unique")
+    history = text.split(marker, 1)[1]
+    pattern = (
+        r"^## (v[0-9]+(?:\.[0-9]+)+)\s*$"
+        if path == "docs/Image Rule.md"
+        else r"^# Audit Rule (v[0-9]+(?:\.[0-9]+)+)\s*$"
+    )
+    matches = list(re.finditer(pattern, history, re.MULTILINE))
+    _require(bool(matches), "Rule has no version entries")
+    entries = {}
+    for index, match in enumerate(matches):
+        version = match.group(1)
+        _require(version not in entries, "duplicate Rule version entry")
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(history)
+        entries[version] = history[match.start():end]
+    return entries
+
+
+def rule_entry_state(path, version, block):
+    candidate = "CANDIDATE / NOT FORMALLY ADOPTED" in block
+    approved = "Human Formal Adoption Decision = `APPROVED`" in block
+    if path == "docs/Image Rule.md":
+        current_claim = (
+            "Current Official Versionは" + version + "とする" in block
+        )
+    else:
+        current_claim = (
+            "Current Official Audit Rule " + version + "とする" in block
+        )
+    if candidate:
+        _require(
+            not approved and not current_claim,
+            "candidate Rule entry also claims completed/current adoption",
+        )
+    if approved:
+        _require(
+            "NOT PERFORMED" not in block,
+            "Rule entry has conflicting adoption states",
+        )
+    return candidate, approved, current_claim
+
+
+def current_rule_version(path, entries):
+    """Resolve explicit adoption/current declarations, never entry order.
+
+    Historical Current Official wording remains evidence of its era.
+    A later formally adopted entry must explicitly identify the retired
+    predecessor when preserving that earlier wording.
+
+    Supported explicit retirement declaration:
+      Historical Official Version: vX.Y[.Z]
+
+    Ambiguous active declarations fail; no highest/newest fallback exists.
+    """
+    active = set()
+    retired = set()
+    for version, block in entries.items():
+        candidate, approved, current_claim = rule_entry_state(
+            path, version, block
+        )
+        if candidate:
             continue
-        path = item.get("document")
-        version = item.get("version")
-        authority_ids.append(str(item.get("authority_id")))
+        if approved and current_claim:
+            active.add(version)
+            retired.update(re.findall(
+                r"^Historical Official Version:\s*(v[0-9]+(?:\.[0-9]+)+)\s*$",
+                block,
+                re.MULTILINE,
+            ))
+    _require(not (retired - set(entries)), "unknown retired Rule version")
+    active -= retired
+    _require(
+        len(active) == 1,
+        "Current Official Rule identity is absent or ambiguous",
+    )
+    return next(iter(active))
+
+
+def observe_rule(path, text, expected, context):
+    entries = rule_entries(path, text)
+    _require(expected in entries, "expected Rule version entry absent")
+    candidate, approved, current_claim = rule_entry_state(
+        path, expected, entries[expected]
+    )
+    if context == "current":
+        _require(
+            current_rule_version(path, entries) == expected,
+            "Rule is not the explicitly Current Official version",
+        )
+        return expected
+
+    if context in {"candidate", "historical"}:
+        _require(
+            candidate or approved,
+            "expected Rule entry has no explicit candidate/adoption state",
+        )
+        # Historical means the state in the recovered historical bytes.
+        # Candidate validation verifies existence/state, not current selection.
+        return expected
+
+    raise ValueError("unknown Rule observation context")
+
+
+def validate_governance(
+    definition: dict[str, Any],
+    repository_root: Path,
+    reader=None,
+    context: str = "candidate",
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    errors, warnings = [], []
+    expected = governance_expectations(definition)
+    observed = {}
+    authority_ids = []
+
+    for item in definition.get("applicable_governance", []):
+        if not isinstance(item, dict):
+            errors.append(finding(
+                "GOVERNANCE_COMPATIBILITY", "GOVERNANCE-ENTRY-TYPE",
+                "Governance entry must be an object",
+            ))
+            continue
+        path, version = item.get("document"), item.get("version")
+        authority_ids.append(item.get("authority_id"))
         if isinstance(path, str) and isinstance(version, str):
             if path in observed:
-                errors.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-DUPLICATE", f"duplicate Governance document declaration: {path}"))
+                errors.append(finding(
+                    "GOVERNANCE_COMPATIBILITY", "GOVERNANCE-DUPLICATE", path
+                ))
             observed[path] = version
+
     if len(authority_ids) != len(set(authority_ids)):
-        errors.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-DUPLICATE-AUTHORITY", "duplicate Governance authority_id"))
-    if observed != EXPECTED_GOVERNANCE:
-        missing = sorted(set(EXPECTED_GOVERNANCE) - set(observed))
-        extra = sorted(set(observed) - set(EXPECTED_GOVERNANCE))
-        mismatch = sorted(path for path in set(observed) & set(EXPECTED_GOVERNANCE) if observed[path] != EXPECTED_GOVERNANCE[path])
-        errors.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-DECLARATION-MISMATCH", f"missing={missing}; extra={extra}; version_mismatch={mismatch}"))
-    for path, expected in EXPECTED_GOVERNANCE.items():
-        candidate = repository_root / path
-        if not candidate.is_file():
-            errors.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-FILE-MISSING", f"required Governance file is absent: {path}"))
-            continue
-        text = candidate.read_text(encoding="utf-8")
-        actual = _observe_version(path, text)
-        if actual is None:
-            warnings.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-VERSION-UNDETERMINED", f"VERSION OBSERVATION UNDETERMINED for {path}"))
-        elif actual != expected:
-            errors.append(finding("GOVERNANCE_COMPATIBILITY", "GOVERNANCE-VERSION-MISMATCH", f"{path}: declared {expected}, observed {actual}"))
-    for warning in warnings:
-        warning["blocking"] = False
+        errors.append(finding(
+            "GOVERNANCE_COMPATIBILITY", "GOVERNANCE-DUPLICATE-AUTHORITY",
+            "duplicate authority_id",
+        ))
+    if observed != expected:
+        errors.append(finding(
+            "GOVERNANCE_COMPATIBILITY", "GOVERNANCE-DECLARATION-MISMATCH",
+            "Governance declarations do not match the Workflow era",
+        ))
+
+    def walk(value):
+        if isinstance(value, dict):
+            path = value.get("document")
+            if path in expected and value.get("version") != expected[path]:
+                errors.append(finding(
+                    "GOVERNANCE_COMPATIBILITY", "GOVERNANCE-REFERENCE-MISMATCH",
+                    str(path),
+                ))
+            for child in value.values():
+                walk(child)
+        elif isinstance(value, list):
+            for child in value:
+                walk(child)
+
+    walk(definition)
+
+    for path, version in expected.items():
+        try:
+            raw = (
+                reader(path)
+                if reader is not None
+                else _relative(repository_root, path).read_bytes()
+            )
+            text = raw.decode("utf-8")
+            if path in RULE_PATHS:
+                observe_rule(path, text, version, context)
+            else:
+                actual = _observe_version(path, text)
+                if actual is None:
+                    warning = finding(
+                        "GOVERNANCE_COMPATIBILITY",
+                        "GOVERNANCE-VERSION-UNDETERMINED",
+                        "VERSION OBSERVATION UNDETERMINED for " + path,
+                    )
+                    warning["blocking"] = False
+                    warnings.append(warning)
+                elif actual != version:
+                    errors.append(finding(
+                        "GOVERNANCE_COMPATIBILITY",
+                        "GOVERNANCE-VERSION-MISMATCH",
+                        path,
+                    ))
+        except (OSError, UnicodeError, ValueError) as exc:
+            errors.append(finding(
+                "GOVERNANCE_COMPATIBILITY",
+                "GOVERNANCE-RULE-OBSERVATION",
+                path + ": " + str(exc),
+            ))
+
     return errors, warnings
 
 
@@ -720,7 +888,7 @@ def validate_schema_optional(schema: dict[str, Any], definition: dict[str, Any])
     return ("FAIL" if errors else "PASS"), errors, []
 
 
-def run_validation(schema_path: Path, definition_path: Path, repository_root: Path | None, check_governance: bool, records: list[Path] | None = None, prospective: bool = False) -> dict[str, Any]:
+def _run_validation_core(schema_path: Path, definition_path: Path, repository_root: Path | None, check_governance: bool, records: list[Path] | None = None, prospective: bool = False) -> dict[str, Any]:
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
     schema = definition = None
@@ -885,13 +1053,38 @@ class AdoptionSet:
     def reference(self, path: str, digest: str):
         return self.record(_relative(self.root, path), digest)
 
-    def definition_checks(self, data):
+
+    def historical_bytes(self, commit, path):
+        """Recover the recorded historical identity; never use live fallback."""
+        _relative(self.root, path)
+        _require(
+            bool(re.fullmatch(r"[0-9a-f]{40}", commit)),
+            "full historical commit required",
+        )
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(self.root), "show", commit + ":" + path],
+                capture_output=True, check=False,
+            )
+        except FileNotFoundError as exc:
+            raise AdoptionCapabilityUnavailable("Git executable unavailable") from exc
+        _require(
+            result.returncode == 0,
+            "historical controlled bytes unavailable: " + path,
+        )
+        return result.stdout
+
+    def definition_checks(self, data, commit):
         status, errors, _ = validate_schema_optional(self.schema, data)
         if status == "UNAVAILABLE":
             raise AdoptionCapabilityUnavailable("Draft 2020-12 unavailable")
         _require(status == "PASS", "definition schema: " + str(errors))
         _require(not validate_semantics(data), "definition semantic validation failed")
-        errors, _ = validate_governance(data, self.root)
+        errors, _ = validate_governance(
+            data, self.root,
+            reader=lambda path: self.historical_bytes(commit, path),
+            context="historical",
+        )
         _require(not errors, "definition governance validation failed")
 
     def candidate(self, target):
@@ -910,10 +1103,10 @@ class AdoptionSet:
         _require(isinstance(data, dict) and data.get("status") == "PROPOSED", "Git candidate must be PROPOSED")
         for field in ("workflow_version", "definition_format_version"):
             _require(data.get(field) == target[field], "candidate " + field + " mismatch")
-        self.definition_checks(data)
+        self.definition_checks(data, commit)
         return data
 
-    def evidence(self, evidence, digest):
+    def evidence(self, evidence, digest, commit):
         _require(evidence is not None and evidence["definition_sha256"] == digest, "validation evidence candidate SHA mismatch")
         tests = evidence["tests"]
         _require(tests["total"] == tests["passed"], "not all applicable tests passed")
@@ -931,15 +1124,16 @@ class AdoptionSet:
             _require(artifact["path"] not in paths, "duplicate controlled evidence path")
             paths.add(artifact["path"])
             p = _relative(self.root, artifact["path"])
-            _require(_sha(p.read_bytes()) == artifact["sha256"], "stale controlled validation artifact: " + artifact["path"])
+            raw = self.historical_bytes(commit, artifact["path"])
+            _require(_sha(raw) == artifact["sha256"], "historical controlled validation artifact mismatch: " + artifact["path"])
         _require(required <= paths, "required controlled validation artifacts missing")
 
     def decision(self, data):
         candidate = self.candidate(data["target"])
         if data["decision_value"] == "AUTHORIZE_ADOPTION":
-            self.evidence(data["validation_evidence"], data["target"]["candidate_definition_sha256"])
+            self.evidence(data["validation_evidence"], data["target"]["candidate_definition_sha256"], data["target"]["candidate_git_commit_sha"])
         elif data["validation_evidence"] is not None:
-            self.evidence(data["validation_evidence"], data["target"]["candidate_definition_sha256"])
+            self.evidence(data["validation_evidence"], data["target"]["candidate_definition_sha256"], data["target"]["candidate_git_commit_sha"])
         _time(data["decided_at"])
         return candidate
 
@@ -961,9 +1155,9 @@ class AdoptionSet:
         _require(current.get("status") == "ADOPTED", "completed record requires current ADOPTED workflow")
         prospective = dict(candidate, status="ADOPTED")
         _require(current == prospective, "unauthorized adoption delta; only /status may change")
-        self.definition_checks(current)
+        self.definition_checks(current, target["candidate_git_commit_sha"])
         _require(_time(data["adopted_at"]) >= _time(decision["decided_at"]), "adoption precedes decision")
-        self.evidence(data["adopted_state_validation_evidence"], _sha(raw))
+        self.evidence(data["adopted_state_validation_evidence"], _sha(raw), target["candidate_git_commit_sha"])
         key = (current["workflow_id"], target["workflow_version"])
         _require(key not in self.adopted or self.adopted[key] == identity, "conflicting adoption records")
         self.adopted[key] = identity
@@ -1039,8 +1233,179 @@ def validate_adoption_set(schema_path, definition_path, definition, root, record
         errors.append(finding("CROSS_ARTIFACT_VALIDATION", "ADOPTION-CONTRACT", str(exc)))
         return errors, False
 
+def run_validation(
+    schema_path: Path,
+    definition_path: Path,
+    repository_root: Path | None,
+    check_governance: bool,
+    records: list[Path] | None = None,
+    prospective: bool = False,
+    validation_mode: str = "candidate",
+) -> dict[str, Any]:
+    """Explicit candidate/history/current scopes; no automatic current selection."""
+    if validation_mode not in {"candidate", "historical", "current"}:
+        raise ValueError("unknown validation mode")
+
+    report = _run_validation_core(
+        schema_path,
+        definition_path,
+        repository_root,
+        check_governance if validation_mode == "candidate" else False,
+        records,
+        prospective,
+    )
+    report["validation_scope"] = validation_mode.upper()
+    report["historical_adoption_integrity"] = "NOT_CHECKED"
+    report["current_applicability"] = "NOT_CHECKED"
+    report["applicable_rule_content_source"] = "NOT_SELECTED"
+
+    if records:
+        report["historical_adoption_integrity"] = report["layers"][
+            "CROSS_ARTIFACT_VALIDATION"
+        ]
+
+    extra = []
+    definition = None
+    if validation_mode in {"historical", "current"}:
+        if prospective or not records or repository_root is None:
+            extra.append(finding(
+                "CROSS_ARTIFACT_VALIDATION",
+                "EXPLICIT-ADOPTION-EVIDENCE-REQUIRED",
+                "Historical/current validation requires explicit completed evidence",
+            ))
+        definition, _ = load_json_strict(definition_path)
+        if definition.get("status") != "ADOPTED":
+            extra.append(finding(
+                "CROSS_ARTIFACT_VALIDATION",
+                "ADOPTED-STATE-REQUIRED",
+                "PROPOSED/prospective definitions are not current adoptions",
+            ))
+
+    if validation_mode == "current":
+        if definition.get("workflow_version") not in {"v1.0", "v1.1"}:
+            extra.append(finding(
+                "GOVERNANCE_COMPATIBILITY",
+                "UNSUPPORTED-CURRENT-ERA",
+                "No current applicability contract for this Workflow era",
+            ))
+
+        if repository_root is not None:
+            gov_errors, gov_warnings = validate_governance(
+                definition, repository_root, context="current"
+            )
+            extra.extend(gov_errors)
+            report["warnings"].extend(gov_warnings)
+            report["layers"]["GOVERNANCE_COMPATIBILITY"] = (
+                "FAIL" if gov_errors else "PASS"
+            )
+
+            if not report["errors"] and not extra:
+                try:
+                    context = AdoptionSet(repository_root, schema_path)
+                    matched = []
+                    for path in records or []:
+                        record = context.record(path)
+                        kind = record.get(
+                            "record_type", record.get("decision_type")
+                        )
+                        if kind == "WORKFLOW_FORMAL_ADOPTION_RECORD":
+                            context.adoption(record)
+                            if _relative(
+                                repository_root,
+                                record["target"]["workflow_path"],
+                            ).resolve() == definition_path.resolve():
+                                matched.append(record)
+                        elif kind == "WORKFLOW_DEPRECATION_RECORD":
+                            context.deprecation(record)
+
+                    _require(
+                        len(matched) == 1,
+                        "one explicit current adoption required",
+                    )
+                    record = matched[0]
+                    target = record["target"]
+                    identity = (
+                        target["workflow_path"],
+                        target["adopted_definition_sha256"],
+                    )
+                    _require(
+                        identity not in context.deprecated,
+                        "deprecated Workflow cannot be current",
+                    )
+
+                    artifacts = {
+                        item["path"]: item["sha256"]
+                        for item in record[
+                            "adopted_state_validation_evidence"
+                        ]["controlled_artifacts"]
+                    }
+                    expected = governance_expectations(definition)
+
+                    for path, version in expected.items():
+                        historical = context.historical_bytes(
+                            target["candidate_git_commit_sha"], path
+                        )
+                        _require(
+                            _sha(historical) == artifacts[path],
+                            "recorded applicable governance bytes mismatch: " + path,
+                        )
+                        if path in RULE_PATHS:
+                            # Historical candidate bytes establish the recorded
+                            # Rule version identity. Current status is validated
+                            # separately against the live Rule documents above.
+                            observe_rule(
+                                path,
+                                historical.decode("utf-8"),
+                                version,
+                                "historical",
+                            )
+                        else:
+                            _require(
+                                _sha(_relative(
+                                    repository_root, path
+                                ).read_bytes()) == artifacts[path],
+                                "current governance bytes mismatch: " + path,
+                            )
+
+                    # Historical validator/test/schema identities were already
+                    # checked against historical bytes. Their later live
+                    # changes do not silently revoke the old adoption.
+                    report["applicable_rule_content_source"] = (
+                        "RECOVERED_RECORDED_CONTROLLED_BYTES"
+                    )
+
+                except AdoptionCapabilityUnavailable:
+                    report["validator_result"] = "VALIDATION_LIMITED"
+                    report["exit_code"] = 3
+                except (OSError, ValueError, KeyError, TypeError) as exc:
+                    extra.append(finding(
+                        "GOVERNANCE_COMPATIBILITY",
+                        "CURRENT-APPLICABILITY",
+                        str(exc),
+                    ))
+
+    report["errors"].extend(extra)
+    if report["errors"]:
+        report["validator_result"] = "FAIL"
+        report["exit_code"] = 1
+    elif report["exit_code"] == 0 and report["warnings"]:
+        report["validator_result"] = "PASS_WITH_WARNINGS"
+
+    if validation_mode == "current":
+        report["current_applicability"] = (
+            "PASS" if report["exit_code"] == 0
+            else "UNAVAILABLE" if report["exit_code"] == 3
+            else "FAIL"
+        )
+    if validation_mode == "historical" and extra:
+        report["historical_adoption_integrity"] = "FAIL"
+    return report
+
+
 def _print_human(report: dict[str, Any]) -> None:
     print(f"Validator Result: {report['validator_result']}")
+    print("Historical Adoption Integrity: " + report.get("historical_adoption_integrity", "NOT_CHECKED"))
+    print("Current Applicability: " + report.get("current_applicability", "NOT_CHECKED"))
     for layer, result in report["layers"].items():
         print(f"{layer}: {result}")
     print(f"Definition SHA-256: {report['definition_sha256']}")
@@ -1065,6 +1430,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--check-governance", action="store_true", help="validate the exact required Governance declarations and local files")
     parser.add_argument("--record", action="append", default=[], type=Path, help="explicit read-only record-set member; repeat for all applicable decisions/adoptions/deprecations")
     parser.add_argument("--prospective-adopted", action="store_true", help="validate prospective ADOPTED bytes without claiming completed adoption; cannot be combined with records")
+    parser.add_argument(
+        "--validation-mode",
+        choices=("candidate", "historical", "current"),
+        default="candidate",
+        help="Explicit scope; no automatic current selection or adoption",
+    )
     parser.add_argument("--format", choices=("human", "json"), default="human", help="deterministic output format")
     return parser
 
@@ -1081,7 +1452,7 @@ def main(argv: list[str] | None = None) -> int:
         }
     else:
         try:
-            report = run_validation(args.schema, args.definition, args.repository_root, args.check_governance, args.record, args.prospective_adopted)
+            report = run_validation(args.schema, args.definition, args.repository_root, args.check_governance, args.record, args.prospective_adopted, args.validation_mode)
         except (OSError, ValueError) as exc:
             report = {
                 "validator_result": "FAIL", "exit_code": 2,

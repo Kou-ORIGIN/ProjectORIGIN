@@ -18,6 +18,81 @@ assert SPEC.loader is not None
 SPEC.loader.exec_module(VALIDATOR)
 
 
+HISTORICAL_COMMIT = "16dd19a8f5ce2910988a6d116e3f91c18da42874"
+
+
+def _historical_source(relative):
+    return subprocess.check_output(
+        ["git", "-C", str(ROOT), "show", HISTORICAL_COMMIT + ":" + relative]
+    )
+
+
+def _rewrite_rule_references(value, successor):
+    versions = {
+        "docs/Image Rule.md": "v1.4" if successor else "v1.3",
+        "docs/Audit Rule.md": "v1.4.1" if successor else "v1.4.0",
+    }
+    if isinstance(value, dict):
+        if value.get("document") in versions:
+            value["version"] = versions[value["document"]]
+        for child in value.values():
+            _rewrite_rule_references(child, successor)
+    elif isinstance(value, list):
+        for child in value:
+            _rewrite_rule_references(child, successor)
+
+
+def _insert_test_entry(root, path, entry):
+    target = root / path
+    text = target.read_text(encoding="utf-8")
+    marker = "# Version History\n\n"
+    assert text.count(marker) == 1
+    target.write_text(
+        text.replace(marker, marker + entry, 1),
+        encoding="utf-8",
+    )
+
+
+def _synthetic_candidate_rules(root):
+    _insert_test_entry(
+        root,
+        "docs/Image Rule.md",
+        "## v1.4\n\n### Status\n\n"
+        "CANDIDATE / NOT FORMALLY ADOPTED。\n"
+        "Formal Adoption Date: NOT PERFORMED\n\n",
+    )
+    _insert_test_entry(
+        root,
+        "docs/Audit Rule.md",
+        "# Audit Rule v1.4.1\n\n## Status\n\n"
+        "CANDIDATE / NOT FORMALLY ADOPTED。\n"
+        "Formal Adoption Date: NOT PERFORMED\n\n",
+    )
+
+
+def _synthetic_successor_rules(root):
+    # Synthetic Human declarations only; old entries remain intact.
+    _insert_test_entry(
+        root,
+        "docs/Image Rule.md",
+        "## v1.4\n\n### Status\n\n"
+        "SYNTHETIC TEST ONLY。\n"
+        "OFFICIAL。Current Official Versionはv1.4とする。"
+        "Human Formal Adoption Decision = `APPROVED`。\n"
+        "Historical Official Version: v1.3\n\n",
+    )
+    _insert_test_entry(
+        root,
+        "docs/Audit Rule.md",
+        "# Audit Rule v1.4.1\n\n"
+        "**Formal Adoption Date**\n\n2026-09-16\n\n"
+        "## Status\n\nSYNTHETIC TEST ONLY。\n"
+        "Human Formal Adoption Decision = `APPROVED`。\n"
+        "本VersionはCurrent Official Audit Rule v1.4.1とする。\n"
+        "Historical Official Version: v1.4.0\n\n",
+    )
+
+
 class WorkflowValidatorTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -484,6 +559,9 @@ class AdoptionContractTests(unittest.TestCase):
         self.schema = self.root / SCHEMA.relative_to(ROOT)
         self.workflow = self.root / "workflows/case-production-workflow_v1.0.json"
         self.candidate = json.loads(DEFINITION.read_text())
+        self.candidate["status"] = "PROPOSED"
+        for relative in ("docs/Image Rule.md", "docs/Audit Rule.md"):
+            (self.root / relative).write_bytes(_historical_source(relative))
         self.write(self.workflow, self.candidate)
         self.git("init", "-q")
         self.git("-c", "user.name=Synthetic Fixture", "-c", "user.email=fixture@example.invalid", "add", ".")
@@ -572,9 +650,14 @@ class AdoptionContractTests(unittest.TestCase):
         self.authority_path.unlink();self.write(self.deprecation_path,self.deprecation)
         self.assert_invalid(self.run_set([self.adoption_path,self.deprecation_path]))
 
-    def test_stale_validation_artifact(self):
+    def test_later_validation_artifact_preserves_adoption(self):
         (self.root/'tests/workflows/test_validate_workflow.py').write_text('changed')
-        self.assert_invalid(self.run_set())
+        for mode in ('historical', 'current'):
+            report = VALIDATOR.run_validation(
+                self.schema, self.workflow, self.root, True,
+                [self.adoption_path], validation_mode=mode,
+            )
+            self.assert_valid(report)
 
     def test_all_schema_definitions_execute(self):
         from jsonschema import Draft202012Validator
@@ -738,12 +821,15 @@ for i,value in enumerate(['v1.0','v2.3','v10.0']):
 def _make_successor(self, supersedes=False, version="v1.1"):
     path=self.root/'workflows/successor.json'
     candidate=copy.deepcopy(self.candidate);candidate['workflow_version']=version
+    if version == 'v1.1':
+        _rewrite_rule_references(candidate, successor=True)
+        _synthetic_successor_rules(self.root)
     if supersedes:
         ref=self.adoption_ref();ref['repository_path']=ref.pop('workflow_path')
         ref['workflow_id']=candidate['workflow_id'];ref['definition_format_version']='v1.0'
         candidate['supersedes']=ref
     self.write(path,candidate)
-    self.git('add','workflows/successor.json')
+    self.git('add','workflows/successor.json','docs/Image Rule.md','docs/Audit Rule.md')
     self.git('-c','user.name=Synthetic Fixture','-c','user.email=fixture@example.invalid','commit','-qm','Synthetic successor')
     target=dict(self.target,workflow_path='workflows/successor.json',workflow_version=version,candidate_git_commit_sha=self.git('rev-parse','HEAD').strip(),candidate_definition_sha256=VALIDATOR._sha(path.read_bytes()))
     decision=copy.deepcopy(self.decision);decision['decision_id']='WFADOPTDEC-9002';decision['target']=target;decision['validation_evidence']=self.evidence(target['candidate_definition_sha256'])
@@ -764,7 +850,11 @@ def _successor_case(mode):
                 data=json.loads(path.read_text());data['status']='PROPOSED';self.write(path,data)
             if mode=='sha':ref['adopted_definition_sha256']='0'*64
         self.deprecation['successor']=ref;self.write(self.deprecation_path,self.deprecation)
-        report=self.run_set([self.adoption_path,self.deprecation_path])
+        report=VALIDATOR.run_validation(
+            self.schema, self.workflow, self.root, False,
+            [self.adoption_path,self.deprecation_path],
+            validation_mode='historical',
+        )
         (self.assert_valid if mode in {'valid','supersession'} else self.assert_invalid)(report)
     return test
 for mode in ['valid','self','proposed','sha','supersession']:
@@ -864,6 +954,337 @@ def _same_version_new_bytes(self):
     self.deprecation['successor']=ref;self.write(self.deprecation_path,self.deprecation)
     self.assert_invalid(self.run_set([self.adoption_path,self.deprecation_path]))
 AdoptionContractTests.test_no_second_adoption_same_workflow_version=_same_version_new_bytes
+
+class SuccessorGovernanceTests(AdoptionContractTests):
+    """All mutations are inside disposable synthetic fixture repositories."""
+
+    def scoped(self, mode, path=None, records=None):
+        return VALIDATOR.run_validation(
+            self.schema,
+            path or self.workflow,
+            self.root,
+            True,
+            records if records is not None else [self.adoption_path],
+            validation_mode=mode,
+        )
+
+    def proposed_successor(self):
+        candidate = copy.deepcopy(self.candidate)
+        candidate["workflow_version"] = "v1.1"
+        _rewrite_rule_references(candidate, successor=True)
+        ref = self.adoption_ref()
+        ref["repository_path"] = ref.pop("workflow_path")
+        ref["workflow_id"] = candidate["workflow_id"]
+        ref["definition_format_version"] = "v1.0"
+        candidate["supersedes"] = ref
+        path = self.root / "workflows/proposed-successor.json"
+        self.write(path, candidate)
+        return path
+
+    def test_A_candidates_preserve_old_current(self):
+        _synthetic_candidate_rules(self.root)
+        report = self.scoped("current")
+        self.assert_valid(report)
+        self.assertEqual("PASS", report["current_applicability"])
+        self.assertEqual(
+            "RECOVERED_RECORDED_CONTROLLED_BYTES",
+            report["applicable_rule_content_source"],
+        )
+
+    def test_B_candidates_do_not_make_successor_current(self):
+        _synthetic_candidate_rules(self.root)
+        path = self.proposed_successor()
+        report = self.scoped("current", path, [])
+        self.assert_invalid(report)
+        self.assertEqual("FAIL", report["current_applicability"])
+
+    def test_C_formally_adopted_successor_current(self):
+        ref, path, record_path = self.make_successor(True)
+        report = self.scoped("current", path, [record_path])
+        self.assert_valid(report)
+        self.assertEqual("PASS", report["current_applicability"])
+        self.assertEqual("PASS", report["historical_adoption_integrity"])
+
+    def test_C2_candidate_commit_then_coordinated_cutover_current(self):
+        _synthetic_candidate_rules(self.root)
+
+        candidate = copy.deepcopy(self.candidate)
+        candidate["workflow_version"] = "v1.1"
+        _rewrite_rule_references(candidate, successor=True)
+        ref = self.adoption_ref()
+        ref["repository_path"] = ref.pop("workflow_path")
+        ref["workflow_id"] = candidate["workflow_id"]
+        ref["definition_format_version"] = "v1.0"
+        candidate["supersedes"] = ref
+
+        path = self.root / "workflows/coordinated-successor.json"
+        self.write(path, candidate)
+        self.git(
+            "add",
+            "workflows/coordinated-successor.json",
+            "docs/Image Rule.md",
+            "docs/Audit Rule.md",
+        )
+        self.git(
+            "-c", "user.name=Synthetic Fixture",
+            "-c", "user.email=fixture@example.invalid",
+            "commit", "-qm", "Synthetic coordinated successor candidate",
+        )
+        candidate_commit = self.git("rev-parse", "HEAD").strip()
+        candidate_sha = VALIDATOR._sha(path.read_bytes())
+        candidate_evidence = self.evidence(candidate_sha)
+
+        target = dict(
+            self.target,
+            workflow_path=str(path.relative_to(self.root)),
+            workflow_version="v1.1",
+            candidate_git_commit_sha=candidate_commit,
+            candidate_definition_sha256=candidate_sha,
+        )
+        decision = copy.deepcopy(self.decision)
+        decision["decision_id"] = "WFADOPTDEC-9003"
+        decision["target"] = target
+        decision["validation_evidence"] = copy.deepcopy(candidate_evidence)
+        decision_path = self.root / "coordinated-successor-decision.json"
+        self.write(decision_path, decision)
+
+        replacements = {
+            "docs/Image Rule.md": (
+                "## v1.4\n\n### Status\n\n"
+                "CANDIDATE / NOT FORMALLY ADOPTED。\n"
+                "Formal Adoption Date: NOT PERFORMED\n\n",
+                "## v1.4\n\n### Status\n\n"
+                "SYNTHETIC TEST ONLY。\n"
+                "OFFICIAL。Current Official Versionはv1.4とする。"
+                "Human Formal Adoption Decision = `APPROVED`。\n"
+                "Historical Official Version: v1.3\n\n",
+            ),
+            "docs/Audit Rule.md": (
+                "# Audit Rule v1.4.1\n\n## Status\n\n"
+                "CANDIDATE / NOT FORMALLY ADOPTED。\n"
+                "Formal Adoption Date: NOT PERFORMED\n\n",
+                "# Audit Rule v1.4.1\n\n"
+                "**Formal Adoption Date**\n\n2026-09-16\n\n"
+                "## Status\n\nSYNTHETIC TEST ONLY。\n"
+                "Human Formal Adoption Decision = `APPROVED`。\n"
+                "本VersionはCurrent Official Audit Rule v1.4.1とする。\n"
+                "Historical Official Version: v1.4.0\n\n",
+            ),
+        }
+        for relative, (before, after) in replacements.items():
+            rule = self.root / relative
+            rule_text = rule.read_text(encoding="utf-8")
+            self.assertEqual(1, rule_text.count(before))
+            rule.write_text(
+                rule_text.replace(before, after, 1),
+                encoding="utf-8",
+            )
+
+        self.write(path, dict(candidate, status="ADOPTED"))
+        adopted_sha = VALIDATOR._sha(path.read_bytes())
+        adopted_evidence = copy.deepcopy(candidate_evidence)
+        adopted_evidence["definition_sha256"] = adopted_sha
+
+        record = copy.deepcopy(self.adoption)
+        record["adoption_record_id"] = "WFADOPT-9003"
+        record["target"] = dict(
+            target,
+            adopted_definition_sha256=adopted_sha,
+        )
+        record["human_decision"] = {
+            "decision_id": "WFADOPTDEC-9003",
+            "decision_path": decision_path.name,
+            "decision_sha256": VALIDATOR._sha(decision_path.read_bytes()),
+        }
+        record["adopted_state_validation_evidence"] = adopted_evidence
+        record_path = self.root / "coordinated-successor-adoption.json"
+        self.write(record_path, record)
+
+        report = self.scoped("current", path, [record_path])
+        self.assert_valid(report)
+        self.assertEqual("PASS", report["historical_adoption_integrity"])
+        self.assertEqual("PASS", report["current_applicability"])
+        self.assertEqual(
+            "RECOVERED_RECORDED_CONTROLLED_BYTES",
+            report["applicable_rule_content_source"],
+        )
+
+    def test_D_cutover_rejects_old_current_preserves_history(self):
+        self.make_successor(True)
+        current = self.scoped("current")
+        historical = self.scoped("historical")
+        self.assert_invalid(current)
+        self.assertEqual("FAIL", current["current_applicability"])
+        self.assert_valid(historical)
+        self.assertEqual("PASS", historical["historical_adoption_integrity"])
+        self.assertEqual("NOT_CHECKED", historical["current_applicability"])
+
+    def test_candidate_context_accepts_successor_entries(self):
+        _synthetic_candidate_rules(self.root)
+        path = self.proposed_successor()
+        report = VALIDATOR.run_validation(
+            self.schema, path, self.root, True, []
+        )
+        self.assert_valid(report)
+        self.assertEqual("CANDIDATE", report["validation_scope"])
+        self.assertEqual("NOT_CHECKED", report["current_applicability"])
+
+    def test_rule_observation_is_not_entry_order(self):
+        _synthetic_candidate_rules(self.root)
+        for path, old in (
+            ("docs/Image Rule.md", "v1.3"),
+            ("docs/Audit Rule.md", "v1.4.0"),
+        ):
+            text = (self.root / path).read_text()
+            entries = VALIDATOR.rule_entries(path, text)
+            reversed_entries = dict(reversed(list(entries.items())))
+            self.assertEqual(
+                old, VALIDATOR.current_rule_version(path, entries)
+            )
+            self.assertEqual(
+                old, VALIDATOR.current_rule_version(path, reversed_entries)
+            )
+
+    def test_ambiguous_current_declarations_rejected(self):
+        _synthetic_successor_rules(self.root)
+        path = self.root / "docs/Image Rule.md"
+        path.write_text(
+            path.read_text().replace(
+                "Historical Official Version: v1.3\n", ""
+            ),
+            encoding="utf-8",
+        )
+        entries = VALIDATOR.rule_entries(
+            "docs/Image Rule.md", path.read_text()
+        )
+        with self.assertRaises(VALIDATOR.AdoptionInvalid):
+            VALIDATOR.current_rule_version("docs/Image Rule.md", entries)
+
+    def test_historical_survives_later_rule_bytes(self):
+        (self.root / "docs/Image Rule.md").write_text(
+            "later bytes", encoding="utf-8"
+        )
+        self.assert_valid(self.scoped("historical"))
+        self.assert_invalid(self.scoped("current"))
+
+    def test_historical_controlled_sha_mutation(self):
+        self.adoption["adopted_state_validation_evidence"][
+            "controlled_artifacts"
+        ][0]["sha256"] = "0" * 64
+        self.write(self.adoption_path, self.adoption)
+        self.assert_invalid(self.scoped("historical"))
+
+    def test_unrecoverable_historical_bytes(self):
+        self.adoption["adopted_state_validation_evidence"][
+            "controlled_artifacts"
+        ].append({
+            "path": "never-committed.txt",
+            "sha256": VALIDATOR._sha(b"live only"),
+        })
+        (self.root / "never-committed.txt").write_bytes(b"live only")
+        self.write(self.adoption_path, self.adoption)
+        self.assert_invalid(self.scoped("historical"))
+
+    def test_old_workflow_keeps_old_rule_binding(self):
+        expected = VALIDATOR.governance_expectations(self.adopted)
+        self.assertEqual("v1.3", expected["docs/Image Rule.md"])
+        self.assertEqual("v1.4.0", expected["docs/Audit Rule.md"])
+        changed = copy.deepcopy(self.adopted)
+        _rewrite_rule_references(changed, successor=True)
+        errors, _ = VALIDATOR.validate_governance(changed, self.root)
+        self.assertTrue(errors)
+
+    def test_old_rules_new_workflow_mixed_set(self):
+        ref, path, record_path = self.make_successor(True)
+        for relative in ("docs/Image Rule.md", "docs/Audit Rule.md"):
+            (self.root / relative).write_text(
+                self.git("show", self.commit + ":" + relative),
+                encoding="utf-8",
+            )
+        self.assert_valid(self.scoped("historical", path, [record_path]))
+        self.assert_invalid(self.scoped("current", path, [record_path]))
+
+    def test_partial_rule_cutover_rejected_for_both_workflows(self):
+        ref, path, record_path = self.make_successor(True)
+        relative = "docs/Audit Rule.md"
+        (self.root / relative).write_text(
+            self.git("show", self.commit + ":" + relative),
+            encoding="utf-8",
+        )
+        self.assert_invalid(self.scoped("current"))
+        self.assert_invalid(self.scoped("current", path, [record_path]))
+
+    def test_proposed_rules_with_adopted_successor_rejected(self):
+        ref, path, record_path = self.make_successor(True)
+        for relative in ("docs/Image Rule.md", "docs/Audit Rule.md"):
+            (self.root / relative).write_text(
+                self.git("show", self.commit + ":" + relative),
+                encoding="utf-8",
+            )
+        _synthetic_candidate_rules(self.root)
+        self.assert_invalid(self.scoped("current", path, [record_path]))
+
+    def test_wrong_predecessor_sha(self):
+        _synthetic_candidate_rules(self.root)
+        path = self.proposed_successor()
+        candidate = json.loads(path.read_text())
+        candidate["supersedes"]["adoption_record_sha256"] = "0" * 64
+        self.write(path, candidate)
+        self.assert_invalid(VALIDATOR.run_validation(
+            self.schema, path, self.root, True, []
+        ))
+
+    def test_self_supersedes(self):
+        _synthetic_candidate_rules(self.root)
+        path = self.proposed_successor()
+        candidate = json.loads(path.read_text())
+        candidate["supersedes"]["repository_path"] = str(
+            path.relative_to(self.root)
+        )
+        self.write(path, candidate)
+        self.assert_invalid(VALIDATOR.run_validation(
+            self.schema, path, self.root, True, []
+        ))
+
+    def test_cycle_guard(self):
+        context = VALIDATOR.AdoptionSet(self.root, self.schema)
+        context.visiting.add(self.adoption["adoption_record_id"])
+        with self.assertRaises(VALIDATOR.AdoptionInvalid):
+            context.adoption(self.adoption)
+
+    def test_report_scopes_are_distinct(self):
+        historical = self.scoped("historical")
+        current = self.scoped("current")
+        self.assertEqual("HISTORICAL", historical["validation_scope"])
+        self.assertEqual("NOT_CHECKED", historical["current_applicability"])
+        self.assertEqual("CURRENT", current["validation_scope"])
+        self.assertEqual("PASS", current["current_applicability"])
+
+
+class HistoricalProductionEvidenceTests(unittest.TestCase):
+    def test_exact_wfadopt_0001_historical_evidence(self):
+        record = ROOT / "workflows/adoptions/WFADOPT-0001.json"
+        self.assertEqual(
+            "9d7a8d73706b1b2db2188d1d29e874bc092431e0405f95ea8164b747689fac47",
+            VALIDATOR._sha(record.read_bytes()),
+        )
+        report = VALIDATOR.run_validation(
+            SCHEMA, DEFINITION, ROOT, False, [record],
+            validation_mode="historical",
+        )
+        self.assertEqual(0, report["exit_code"], report)
+        self.assertEqual("PASS", report["historical_adoption_integrity"])
+        self.assertEqual("NOT_CHECKED", report["current_applicability"])
+
+    def test_real_candidate_additions_preserve_v1_current(self):
+        record = ROOT / "workflows/adoptions/WFADOPT-0001.json"
+        report = VALIDATOR.run_validation(
+            SCHEMA, DEFINITION, ROOT, True, [record],
+            validation_mode="current",
+        )
+        self.assertEqual(0, report["exit_code"], report)
+        self.assertEqual("PASS", report["current_applicability"])
+
 
 if __name__ == "__main__":
     unittest.main()

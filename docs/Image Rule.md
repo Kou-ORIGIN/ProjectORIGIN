@@ -645,6 +645,24 @@ Mechanical ValidationはFormal Auditそのものではない。ValidationがPASS
 
 FILE-0001で実施された既存Registration Verification Auditは有効なEvidenceとして保持するが、その存在だけを理由として全RegistrationへのUniversal Formal Audit要件を成立させない。
 
+Decision 171 — Registration Verification Applicability
+
+Conditional Formal Registration Verificationのtriggerは、governing trigger ruleの正式採用されたeffective applicability boundaryの適用範囲内で生じるregistration action、migration、applicable rule-transition actionおよび新たに成立したregistration-risk conditionに適用する。この境界はApplicable VersionおよびHuman Formal Adoptionの正式な根拠に従い、Git commit timestampのみから成立させてはならない。
+
+その適用境界より前に完了したRegistrationについて、過去のregistration-system implementationの一部であったこと、当初のRegistrationがmanualであった可能性、当時と現在のRule Versionの差、または後のtrigger文言にinitial implementation、manual registration、Rule transitionが含まれることのみを理由に、新たな遡及的Formal Registration Verification義務を成立させてはならない。遡及適用には、対象Registrationまたは定義された対象集合、適用triggerおよび必要なverification scopeを特定する明示authorityを必要とする。
+
+この規定は、現在のEvidenceがApplicableなcurrent triggerを独立して示す場合の免除ではない。定義された範囲でのID conflict、Version conflict、rights conflict、current migration、current rule-transition action、明示指定されたhigh-risk exceptionその他明示的にApplicableなregistration-risk conditionは、既存Registrationについても評価する。既存の明示的Registration Verification義務は維持する。
+
+既存PASS Evidenceは、exact Asset／Sidecar／Evidence identityが一致し、Scopeが引き続きApplicableであり、必要なAudit independenceを満たす場合に利用できる。Rule Versionの差のみでPASSを無効化したりRe-Auditを要求したりしてはならない。Mandatory Mechanical Validationは別要件として維持し、免除しない。
+
+Decision 171に基づくFILE-0001の現在確立されたEvidenceに対する判定は以下とする。
+
+- FILE-0001-IMG-0001／IMGREQ-003: Registration Verification applicability = NOT APPLICABLE。
+- FILE-0001-IMG-0002／IMGREQ-011: Registration Verification applicability = NOT APPLICABLE。
+- 上記2件は、別個のcurrent triggerまたは明示的な遡及authorityが後に成立した場合、Applicabilityを再評価する。
+- FILE-0001-IMG-0003／IMGREQ-010: 既存の独立したRegistration Verification PASSは有効なEvidenceであり、CPW-025のblockerではない。
+- FILE-0001-IMG-0004／IMGREQ-004: 既存Applicabilityを維持する。既存same-root PASSはsupporting evidenceとして保持し、独立したAudit Agentによる確認は引き続き必要とする。
+
 ## Asset Identity
 
 Approved Image Assetには、以下の形式でAsset IDを発行する。
@@ -917,6 +935,37 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 ---
 
 # Version History
+
+## v1.4
+
+### Registration Verification Applicability Clarification
+
+### Candidate Date
+
+2026-09-16
+
+### Formal Adoption Date
+
+NOT PERFORMED
+
+### Changes
+
+- Decision 171のRegistration Verification prospective-applicability clarificationを反映する。
+- 正式なeffective applicability boundaryと、遡及適用に必要な対象・trigger・verification scopeを特定する明示authorityを明確化する。
+- current risk trigger、既存の明示的義務、Audit independenceおよびmandatory mechanical validationを維持する。
+- exact identityとApplicable scopeに基づく既存PASS Evidenceの利用条件を明確化する。
+- Decision 174のsuccessor-version modelに従い、Decision 175が割り当てたv1.4の候補として扱う。
+
+### Reason / Affected Scope
+
+Rule Versionの差や過去のmanual registrationの可能性のみから、新たな遡及的Formal Registration Verification義務を推論しないための明確化。対象はRegistration Verification applicabilityと関連Evidenceの評価であり、Audit実施、production transactionまたはworkflow closureを成立させない。
+
+### Status
+
+CANDIDATE / NOT FORMALLY ADOPTED。
+v1.3は後継の正式採用までCurrent Official Versionとして維持する。
+以下のv1.3以前のVersion Historyは変更しない。
+Human exact-byte acceptance、Formal Adoptionおよび後継Workflow v1.1と後継Rulesの協調したcurrent-applicability cutoverは別工程であり、本候補は実行しない。
 
 ## v1.3
 

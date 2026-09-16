@@ -412,6 +412,24 @@ Approved Image Asset Registrationに対するmechanical validationはApplicable 
 
 FILE-0001の既存Registration Verification Auditは有効なAudit Evidenceとして保持する。ただし、その存在だけから全Registrationに対するUniversal Formal Audit requirementを推論してはならない。
 
+Decision 171 — Registration Verification Applicability
+
+Conditional Formal Registration Verificationのtriggerは、governing trigger ruleの正式採用されたeffective applicability boundaryの適用範囲内で生じるregistration action、migration、applicable rule-transition actionおよび新たに成立したregistration-risk conditionに適用する。この境界はApplicable VersionおよびHuman Formal Adoptionの正式な根拠に従い、Git commit timestampのみから成立させてはならない。
+
+その適用境界より前に完了したRegistrationについて、過去のregistration-system implementationの一部であったこと、当初のRegistrationがmanualであった可能性、当時と現在のRule Versionの差、または後のtrigger文言にinitial implementation、manual registration、Rule transitionが含まれることのみを理由に、新たな遡及的Formal Registration Verification義務を成立させてはならない。遡及適用には、対象Registrationまたは定義された対象集合、適用triggerおよび必要なverification scopeを特定する明示authorityを必要とする。
+
+この規定は、現在のEvidenceがApplicableなcurrent triggerを独立して示す場合の免除ではない。定義された範囲でのID conflict、Version conflict、rights conflict、current migration、current rule-transition action、明示指定されたhigh-risk exceptionその他明示的にApplicableなregistration-risk conditionは、既存Registrationについても評価する。既存の明示的Registration Verification義務は維持する。
+
+既存PASS Evidenceは、exact Asset／Sidecar／Evidence identityが一致し、Scopeが引き続きApplicableであり、必要なAudit independenceを満たす場合に利用できる。Rule Versionの差のみでPASSを無効化したりRe-Auditを要求したりしてはならない。Mandatory Mechanical Validationは別要件として維持し、免除しない。
+
+Decision 171に基づくFILE-0001の現在確立されたEvidenceに対する判定は以下とする。
+
+- FILE-0001-IMG-0001／IMGREQ-003: Registration Verification applicability = NOT APPLICABLE。
+- FILE-0001-IMG-0002／IMGREQ-011: Registration Verification applicability = NOT APPLICABLE。
+- 上記2件は、別個のcurrent triggerまたは明示的な遡及authorityが後に成立した場合、Applicabilityを再評価する。
+- FILE-0001-IMG-0003／IMGREQ-010: 既存の独立したRegistration Verification PASSは有効なEvidenceであり、CPW-025のblockerではない。
+- FILE-0001-IMG-0004／IMGREQ-004: 既存Applicabilityを維持する。既存same-root PASSはsupporting evidenceとして保持し、独立したAudit Agentによる確認は引き続き必要とする。
+
 ### Human Visual Review and Image Audit Boundary
 
 Applicable Image RuleがHuman Visual Reviewを要求する場合、そのReviewはexact Candidate identityまたはSHA-256へ結び付いていることを確認する。Human Visual ReviewはFormal Image Audit、Publication Human Read ReviewまたはFinal Human Approvalを代替しない。
@@ -2091,6 +2109,43 @@ ProjectORIGINでは、1000件以上の事件ファイルおよび関連資産を
 ---
 
 # Version History
+
+# Audit Rule v1.4.1
+
+**Candidate Date**
+
+2026-09-16
+
+**Formal Adoption Date**
+
+NOT PERFORMED
+
+## Overview
+
+Decision 171のRegistration Verification prospective-applicability clarificationをAudit responsibilityへ反映する後継候補。Decision 174のsuccessor-version modelに従い、Decision 175がv1.4.1を割り当てた。
+
+## Changes
+
+- 正式なeffective applicability boundaryと、遡及適用に必要な対象・trigger・verification scopeを特定する明示authorityを明確化する。
+- current risk trigger、既存の明示的義務、Audit independenceおよびmandatory mechanical validationを維持する。
+- exact identityとApplicable scopeに基づく既存PASS Evidenceの利用条件を明確化する。
+
+## Reason / Affected Scope
+
+Rule Versionの差や過去のmanual registrationの可能性のみから、新たな遡及的Formal Registration Verification義務を推論しないための明確化。対象はRegistration Verification applicabilityと関連Evidenceの評価であり、Audit実施、production transactionまたはworkflow closureを成立させない。
+
+## Compatibility
+
+本候補の後継governance setはImage Rule v1.4およびWorkflow v1.1とする。他のgovernance versionは変更しない。既存のv1.4.0 CompatibilityおよびStatus記述は、現在正式採用されているpredecessorの記述として保持する。
+
+## Status
+
+CANDIDATE / NOT FORMALLY ADOPTED。
+Audit Rule v1.4.0は後継の正式採用までCurrent Official Versionとして維持する。
+以下のv1.4.0以前のVersion Historyは変更しない。
+Human exact-byte acceptance、Formal Adoptionおよび後継Workflow v1.1と後継Rulesの協調したcurrent-applicability cutoverは別工程であり、本候補は実行しない。
+
+---
 
 # Audit Rule v1.4.0
 
