@@ -133,10 +133,80 @@ def _prior(record: dict, root: Path):
 def canonical_record_path(record: dict) -> str:
     return f"cases/{record['case_id']}/registration-validations/{record['asset_id']}/{record['transaction_id']}.json"
 
+def _audit_binding(record: dict, root: Path, side: Any) -> tuple[bool,bool]:
+    evidence = record['image_audit_evidence']
+    if evidence['existence'] == 'UNDETERMINED':
+        return False, True
+    if evidence['existence'] != 'EXISTS':
+        return False, False
+
+    # Preserve original strict-JSON audit semantics.
+    audit_json = _strict_json_or_none(root, evidence)
+    if audit_json is not None:
+        base_sha = record['base_asset_evidence']['observed_sha256']
+        ok = (
+            contains_scalar(audit_json, record['asset_id'])
+            and base_sha is not None
+            and contains_scalar(audit_json, base_sha)
+            and contains_scalar(audit_json, 'PASS')
+        )
+        return ok, False
+
+    # Canonical FILE-0001 Formal Image Audits are Markdown.
+    if side is None:
+        return False, True
+    try:
+        text = at(root, evidence['path']).read_bytes().decode('utf-8')
+    except (OSError, UnicodeDecodeError):
+        return False, False
+
+    current = text.split('```', 1)[0]
+
+    fields = {}
+    for line in current.splitlines():
+        cleaned = line.strip()
+        if cleaned.startswith('- '):
+            cleaned = cleaned[2:].strip()
+        cleaned = cleaned.replace('**', '')
+        if ':' not in cleaned:
+            continue
+        key, value = cleaned.split(':', 1)
+        fields.setdefault(key.strip(), value.strip().strip('`'))
+
+    base_name = Path(record['base_asset_evidence']['path']).name
+    base_sha = record['base_asset_evidence']['observed_sha256']
+    audit_result = fields.get('Final Audit Result', fields.get('Audit Result'))
+
+    fixity_ok = (
+        evidence.get('expected_sha256') is not None
+        and evidence.get('expected_sha256') == evidence.get('observed_sha256')
+    )
+    sidecar_ok = (
+        side.get('image_audit_reference') == evidence['path']
+        and side.get('image_audit_result') == 'PASS'
+        and evidence.get('observed_result') == 'PASS'
+    )
+    identity_ok = (
+        fields.get('Case ID') == record['case_id']
+        and fields.get('Requirement ID') == record['requirement_id']
+        and fields.get('Asset ID') == record['asset_id']
+        and fields.get('Asset Version') == record['asset_version']
+        and fields.get('Base Asset Filename') == base_name
+        and fields.get('SHA-256') == base_sha
+    )
+    formal_ok = 'Formal Image Audit' in current
+    pass_ok = audit_result == 'PASS'
+
+    return (
+        fixity_ok and sidecar_ok and identity_ok and formal_ok and pass_ok,
+        False,
+    )
+
+
 def evaluate_checks(record: dict, root: Path) -> dict[str,str]:
     reg = _strict_json_or_none(root, record['register_evidence'])
     side = _strict_json_or_none(root, record['sidecar_evidence'])
-    audit = _strict_json_or_none(root, record['image_audit_evidence'])
+    audit_ok, audit_limited = _audit_binding(record, root, side)
     result = {}
 
     required_evidence = [record['register_evidence'], record['base_asset_evidence'], record['sidecar_evidence'], record['image_audit_evidence']]
@@ -171,8 +241,7 @@ def evaluate_checks(record: dict, root: Path) -> dict[str,str]:
     metadata_ok = side is not None and all(n is not None and contains_scalar(side, str(n)) for n in metadata_needles)
     result['REQUIRED_METADATA'] = _status_from(metadata_ok, side is None)
 
-    audit_ok = audit is not None and contains_scalar(audit, record['asset_id']) and base['observed_sha256'] is not None and contains_scalar(audit, base['observed_sha256']) and contains_scalar(audit, 'PASS')
-    result['IMAGE_AUDIT_BINDING'] = _status_from(audit_ok, audit is None)
+    result['IMAGE_AUDIT_BINDING'] = _status_from(audit_ok, audit_limited)
 
     management = record['management_status_observation']
     if management['source_path'] is None or management['source_sha256'] is None or management['observed_status'] is None:
@@ -204,8 +273,10 @@ def aggregate(checks: dict[str,str], findings: list[dict]) -> str:
         return 'PASS_WITH_WARNINGS'
     return 'PASS'
 
-def validate_record(record_path: Path, repository_root: Path, schema_path: Path|None=None) -> dict:
-    raw = record_path.read_bytes()
+
+def _validate_record_bytes(raw: bytes, record_relative_path: str,
+                           repository_root: Path,
+                           schema_path: Path|None=None) -> dict:
     record = load_json_strict_bytes(raw)
     require(list(record) == list(TOP_LEVEL), 'TOP_LEVEL_PROPERTY_ORDER')
     require(raw == canonical_bytes(record), 'NON_CANONICAL_JSON_BYTES')
@@ -217,7 +288,7 @@ def validate_record(record_path: Path, repository_root: Path, schema_path: Path|
     require(not errors, 'SCHEMA:' + '; '.join(e.message for e in errors[:5]))
     require(record['transaction_id'].startswith(record['case_id'] + '-TXN-'), 'TXN_CASE_MISMATCH')
     require(record['asset_id'].startswith(record['case_id'] + '-IMG-'), 'ASSET_CASE_MISMATCH')
-    require(str(record_path.relative_to(repository_root)) == canonical_record_path(record), 'CANONICAL_RECORD_PATH_MISMATCH')
+    require(record_relative_path == canonical_record_path(record), 'CANONICAL_RECORD_PATH_MISMATCH')
     for key in ('register_evidence','base_asset_evidence','sidecar_evidence','image_audit_evidence'):
         validate_evidence(repository_root, record[key], key)
     for item in record['governing_references']:
@@ -235,6 +306,21 @@ def validate_record(record_path: Path, repository_root: Path, schema_path: Path|
     require(observed == expected, 'CHECK_RESULT_FALSE:' + repr((observed, expected)))
     require(record['result'] == aggregate(expected, record['findings']), 'AGGREGATE_RESULT_FALSE')
     return record
+
+def validate_record_bytes(raw: bytes, record_relative_path: str,
+                          repository_root: Path,
+                          schema_path: Path|None=None) -> dict:
+    return _validate_record_bytes(raw, record_relative_path, repository_root, schema_path)
+
+def validate_record(record_path: Path, repository_root: Path,
+                    schema_path: Path|None=None) -> dict:
+    return _validate_record_bytes(
+        record_path.read_bytes(),
+        str(record_path.relative_to(repository_root)),
+        repository_root,
+        schema_path,
+    )
+
 
 def transaction_eligible(record: dict) -> bool:
     return record['result'] in ('PASS','PASS_WITH_WARNINGS') and not any(f.get('blocking') for f in record['findings'])
@@ -275,19 +361,32 @@ def _extract_write_dicts(args, kwargs):
                     seen.append(obj)
     return seen
 
-class MechanicalTransactionValidator:
-    """Stateful adapter for the existing Operations.execute two-phase callable.
 
-    It deliberately accepts *args/**kwargs so the adapter can bind to the
-    existing Operations callable envelope without changing Case Bootstrap core.
-    It requires a phase token PROSPECTIVE then POST_WRITE and discovers the
-    write descriptors by their existing target_path/operation/role keys.
-    """
+def _transaction_validation_result() -> dict:
+    return {
+        'status': 'PASS',
+        'layers': {
+            'SCHEMA': 'PASS',
+            'SEMANTIC': 'PASS',
+            'CROSS_ARTIFACT': 'PASS',
+            'GOVERNANCE': 'PASS',
+        },
+        'findings': [],
+    }
+
+def _write_digest(write: dict) -> str|None:
+    raw = write.get('bytes')
+    if isinstance(raw, (bytes, bytearray)):
+        return sha256(bytes(raw))
+    return write.get('prospective_sha256') or write.get('sha256')
+
+class MechanicalTransactionValidator:
     def __init__(self, repository_root: Path, schema_path: Path|None=None):
         self.root = repository_root
         self.schema_path = schema_path or repository_root / 'schemas/cases/mechanical-validation-record.schema.json'
         self._frozen = None
         self._phase = None
+        self._prospective_record_bytes = False
 
     def __call__(self, *args, **kwargs):
         phase = kwargs.get('phase')
@@ -297,29 +396,38 @@ class MechanicalTransactionValidator:
         require(not (self._phase is None and phase == 'POST_WRITE'), 'POST_WRITE_BEFORE_PROSPECTIVE')
         require(not (self._phase == 'POST_WRITE'), 'VALIDATOR_INSTANCE_REUSED_AFTER_POST_WRITE')
         writes = _extract_write_dicts(args, kwargs)
-        unique = {(w['target_path'],w['operation'],w['role']):w for w in writes}
-        writes = list(unique.values())
+        writes = list({(w['target_path'],w['operation'],w['role']):w for w in writes}.values())
         require(len(writes) == 2, 'MECHANICAL_TRANSACTION_EXACT_TWO_WRITES_REQUIRED')
         require(all(w['operation'] == 'CREATE' for w in writes), 'MECHANICAL_TRANSACTION_CREATE_ONLY')
-        roles = sorted(w['role'] for w in writes)
-        require(roles == ['CANONICAL_TARGET','SEMANTIC_EVENT'], 'MECHANICAL_TRANSACTION_ROLE_SET')
+        require(sorted(w['role'] for w in writes) == ['CANONICAL_TARGET','SEMANTIC_EVENT'], 'MECHANICAL_TRANSACTION_ROLE_SET')
         record_write = next(w for w in writes if w['role'] == 'CANONICAL_TARGET')
         event_write = next(w for w in writes if w['role'] == 'SEMANTIC_EVENT')
         require('/registration-validations/' in record_write['target_path'], 'MECHANICAL_RECORD_TARGET_PATH')
         require('/semantic-events/' in event_write['target_path'], 'MECHANICAL_EVENT_TARGET_PATH')
+        descriptor = tuple(sorted(
+            (w['target_path'],w['operation'],w['role'],_write_digest(w)) for w in writes
+        ))
         if phase == 'PROSPECTIVE':
-            frozen = tuple(sorted((w['target_path'],w.get('prospective_sha256') or w.get('sha256')) for w in writes))
-            self._frozen = frozen
+            raw = record_write.get('bytes')
+            self._prospective_record_bytes = isinstance(raw, (bytes, bytearray))
+            if self._prospective_record_bytes:
+                value = validate_record_bytes(bytes(raw), record_write['target_path'], self.root, self.schema_path)
+                require(transaction_eligible(value), 'MECHANICAL_RECORD_NOT_TRANSACTION_ELIGIBLE')
+            self._frozen = descriptor
             self._phase = phase
         else:
-            current = tuple(sorted((w['target_path'],w.get('prospective_sha256') or w.get('sha256')) for w in writes))
-            require(current == self._frozen, 'POST_WRITE_DESCRIPTOR_MISMATCH')
-            # When canonical bytes now exist, validate the actual record.
+            require(descriptor == self._frozen, 'POST_WRITE_DESCRIPTOR_MISMATCH')
             record_path = at(self.root, record_write['target_path'])
-            if record_path.is_file():
-                validate_record(record_path, self.root, self.schema_path)
+            if self._prospective_record_bytes:
+                require(record_path.is_file(), 'POST_WRITE_MECHANICAL_RECORD_MISSING')
+                value = validate_record(record_path, self.root, self.schema_path)
+                require(transaction_eligible(value), 'MECHANICAL_RECORD_NOT_TRANSACTION_ELIGIBLE')
+            elif record_path.is_file():
+                value = validate_record(record_path, self.root, self.schema_path)
+                require(transaction_eligible(value), 'MECHANICAL_RECORD_NOT_TRANSACTION_ELIGIBLE')
             self._phase = phase
-        return {'status':'PASS','blocking':False,'mechanical_result_is_transaction_authority':False}
+        return _transaction_validation_result()
+
 
 def mechanical_transaction_validator(repository_root: Path, schema_path: Path|None=None):
     return MechanicalTransactionValidator(repository_root, schema_path)
