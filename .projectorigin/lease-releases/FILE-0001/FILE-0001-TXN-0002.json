@@ -1,0 +1,31 @@
+{
+  "record_format_version": "v0.1",
+  "artifact_type": "LEASE_RELEASE_RECORD",
+  "transaction_id": "FILE-0001-TXN-0002",
+  "case_id": "FILE-0001",
+  "receipt_ref": ".projectorigin/receipts/FILE-0001/FILE-0001-TXN-0002.json",
+  "receipt_sha256": "c293d9eb4a64ed88afc2209c84d8c8e0565d514f2145523e4d6431fb291e9143",
+  "expected_lease": {
+    "lease_path": ".projectorigin/leases/FILE-0001.json",
+    "lease_sha256": "f53cac84124c10c0d7b913ce176e05a2079a9ccacd54d8c5ebd8cb63c3d51a03",
+    "allocation_record_ref": ".projectorigin/transaction-allocations/FILE-0001/FILE-0001-TXN-0002.json",
+    "allocation_record_sha256": "43a89220f65778a413dcaa986cccd199b079ae4205c430ca4c415920bd2bfa8f",
+    "holder_actor_id": "ACTOR-0001",
+    "holder_actor_role": "Image Agent",
+    "acquired_at": "2026-09-19T13:17:36.834233Z",
+    "expires_at": "2026-09-19T14:17:36.828923Z"
+  },
+  "release_outcome": "RELEASED",
+  "release_attempted_by_actor_id": "ACTOR-0001",
+  "release_attempted_by_actor_role": "Image Agent",
+  "release_evidence": {
+    "observed_at": "2026-09-19T13:17:37.578827Z",
+    "exact_instance_verified": true,
+    "safe_delete_performed": true,
+    "post_observation": {
+      "existence": "ABSENT",
+      "sha256": null
+    },
+    "finding_code": null
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "record_format_version": "v1.0",
+  "artifact_type": "MECHANICAL_VALIDATION_RECORD",
+  "case_id": "FILE-0001",
+  "source_step": "CPW-025",
+  "transaction_id": "FILE-0001-TXN-0003",
+  "requirement_id": "IMGREQ-011",
+  "asset_id": "FILE-0001-IMG-0002",
+  "asset_version": "v1.0",
+  "register_evidence": {
+    "path": "cases/FILE-0001/image-requirements.json",
+    "expected_sha256": "ab76dc0a0b580f505c9b7f325b06e460b1631fd75b3a30d65a2887c58dacbd6b",
+    "observed_sha256": "ab76dc0a0b580f505c9b7f325b06e460b1631fd75b3a30d65a2887c58dacbd6b",
+    "existence": "EXISTS"
+  },
+  "base_asset_evidence": {
+    "path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.svg",
+    "expected_sha256": "9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905",
+    "observed_sha256": "9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905",
+    "existence": "EXISTS"
+  },
+  "sidecar_evidence": {
+    "path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.metadata.json",
+    "expected_sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee",
+    "observed_sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee",
+    "existence": "EXISTS"
+  },
+  "image_audit_evidence": {
+    "path": "cases/FILE-0001/audit/FILE-0001-IMG-0002_IMAGE-AUDIT_v1.0.md",
+    "expected_sha256": "a7cec98c0a4ced32cc548083a7774bfbed8b63b433c0d9f212fc3a5f616d5aac",
+    "observed_sha256": "a7cec98c0a4ced32cc548083a7774bfbed8b63b433c0d9f212fc3a5f616d5aac",
+    "existence": "EXISTS",
+    "observed_result": "PASS"
+  },
+  "management_status_observation": {
+    "source_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.metadata.json",
+    "source_sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee",
+    "observed_status": "APPROVED"
+  },
+  "governing_references": [
+    {
+      "document_path": "docs/Image Rule.md",
+      "applicable_version": "v1.2",
+      "sha256": "be34b3165aaa351614dd19c16dd955e5de6f043aae8fd42979ff872cb67626f5"
+    },
+    {
+      "document_path": "docs/ProjectORIGIN Repository Rule.md",
+      "applicable_version": "current",
+      "sha256": "c03a93e495ba3d367a20f341e4b59a595987b316b54645338d412e73ff3beb9a"
+    }
+  ],
+  "validator_identity": {
+    "implementation_path": "scripts/validate-image-registration.py",
+    "sha256": "2295e149a1657137ee1362ccd798975bb67f709ea0ac54322eb61d3b94fc3c48"
+  },
+  "runtime_identity": {
+    "python_version": "3.9.6",
+    "libraries": [
+      {
+        "name": "jsonschema",
+        "version": "4.25.1"
+      }
+    ]
+  },
+  "validated_at": "2026-09-19T14:48:34.166165Z",
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Image Agent",
+  "checks": [
+    {
+      "check_id": "FILE_EXISTENCE",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "FILENAME",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "IDENTITY_UNIQUENESS",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "VERSION_CONSISTENCY",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "BYTE_IDENTITY",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "SIDECAR_JSON",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "REQUIRED_METADATA",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "IMAGE_AUDIT_BINDING",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "APPROVED_ELIGIBILITY",
+      "result": "PASS",
+      "evidence_references": []
+    },
+    {
+      "check_id": "ASSET_PRESERVATION",
+      "result": "PASS",
+      "evidence_references": []
+    }
+  ],
+  "result": "PASS",
+  "findings": [],
+  "prior_record_reference": null
+}

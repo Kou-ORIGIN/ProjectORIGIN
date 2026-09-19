@@ -1,0 +1,22 @@
+{
+  "event_id": "FILE-0001-EVT-0002",
+  "occurred_at": "2026-09-19T13:17:35.664345Z",
+  "event_type": "RECORD_CREATED",
+  "record_ref": {
+    "ref_id": "mechanical-validation-record",
+    "artifact_type": "MECHANICAL_VALIDATION_RECORD",
+    "required": true,
+    "applicability": "REQUIRED",
+    "repository_path": "cases/FILE-0001/registration-validations/FILE-0001-IMG-0001/FILE-0001-TXN-0002.json",
+    "sha256": "216f59d44753f99366fd5f101900634a18167cb340f0719bbc7a3c78f5fedd8b",
+    "source_step": "CPW-025"
+  },
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Image Agent",
+  "authority_type": "NONE",
+  "authority_reference": null,
+  "previous_state": null,
+  "new_state": null,
+  "evidence_references": [],
+  "note": "Creation of the Mechanical Validation Record for FILE-0001-IMG-0001 v1.0 under D209 Phase 2; this records mechanical registration validation only and does not establish placement or additional Human authority."
+}

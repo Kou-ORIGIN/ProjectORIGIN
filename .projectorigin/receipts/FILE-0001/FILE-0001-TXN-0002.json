@@ -1,0 +1,107 @@
+{
+  "record_format_version": "v0.1",
+  "artifact_type": "TRANSACTION_RECEIPT",
+  "transaction_id": "FILE-0001-TXN-0002",
+  "case_id": "FILE-0001",
+  "terminal_outcome": "COMMITTED",
+  "initiated_by_actor_id": "ACTOR-0001",
+  "initiated_by_actor_role": "Image Agent",
+  "recorded_by_actor_id": "ACTOR-0001",
+  "recorded_by_actor_role": "Image Agent",
+  "terminal_at": "2026-09-19T13:17:37.449358Z",
+  "receipt_created_at": "2026-09-19T13:17:37.488691Z",
+  "lease_evidence": {
+    "lease_path": ".projectorigin/leases/FILE-0001.json",
+    "lease_sha256": "f53cac84124c10c0d7b913ce176e05a2079a9ccacd54d8c5ebd8cb63c3d51a03",
+    "allocation_record_ref": ".projectorigin/transaction-allocations/FILE-0001/FILE-0001-TXN-0002.json",
+    "allocation_record_sha256": "43a89220f65778a413dcaa986cccd199b079ae4205c430ca4c415920bd2bfa8f",
+    "holder_actor_id": "ACTOR-0001",
+    "holder_actor_role": "Image Agent",
+    "acquired_at": "2026-09-19T13:17:36.834233Z",
+    "expires_at": "2026-09-19T14:17:36.828923Z"
+  },
+  "write_results": [
+    {
+      "target_path": "cases/FILE-0001/registration-validations/FILE-0001-IMG-0001/FILE-0001-TXN-0002.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "216f59d44753f99366fd5f101900634a18167cb340f0719bbc7a3c78f5fedd8b"
+      },
+      "result": "CREATED",
+      "role": "CANONICAL_TARGET"
+    },
+    {
+      "target_path": "cases/FILE-0001/semantic-events/FILE-0001-EVT-0002.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "58dc6a15a51832499ae8e7872ddca991afb36e5794aacaa77cd63cb574df8a6e"
+      },
+      "result": "CREATED",
+      "role": "SEMANTIC_EVENT"
+    }
+  ],
+  "validation_evidence": {
+    "prospective_validation": {
+      "status": "PASS",
+      "layers": {
+        "SCHEMA": "PASS",
+        "SEMANTIC": "PASS",
+        "CROSS_ARTIFACT": "PASS",
+        "GOVERNANCE": "PASS"
+      },
+      "findings": []
+    },
+    "post_write_verification": {
+      "status": "PASS",
+      "layers": {
+        "SCHEMA": "PASS",
+        "SEMANTIC": "PASS",
+        "CROSS_ARTIFACT": "PASS",
+        "GOVERNANCE": "PASS"
+      },
+      "findings": []
+    }
+  },
+  "semantic_event_requirement": "REQUIRED",
+  "required_semantic_events": [
+    {
+      "event_id": "FILE-0001-EVT-0002",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "mechanical-validation-record",
+        "artifact_type": "MECHANICAL_VALIDATION_RECORD",
+        "required": true,
+        "applicability": "REQUIRED",
+        "repository_path": "cases/FILE-0001/registration-validations/FILE-0001-IMG-0001/FILE-0001-TXN-0002.json",
+        "sha256": "216f59d44753f99366fd5f101900634a18167cb340f0719bbc7a3c78f5fedd8b",
+        "source_step": "CPW-025"
+      }
+    }
+  ],
+  "emitted_semantic_event_refs": [
+    {
+      "event_id": "FILE-0001-EVT-0002",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "mechanical-validation-record",
+        "artifact_type": "MECHANICAL_VALIDATION_RECORD",
+        "required": true,
+        "applicability": "REQUIRED",
+        "repository_path": "cases/FILE-0001/registration-validations/FILE-0001-IMG-0001/FILE-0001-TXN-0002.json",
+        "sha256": "216f59d44753f99366fd5f101900634a18167cb340f0719bbc7a3c78f5fedd8b",
+        "source_step": "CPW-025"
+      },
+      "event_sha256": "58dc6a15a51832499ae8e7872ddca991afb36e5794aacaa77cd63cb574df8a6e"
+    }
+  ]
+}
