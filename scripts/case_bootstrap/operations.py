@@ -478,6 +478,18 @@ class Operations:
                 require(write['role']=='SEMANTIC_EVENT' and write['operation']=='CREATE', 'SEMANTIC_EVENT_IMMUTABLE')
             if write['role']=='SEMANTIC_EVENT':
                 require(write['operation']=='CREATE', 'SEMANTIC_EVENT_IMMUTABLE')
+        # Fail before Journal publication if a Semantic Event carries a canonical
+        # artifact reference that post-commit contextual integrity cannot verify.
+        from .contextual import references
+        for write in writes:
+            if write['role'] == 'SEMANTIC_EVENT':
+                event = s.parse_json(write['bytes'])
+                self.contracts.validate_event(event, write['bytes'])
+                for reference in references(event):
+                    self.contracts.validate_definition('artifactReference', reference)
+                    require(reference.get('repository_path') and reference.get('sha256') and reference.get('artifact_id'),
+                            'CANONICAL_REFERENCE_EVIDENCE_INSUFFICIENT')
+
         before = {w['target_path']:state(self.root,w['target_path']) for w in writes}
         stamp=now(); evidence=self.lease_evidence(lease)
         journal={**envelope('TRANSACTION_JOURNAL',case,transaction),'state':'PREPARED',

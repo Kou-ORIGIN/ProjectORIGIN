@@ -368,6 +368,85 @@ class DR06Tests(Base):
         self.corrupt(j)
         return a,j,targets
 
+    def legacy_committed_event(self, reference_type='MECHANICAL_VALIDATION_RECORD', reference_sha=None, reference_path=None, target_transaction=None, extra_reference=False):
+        allocation=self.ops.allocate(CASE,IDENTITY,ROLE);lease=self.ops.acquire(allocation,EXPIRY)
+        transaction=allocation['transaction_id']
+        target_path='cases/'+CASE+'/registration-validations/FILE-0001-IMG-0001/'+transaction+'.json'
+        target_value={'artifact_type':'MECHANICAL_VALIDATION_RECORD','transaction_id':target_transaction or transaction}
+        if reference_type=='FIXTURE':
+            target_path='cases/'+CASE+'/record.json';target_value={'artifact_id':'REC-0001','artifact_type':'FIXTURE'}
+        target_bytes=json.dumps(target_value,sort_keys=True).encode()+b'\n'
+        if reference_path is None:
+            reference_path=target_path
+        if reference_path!=target_path:
+            external=self.root/reference_path;external.parent.mkdir(parents=True,exist_ok=True);external.write_bytes(target_bytes)
+        digest=reference_sha or s.sha256(target_bytes)
+        artifact_id=(target_value.get('transaction_id') or target_value.get('artifact_id'))
+        reference={'ref_id':'legacy-target','artifact_type':reference_type,'artifact_id':artifact_id,'required':True,'applicability':'REQUIRED','repository_path':reference_path,'sha256':digest}
+        evidence=[]
+        if extra_reference:
+            extra_path='cases/'+CASE+'/extra.json';extra_value={'artifact_id':'EXTRA-0001','artifact_type':'FIXTURE'};extra=self.root/extra_path;extra.parent.mkdir(parents=True,exist_ok=True);extra.write_text(json.dumps(extra_value))
+            evidence=[{'ref_id':'extra','artifact_type':'FIXTURE','artifact_id':'EXTRA-0001','required':False,'applicability':'CONDITIONAL','repository_path':extra_path,'sha256':s.sha256(extra.read_bytes())}]
+        event={'event_id':CASE+'-EVT-0001','occurred_at':now(),'event_type':'RECORD_CREATED','record_ref':reference,'actor_id':IDENTITY,'actor_role':ROLE,'authority_type':'NONE','authority_reference':None,'previous_state':None,'new_state':None,'evidence_references':evidence}
+        event_path='cases/'+CASE+'/semantic-events/'+event['event_id']+'.json'
+        event_bytes=s.serialize(event,CONTRACTS.definition('semanticEvent'),CONTRACTS.resolve)
+        plan=[{'target_path':target_path,'operation':'CREATE','role':'CANONICAL_TARGET','bytes':target_bytes},{'target_path':event_path,'operation':'CREATE','role':'SEMANTIC_EVENT','bytes':event_bytes}]
+        required=[{k:event[k] for k in ('event_id','event_type','record_ref')}]
+        result=self.ops.execute(allocation,lease,plan,required,validation)
+        self.assertEqual('COMMITTED',result['receipt']['terminal_outcome'])
+
+        # Rewrite the disposable fixture into the historical legacy shape while
+        # keeping Journal/Receipt/Event fixity internally coherent. Production
+        # Semantic Events remain immutable; this direct mutation is test-only.
+        legacy=copy.deepcopy(event);legacy['record_ref'].pop('artifact_id')
+        if extra_reference:
+            legacy['evidence_references'][0].pop('artifact_id')
+        legacy_bytes=s.serialize(legacy,CONTRACTS.definition('semanticEvent'),CONTRACTS.resolve);legacy_sha=s.sha256(legacy_bytes)
+        (self.root/event_path).write_bytes(legacy_bytes)
+        journal=self.ops.read('.projectorigin/journals/'+CASE+'/'+transaction+'.json')
+        receipt=self.ops.read('.projectorigin/receipts/'+CASE+'/'+transaction+'.json')
+        journal['required_semantic_events'][0]['record_ref'].pop('artifact_id')
+        next(i for i in journal['write_intent'] if i['target_path']==event_path)['prospective_sha256']=legacy_sha
+        receipt['required_semantic_events'][0]['record_ref'].pop('artifact_id')
+        emitted=receipt['emitted_semantic_event_refs'][0];emitted['record_ref'].pop('artifact_id');emitted['event_sha256']=legacy_sha
+        next(i for i in receipt['write_results'] if i['target_path']==event_path)['post_write_state']['sha256']=legacy_sha
+        self.corrupt(journal);self.corrupt(receipt)
+        return allocation,target_path,event_path
+
+    def test_legacy_committed_mvr_reference_compatibility_safe(self):
+        allocation,_,_=self.legacy_committed_event()
+        result=self.assert_outcome(allocation,'SAFE_TO_START_NEW_TXN','MATCHES_COMMITTED_STATE')
+        self.assertEqual('VALID',result['evidence']['integrity_results'][0]['status'])
+
+    def test_legacy_contextual_validator_error_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event()
+        self.ops.contextual_validator=lambda path,event:[{'code':'SYNTHETIC_CONTEXT_INVALID','severity':'ERROR','blocking':True}]
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
+    def test_legacy_reference_wrong_sha_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event(reference_sha='0'*64)
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
+    def test_legacy_reference_outside_transaction_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event(reference_path='cases/'+CASE+'/external.json')
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
+    def test_legacy_reference_artifact_type_mismatch_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event(reference_type='WRONG_TYPE')
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
+    def test_legacy_reference_transaction_identity_mismatch_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event(target_transaction=CASE+'-TXN-0099')
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
+    def test_legacy_event_with_additional_incomplete_reference_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event(extra_reference=True)
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
+    def test_generic_legacy_reference_missing_artifact_id_remains_unsafe(self):
+        allocation,_,_=self.legacy_committed_event(reference_type='FIXTURE')
+        self.assert_outcome(allocation,'UNSAFE_TO_PROCEED','CONFLICTING_STATE')
+
     def test_recovery_valid_required_event_safe(self):
         a,j,targets=self.event_scenario();self.assert_outcome(a,'SAFE_TO_START_NEW_TXN','MATCHES_COMMITTED_STATE')
 

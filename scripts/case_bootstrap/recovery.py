@@ -187,6 +187,79 @@ def validate_snapshot(contracts, value):
         s.reject('RECOVERY_DETERMINATION_EVIDENCE_MISMATCH')
 
 
+def _legacy_committed_mvr_event_compatibility(ops, path, events, paths, journal, receipt):
+    """Accept one historical committed MVR Event missing only artifact_id.
+
+    This is recovery-inspection compatibility only. It never mutates bytes and
+    it does not weaken the general contextual reference contract.
+    """
+    if not journal or not receipt or journal.get('state') != 'COMMITTED' or receipt.get('terminal_outcome') != 'COMMITTED':
+        return None
+    item = paths.get(path)
+    if not item or item.get('role') != 'SEMANTIC_EVENT' or item.get('operation') != 'CREATE':
+        return None
+    committed = item.get('expected_committed_state')
+    actual = observed_state(ops.root, path)
+    if not committed or committed.get('existence') != 'EXISTS' or not committed.get('sha256') or actual != committed:
+        return None
+    try:
+        raw = s.read_bytes(ops.root, path)
+        if s.sha256(raw) != committed['sha256']:
+            return None
+        event = s.parse_json(raw)
+        ops.contracts.validate_event(event, raw)
+        case = path.split('/')[1]
+        s.validate_id(event['event_id'], 'EVT', case)
+        if path != 'cases/'+case+'/semantic-events/'+event['event_id']+'.json':
+            return None
+
+        required = [v for v in events if v.get('event_id') == event['event_id']]
+        if len(required) != 1 or any(required[0][k] != event[k] for k in ('event_type','record_ref')):
+            return None
+
+        from .contextual import references, check_reference
+        refs = list(references(event))
+        record_ref = event.get('record_ref')
+        if record_ref not in refs or record_ref.get('artifact_id') is not None:
+            return None
+        if not record_ref.get('repository_path') or not record_ref.get('sha256') or record_ref.get('artifact_type') != 'MECHANICAL_VALIDATION_RECORD':
+            return None
+
+        target_path = record_ref['repository_path']
+        target_item = paths.get(target_path)
+        if not target_item or target_item.get('role') != 'CANONICAL_TARGET' or target_item.get('operation') != 'CREATE':
+            return None
+        target_committed = target_item.get('expected_committed_state')
+        target_actual = observed_state(ops.root, target_path)
+        if not target_committed or target_committed.get('existence') != 'EXISTS' or target_actual != target_committed:
+            return None
+        if record_ref['sha256'] != target_committed.get('sha256'):
+            return None
+
+        target_raw = s.read_bytes(ops.root, target_path)
+        if s.sha256(target_raw) != record_ref['sha256']:
+            return None
+        target = s.parse_json(target_raw)
+        if target.get('artifact_type') != 'MECHANICAL_VALIDATION_RECORD' or target.get('transaction_id') != receipt.get('transaction_id'):
+            return None
+
+        inferred = dict(record_ref, artifact_id=receipt['transaction_id'])
+        check_reference(ops, inferred)
+        for reference in refs:
+            if reference is not record_ref:
+                check_reference(ops, reference)
+
+        if ops.contextual_validator is not None:
+            findings = ops.contextual_validator(path, event)
+            if not isinstance(findings, list):
+                return None
+            if any(f.get('severity','ERROR') == 'ERROR' or f.get('blocking',False) for f in findings):
+                return None
+        return {'target_path':path,'status':'VALID','sha256':committed['sha256'],'findings':[]}
+    except (s.OperationalError, OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def inspect(ops, case, transaction, identity, role):
     from .operations import now, actor
     from .contextual import integrity
@@ -219,6 +292,11 @@ def inspect(ops, case, transaction, identity, role):
             result={'target_path':path,'status':'NOT_APPLICABLE','sha256':None,'findings':[]}
         else:
             result=integrity(ops,path,kind,events)
+            if (kind == 'SEMANTIC_EVENT' and result.get('status') == 'INVALID' and
+                    result.get('findings') == ['CANONICAL_REFERENCE_EVIDENCE_INSUFFICIENT']):
+                compatible = _legacy_committed_mvr_event_compatibility(ops,path,events,paths,j,r)
+                if compatible is not None:
+                    result = compatible
         e['integrity_results'].append(result)
     try:
         for previous in ops.records('RECOVERY_DETERMINATION',case):

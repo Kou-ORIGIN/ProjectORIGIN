@@ -345,6 +345,36 @@ class LifecycleTests(Base):
         result=self.ops.execute(allocation,lease,writes(),[event],validation)
         self.assertEqual('ABORTED',result['receipt']['terminal_outcome'])
 
+    def semantic_event_plan(self, allocation, include_artifact_id):
+        target_path='cases/'+CASE+'/registration-validations/FILE-0001-IMG-0001/'+allocation['transaction_id']+'.json'
+        target_bytes=json.dumps({'artifact_type':'MECHANICAL_VALIDATION_RECORD','transaction_id':allocation['transaction_id']},sort_keys=True).encode()+b'\n'
+        reference={'ref_id':'mechanical-validation-record','artifact_type':'MECHANICAL_VALIDATION_RECORD','required':True,'applicability':'REQUIRED','repository_path':target_path,'sha256':s.sha256(target_bytes)}
+        if include_artifact_id:
+            reference['artifact_id']=allocation['transaction_id']
+        event={'event_id':CASE+'-EVT-0001','occurred_at':now(),'event_type':'RECORD_CREATED','record_ref':reference,'actor_id':IDENTITY,'actor_role':ROLE,'authority_type':'NONE','authority_reference':None,'previous_state':None,'new_state':None,'evidence_references':[]}
+        event_bytes=s.serialize(event,CONTRACTS.definition('semanticEvent'),CONTRACTS.resolve)
+        event_path='cases/'+CASE+'/semantic-events/'+event['event_id']+'.json'
+        plan=[{'target_path':target_path,'operation':'CREATE','role':'CANONICAL_TARGET','bytes':target_bytes},{'target_path':event_path,'operation':'CREATE','role':'SEMANTIC_EVENT','bytes':event_bytes}]
+        required=[{k:event[k] for k in ('event_id','event_type','record_ref')}]
+        return plan,required,target_path,event_path
+
+    def test_semantic_event_reference_evidence_rejected_before_journal(self):
+        allocation=self.ops.allocate(CASE,IDENTITY,ROLE);lease=self.ops.acquire(allocation,EXPIRY)
+        plan,required,target_path,event_path=self.semantic_event_plan(allocation,False)
+        self.code('CANONICAL_REFERENCE_EVIDENCE_INSUFFICIENT',self.ops.execute,allocation,lease,plan,required,validation)
+        self.assertFalse((self.root/('.projectorigin/journals/'+CASE+'/'+allocation['transaction_id']+'.json')).exists())
+        self.assertFalse((self.root/('.projectorigin/receipts/'+CASE+'/'+allocation['transaction_id']+'.json')).exists())
+        self.assertFalse((self.root/target_path).exists())
+        self.assertFalse((self.root/event_path).exists())
+
+    def test_semantic_event_complete_reference_commits(self):
+        allocation=self.ops.allocate(CASE,IDENTITY,ROLE);lease=self.ops.acquire(allocation,EXPIRY)
+        plan,required,target_path,event_path=self.semantic_event_plan(allocation,True)
+        result=self.ops.execute(allocation,lease,plan,required,validation)
+        self.assertEqual('COMMITTED',result['receipt']['terminal_outcome'])
+        self.assertTrue((self.root/target_path).exists())
+        self.assertTrue((self.root/event_path).exists())
+
     def test_terminal_journal_cannot_resume(self):
         allocation,lease,receipt,lrel=completed(self.ops)
         journal=self.ops.read('.projectorigin/journals/'+CASE+'/'+allocation['transaction_id']+'.json')
