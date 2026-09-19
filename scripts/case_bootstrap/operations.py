@@ -96,6 +96,33 @@ class Operations:
         require(serial <= 9999, 'OPERATIONAL_ID_NAMESPACE_EXHAUSTED')
         return case + '-' + namespace + '-' + str(serial).zfill(4)
 
+    def next_event_id(self, case, lease):
+        s.validate_case(case)
+        self.owned(lease)
+        self.check_links(lease)
+        require(lease['case_id'] == case, 'LEASE_BINDING_MISMATCH')
+
+        with s.namespace_lock(self.root, case, 'EVT'):
+            directory = s.path_at(self.root, 'cases/' + case + '/semantic-events')
+            ids = []
+
+            if directory.exists():
+                for path in sorted(directory.glob('*.json')):
+                    ref = path.relative_to(self.root).as_posix()
+                    data = s.read_bytes(self.root, ref)
+                    event = s.parse_json(data)
+                    self.contracts.validate_event(event, data)
+                    s.validate_id(event['event_id'], 'EVT', case)
+                    require(path.stem == event['event_id'],
+                            'SEMANTIC_EVENT_IDENTITY_MISMATCH')
+                    ids.append(event['event_id'])
+
+            require(len(ids) == len(set(ids)), 'SEMANTIC_EVENT_DUPLICATE')
+            serial = max([int(event_id.rsplit('-', 1)[1])
+                          for event_id in ids] or [0]) + 1
+            require(serial <= 9999, 'SEMANTIC_EVENT_ID_NAMESPACE_EXHAUSTED')
+            return case + '-EVT-' + str(serial).zfill(4)
+
     def check_recovery(self, case, context, fresh=False):
         try:
             rdet = self.read(context['recovery_determination_ref'], context['recovery_determination_sha256'])

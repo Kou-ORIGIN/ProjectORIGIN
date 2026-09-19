@@ -215,6 +215,13 @@ class StorageTests(unittest.TestCase):
         with s.namespace_lock(self.root, "FILE-0001", "TXN"):
             self.assertEqual(inode, (self.root / ref).stat().st_ino)
 
+    def test_evt_lock_inode_retained(self):
+        ref = ".projectorigin/id-allocation-locks/EVT/FILE-0001.lock"
+        with s.namespace_lock(self.root, "FILE-0001", "EVT"):
+            inode = (self.root / ref).stat().st_ino
+        with s.namespace_lock(self.root, "FILE-0001", "EVT"):
+            self.assertEqual(inode, (self.root / ref).stat().st_ino)
+
     def test_unavailable_lock_fails_closed(self):
         with mock.patch.object(s.fcntl, "flock", side_effect=OSError("injected")):
             with self.assertRaises(s.OperationalError) as caught:

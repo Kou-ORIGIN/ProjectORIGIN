@@ -210,6 +210,86 @@ class SchemaTests(Base):
             self.assertEqual(CONTRACTS.encode(value),CONTRACTS.encode(dict(reversed(list(value.items())))))
 
 
+class SemanticEventAllocationTests(Base):
+    def lease(self, case=CASE):
+        allocation = self.ops.allocate(case, IDENTITY, ROLE)
+        return self.ops.acquire(allocation, EXPIRY)
+
+    def event(self, case, serial):
+        return {
+            'event_id': case + '-EVT-' + str(serial).zfill(4),
+            'occurred_at': '2026-09-18T00:00:00Z',
+            'event_type': 'RECORD_CREATED',
+            'record_ref': {
+                'ref_id': 'fixture',
+                'artifact_type': 'FIXTURE',
+                'required': False,
+                'applicability': 'CONDITIONAL'
+            },
+            'actor_id': IDENTITY,
+            'actor_role': ROLE,
+            'authority_type': 'NONE',
+            'authority_reference': None,
+            'previous_state': None,
+            'new_state': None,
+            'evidence_references': []
+        }
+
+    def write_event(self, case, serial):
+        event = self.event(case, serial)
+        CONTRACTS.validate_event(event)
+        path = self.root / 'cases' / case / 'semantic-events' / (event['event_id'] + '.json')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(s.serialize(event, CONTRACTS.definition('semanticEvent'), CONTRACTS.resolve))
+        return path
+
+    def test_empty_namespace_starts_at_one(self):
+        self.assertEqual(CASE + '-EVT-0001', self.ops.next_event_id(CASE, self.lease()))
+
+    def test_existing_event_advances_serial(self):
+        lease = self.lease(); self.write_event(CASE, 1)
+        self.assertEqual(CASE + '-EVT-0002', self.ops.next_event_id(CASE, lease))
+
+    def test_gap_is_not_reused(self):
+        lease = self.lease(); self.write_event(CASE, 1); self.write_event(CASE, 3)
+        self.assertEqual(CASE + '-EVT-0004', self.ops.next_event_id(CASE, lease))
+
+    def test_case_isolation(self):
+        lease = self.lease(); self.write_event('FILE-0002', 9)
+        self.assertEqual(CASE + '-EVT-0001', self.ops.next_event_id(CASE, lease))
+
+    def test_malformed_event_fails_closed(self):
+        lease = self.lease()
+        path = self.root / 'cases' / CASE / 'semantic-events' / (CASE + '-EVT-0001.json')
+        path.parent.mkdir(parents=True); path.write_bytes(b'{}\n')
+        self.code('SCHEMA_ERROR', self.ops.next_event_id, CASE, lease)
+
+    def test_namespace_exhaustion(self):
+        lease = self.lease(); self.write_event(CASE, 9999)
+        self.code('SEMANTIC_EVENT_ID_NAMESPACE_EXHAUSTED', self.ops.next_event_id, CASE, lease)
+
+    def test_missing_active_lease_fails(self):
+        lease = self.lease(); (self.root / record_path(lease)).unlink()
+        self.code('REFERENCE_TARGET_MISSING', self.ops.next_event_id, CASE, lease)
+
+    def test_foreign_lease_fails(self):
+        lease = self.lease('FILE-0002')
+        self.code('LEASE_BINDING_MISMATCH', self.ops.next_event_id, CASE, lease)
+
+    def test_stale_lease_fails(self):
+        lease = self.lease(); current = copy.deepcopy(lease); current['expires_at'] = '2098-01-01T00:00:00Z'; self.corrupt(current)
+        self.code('LEASE_RELEASE_OWNERSHIP_MISMATCH', self.ops.next_event_id, CASE, lease)
+
+    def test_duplicate_identity_fails(self):
+        lease = self.lease(); path = self.write_event(CASE, 1)
+        original = Path.glob
+        def duplicate(directory, pattern):
+            found = list(original(directory, pattern))
+            return iter(found + found)
+        with mock.patch.object(Path, 'glob', duplicate):
+            self.code('SEMANTIC_EVENT_DUPLICATE', self.ops.next_event_id, CASE, lease)
+
+
 class LifecycleTests(Base):
     def test_committed_lifecycle(self):
         allocation,lease,receipt,lrel=completed(self.ops)
@@ -440,6 +520,39 @@ class IntegrityTests(Base):
         result=audit(self.root,CONTRACTS)
         self.assertIn('DERIVED_INDEX_STALE',{f['code'] for f in result['findings']})
         self.assertEqual(0,result['counts']['ERROR'])
+
+    def test_semantic_event_gap_warning(self):
+        target={'artifact_id':'fixture','artifact_type':'FIXTURE'}
+        target_ref='cases/'+CASE+'/fixture.json'
+        target_raw=json.dumps(target,separators=(',',':'),sort_keys=True).encode()
+        target_path=self.root/target_ref
+        target_path.parent.mkdir(parents=True,exist_ok=True)
+        target_path.write_bytes(target_raw)
+
+        def write_event(serial):
+            event={
+                'event_id':CASE+'-EVT-'+str(serial).zfill(4),
+                'occurred_at':'2026-09-18T00:00:00Z',
+                'event_type':'RECORD_CREATED',
+                'record_ref':{
+                    'ref_id':'fixture','artifact_type':'FIXTURE','required':False,
+                    'applicability':'CONDITIONAL','artifact_id':'fixture',
+                    'repository_path':target_ref,'sha256':s.sha256(target_raw)
+                },
+                'actor_id':IDENTITY,'actor_role':ROLE,
+                'authority_type':'NONE','authority_reference':None,
+                'previous_state':None,'new_state':None,'evidence_references':[]
+            }
+            path=self.root/'cases'/CASE/'semantic-events'/(event['event_id']+'.json')
+            path.parent.mkdir(parents=True,exist_ok=True)
+            path.write_bytes(s.serialize(event,CONTRACTS.definition('semanticEvent'),CONTRACTS.resolve))
+
+        write_event(1);write_event(3)
+        result=audit(self.root,CONTRACTS,contextual_validator=lambda path,event:[])
+        gaps=[f for f in result['findings'] if f['code']=='PERMITTED_SERIAL_GAP' and f['ref']==CASE+'/EVT']
+        self.assertEqual(1,len(gaps),result)
+        self.assertEqual('WARNING',gaps[0]['severity'])
+        self.assertEqual(0,result['counts']['ERROR'],result)
 
     def test_temp_debris_warning(self):
         path=self.root/'.projectorigin/receipts'/'stale.tmp';path.parent.mkdir(parents=True);path.write_bytes(b'partial')

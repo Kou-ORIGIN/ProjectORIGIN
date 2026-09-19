@@ -273,7 +273,7 @@ def namespace_lock(root, case_id, namespace):
     if namespace == "TXN":
         return exclusive_lock(root, ".projectorigin/allocation-locks/" +
                               case_id + ".lock", "ALLOCATION_SERIALIZATION_UNAVAILABLE")
-    if namespace not in ("RDET", "RAUTH", "LRRES"):
+    if namespace not in ("RDET", "RAUTH", "LRRES", "EVT"):
         reject("OPERATIONAL_NAMESPACE_INVALID", namespace)
     return exclusive_lock(root, ".projectorigin/id-allocation-locks/" + namespace
                           + "/" + case_id + ".lock",

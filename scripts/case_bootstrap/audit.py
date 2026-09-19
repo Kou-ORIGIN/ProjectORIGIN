@@ -129,6 +129,10 @@ def audit(root, contracts=None, contextual_validator=None):
             events_by_case.setdefault(case,[]).append({'event_id':event['event_id'],'event_type':event['event_type'],'record_ref':event['record_ref'],'occurred_at':event['occurred_at'],'event_path':ref,'event_sha256':s.sha256(data)})
         except (s.OperationalError,OSError,ValueError,KeyError,TypeError) as exc:
             failed(exc,ref)
+    for case,events in events_by_case.items():
+        serials=[int(event['event_id'].rsplit('-',1)[1]) for event in events]
+        if sorted(set(serials))!=list(range(1,max(serials)+1)):
+            finding('PERMITTED_SERIAL_GAP','NAMESPACE',case+'/EVT',severity='WARNING')
     index_dir=s.path_at(ops.root,'.projectorigin/index/semantic-events')
     index_cases={p.stem for p in index_dir.glob('*.json')} if index_dir.exists() else set()
     for case in sorted(set(events_by_case)|index_cases):
