@@ -1325,3 +1325,187 @@ class HistoricalProductionEvidenceTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+# CPW-026 Workflow v1.2 era validator compatibility regression tests
+class WorkflowV12EraCompatibilityTests(unittest.TestCase):
+    REPOSITORY_RULE = "docs/ProjectORIGIN Repository Rule.md"
+
+    def workflow_v12(self):
+        data = json.loads(
+            (ROOT / "workflows/case-production-workflow_v1.1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        data["workflow_version"] = "v1.2"
+        data["status"] = "PROPOSED"
+
+        def rewrite(value):
+            if isinstance(value, dict):
+                if value.get("document") == self.REPOSITORY_RULE:
+                    value["version"] = "v1.3"
+                for child in value.values():
+                    rewrite(child)
+            elif isinstance(value, list):
+                for child in value:
+                    rewrite(child)
+
+        rewrite(data)
+        return data
+
+    def repository_candidate_text(self):
+        text = (ROOT / self.REPOSITORY_RULE).read_text(encoding="utf-8")
+        self.assertIn("Version: v1.2", text)
+        self.assertIn("**Current Official Version:** v1.2", text)
+        marker = "**Version History**"
+        self.assertEqual(1, text.count(marker))
+        text = text.replace("Version: v1.2", "Version: v1.3", 1)
+        entry = (
+            "\nv1.3\n"
+            "Date: 2026-09-20\n"
+            "CPW-026 Placement Transaction Persistence Contract\n"
+            "**Contents**\n\n"
+            "- Synthetic validator fixture for Workflow v1.2 era compatibility.\n\n"
+            "**Status:** CANDIDATE / NOT FORMALLY ADOPTED\n"
+            "Formal Adoption Date: NOT PERFORMED\n\n"
+        )
+        return text.replace(marker, marker + entry, 1)
+
+    def repository_adopted_text(self):
+        text = self.repository_candidate_text()
+        text = text.replace(
+            "**Current Official Version:** v1.2",
+            "**Current Official Version:** v1.3",
+            1,
+        )
+        text = text.replace(
+            "**Status:** CANDIDATE / NOT FORMALLY ADOPTED\n"
+            "Formal Adoption Date: NOT PERFORMED\n",
+            "**Status:** OFFICIAL. Current Official Version is v1.3. "
+            "Formally adopted by Human Formal Adoption Decision = `APPROVED`.\n"
+            "Historical Official Version: v1.2\n"
+            "Formal Adoption Date: 2026-09-20\n",
+            1,
+        )
+        return text
+
+    def isolated_governance_root(self, repository_rule_text):
+        temp = tempfile.TemporaryDirectory()
+        root = Path(temp.name)
+        for relative in VALIDATOR.EXPECTED_GOVERNANCE:
+            source = ROOT / relative
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(source.read_bytes())
+        target = root / self.REPOSITORY_RULE
+        target.write_text(repository_rule_text, encoding="utf-8")
+        return temp, root
+
+    def test_v12_exact_governance_contract(self):
+        expected = VALIDATOR.governance_expectations(
+            {"workflow_version": "v1.2"}
+        )
+        self.assertEqual("v1.4", expected["docs/Image Rule.md"])
+        self.assertEqual("v1.3", expected[self.REPOSITORY_RULE])
+        self.assertEqual("v1.4.1", expected["docs/Audit Rule.md"])
+        self.assertEqual("v1.2", expected["AGENTS.md"])
+        self.assertEqual("v1.1", expected["docs/ProjectORIGIN Publication Bible.md"])
+
+    def test_v12_candidate_with_repository_rule_v13_candidate_passes(self):
+        temp, root = self.isolated_governance_root(
+            self.repository_candidate_text()
+        )
+        self.addCleanup(temp.cleanup)
+        errors, _ = VALIDATOR.validate_governance(
+            self.workflow_v12(), root, context="candidate"
+        )
+        self.assertEqual([], errors)
+
+    def test_v12_candidate_without_repository_rule_v13_fails(self):
+        live = (ROOT / self.REPOSITORY_RULE).read_text(encoding="utf-8")
+        temp, root = self.isolated_governance_root(live)
+        self.addCleanup(temp.cleanup)
+        errors, _ = VALIDATOR.validate_governance(
+            self.workflow_v12(), root, context="candidate"
+        )
+        self.assertTrue(errors)
+
+    def test_v12_repository_rule_reference_v12_fails(self):
+        definition = self.workflow_v12()
+
+        def rewrite_back(value):
+            if isinstance(value, dict):
+                if value.get("document") == self.REPOSITORY_RULE:
+                    value["version"] = "v1.2"
+                for child in value.values():
+                    rewrite_back(child)
+            elif isinstance(value, list):
+                for child in value:
+                    rewrite_back(child)
+
+        rewrite_back(definition)
+        temp, root = self.isolated_governance_root(
+            self.repository_candidate_text()
+        )
+        self.addCleanup(temp.cleanup)
+        errors, _ = VALIDATOR.validate_governance(
+            definition, root, context="candidate"
+        )
+        self.assertTrue(errors)
+
+    def test_v12_current_with_adopted_repository_rule_v13_passes(self):
+        definition = self.workflow_v12()
+        definition["status"] = "ADOPTED"
+        temp, root = self.isolated_governance_root(
+            self.repository_adopted_text()
+        )
+        self.addCleanup(temp.cleanup)
+        errors, _ = VALIDATOR.validate_governance(
+            definition, root, context="current"
+        )
+        self.assertEqual([], errors)
+
+    def test_v12_current_rejects_repository_rule_v13_candidate(self):
+        definition = self.workflow_v12()
+        definition["status"] = "ADOPTED"
+        temp, root = self.isolated_governance_root(
+            self.repository_candidate_text()
+        )
+        self.addCleanup(temp.cleanup)
+        errors, _ = VALIDATOR.validate_governance(
+            definition, root, context="current"
+        )
+        self.assertTrue(errors)
+
+    def test_repository_rule_candidate_cannot_claim_current_or_approved(self):
+        text = self.repository_candidate_text().replace(
+            "**Current Official Version:** v1.2",
+            "**Current Official Version:** v1.3",
+            1,
+        )
+        marker = "**Status:** CANDIDATE / NOT FORMALLY ADOPTED"
+        text = text.replace(
+            marker,
+            marker + "\nHuman Formal Adoption Decision = `APPROVED`",
+            1,
+        )
+        with self.assertRaises(VALIDATOR.AdoptionInvalid):
+            VALIDATOR.observe_repository_rule(text, "v1.3", "candidate")
+
+    def test_repository_rule_v13_current_requires_historical_v12(self):
+        text = self.repository_adopted_text().replace(
+            "Historical Official Version: v1.2\n",
+            "",
+            1,
+        )
+        with self.assertRaises(VALIDATOR.AdoptionInvalid):
+            VALIDATOR.observe_repository_rule(text, "v1.3", "current")
+
+    def test_supported_current_workflow_eras_are_explicit(self):
+        self.assertEqual(
+            {"v1.0", "v1.1", "v1.2"},
+            VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
+        )
+        self.assertNotIn(
+            "v1.3",
+            VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
+        )

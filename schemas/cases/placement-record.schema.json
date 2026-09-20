@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:projectorigin:schema:cases:placement-record:v1.0",
+  "title": "Placement Record v1.0",
+  "$comment": "CPW-026 canonical placement identity record. This record binds Approved Image Asset identity to an exact Publication Artifact identity/version/section/slot. It does not establish Human Approval, Repository Integration, Publication, or Publication Status.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_format_version",
+    "artifact_type",
+    "case_id",
+    "source_step",
+    "transaction_id",
+    "placements",
+    "governing_references",
+    "validator_identity",
+    "runtime_identity",
+    "created_at",
+    "actor_id",
+    "actor_role"
+  ],
+  "properties": {
+    "record_format_version": {
+      "const": "v1.0"
+    },
+    "artifact_type": {
+      "const": "PLACEMENT_RECORD"
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "source_step": {
+      "const": "CPW-026"
+    },
+    "transaction_id": {
+      "type": "string",
+      "pattern": "^FILE-(?!0000)[0-9]{4}-TXN-(?!0000)[0-9]{4}$(?![\\s\\S])"
+    },
+    "placements": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "target_artifact_identity",
+          "target_artifact_version",
+          "asset_id",
+          "asset_version",
+          "sha256",
+          "section",
+          "slot",
+          "sidecar_reference",
+          "caption_reference",
+          "credit_reference",
+          "placement_operation_date",
+          "placement_result",
+          "affected_audit_references",
+          "re_audit_determination",
+          "rollback_failure_state"
+        ],
+        "properties": {
+          "target_artifact_identity": {
+            "type": "string",
+            "pattern": "^FILE-(?!0000)[0-9]{4}_(?:FREE|CLASSIFIED)_v[0-9]+\\.[0-9]+\\.md$(?![\\s\\S])"
+          },
+          "target_artifact_version": {
+            "type": "string",
+            "pattern": "^v[0-9]+\\.[0-9]+$(?![\\s\\S])"
+          },
+          "asset_id": {
+            "type": "string",
+            "pattern": "^FILE-(?!0000)[0-9]{4}-IMG-[0-9]{4}$(?![\\s\\S])"
+          },
+          "asset_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+          },
+          "section": {
+            "type": "string",
+            "minLength": 1
+          },
+          "slot": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sidecar_reference": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "repository_path",
+              "sha256"
+            ],
+            "properties": {
+              "repository_path": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+              }
+            }
+          },
+          "caption_reference": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "repository_path",
+              "sha256",
+              "json_pointer"
+            ],
+            "properties": {
+              "repository_path": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+              },
+              "json_pointer": {
+                "const": "/caption"
+              }
+            }
+          },
+          "credit_reference": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "repository_path",
+              "sha256",
+              "json_pointer"
+            ],
+            "properties": {
+              "repository_path": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+              },
+              "json_pointer": {
+                "const": "/credit"
+              }
+            }
+          },
+          "placement_operation_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "placement_result": {
+            "enum": [
+              "PLACED",
+              "FAILED",
+              "NOT_PERFORMED"
+            ]
+          },
+          "affected_audit_references": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "re_audit_determination": {
+            "enum": [
+              "REQUIRED",
+              "NOT_REQUIRED",
+              "UNDETERMINED"
+            ]
+          },
+          "rollback_failure_state": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rollback_required",
+              "rollback_performed",
+              "failure_state"
+            ],
+            "properties": {
+              "rollback_required": {
+                "type": "boolean"
+              },
+              "rollback_performed": {
+                "type": "boolean"
+              },
+              "failure_state": {
+                "enum": [
+                  "NONE",
+                  "ROLLED_BACK",
+                  "FAILED_STATE_RECORDED",
+                  "UNDETERMINED"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "governing_references": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "document_path",
+          "applicable_version",
+          "sha256"
+        ],
+        "properties": {
+          "document_path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+          },
+          "applicable_version": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+          }
+        }
+      }
+    },
+    "validator_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "implementation_path",
+        "sha256"
+      ],
+      "properties": {
+        "implementation_path": {
+          "const": "scripts/validate-placement-transaction.py"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$(?![\\s\\S])"
+        }
+      }
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "python_version",
+        "libraries"
+      ],
+      "properties": {
+        "python_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "libraries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "version"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor_id": {
+      "type": "string",
+      "pattern": "^(?:ACTOR|HUMAN)-[0-9]{4}$(?![\\s\\S])"
+    },
+    "actor_role": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

@@ -1,6 +1,6 @@
 **ProjectORIGIN Repository Rule**
-Version: v1.2
-**Status:** Official
+Version: v1.3
+**Status:** CANDIDATE / NOT FORMALLY ADOPTED
 **Current Official Version:** v1.2
 **Project:** ProjectORIGIN
 
@@ -448,6 +448,7 @@ Case ID、File Numberその他のDatabase上の識別情報について、その
  ├── publication/
  │ ├── free/
  │ └── classified/
+ ├── placement-transactions/
  ├── assets/
  ├── audit/
  └── publication-tracking.json
@@ -584,6 +585,30 @@ Case間で共通利用される情報またはAssetが将来必要となった�
 新しいCase-level Directoryが正式に必要となった場合は、Chapter 2のControlled Expansionおよび本書の正式な変更工程に従う。
 
 ---
+
+### CPW-026 Placement Transaction Controlled Expansion
+
+CPW-026 `Placement Transaction and Change Impact Handling`の必須成果物を、Case単位で追跡可能かつ既存Production Layerから分離して保持するため、次のCase-scoped operational persistenceを正式に使用する。
+
+```text
+cases/FILE-XXXX/placement-transactions/<TRANSACTION_ID>/
+├── placement-record.json
+└── change-impact-assessment.json
+```
+
+`placement-transactions/`は新しいPublication LayerまたはProduction Artifact Layerではない。Approved Image AssetとPublication ArtifactのPlacement TransactionおよびそのChange Impactを保持する、CPW-026専用のRepository-managed operational persistenceである。
+
+`<TRANSACTION_ID>`には既存のCase transaction identity `FILE-XXXX-TXN-NNNN`を使用し、Placement専用の新しいID allocatorを設けない。
+
+各Transaction Directoryでは、`PLACEMENT_RECORD`を`placement-record.json`、`CHANGE_IMPACT_ASSESSMENT`を`change-impact-assessment.json`として保持する。具体的なfield、validationおよびcross-artifact integrityは、以下のApplicable schemaおよびvalidator contractに従う。
+
+- `schemas/cases/placement-record.schema.json`
+- `schemas/cases/change-impact-assessment.schema.json`
+- `scripts/validate-placement-transaction.py`
+
+初回成立する正式recordはCREATEとして扱い、既存のcommitted Placement Transaction recordをSilent Overwriteしない。Correction、Supersessionまたは再評価が必要な場合は、Applicable WorkflowおよびTransaction Ruleに従い新しいTransaction identityを使用し、Historical Traceabilityを保持する。
+
+このControlled Expansionは、Publication Artifact本文、`publication-tracking.json`、Database、Publication Status、Human ApprovalまたはRepository Integrationへのwrite authorityを生成しない。
 
 ## 3.11 Audit Artifact Placement
 
@@ -2552,6 +2577,17 @@ Image Requirement RegisterおよびOrchestration Manifestの更新は、それ�
 Human Review Packageはversion-boundかつimmutableなsnapshotであるため、既存PackageをSilent Overwriteしない。Material Change後は必要な再検証を行い、新しいApplicable Package Versionを作成する。
 
 これらのwriteはOperational Workflow managementであり、Publication Artifact Repository Integration、Database Integration、Human ApprovalまたはPublicationではない。これらのArtifactの存在または更新だけを根拠として、正式StateまたはDecisionを変更してはならない。
+
+### CPW-026 Placement Transaction Write Exception
+
+CPW-026 `Placement Transaction and Change Impact Handling`はFinal Human Approval前に実施され得るため、Human-approved Placement scopeおよびApplicable Transaction Contractに従う場合に限り、次のCPW-026必須operational artifactをFinal Human Approval前にRepositoryへCREATEできる。
+
+- `cases/FILE-XXXX/placement-transactions/<TRANSACTION_ID>/placement-record.json`
+- `cases/FILE-XXXX/placement-transactions/<TRANSACTION_ID>/change-impact-assessment.json`
+
+この限定Writeは、Approved Image AssetのAsset ID／Version／SHAとTarget Publication Artifact identity／Version／Section／Slotのbinding、およびChange Impact Assessmentを保持するためのoperational persistenceである。Placement Transactionに必要なSemantic Eventは既存のCase Bootstrap semantic-event contractに従い、本例外から新しいSemantic Event persistence ruleを派生させない。
+
+本例外はPublication Artifact本文、`publication-tracking.json`、Database、Publication Status、Human Approval Decision、Repository IntegrationまたはPublicationへのHuman Approval前write権限を許可しない。
 
 ProjectORIGINの標準Production Flowでは、Repository IntegrationはApplicable Final Flow Audit後のHuman Approvalにおいて、Applicable Human Approval Decisionとして\`APPROVED\`が成立した後に位置する。
 
@@ -4761,6 +4797,24 @@ Active HOLDの未確定仕様をCompatibilityの都合によって暗黙に確�
 --
 
 **Version History**
+v1.3
+Date: 2026-09-20
+CPW-026 Placement Transaction Persistence Contract
+**Contents**
+
+- Added case-scoped `placement-transactions/<TRANSACTION_ID>/` operational persistence for CPW-026.
+- Defined `placement-record.json` and `change-impact-assessment.json` as the required CPW-026 transaction artifacts.
+- Reused the existing Case transaction identity `FILE-XXXX-TXN-NNNN` and prohibited a separate Placement ID allocator.
+- Bound Placement Transaction persistence to the approved schemas and `validate-placement-transaction.py`.
+- Prohibited Silent Overwrite and required a new Transaction identity for correction, supersession, or reassessment.
+- Added the narrow pre-Final-Human-Approval write exception for the two CPW-026 operational artifacts.
+- Preserved the existing Case Bootstrap Semantic Event contract without creating a separate persistence rule.
+- Preserved the Human Approval boundary for Publication Artifact body, `publication-tracking.json`, Database, Publication Status, Human Approval Decision, Repository Integration, and Publication.
+
+**Status:** CANDIDATE / NOT FORMALLY ADOPTED.
+Human Formal Adoption Decision = `NOT PERFORMED`.
+Current Official Version remains v1.2.
+
 v1.2
 Date: 2026-09-09
 Case Production Workflow Formalization
