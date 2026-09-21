@@ -1,0 +1,10 @@
+{
+  "record_format_version": "v0.1",
+  "artifact_type": "TRANSACTION_ALLOCATION",
+  "transaction_id": "FILE-0001-TXN-0006",
+  "case_id": "FILE-0001",
+  "allocated_by_actor_id": "ACTOR-0001",
+  "allocated_by_actor_role": "Repository / Data Agent",
+  "allocated_at": "2026-09-21T11:43:26.766302Z",
+  "transaction_origin": "NORMAL"
+}

@@ -1,0 +1,78 @@
+{
+  "record_format_version": "v1.0",
+  "artifact_type": "PLACEMENT_RECORD",
+  "case_id": "FILE-0001",
+  "source_step": "CPW-026",
+  "transaction_id": "FILE-0001-TXN-0006",
+  "placements": [
+    {
+      "target_artifact_identity": "FILE-0001_CLASSIFIED_v1.2.md",
+      "target_artifact_version": "v1.2",
+      "asset_id": "FILE-0001-IMG-0002",
+      "asset_version": "v1.0",
+      "sha256": "9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905",
+      "section": "EVIDENCE 04｜残骸の特徴",
+      "slot": "[ COMPARISON VISUAL ]",
+      "sidecar_reference": {
+        "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.metadata.json",
+        "sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee"
+      },
+      "caption_reference": {
+        "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.metadata.json",
+        "sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee",
+        "json_pointer": "/caption"
+      },
+      "credit_reference": {
+        "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.metadata.json",
+        "sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee",
+        "json_pointer": "/credit"
+      },
+      "placement_operation_date": "2026-09-21T11:43:26.820850Z",
+      "placement_result": "PLACED",
+      "affected_audit_references": [],
+      "re_audit_determination": "NOT_REQUIRED",
+      "rollback_failure_state": {
+        "rollback_required": false,
+        "rollback_performed": false,
+        "failure_state": "NONE"
+      }
+    }
+  ],
+  "governing_references": [
+    {
+      "document_path": "docs/Image Rule.md",
+      "applicable_version": "v1.4",
+      "sha256": "be34b3165aaa351614dd19c16dd955e5de6f043aae8fd42979ff872cb67626f5"
+    },
+    {
+      "document_path": "docs/ProjectORIGIN Repository Rule.md",
+      "applicable_version": "v1.3",
+      "sha256": "b15be0d2a49ccf75e92695fc5c362285c80645f2fea8898883af54efbfcb26e1"
+    },
+    {
+      "document_path": "docs/Audit Rule.md",
+      "applicable_version": "v1.4.1",
+      "sha256": "8f92e7a80aca02b660a83419299d35f516edd67daa6033157bb8be7376f59252"
+    }
+  ],
+  "validator_identity": {
+    "implementation_path": "scripts/validate-placement-transaction.py",
+    "sha256": "cdeca14fa371771c5150f48e675339a02d90cb22004a1c47f0c468cf91148c05"
+  },
+  "runtime_identity": {
+    "python_version": "3.9.6",
+    "libraries": [
+      {
+        "name": "jsonschema",
+        "version": "4.25.1"
+      },
+      {
+        "name": "referencing",
+        "version": "0.36.2"
+      }
+    ]
+  },
+  "created_at": "2026-09-21T11:43:26.820850Z",
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Repository / Data Agent"
+}

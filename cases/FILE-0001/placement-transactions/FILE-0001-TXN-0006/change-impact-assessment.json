@@ -1,0 +1,93 @@
+{
+  "record_format_version": "v1.0",
+  "artifact_type": "CHANGE_IMPACT_ASSESSMENT",
+  "case_id": "FILE-0001",
+  "source_step": "CPW-026",
+  "transaction_id": "FILE-0001-TXN-0006",
+  "placement_record_reference": {
+    "artifact_type": "PLACEMENT_RECORD",
+    "artifact_id": "FILE-0001-TXN-0006",
+    "transaction_id": "FILE-0001-TXN-0006",
+    "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/placement-record.json",
+    "sha256": "f6a467fcdc957760f49bc0ffd4d2744a93ad904b9daf229afb18a883b900581f"
+  },
+  "impact_determinations": {
+    "AUDIT": {
+      "determination": "NOT_REQUIRED",
+      "closure_state": "CLOSED",
+      "rationale": "This CPW-026 operation creates the approved logical placement binding only. The Publication Artifact bytes, approved asset bytes, sidecar, caption and credit are unchanged, and the exact IMG-0002 Formal Image Audit records Re-Audit Required: NO.",
+      "evidence_references": [
+        "cases/FILE-0001/audit/FILE-0001-IMG-0002_IMAGE-AUDIT_v1.0.md",
+        "docs/Image Rule.md",
+        "docs/Audit Rule.md"
+      ]
+    },
+    "HUMAN_READ_REVIEW": {
+      "determination": "NOT_REQUIRED",
+      "closure_state": "CLOSED",
+      "rationale": "The logical placement binding does not modify the Publication Artifact bytes or reader-facing meaning, so it creates no new Human Read Re-Review trigger.",
+      "evidence_references": []
+    },
+    "HUMAN_VISUAL_REVIEW": {
+      "determination": "NOT_REQUIRED",
+      "closure_state": "CLOSED",
+      "rationale": "The exact approved IMG-0002 asset SHA is unchanged and the existing Formal Image Audit records Human Visual Review: PASS.",
+      "evidence_references": [
+        "cases/FILE-0001/audit/FILE-0001-IMG-0002_IMAGE-AUDIT_v1.0.md"
+      ]
+    },
+    "PLACEMENT": {
+      "determination": "NOT_REQUIRED",
+      "closure_state": "CLOSED",
+      "rationale": "The Human-approved exact placement binding is completed by this transaction; no additional placement operation is required.",
+      "evidence_references": []
+    },
+    "HUMAN_REVIEW_PACKAGE": {
+      "determination": "NOT_REQUIRED",
+      "closure_state": "CLOSED",
+      "rationale": "No existing Human Review Package is invalidated by this binding-only operation. CPW-027 will construct the applicable package from the post-CPW-026 state.",
+      "evidence_references": [
+        "workflows/case-production-workflow_v1.2.json"
+      ]
+    }
+  },
+  "automatic_global_invalidation": false,
+  "all_applicable_impacts_closed": true,
+  "governing_references": [
+    {
+      "document_path": "docs/Image Rule.md",
+      "applicable_version": "v1.4",
+      "sha256": "be34b3165aaa351614dd19c16dd955e5de6f043aae8fd42979ff872cb67626f5"
+    },
+    {
+      "document_path": "docs/ProjectORIGIN Repository Rule.md",
+      "applicable_version": "v1.3",
+      "sha256": "b15be0d2a49ccf75e92695fc5c362285c80645f2fea8898883af54efbfcb26e1"
+    },
+    {
+      "document_path": "docs/Audit Rule.md",
+      "applicable_version": "v1.4.1",
+      "sha256": "8f92e7a80aca02b660a83419299d35f516edd67daa6033157bb8be7376f59252"
+    }
+  ],
+  "validator_identity": {
+    "implementation_path": "scripts/validate-placement-transaction.py",
+    "sha256": "cdeca14fa371771c5150f48e675339a02d90cb22004a1c47f0c468cf91148c05"
+  },
+  "runtime_identity": {
+    "python_version": "3.9.6",
+    "libraries": [
+      {
+        "name": "jsonschema",
+        "version": "4.25.1"
+      },
+      {
+        "name": "referencing",
+        "version": "0.36.2"
+      }
+    ]
+  },
+  "assessed_at": "2026-09-21T11:43:26.820850Z",
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Repository / Data Agent"
+}

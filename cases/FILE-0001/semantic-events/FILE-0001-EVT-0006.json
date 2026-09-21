@@ -1,0 +1,22 @@
+{
+  "event_id": "FILE-0001-EVT-0006",
+  "occurred_at": "2026-09-21T11:43:26.820850Z",
+  "event_type": "RECORD_CREATED",
+  "record_ref": {
+    "ref_id": "placement-record",
+    "artifact_type": "PLACEMENT_RECORD",
+    "required": true,
+    "applicability": "REQUIRED",
+    "artifact_id": "FILE-0001-TXN-0006",
+    "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/placement-record.json",
+    "sha256": "f6a467fcdc957760f49bc0ffd4d2744a93ad904b9daf229afb18a883b900581f",
+    "source_step": "CPW-026"
+  },
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Repository / Data Agent",
+  "authority_type": "NONE",
+  "authority_reference": null,
+  "previous_state": null,
+  "new_state": null,
+  "evidence_references": []
+}

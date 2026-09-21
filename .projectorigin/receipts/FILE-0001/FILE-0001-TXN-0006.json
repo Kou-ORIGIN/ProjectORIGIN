@@ -1,0 +1,166 @@
+{
+  "record_format_version": "v0.1",
+  "artifact_type": "TRANSACTION_RECEIPT",
+  "transaction_id": "FILE-0001-TXN-0006",
+  "case_id": "FILE-0001",
+  "terminal_outcome": "COMMITTED",
+  "initiated_by_actor_id": "ACTOR-0001",
+  "initiated_by_actor_role": "Repository / Data Agent",
+  "recorded_by_actor_id": "ACTOR-0001",
+  "recorded_by_actor_role": "Repository / Data Agent",
+  "terminal_at": "2026-09-21T11:43:29.168662Z",
+  "receipt_created_at": "2026-09-21T11:43:29.220445Z",
+  "lease_evidence": {
+    "lease_path": ".projectorigin/leases/FILE-0001.json",
+    "lease_sha256": "48ad5b25f4eff3d57adac28a3f2dcdcf55e92f4d861c3b0c178fc654beed43a6",
+    "allocation_record_ref": ".projectorigin/transaction-allocations/FILE-0001/FILE-0001-TXN-0006.json",
+    "allocation_record_sha256": "cffb6525855a310235da378523ed010c64092f5a1a664e9ad2ca12203f5d55ad",
+    "holder_actor_id": "ACTOR-0001",
+    "holder_actor_role": "Repository / Data Agent",
+    "acquired_at": "2026-09-21T11:43:27.337035Z",
+    "expires_at": "2026-09-21T12:43:27.334720Z"
+  },
+  "write_results": [
+    {
+      "target_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/placement-record.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "f6a467fcdc957760f49bc0ffd4d2744a93ad904b9daf229afb18a883b900581f"
+      },
+      "result": "CREATED",
+      "role": "CANONICAL_TARGET"
+    },
+    {
+      "target_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/change-impact-assessment.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "8eddcb92b67478abcb18ee43c84c38327c783374ee0b4b7652910e41a9ae88f3"
+      },
+      "result": "CREATED",
+      "role": "CANONICAL_TARGET"
+    },
+    {
+      "target_path": "cases/FILE-0001/semantic-events/FILE-0001-EVT-0006.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "170a1d84c6757fd4b6bb00f060d84622b0e289e889df76a92c18f10cbaaaabd8"
+      },
+      "result": "CREATED",
+      "role": "SEMANTIC_EVENT"
+    },
+    {
+      "target_path": "cases/FILE-0001/semantic-events/FILE-0001-EVT-0007.json",
+      "operation": "CREATE",
+      "pre_write_state": {
+        "existence": "ABSENT",
+        "sha256": null
+      },
+      "post_write_state": {
+        "existence": "EXISTS",
+        "sha256": "1429dc637f0573984dcbc24ea88528025120edf3751d26f079b09be298472afc"
+      },
+      "result": "CREATED",
+      "role": "SEMANTIC_EVENT"
+    }
+  ],
+  "validation_evidence": {
+    "prospective_validation": {
+      "status": "PASS",
+      "layers": {
+        "SCHEMA": "PASS",
+        "SEMANTIC": "PASS",
+        "CROSS_ARTIFACT": "PASS",
+        "GOVERNANCE": "PASS"
+      },
+      "findings": []
+    },
+    "post_write_verification": {
+      "status": "PASS",
+      "layers": {
+        "SCHEMA": "PASS",
+        "SEMANTIC": "PASS",
+        "CROSS_ARTIFACT": "PASS",
+        "GOVERNANCE": "PASS"
+      },
+      "findings": []
+    }
+  },
+  "semantic_event_requirement": "REQUIRED",
+  "required_semantic_events": [
+    {
+      "event_id": "FILE-0001-EVT-0006",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "placement-record",
+        "artifact_type": "PLACEMENT_RECORD",
+        "required": true,
+        "applicability": "REQUIRED",
+        "artifact_id": "FILE-0001-TXN-0006",
+        "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/placement-record.json",
+        "sha256": "f6a467fcdc957760f49bc0ffd4d2744a93ad904b9daf229afb18a883b900581f",
+        "source_step": "CPW-026"
+      }
+    },
+    {
+      "event_id": "FILE-0001-EVT-0007",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "change-impact-assessment",
+        "artifact_type": "CHANGE_IMPACT_ASSESSMENT",
+        "required": true,
+        "applicability": "REQUIRED",
+        "artifact_id": "FILE-0001-TXN-0006",
+        "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/change-impact-assessment.json",
+        "sha256": "8eddcb92b67478abcb18ee43c84c38327c783374ee0b4b7652910e41a9ae88f3",
+        "source_step": "CPW-026"
+      }
+    }
+  ],
+  "emitted_semantic_event_refs": [
+    {
+      "event_id": "FILE-0001-EVT-0006",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "placement-record",
+        "artifact_type": "PLACEMENT_RECORD",
+        "required": true,
+        "applicability": "REQUIRED",
+        "artifact_id": "FILE-0001-TXN-0006",
+        "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/placement-record.json",
+        "sha256": "f6a467fcdc957760f49bc0ffd4d2744a93ad904b9daf229afb18a883b900581f",
+        "source_step": "CPW-026"
+      },
+      "event_sha256": "170a1d84c6757fd4b6bb00f060d84622b0e289e889df76a92c18f10cbaaaabd8"
+    },
+    {
+      "event_id": "FILE-0001-EVT-0007",
+      "event_type": "RECORD_CREATED",
+      "record_ref": {
+        "ref_id": "change-impact-assessment",
+        "artifact_type": "CHANGE_IMPACT_ASSESSMENT",
+        "required": true,
+        "applicability": "REQUIRED",
+        "artifact_id": "FILE-0001-TXN-0006",
+        "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/change-impact-assessment.json",
+        "sha256": "8eddcb92b67478abcb18ee43c84c38327c783374ee0b4b7652910e41a9ae88f3",
+        "source_step": "CPW-026"
+      },
+      "event_sha256": "1429dc637f0573984dcbc24ea88528025120edf3751d26f079b09be298472afc"
+    }
+  ]
+}

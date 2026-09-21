@@ -1,0 +1,22 @@
+{
+  "event_id": "FILE-0001-EVT-0007",
+  "occurred_at": "2026-09-21T11:43:26.820850Z",
+  "event_type": "RECORD_CREATED",
+  "record_ref": {
+    "ref_id": "change-impact-assessment",
+    "artifact_type": "CHANGE_IMPACT_ASSESSMENT",
+    "required": true,
+    "applicability": "REQUIRED",
+    "artifact_id": "FILE-0001-TXN-0006",
+    "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/change-impact-assessment.json",
+    "sha256": "8eddcb92b67478abcb18ee43c84c38327c783374ee0b4b7652910e41a9ae88f3",
+    "source_step": "CPW-026"
+  },
+  "actor_id": "ACTOR-0001",
+  "actor_role": "Repository / Data Agent",
+  "authority_type": "NONE",
+  "authority_reference": null,
+  "previous_state": null,
+  "new_state": null,
+  "evidence_references": []
+}
