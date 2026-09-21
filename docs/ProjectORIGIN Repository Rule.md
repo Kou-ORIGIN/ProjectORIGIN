@@ -1,7 +1,7 @@
 **ProjectORIGIN Repository Rule**
 Version: v1.3
-**Status:** CANDIDATE / NOT FORMALLY ADOPTED
-**Current Official Version:** v1.2
+**Status:** Official
+**Current Official Version:** v1.3
 **Project:** ProjectORIGIN
 
 ---
@@ -4811,9 +4811,8 @@ CPW-026 Placement Transaction Persistence Contract
 - Preserved the existing Case Bootstrap Semantic Event contract without creating a separate persistence rule.
 - Preserved the Human Approval boundary for Publication Artifact body, `publication-tracking.json`, Database, Publication Status, Human Approval Decision, Repository Integration, and Publication.
 
-**Status:** CANDIDATE / NOT FORMALLY ADOPTED.
-Human Formal Adoption Decision = `NOT PERFORMED`.
-Current Official Version remains v1.2.
+**Status:** OFFICIAL. Current Official Version is v1.3. Formally adopted by Human Formal Adoption Decision = `APPROVED`.
+Historical Official Version: v1.2
 
 v1.2
 Date: 2026-09-09

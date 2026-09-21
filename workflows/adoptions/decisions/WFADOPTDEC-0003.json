@@ -1,0 +1,115 @@
+{
+  "record_format_version": "v1.0",
+  "decision_id": "WFADOPTDEC-0003",
+  "decision_type": "WORKFLOW_FORMAL_ADOPTION",
+  "decision_value": "AUTHORIZE_ADOPTION",
+  "target": {
+    "workflow_path": "workflows/case-production-workflow_v1.2.json",
+    "workflow_version": "v1.2",
+    "definition_format_version": "v1.0",
+    "candidate_definition_sha256": "d83a32af34efe4e27799079749ba63a97ee07d30c85a1be1af9d4a89ddb6a9a9",
+    "candidate_git_commit_sha": "a1e0284e0aa256c342e97fabc2a4a1dc2fada002"
+  },
+  "human_authority": {
+    "authority_type": "EXPLICIT_HUMAN_DECISION",
+    "human_actor_id": "HUMAN-0001"
+  },
+  "validation_evidence": {
+    "definition_sha256": "d83a32af34efe4e27799079749ba63a97ee07d30c85a1be1af9d4a89ddb6a9a9",
+    "result": "PASS_WITH_WARNINGS",
+    "json_integrity": "PASS",
+    "schema_validation": "PASS",
+    "semantic_validation": "PASS",
+    "governance_compatibility": "PASS",
+    "tests": {
+      "total": 502,
+      "passed": 502,
+      "failed": 0,
+      "skipped": 0,
+      "expected_failures": 0
+    },
+    "validator_exit_code": 0,
+    "controlled_artifact_integrity": "PASS",
+    "controlled_artifacts": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "2e949c83e8f665b1c7d5e34c27e38b3f28a4ebf00006c3fc6909d13afcea4f4d"
+      },
+      {
+        "path": "docs/Audit Rule.md",
+        "sha256": "8f92e7a80aca02b660a83419299d35f516edd67daa6033157bb8be7376f59252"
+      },
+      {
+        "path": "docs/Case File Template.md",
+        "sha256": "70ed9d7dbd790f7984b4067bf48c32bfac079ef91513ba54d4433e3d3bb28e5e"
+      },
+      {
+        "path": "docs/Database Rule.md",
+        "sha256": "5d53d6dab7709be520ef41098b39722a3e56c879b2b3a25aade917cf9f62eb6b"
+      },
+      {
+        "path": "docs/Database Schema.md",
+        "sha256": "5084dc8929b43b33d87aab28bee9d1fa9c22adf3c96e7a6dafe4cd5ac707082e"
+      },
+      {
+        "path": "docs/Image Rule.md",
+        "sha256": "be34b3165aaa351614dd19c16dd955e5de6f043aae8fd42979ff872cb67626f5"
+      },
+      {
+        "path": "docs/Operating Manual.md",
+        "sha256": "dede99b81428c822784eca606270c07f1fed55aaf8e44b95e527fba4e3184a27"
+      },
+      {
+        "path": "docs/ProjectORIGIN Publication Bible.md",
+        "sha256": "fda7d02011825c11734bad0616d3989cf9faebb15f2a019df77de53ea0a75cdc"
+      },
+      {
+        "path": "docs/ProjectORIGIN Repository Rule.md",
+        "sha256": "de069cdaf9ad16df72e7af04d9c03d96914c291df7d74b972ca786ac4d6471ef"
+      },
+      {
+        "path": "schemas/workflows/case-production-workflow-definition.schema.json",
+        "sha256": "6d147f041dec4e0325d78b2aba299c22ba7e82424087c5b8ca2749a6b0ed1ba3"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-decision.schema.json",
+        "sha256": "f999c5429ceb57eb08d21d7291318b5d19069756ae3cfcd5166f84bc3c5d3af4"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-record.schema.json",
+        "sha256": "9d366d4b11418b00c1f01f709fb85f8f690c14b0bb14aee5a167f4c366c70081"
+      },
+      {
+        "path": "schemas/workflows/workflow-deprecation-record.schema.json",
+        "sha256": "54ca50cc50fffb10e7488c8d65ad09edf2d977b779e2ce377fb571d0fa1b437f"
+      },
+      {
+        "path": "scripts/validate-workflow.py",
+        "sha256": "26a64acdc54697a17c4923114676ccf214e48b549d748534c4c919b2dd2b1750"
+      },
+      {
+        "path": "tests/workflows/test_validate_workflow.py",
+        "sha256": "c8d640bca4deefe71a6325561fdfea611feafbc25a2cbb25a36134fb9d3c7e77"
+      }
+    ],
+    "warnings": [
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Operating Manual.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Rule.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Schema.md",
+        "blocking": false
+      }
+    ]
+  },
+  "decided_at": "2026-09-21T03:04:39Z",
+  "rationale": "Human approval explicitly authorized the CPW-026 Coordinated Formal Adoption Authorization PROPOSAL for Workflow v1.2 candidate commit a1e0284e0aa256c342e97fabc2a4a1dc2fada002 and the coordinated Repository Rule v1.3 formal cutover. Candidate validation and prospective ADOPTED validation passed with only nonblocking governance-version warnings. This record binds that Human authority to the exact Workflow v1.2 candidate."
+}

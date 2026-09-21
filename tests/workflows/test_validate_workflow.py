@@ -1509,3 +1509,194 @@ class WorkflowV12EraCompatibilityTests(unittest.TestCase):
             "v1.3",
             VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
         )
+
+
+class RepositoryRuleCompletedAdoptionTests(unittest.TestCase):
+    """Pinned historical bytes, synthetic authority, no Git index/commit writes.
+
+    Reuse the existing WFADOPT[DEC]-9001 fixture identifiers only in a temporary
+    directory. Never depend on provisional WFADOPT-0003 or live governance bytes.
+    """
+
+    CANDIDATE_COMMIT = "a1e0284e0aa256c342e97fabc2a4a1dc2fada002"
+    REPOSITORY_RULE = "docs/ProjectORIGIN Repository Rule.md"
+    write = AdoptionContractTests.write
+    evidence = AdoptionContractTests.evidence
+    assert_valid = AdoptionContractTests.assert_valid
+
+    def source(self, relative, commit=None):
+        return subprocess.check_output([
+            "git", "-C", str(ROOT), "show",
+            (commit or self.CANDIDATE_COMMIT) + ":" + relative,
+        ])
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        # The validator only uses git show/cat-file; shared history is read-only.
+        git_dir = subprocess.check_output(
+            ["git", "-C", str(ROOT), "rev-parse", "--absolute-git-dir"],
+            text=True,
+        ).strip()
+        (self.root / ".git").symlink_to(git_dir, target_is_directory=True)
+        paths = set(VALIDATOR.EXPECTED_GOVERNANCE)
+        paths.update(["scripts/validate-workflow.py",
+                      "tests/workflows/test_validate_workflow.py"])
+        paths.update(subprocess.check_output([
+            "git", "-C", str(ROOT), "ls-tree", "-r", "--name-only",
+            self.CANDIDATE_COMMIT, "schemas/workflows", "workflows",
+        ], text=True).splitlines())
+        for relative in paths:
+            target = self.root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(self.source(relative))
+        self.schema = self.root / SCHEMA.relative_to(ROOT)
+        self.workflow = self.root / "workflows/case-production-workflow_v1.2.json"
+        candidate = json.loads(self.workflow.read_bytes())
+        target = {
+            "workflow_path": str(self.workflow.relative_to(self.root)),
+            "workflow_version": "v1.2", "definition_format_version": "v1.0",
+            "candidate_git_commit_sha": self.CANDIDATE_COMMIT,
+            "candidate_definition_sha256": VALIDATOR._sha(self.workflow.read_bytes()),
+        }
+        evidence = self.evidence(target["candidate_definition_sha256"])
+        decision = json.loads(self.source(
+            "workflows/adoptions/decisions/WFADOPTDEC-0002.json"
+        ))
+        decision.update(
+            decision_id="WFADOPTDEC-9001", target=target,
+            human_authority={"authority_type": "EXPLICIT_HUMAN_DECISION",
+                             "human_actor_id": "HUMAN-9001"},
+            validation_evidence=evidence, decided_at="2026-09-21T01:00:00Z",
+            rationale="Synthetic completed-adoption regression fixture only",
+        )
+        decision_path = self.root / "fixture-decision.json"
+        self.write(decision_path, decision)
+        self.write(self.workflow, dict(candidate, status="ADOPTED"))
+        adopted_sha = VALIDATOR._sha(self.workflow.read_bytes())
+        self.adoption = json.loads(self.source("workflows/adoptions/WFADOPT-0002.json"))
+        self.adoption.update(
+            adoption_record_id="WFADOPT-9001",
+            target=dict(target, adopted_definition_sha256=adopted_sha),
+            human_decision={"decision_id": "WFADOPTDEC-9001",
+                            "decision_path": decision_path.name,
+                            "decision_sha256": VALIDATOR._sha(decision_path.read_bytes())},
+            adopted_at="2026-09-21T02:00:00Z",
+            adopted_state_validation_evidence=dict(evidence, definition_sha256=adopted_sha),
+        )
+        self.adoption_path = self.root / "fixture-adoption.json"
+        self.write(self.adoption_path, self.adoption)
+        self.rule = self.root / self.REPOSITORY_RULE
+        self.candidate_rule = self.rule.read_text(encoding="utf-8")
+        replacements = {
+            "**Status:** CANDIDATE / NOT FORMALLY ADOPTED\n": "**Status:** Official\n",
+            "**Current Official Version:** v1.2\n": "**Current Official Version:** v1.3\n",
+            "**Status:** CANDIDATE / NOT FORMALLY ADOPTED.\n"
+            "Human Formal Adoption Decision = `NOT PERFORMED`.\n"
+            "Current Official Version remains v1.2.\n":
+            "**Status:** OFFICIAL. Current Official Version is v1.3. "
+            "Formally adopted by Human Formal Adoption Decision = `APPROVED`.\n"
+            "Historical Official Version: v1.2\n",
+        }
+        adopted_rule = self.candidate_rule
+        for before, after in replacements.items():
+            self.assertEqual(1, adopted_rule.count(before))
+            adopted_rule = adopted_rule.replace(before, after, 1)
+        self.rule.write_text(adopted_rule, encoding="utf-8")
+
+    def scoped(self, mode="current"):
+        return VALIDATOR.run_validation(
+            self.schema, self.workflow, self.root, True, [self.adoption_path],
+            validation_mode=mode,
+        )
+
+    def repository_evidence(self):
+        return next(a for a in self.adoption["adopted_state_validation_evidence"][
+            "controlled_artifacts"] if a["path"] == self.REPOSITORY_RULE)
+
+    def assert_historical_rejection(self):
+        self.write(self.adoption_path, self.adoption)
+        report = self.scoped()
+        self.assertEqual(1, report["exit_code"], report)
+        self.assertEqual("FAIL", report["historical_adoption_integrity"])
+        self.assertEqual("FAIL", report["current_applicability"])
+        self.assertTrue(any(e["message"] ==
+            "historical controlled validation artifact mismatch: " + self.REPOSITORY_RULE
+            for e in report["errors"]), report)
+
+    def test_coordinated_cutover_preserves_historical_sha(self):
+        recorded = self.repository_evidence()["sha256"]
+        self.assertEqual(VALIDATOR._sha(self.source(self.REPOSITORY_RULE)), recorded)
+        self.assertNotEqual(VALIDATOR._sha(self.rule.read_bytes()), recorded)
+        report = self.scoped()
+        self.assert_valid(report)
+        self.assertEqual("PASS", report["historical_adoption_integrity"])
+        self.assertEqual("PASS", report["current_applicability"])
+
+    def test_historical_sha_tamper_rejected(self):
+        self.repository_evidence()["sha256"] = "0" * 64
+        self.assert_historical_rejection()
+
+    def test_live_sha_cannot_replace_historical_evidence(self):
+        self.repository_evidence()["sha256"] = VALIDATOR._sha(self.rule.read_bytes())
+        self.assert_historical_rejection()
+
+    def test_wrong_candidate_snapshot_sha_rejected(self):
+        predecessor = json.loads(self.source("workflows/adoptions/WFADOPT-0002.json"))
+        wrong_bytes = self.source(
+            self.REPOSITORY_RULE, predecessor["target"]["candidate_git_commit_sha"]
+        )
+        self.assertNotEqual(wrong_bytes, self.source(self.REPOSITORY_RULE))
+        self.repository_evidence()["sha256"] = VALIDATOR._sha(wrong_bytes)
+        self.assert_historical_rejection()
+
+    def test_invalid_current_repository_rule_rejected(self):
+        valid = self.rule.read_text(encoding="utf-8")
+        for label, text in (
+            ("candidate", self.candidate_rule),
+            ("wrong_current", valid.replace("**Current Official Version:** v1.3",
+                                            "**Current Official Version:** v1.2", 1)),
+            ("missing_approval", valid.replace("`APPROVED`", "`NOT PERFORMED`")),
+            ("missing_history", valid.replace("Historical Official Version: v1.2\n", "")),
+            ("missing_file", None),
+        ):
+            with self.subTest(state=label):
+                if text is None:
+                    self.rule.unlink()
+                else:
+                    self.rule.write_text(text, encoding="utf-8")
+                report = self.scoped()
+                self.assertEqual(1, report["exit_code"], report)
+                self.assertEqual("PASS", report["historical_adoption_integrity"])
+                self.assertEqual("FAIL", report["current_applicability"])
+                self.assertEqual("FAIL", report["layers"]["GOVERNANCE_COMPATIBILITY"])
+
+    def test_predecessor_records_and_image_audit_cutover(self):
+        # Restore the v1.1-era Repository Rule; Image/Audit cutover bytes stay
+        # pinned to the committed v1.1 adopted state, independent of live files.
+        predecessor = json.loads(self.source("workflows/adoptions/WFADOPT-0002.json"))
+        self.rule.write_bytes(self.source(
+            self.REPOSITORY_RULE, predecessor["target"]["candidate_git_commit_sha"]
+        ))
+        for relative in ("docs/Image Rule.md", "docs/Audit Rule.md"):
+            self.assertNotEqual(
+                self.source(relative, predecessor["target"]["candidate_git_commit_sha"]),
+                (self.root / relative).read_bytes(),
+            )
+        for number, version in ((1, "v1.0"), (2, "v1.1")):
+            for mode in ("historical", "current"):
+                with self.subTest(record=number, mode=mode):
+                    report = VALIDATOR.run_validation(
+                        self.schema,
+                        self.root / ("workflows/case-production-workflow_" + version + ".json"),
+                        self.root, True,
+                        [self.root / ("workflows/adoptions/WFADOPT-%04d.json" % number)],
+                        validation_mode=mode,
+                    )
+                    self.assertEqual("PASS", report["historical_adoption_integrity"])
+                    if number == 1 and mode == "current":
+                        self.assertEqual("FAIL", report["current_applicability"])
+                        self.assertEqual(1, report["exit_code"])
+                    else:
+                        self.assert_valid(report)

@@ -1462,7 +1462,14 @@ def run_validation(
                             _sha(historical) == artifacts[path],
                             "recorded applicable governance bytes mismatch: " + path,
                         )
-                        if path in RULE_PATHS:
+                        if path == REPOSITORY_RULE_PATH:
+                            # Bind evidence to the historical candidate, while
+                            # validate_governance(context="current") above checks
+                            # the live cutover through this same dedicated parser.
+                            observe_repository_rule(
+                                historical.decode("utf-8"), version, "historical"
+                            )
+                        elif path in RULE_PATHS:
                             # Historical candidate bytes establish the recorded
                             # Rule version identity. Current status is validated
                             # separately against the live Rule documents above.
