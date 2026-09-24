@@ -1,0 +1,136 @@
+{
+  "record_format_version": "v1.0",
+  "adoption_record_id": "WFADOPT-0004",
+  "record_type": "WORKFLOW_FORMAL_ADOPTION_RECORD",
+  "target": {
+    "workflow_path": "workflows/case-production-workflow_v1.3.json",
+    "workflow_version": "v1.3",
+    "definition_format_version": "v1.0",
+    "candidate_definition_sha256": "3d14ec4779829f4b79a94c934277de5a21d88ee7356cd46253af1a23ce922792",
+    "candidate_git_commit_sha": "b960d40bad431b50c85a4f5b30df921455d46884",
+    "adopted_definition_sha256": "1a24fc20f7649b461371d54818291b18e0c56d20a08aef1de359d8d7ea243d3c"
+  },
+  "transition": {
+    "from_status": "PROPOSED",
+    "to_status": "ADOPTED"
+  },
+  "human_decision": {
+    "decision_id": "WFADOPTDEC-0004",
+    "decision_path": "workflows/adoptions/decisions/WFADOPTDEC-0004.json",
+    "decision_sha256": "f5ef9f53640b265292ed95f8014b03618ee1d6b3b8a5b494473d1543e72f2038"
+  },
+  "adopted_at": "2026-09-24T04:19:13Z",
+  "adopted_state_validation_evidence": {
+    "definition_sha256": "1a24fc20f7649b461371d54818291b18e0c56d20a08aef1de359d8d7ea243d3c",
+    "result": "PASS_WITH_WARNINGS",
+    "json_integrity": "PASS",
+    "schema_validation": "PASS",
+    "semantic_validation": "PASS",
+    "governance_compatibility": "PASS",
+    "tests": {
+      "total": 98,
+      "passed": 98,
+      "failed": 0,
+      "skipped": 0,
+      "expected_failures": 0
+    },
+    "validator_exit_code": 0,
+    "controlled_artifact_integrity": "PASS",
+    "controlled_artifacts": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "2e949c83e8f665b1c7d5e34c27e38b3f28a4ebf00006c3fc6909d13afcea4f4d"
+      },
+      {
+        "path": "docs/Audit Rule.md",
+        "sha256": "8f92e7a80aca02b660a83419299d35f516edd67daa6033157bb8be7376f59252"
+      },
+      {
+        "path": "docs/Case File Template.md",
+        "sha256": "70ed9d7dbd790f7984b4067bf48c32bfac079ef91513ba54d4433e3d3bb28e5e"
+      },
+      {
+        "path": "docs/Database Rule.md",
+        "sha256": "5d53d6dab7709be520ef41098b39722a3e56c879b2b3a25aade917cf9f62eb6b"
+      },
+      {
+        "path": "docs/Database Schema.md",
+        "sha256": "5084dc8929b43b33d87aab28bee9d1fa9c22adf3c96e7a6dafe4cd5ac707082e"
+      },
+      {
+        "path": "docs/Image Rule.md",
+        "sha256": "9357cfa65d094ad4bb96cc85aa8b9b6cb6ca050eeb7fe81e06bcab390bdbb940"
+      },
+      {
+        "path": "docs/Operating Manual.md",
+        "sha256": "dede99b81428c822784eca606270c07f1fed55aaf8e44b95e527fba4e3184a27"
+      },
+      {
+        "path": "docs/ProjectORIGIN Publication Bible.md",
+        "sha256": "fda7d02011825c11734bad0616d3989cf9faebb15f2a019df77de53ea0a75cdc"
+      },
+      {
+        "path": "docs/ProjectORIGIN Repository Rule.md",
+        "sha256": "b15be0d2a49ccf75e92695fc5c362285c80645f2fea8898883af54efbfcb26e1"
+      },
+      {
+        "path": "schemas/cases/image-requirement-register.schema.json",
+        "sha256": "8eabeb1b48ad35dccf0b194165f60357d237a2c9f692c74b9b594671a8699191"
+      },
+      {
+        "path": "schemas/workflows/case-production-workflow-definition.schema.json",
+        "sha256": "6d147f041dec4e0325d78b2aba299c22ba7e82424087c5b8ca2749a6b0ed1ba3"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-decision.schema.json",
+        "sha256": "f999c5429ceb57eb08d21d7291318b5d19069756ae3cfcd5166f84bc3c5d3af4"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-record.schema.json",
+        "sha256": "9d366d4b11418b00c1f01f709fb85f8f690c14b0bb14aee5a167f4c366c70081"
+      },
+      {
+        "path": "schemas/workflows/workflow-deprecation-record.schema.json",
+        "sha256": "54ca50cc50fffb10e7488c8d65ad09edf2d977b779e2ce377fb571d0fa1b437f"
+      },
+      {
+        "path": "scripts/validate-image-requirements.py",
+        "sha256": "2dd808cb09d3233805052e50b2235172bc16476458b4825ec6dc9dfd96832ba3"
+      },
+      {
+        "path": "scripts/validate-workflow.py",
+        "sha256": "c7e0963c61e767655b1b2fb080e0cd906dec30c1623c5d13ac1727874ad21589"
+      },
+      {
+        "path": "tests/cases/test_validate_image_requirements.py",
+        "sha256": "a007507a12f4fcd488742abd8bede9e280fb5ea6870aabc994f21016659f9ef1"
+      },
+      {
+        "path": "tests/workflows/test_validate_workflow.py",
+        "sha256": "0eb1525bdb22d4386f31eb416a929e90360514846c02f95e390cca1a0cba0d4f"
+      }
+    ],
+    "warnings": [
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Operating Manual.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Rule.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Schema.md",
+        "blocking": false
+      },
+      {
+        "id": "KNOWN-BASELINE-WORKFLOW-TEST",
+        "message": "Known pre-candidate failure remains: test_31_json_cli_output.",
+        "blocking": false
+      }
+    ]
+  }
+}

@@ -1013,7 +1013,7 @@ Actual Image Asset laneでは、従来どおりApplicableなRights、Human Visua
 
 ### Formal Adoption Date
 
-NOT PERFORMED
+2026-09-24
 
 ### Changes
 
@@ -1026,9 +1026,9 @@ NOT PERFORMED
 
 ### Status
 
-CANDIDATE / NOT FORMALLY ADOPTED。
-Formal Adoption Date: NOT PERFORMED
-Current Official Image Rule remains v1.4 until explicit Human Formal Adoption.
+OFFICIAL。Current Official Versionはv1.5とする。Human Formal Adoption Decision = `APPROVED`により正式採用された。
+Historical Official Version: v1.4
+以下のv1.4以前のVersion Historyは変更しない。
 
 ## v1.4
 
