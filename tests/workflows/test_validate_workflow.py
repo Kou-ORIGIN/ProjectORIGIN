@@ -13,6 +13,7 @@ SCRIPT = ROOT / "scripts" / "validate-workflow.py"
 SCHEMA = ROOT / "schemas" / "workflows" / "case-production-workflow-definition.schema.json"
 DEFINITION = ROOT / "workflows" / "case-production-workflow_v1.0.json"
 SUCCESSOR = ROOT / "workflows" / "case-production-workflow_v1.3.json"
+RECONCILED_SUCCESSOR = ROOT / "workflows" / "case-production-workflow_v1.4.json"
 SPEC = importlib.util.spec_from_file_location("validate_workflow", SCRIPT)
 VALIDATOR = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
@@ -606,6 +607,42 @@ class WorkflowValidatorTests(unittest.TestCase):
         step["inputs"] = [i for i in step["inputs"] if i.get("ref_id") != "fallback-representation-validation"]
         self.assert_finding(definition, "FINAL-FLOW-IMAGE-FULFILLMENT-EVIDENCE")
 
+    def test_77_reconciled_v14_candidate_passes_semantics(self):
+        definition = json.loads(RECONCILED_SUCCESSOR.read_text(encoding="utf-8"))
+        self.assertEqual("v1.4", definition["workflow_version"])
+        self.assertEqual("PROPOSED", definition["status"])
+        self.assertEqual([], VALIDATOR.validate_semantics(definition))
+
+    def test_78_reconciled_v14_candidate_passes_governance(self):
+        definition = json.loads(RECONCILED_SUCCESSOR.read_text(encoding="utf-8"))
+        errors, _ = VALIDATOR.validate_governance(definition, ROOT, context="candidate")
+        self.assertEqual([], errors)
+
+    def test_79_reconciled_v14_binds_fallback_persistence_paths(self):
+        definition = json.loads(RECONCILED_SUCCESSOR.read_text(encoding="utf-8"))
+        steps = self.ids(definition)
+        out20 = {item["ref_id"]: item for item in steps["CPW-020"]["outputs"]}
+        out22 = {item["ref_id"]: item for item in steps["CPW-022"]["outputs"]}
+        self.assertEqual(
+            "cases/FILE-XXXX/fallback-representations/FILE-XXXX_<Requirement-ID>_FALLBACK_v<version>.md",
+            out20["fallback-representation-candidate"]["repository_path"],
+        )
+        self.assertEqual(
+            "cases/FILE-XXXX/fallback-representations/FILE-XXXX_<Requirement-ID>_FALLBACK-VALIDATION_v<version>.json",
+            out22["fallback-representation-validation"]["repository_path"],
+        )
+
+    def test_80_reconciled_v14_missing_candidate_persistence_is_rejected(self):
+        definition = json.loads(RECONCILED_SUCCESSOR.read_text(encoding="utf-8"))
+        outputs = {item["ref_id"]: item for item in self.ids(definition)["CPW-020"]["outputs"]}
+        outputs["fallback-representation-candidate"].pop("repository_path")
+        self.assert_finding(definition, "IMAGE-FALLBACK-CANDIDATE-PERSISTENCE")
+
+    def test_81_reconciled_v14_missing_validation_persistence_is_rejected(self):
+        definition = json.loads(RECONCILED_SUCCESSOR.read_text(encoding="utf-8"))
+        outputs = {item["ref_id"]: item for item in self.ids(definition)["CPW-022"]["outputs"]}
+        outputs["fallback-representation-validation"].pop("repository_path")
+        self.assert_finding(definition, "IMAGE-FALLBACK-VALIDATION-PERSISTENCE")
 
 
 class AdoptionContractTests(unittest.TestCase):
@@ -1571,11 +1608,11 @@ class WorkflowV12EraCompatibilityTests(unittest.TestCase):
 
     def test_supported_current_workflow_eras_are_explicit(self):
         self.assertEqual(
-            {"v1.0", "v1.1", "v1.2"},
+            {"v1.0", "v1.1", "v1.2", "v1.3"},
             VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
         )
         self.assertNotIn(
-            "v1.3",
+            "v1.4",
             VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
         )
 

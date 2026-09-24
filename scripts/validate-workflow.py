@@ -515,7 +515,7 @@ def validate_image_and_final_flow(definition: dict[str, Any]) -> list[dict[str, 
         if route.get("route_kind") not in allowed_failure:
             errors.append(finding("SEMANTIC_VALIDATION", "FINAL-FLOW-FAILURE-ROUTE", "Final Flow failure may route only through revision, re-audit, or block handling"))
 
-    if definition.get("workflow_version") == "v1.3":
+    if definition.get("workflow_version") in {"v1.3", "v1.4"}:
         interface = definition.get("interfaces", {}).get("image_requirement_register", {})
         expected_fields = {
             "Requirement ID", "Reader Purpose", "Production Route", "Dependency",
@@ -540,13 +540,23 @@ def validate_image_and_final_flow(definition: dict[str, Any]) -> list[dict[str, 
         for ref_id in ("image-candidate-set", "fallback-representation-candidate"):
             item = outputs20.get(ref_id, {})
             if item.get("required") is not False or item.get("applicability") != "CONDITIONAL":
-                errors.append(finding("SEMANTIC_VALIDATION", "IMAGE-FULFILLMENT-CANDIDATE-OUTPUT", f"{ref_id} must be conditional in workflow v1.3"))
+                errors.append(finding("SEMANTIC_VALIDATION", "IMAGE-FULFILLMENT-CANDIDATE-OUTPUT", f"{ref_id} must be conditional in workflow v1.3/v1.4"))
+
+        if definition.get("workflow_version") == "v1.4":
+            expected_candidate_path = "cases/FILE-XXXX/fallback-representations/FILE-XXXX_<Requirement-ID>_FALLBACK_v<version>.md"
+            candidate = outputs20.get("fallback-representation-candidate", {})
+            if candidate.get("repository_path") != expected_candidate_path:
+                errors.append(finding("SEMANTIC_VALIDATION", "IMAGE-FALLBACK-CANDIDATE-PERSISTENCE", "workflow v1.4 must bind CPW-020 fallback candidate to the formal Repository Rule v1.4 path"))
 
         cpw22 = steps.get("CPW-022", {})
         outputs22 = {item.get("ref_id"): item for item in cpw22.get("outputs", []) if isinstance(item, dict)}
         fallback_validation = outputs22.get("fallback-representation-validation", {})
         if fallback_validation.get("artifact_type") != "FALLBACK_REPRESENTATION_VALIDATION" or fallback_validation.get("required") is not False or fallback_validation.get("applicability") != "CONDITIONAL":
             errors.append(finding("SEMANTIC_VALIDATION", "IMAGE-FALLBACK-VALIDATION-OUTPUT", "CPW-022 must expose conditional fallback representation validation evidence"))
+        if definition.get("workflow_version") == "v1.4":
+            expected_validation_path = "cases/FILE-XXXX/fallback-representations/FILE-XXXX_<Requirement-ID>_FALLBACK-VALIDATION_v<version>.json"
+            if fallback_validation.get("repository_path") != expected_validation_path:
+                errors.append(finding("SEMANTIC_VALIDATION", "IMAGE-FALLBACK-VALIDATION-PERSISTENCE", "workflow v1.4 must bind CPW-022 fallback validation to the formal Repository Rule v1.4 path"))
         routes22 = {(r.get("route_kind"), r.get("target"), r.get("condition_ref"), r.get("result_ref")) for r in cpw22.get("routing", {}).get("routes", []) if isinstance(r, dict)}
         if ("CONDITIONAL", "CPW-027", "fallback-representation-valid", "fallback-representation-validation") not in routes22:
             errors.append(finding("SEMANTIC_VALIDATION", "IMAGE-FALLBACK-DIRECT-FINAL-FLOW", "validated FALLBACK_REPRESENTATION must be able to reach CPW-027 without Image Audit or Approved Image Asset Registration"))
@@ -567,8 +577,9 @@ def validate_image_and_final_flow(definition: dict[str, Any]) -> list[dict[str, 
         if not {"image-requirement-register", "fallback-representation-validation"}.issubset(cpw27_inputs):
             errors.append(finding("SEMANTIC_VALIDATION", "FINAL-FLOW-IMAGE-FULFILLMENT-EVIDENCE", "CPW-027 must receive Image Requirement state and fallback validation evidence when applicable"))
         authorities = {(item.get("authority_id"), item.get("version")) for item in cpw27.get("primary_authority", []) if isinstance(item, dict)}
-        if ("IMAGE-RULE", "v1.5") not in authorities:
-            errors.append(finding("SEMANTIC_VALIDATION", "FINAL-FLOW-IMAGE-RULE-AUTHORITY", "workflow v1.3 CPW-027 must include Image Rule v1.5 authority"))
+        expected_image_rule_version = "v1.5.1" if definition.get("workflow_version") == "v1.4" else "v1.5"
+        if ("IMAGE-RULE", expected_image_rule_version) not in authorities:
+            errors.append(finding("SEMANTIC_VALIDATION", "FINAL-FLOW-IMAGE-RULE-AUTHORITY", f"workflow {definition.get('workflow_version')} CPW-027 must include Image Rule {expected_image_rule_version} authority"))
         sources = {(item.get("result_kind"), item.get("source_ref")) for item in cpw27.get("source_of_truth", []) if isinstance(item, dict)}
         if ("IMAGE_REQUIREMENT_STATE", "image-requirement-register") not in sources:
             errors.append(finding("SEMANTIC_VALIDATION", "FINAL-FLOW-IMAGE-REQUIREMENT-SOURCE", "CPW-027 must read Image Requirement state as reference-only evidence"))
@@ -742,6 +753,10 @@ def governance_expectations(definition):
     elif workflow_version == "v1.3":
         expected["docs/Image Rule.md"] = "v1.5"
         expected["docs/ProjectORIGIN Repository Rule.md"] = "v1.3"
+        expected["docs/Audit Rule.md"] = "v1.4.1"
+    elif workflow_version == "v1.4":
+        expected["docs/Image Rule.md"] = "v1.5.1"
+        expected["docs/ProjectORIGIN Repository Rule.md"] = "v1.4"
         expected["docs/Audit Rule.md"] = "v1.4.1"
     return expected
 

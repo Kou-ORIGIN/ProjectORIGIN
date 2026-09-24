@@ -934,11 +934,11 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 
 ---
 
-# Candidate Successor Semantics — Image Rule v1.5
+# Reader Purpose Fulfillment / External Rights Non-Blocking — Image Rule v1.5
 
-**Status:** CANDIDATE / NOT FORMALLY ADOPTED
+**Status:** OFFICIAL / CURRENT
 
-本SectionはImage Rule v1.5 candidateおよびCase Production Workflow v1.3 candidateの検証用successor semanticsである。明示的なHuman Formal Adoptionが完了するまで、Current Official Image Rule v1.4およびCurrent Official Workflow v1.2の適用状態を変更しない。
+本Sectionは2026-09-24にHuman Formal AdoptionされたImage Rule v1.5のCurrent Official semanticsである。Case Production Workflow v1.3の正式採用と整合し、Reader Purpose fulfillmentとExternal Rights non-blocking modelを定義する。
 
 ## Reader Purpose Fulfillment Principle
 
@@ -1002,6 +1002,29 @@ Actual Image Asset laneでは、従来どおりApplicableなRights、Human Visua
 ---
 
 # Version History
+
+## v1.5.1
+
+### Post-Adoption Status Label Reconciliation
+
+### Candidate Date
+
+2026-09-24
+
+### Formal Adoption Date
+
+NOT PERFORMED
+
+### Changes
+
+- v1.5 successor semantics本文に残存したcandidate-only heading／status説明を、2026-09-24の正式採用結果と整合する表記へ修正する。
+- Reader Purpose Fulfillment、Fallback Representation、External Rights Non-Blocking、Publication Blocker Boundary、Workflow / Registration Boundary、Later Asset Upgradeの意味は変更しない。
+- Image Rule v1.5のformal adoption recordおよびhistorical validityは変更しない。
+
+### Status
+
+CANDIDATE / NOT FORMALLY ADOPTED
+Human Formal Adoption Decision = `NOT PERFORMED`.
 
 ## v1.5
 

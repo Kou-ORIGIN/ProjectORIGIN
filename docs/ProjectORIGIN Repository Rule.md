@@ -1,5 +1,5 @@
 **ProjectORIGIN Repository Rule**
-Version: v1.3
+Version: v1.4
 **Status:** Official
 **Current Official Version:** v1.3
 **Project:** ProjectORIGIN
@@ -732,6 +732,31 @@ Case-scoped Image Requirement management artifactは、次のpathで管理する
 
 本ArtifactはRights Evidence、Image Sidecar Metadata、Image Audit Result、Human Review DecisionまたはPublication Trackingを複製または置換しない。
 
+### Fallback Representation Workflow Artifacts
+
+Case-scoped Fallback Representation workflow artifactは、次の専用Directoryで管理する。
+
+`cases/FILE-XXXX/fallback-representations/`
+
+CPW-020の`FALLBACK_REPRESENTATION_CANDIDATE`は、次のfilenameで保持する。
+
+`FILE-XXXX_<Requirement-ID>_FALLBACK_v<version>.md`
+
+CPW-022の`FALLBACK_REPRESENTATION_VALIDATION`は、次のfilenameで保持する。
+
+`FILE-XXXX_<Requirement-ID>_FALLBACK-VALIDATION_v<version>.json`
+
+`<Requirement-ID>`には既存Image Requirement ID（例: `IMGREQ-001`）を使用し、Fallback Representation専用の新しいID allocatorまたはAsset IDを設けない。Fallback identityはCase ID、Requirement ID、Artifact Version、repository pathおよびexact SHA-256によって追跡可能にする。
+
+Fallback Representation CandidateはApproved Image Assetではなく、`assets/`へ配置しない。Fallback Representation ValidationはImage Audit Artifactではなく、`audit/`へ配置しない。Fallback candidateまたはvalidation artifactの存在を、Approved Image Asset Registration、Image Audit PASS、Final Human Approval、Repository IntegrationまたはPublicationとして扱ってはならない。
+
+Fallback Representation Validation JSONは、少なくともexact candidate repository path、candidate SHA-256、Reader Purpose reference、validation basis、source / provenance reference、institutional locator（Applicableな場合）、Evidence Boundaryおよび`VALIDATED_FALLBACK_REPRESENTATION` resultを保持し、次のmechanical contractに従う。
+
+- Schema: `schemas/cases/fallback-representation-validation.schema.json`
+- Validator: `scripts/validate-fallback-representation.py`
+
+同一Case／Requirement／VersionのFallback artifactをSilent Overwriteしてはならない。Reader-facing meaning、source basis、Evidence Boundaryその他のMaterial Changeがある場合は、新しいArtifact Versionを作成し、旧Versionとのtraceabilityを保持する。
+
 ### Case Workflow Orchestration Manifest
 
 Case Workflow Orchestration Manifestは、次のpathで管理する。
@@ -783,6 +808,7 @@ ProjectORIGINの正式な基本Case Repository Structureは、以下とする。
  │ └── classified/
  ├── assets/
  ├── audit/
+ ├── fallback-representations/
  ├── image-requirements.json
  ├── orchestration-manifest.json
  ├── human-review-package_v<version>.json
@@ -2571,10 +2597,14 @@ Final Repository Integration時には、Artifact Identity、Version、exact iden
 - `cases/FILE-XXXX/image-requirements.json`
 - `cases/FILE-XXXX/orchestration-manifest.json`
 - `cases/FILE-XXXX/human-review-package_v<version>.json`
+- `cases/FILE-XXXX/fallback-representations/FILE-XXXX_<Requirement-ID>_FALLBACK_v<version>.md`
+- `cases/FILE-XXXX/fallback-representations/FILE-XXXX_<Requirement-ID>_FALLBACK-VALIDATION_v<version>.json`
 
-Image Requirement RegisterおよびOrchestration Manifestの更新は、それぞれのApplicable Authorityが許可する責務とfield boundaryに限定する。
+Image Requirement Register、Orchestration ManifestおよびFallback Representation workflow artifactの更新は、それぞれのApplicable Authorityが許可する責務、path、filename、validationおよびfield boundaryに限定する。
 
 Human Review Packageはversion-boundかつimmutableなsnapshotであるため、既存PackageをSilent Overwriteしない。Material Change後は必要な再検証を行い、新しいApplicable Package Versionを作成する。
+
+Fallback Representation CandidateおよびValidationはCPW-020／CPW-022のApplicable Workflow中に限るCase-scoped operational persistenceであり、Asset IDを発行せず、Approved Image Asset RegistrationまたはPublication Artifact Repository Integrationを成立させない。
 
 これらのwriteはOperational Workflow managementであり、Publication Artifact Repository Integration、Database Integration、Human ApprovalまたはPublicationではない。これらのArtifactの存在または更新だけを根拠として、正式StateまたはDecisionを変更してはならない。
 
@@ -4797,6 +4827,23 @@ Active HOLDの未確定仕様をCompatibilityの都合によって暗黙に確�
 --
 
 **Version History**
+v1.4
+Date: 2026-09-24
+Fallback Representation Persistence Contract
+**Contents**
+
+- Added case-scoped `fallback-representations/` operational persistence for CPW-020 and CPW-022.
+- Defined deterministic candidate and validation filename conventions bound to Case ID, existing Image Requirement ID, Artifact Version, repository path, and exact SHA-256.
+- Prohibited a separate Fallback Representation ID or Asset ID allocator.
+- Bound Fallback Representation Validation to `schemas/cases/fallback-representation-validation.schema.json` and `scripts/validate-fallback-representation.py`.
+- Prohibited Silent Overwrite and required a new Artifact Version for Material Change.
+- Added the narrow pre-Final-Human-Approval write boundary for the CPW-020 candidate and CPW-022 validation artifacts.
+- Preserved separation from Approved Image Asset Registration, Image Audit PASS, Final Human Approval, Repository Integration, Database Integration, Publication Status, and Publication.
+
+**Status:** CANDIDATE / NOT FORMALLY ADOPTED
+Human Formal Adoption Decision = `NOT PERFORMED`.
+Formal Adoption Date: NOT PERFORMED
+
 v1.3
 Date: 2026-09-20
 CPW-026 Placement Transaction Persistence Contract
