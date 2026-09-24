@@ -934,7 +934,101 @@ ProjectORIGINは、「未知を探索する機密データベース」として�
 
 ---
 
+# Candidate Successor Semantics — Image Rule v1.5
+
+**Status:** CANDIDATE / NOT FORMALLY ADOPTED
+
+本SectionはImage Rule v1.5 candidateおよびCase Production Workflow v1.3 candidateの検証用successor semanticsである。明示的なHuman Formal Adoptionが完了するまで、Current Official Image Rule v1.4およびCurrent Official Workflow v1.2の適用状態を変更しない。
+
+## Reader Purpose Fulfillment Principle
+
+Image Requirementの`REQUIRED`は、定義されたReader Purposeが安全かつ追跡可能な方法で満たされることを要求する。第三者画像の特定byteそのものを常に要求するものではない。
+
+**Required reader information ≠ Required third-party image bytes.**
+
+Requirementのfulfillmentは、以下のいずれかのmodeで管理する。
+
+- `IMAGE_ASSET`: ApplicableなImage AuditおよびApproved Image Asset Registrationを経た実画像Assetによるfulfillment。
+- `FALLBACK_REPRESENTATION`: Reader Purposeを満たすために検証されたSource Card、Document Locator、ProjectORIGIN-produced timeline／comparison／diagramその他のfallback representationによるfulfillment。
+
+`fulfillment_status`は`PENDING`または`SATISFIED`とする。`REQUIRED`／`OPTIONAL`はRequirement priorityであり、fulfillment statusと同一ではない。
+
+## Fallback Representation
+
+Fallback RepresentationはApproved Image Assetではなく、Asset IDを発行しない。Machine-readable stateは`VALIDATED_FALLBACK_REPRESENTATION`として扱い、`APPROVED`という語を使用してFinal Human ApprovalまたはApproved Image Asset Registrationと混同してはならない。
+
+Fallback Representationを`SATISFIED`として扱うには、少なくとも以下を追跡可能にする。
+
+- Representation typeおよびrepresentation reference
+- Reader Purpose satisfactionを検証したvalidation reference
+- Source／provenance reference
+- Institutional locator（Applicableな場合）
+- Evidence Boundary
+
+Document Source Cardを使用する場合は、Applicableな範囲でpublication／institution identity、date、article／document identity、何を立証するか、source／provenance reference、institutional locatorおよびEvidence Boundaryを保持する。Fallbackがoriginal visual contentを保持しない場合、そのvisual inspection自体を必要とするpropositionの根拠として使用してはならない。
+
+## External Rights Non-Blocking
+
+External Rights activityはRequirement fulfillmentとは独立したdimensionとして管理し、`external_asset_disposition`を`NOT_APPLICABLE`、`ACTIVE`または`DEFERRED`として記録できる。
+
+第三者Image Assetを現在のfulfillmentとして選択し、その利用にRights VerificationがApplicableである場合は、Chapter 4のRights Inquiry Lifecycleを維持する。Inquiry Draft ≠ Inquiry Sent ≠ Rights Verifiedであり、Response Received ≠ Rights Clearであり、silenceはPermissionではない。
+
+一方、検証済みFallback RepresentationがReader Purposeを満たす場合、未解決の第三者画像Rightsを`ACTIVE`または`DEFERRED`として保持しても、それだけを理由にCase completionまたはPublicationをblockしてはならない。External Rights inquiryは将来のenhancement／upgrade laneとして非同期に継続できる。
+
+`DEFERRED`という状態だけでReader Purposeを`SATISFIED`としてはならない。`SATISFIED`には、選択されたfulfillment modeに対応するresulting referenceが必要である。
+
+## Publication Blocker Boundary
+
+未解決の第三者画像RightsをPublication blockerとして扱うのは、以下のいずれかがApplicableな場合に限定する。
+
+- visualそれ自体がevidentially indispensableである。
+- Reader Purposeを安全に満たすfallbackが存在しない。
+- 第三者Image Assetが実際にpublication用fulfillmentとして選択されており、ApplicableなRights／provenance requirementが未解決である。
+
+Fallback RepresentationがReader Purposeを満たす場合、単により望ましい第三者画像のpermission待ちであることを理由としてFinal Flowを停止しない。
+
+## Workflow and Registration Boundary
+
+Fallback laneでは、ApplicableでないRights Inquiry、Human Visual Review、Formal Image Audit、Approved Image Asset RegistrationおよびApproved Image Asset Placement Transactionを成立したものとして推論してはならない。Applicableでない工程はN/Aとして分離し、Fallback validation evidenceからFinal Human Approval、Repository IntegrationまたはPublicationを推論しない。
+
+Actual Image Asset laneでは、従来どおりApplicableなRights、Human Visual Review、Formal Image Audit、Registration、Mechanical ValidationおよびPlacementを維持する。Fallback RepresentationをApproved Image Asset Registrationへ入力してはならない。
+
+## Later Asset Upgrade
+
+後にRights Permission、より良いSource、または正式なImage Assetが成立した場合、Fallback RepresentationをImage Asset fulfillmentへupgradeまたはreplaceできる。ただし、既存stateをsilent overwriteせず、Applicableなchange、versioning、Audit、Review、PlacementおよびHuman Gateを別途評価する。
+
+このsuccessor modelは、既存Approved Image Asset、既存Image Audit、既存Placement Transactionまたは過去のRights Evidenceを自動的に無効化しない。
+
+---
+
 # Version History
+
+## v1.5
+
+### Image Throughput Simplification / External Rights Non-Blocking Model
+
+### Candidate Date
+
+2026-09-23
+
+### Formal Adoption Date
+
+NOT PERFORMED
+
+### Changes
+
+- `REQUIRED`をthird-party image bytesではなくReader Purpose fulfillmentとして定義するsuccessor modelを追加する。
+- `IMAGE_ASSET`と`FALLBACK_REPRESENTATION`をfulfillment modeとして分離する。
+- `PENDING`／`SATISFIED`、resulting representation referenceおよびexternal asset dispositionを導入する。
+- External Rightsをnon-blocking enhancement laneとして保持できる条件とPublication blocker boundaryを定義する。
+- Fallback RepresentationがApproved Image Asset、Image Audit PASS、Final Human Approval、Repository IntegrationまたはPublicationを意味しない責務境界を維持する。
+- Later Asset Upgradeをsilent overwriteなしの別controlled changeとして扱う。
+
+### Status
+
+CANDIDATE / NOT FORMALLY ADOPTED。
+Formal Adoption Date: NOT PERFORMED
+Current Official Image Rule remains v1.4 until explicit Human Formal Adoption.
 
 ## v1.4
 

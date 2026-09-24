@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:projectorigin:schema:cases:image-requirement-register:v1.0",
-  "title": "Image Requirement Register v1.0",
-  "$comment": "Decisions 126 and 142. Properties define canonical key order. Descriptive references, blocking reasons and orchestration state create no authority. Empty arrays establish only that no entry is recorded. Asset binding is not registration evidence. Validation is not an Audit Result or approval.",
+  "$id": "urn:projectorigin:schema:cases:image-requirement-register:v1.1",
+  "title": "Image Requirement Register v1.1",
+  "$comment": "Successor format for Image Throughput Simplification. The schema remains backward-compatible with canonical v1.0 registers. Requirement fulfillment state is distinct from Approved Image Asset registration, Human Approval, Publication, and external Rights state. Deferred external Rights activity alone never satisfies Reader Purpose.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -13,7 +13,10 @@
   ],
   "properties": {
     "register_format_version": {
-      "const": "v1.0"
+      "enum": [
+        "v1.0",
+        "v1.1"
+      ]
     },
     "artifact_type": {
       "const": "IMAGE_REQUIREMENT_REGISTER"
@@ -110,6 +113,18 @@
               "minLength": 1
             }
           },
+          "fulfillment_mode": {
+            "enum": [
+              "IMAGE_ASSET",
+              "FALLBACK_REPRESENTATION"
+            ]
+          },
+          "fulfillment_status": {
+            "enum": [
+              "PENDING",
+              "SATISFIED"
+            ]
+          },
           "resulting_asset_reference": {
             "type": [
               "object",
@@ -141,6 +156,65 @@
               }
             }
           },
+          "resulting_representation_reference": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "required": [
+              "representation_type",
+              "representation_state",
+              "representation_reference",
+              "validation_reference",
+              "source_references",
+              "institutional_locator",
+              "evidence_boundary"
+            ],
+            "properties": {
+              "representation_type": {
+                "type": "string",
+                "minLength": 1
+              },
+              "representation_state": {
+                "const": "VALIDATED_FALLBACK_REPRESENTATION"
+              },
+              "representation_reference": {
+                "type": "string",
+                "minLength": 1
+              },
+              "validation_reference": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_references": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "institutional_locator": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "minLength": 1
+              },
+              "evidence_boundary": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "external_asset_disposition": {
+            "enum": [
+              "NOT_APPLICABLE",
+              "ACTIVE",
+              "DEFERRED"
+            ]
+          },
           "completion_condition": {
             "type": "string",
             "minLength": 1
@@ -148,5 +222,77 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "register_format_version": {
+            "const": "v1.0"
+          }
+        },
+        "required": [
+          "register_format_version"
+        ]
+      },
+      "then": {
+        "properties": {
+          "requirements": {
+            "items": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": [
+                      "fulfillment_mode"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "fulfillment_status"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "resulting_representation_reference"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "external_asset_disposition"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "register_format_version": {
+            "const": "v1.1"
+          }
+        },
+        "required": [
+          "register_format_version"
+        ]
+      },
+      "then": {
+        "properties": {
+          "requirements": {
+            "items": {
+              "required": [
+                "fulfillment_mode",
+                "fulfillment_status",
+                "resulting_representation_reference",
+                "external_asset_disposition"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
 }

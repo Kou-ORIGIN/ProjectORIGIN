@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Read-only Decision 126 + 142 validation; never an audit or approval.
+"""Read-only Image Requirement Register validation; never an audit or approval.
 
-This checks structure, deterministic bytes and local cross-field constraints.
-It cannot establish historical ID non-reuse, completeness, rights, registration,
-placement, blocker absence or any Human/workflow/publication authority.
-No referenced asset is required to exist and no evidence is created or changed.
+This validates canonical v1.0 and successor v1.1 register bytes, structure and
+local cross-field constraints. It cannot establish historical ID non-reuse,
+Reader Purpose sufficiency as a factual matter, Rights, registration, placement,
+blocker absence, Human Approval, workflow closure or publication authority.
+No referenced asset or fallback representation is required to exist and no
+evidence is created or changed.
 """
 
 import argparse
@@ -16,7 +18,7 @@ import sys
 # CLI imports must not leave bytecode files behind.
 sys.dont_write_bytecode = True
 
-SCHEMA_ID = "urn:projectorigin:schema:cases:image-requirement-register:v1.0"
+SCHEMA_ID = "urn:projectorigin:schema:cases:image-requirement-register:v1.1"
 DRAFT = "https://json-schema.org/draft/2020-12/schema"
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -57,7 +59,7 @@ def load_schema(path):
         schema = parse_json(Path(path).read_bytes())
         if (not isinstance(schema, dict) or schema.get("$schema") != DRAFT
                 or schema.get("$id") != SCHEMA_ID):
-            raise ValueError("expected Decision 126 schema identity and Draft 2020-12")
+            raise ValueError("expected Image Requirement Register v1.1 schema identity and Draft 2020-12")
         Draft202012Validator.check_schema(schema)
         return schema, Draft202012Validator(schema)
     except Exception as exc:
@@ -119,6 +121,38 @@ def validate_bytes(data, schema, validator, repository_root=ROOT):
         asset = item["resulting_asset_reference"]
         if asset is not None:
             check_path(asset["repository_path"], repository_root)
+
+        if value["register_format_version"] == "v1.1":
+            mode = item["fulfillment_mode"]
+            status = item["fulfillment_status"]
+            representation = item["resulting_representation_reference"]
+
+            if mode == "IMAGE_ASSET":
+                if representation is not None:
+                    raise InvalidTarget(
+                        "IMAGE_ASSET fulfillment cannot use a fallback representation reference"
+                    )
+                if status == "SATISFIED" and asset is None:
+                    raise InvalidTarget(
+                        "SATISFIED IMAGE_ASSET fulfillment requires resulting_asset_reference"
+                    )
+                if status == "PENDING" and asset is not None:
+                    raise InvalidTarget(
+                        "PENDING IMAGE_ASSET fulfillment cannot have a resulting asset"
+                    )
+            elif mode == "FALLBACK_REPRESENTATION":
+                if asset is not None:
+                    raise InvalidTarget(
+                        "FALLBACK_REPRESENTATION fulfillment cannot use an Approved Image Asset reference"
+                    )
+                if status == "SATISFIED" and representation is None:
+                    raise InvalidTarget(
+                        "SATISFIED FALLBACK_REPRESENTATION requires a validated representation reference"
+                    )
+                if status == "PENDING" and representation is not None:
+                    raise InvalidTarget(
+                        "PENDING FALLBACK_REPRESENTATION cannot have a resulting representation"
+                    )
     try:
         canonical = canonical_bytes(value, schema)
     except UnicodeError as exc:

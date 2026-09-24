@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "validate-workflow.py"
 SCHEMA = ROOT / "schemas" / "workflows" / "case-production-workflow-definition.schema.json"
 DEFINITION = ROOT / "workflows" / "case-production-workflow_v1.0.json"
+SUCCESSOR = ROOT / "workflows" / "case-production-workflow_v1.3.json"
 SPEC = importlib.util.spec_from_file_location("validate_workflow", SCRIPT)
 VALIDATOR = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None
@@ -536,6 +537,74 @@ class WorkflowValidatorTests(unittest.TestCase):
             definition["interfaces"]["human_review_package"]
         )
         self.assert_finding(definition, "SOURCE-REVIEW-PACKAGE-BOUNDARY")
+
+
+    def test_69_successor_v13_candidate_passes_semantics(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        self.assertEqual("v1.3", definition["workflow_version"])
+        self.assertEqual("PROPOSED", definition["status"])
+        self.assertEqual([], VALIDATOR.validate_semantics(definition))
+
+    def test_70_successor_v13_candidate_passes_governance(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        errors, _ = VALIDATOR.validate_governance(definition, ROOT)
+        self.assertEqual([], errors)
+
+    def test_71_successor_v13_binds_register_v11(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        interface = definition["interfaces"]["image_requirement_register"]
+        self.assertEqual(
+            {"field": "register_format_version", "value": "v1.1"},
+            interface["format_binding"],
+        )
+        self.assertNotIn("IMAGE-REGISTER-V11-BINDING", self.finding_ids(definition))
+
+    def test_72_successor_fallback_bypasses_rights_and_asset_audit_lane(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        steps = self.ids(definition)
+        routes20 = steps["CPW-020"]["routing"]["routes"]
+        self.assertTrue(any(
+            route.get("target") == "CPW-022"
+            and route.get("condition_ref") == "fallback-representation-selected"
+            for route in routes20
+        ))
+        routes22 = steps["CPW-022"]["routing"]["routes"]
+        self.assertTrue(any(
+            route.get("target") == "CPW-027"
+            and route.get("condition_ref") == "fallback-representation-valid"
+            and route.get("result_ref") == "fallback-representation-validation"
+            for route in routes22
+        ))
+        self.assertNotIn("IMAGE-FALLBACK-DIRECT-FINAL-FLOW", self.finding_ids(definition))
+
+    def test_73_successor_missing_fallback_route_is_rejected(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        routes = self.ids(definition)["CPW-022"]["routing"]["routes"]
+        routes[:] = [r for r in routes if r.get("condition_ref") != "fallback-representation-valid"]
+        self.assert_finding(definition, "IMAGE-FALLBACK-DIRECT-FINAL-FLOW")
+
+    def test_74_successor_missing_deferred_rights_fallback_is_rejected(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        rights05 = self.substates(definition)["RIGHTS-05"]
+        rights05["external_dependency"].pop("fallback_route")
+        self.assert_finding(definition, "RIGHTS-DEFERRED-FALLBACK-ROUTE")
+
+    def test_75_successor_fallback_cannot_enter_registration(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        self.ids(definition)["CPW-025"]["inputs"].append({
+            "ref_id": "fallback-representation-validation",
+            "artifact_type": "FALLBACK_REPRESENTATION_VALIDATION",
+            "required": False,
+            "applicability": "CONDITIONAL",
+            "source_step": "CPW-022",
+        })
+        self.assert_finding(definition, "IMAGE-FALLBACK-AS-APPROVED-ASSET")
+
+    def test_76_successor_final_flow_requires_image_fulfillment_evidence(self):
+        definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
+        step = self.ids(definition)["CPW-027"]
+        step["inputs"] = [i for i in step["inputs"] if i.get("ref_id") != "fallback-representation-validation"]
+        self.assert_finding(definition, "FINAL-FLOW-IMAGE-FULFILLMENT-EVIDENCE")
 
 
 

@@ -56,6 +56,42 @@ def asset():
     }
 
 
+def representation():
+    return {
+        "representation_type": "DOCUMENT_SOURCE_CARD",
+        "representation_state": "VALIDATED_FALLBACK_REPRESENTATION",
+        "representation_reference": "synthetic:inline:source-card-001",
+        "validation_reference": "synthetic:validation:fallback-001",
+        "source_references": ["synthetic:source:001"],
+        "institutional_locator": "https://example.invalid/archive/item/001",
+        "evidence_boundary": "Synthetic fallback does not establish visual facts absent from the source card.",
+    }
+
+
+def requirement_v11(serial=1, mode="IMAGE_ASSET", status="PENDING"):
+    value = requirement(serial)
+    completion = value.pop("completion_condition")
+    value["fulfillment_mode"] = mode
+    value["fulfillment_status"] = status
+    # resulting_asset_reference already exists in canonical v1.0 position and
+    # remains before resulting_representation_reference in v1.1.
+    asset_reference = value.pop("resulting_asset_reference")
+    value["resulting_asset_reference"] = asset_reference
+    value["resulting_representation_reference"] = None
+    value["external_asset_disposition"] = "NOT_APPLICABLE"
+    value["completion_condition"] = completion
+    return value
+
+
+def register_v11(*serials):
+    return {
+        "register_format_version": "v1.1",
+        "artifact_type": "IMAGE_REQUIREMENT_REGISTER",
+        "case_id": "FILE-9876",
+        "requirements": [requirement_v11(serial) for serial in serials],
+    }
+
+
 def encoded(value):
     return (json.dumps(value, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
 
@@ -138,6 +174,91 @@ class ImageRequirementTests(unittest.TestCase):
             value = register(1)
             value["requirements"][0]["classification_candidate"] = classification
             self.check(value)
+
+    def test_v11_pending_image_asset_is_valid(self):
+        self.check(register_v11(1))
+
+    def test_v11_satisfied_image_asset_is_valid(self):
+        value = register_v11(1)
+        item = value["requirements"][0]
+        item["fulfillment_status"] = "SATISFIED"
+        item["resulting_asset_reference"] = asset()
+        self.check(value)
+
+    def test_v11_satisfied_fallback_with_deferred_external_asset_is_valid(self):
+        value = register_v11(1)
+        item = value["requirements"][0]
+        item["fulfillment_mode"] = "FALLBACK_REPRESENTATION"
+        item["fulfillment_status"] = "SATISFIED"
+        item["resulting_representation_reference"] = representation()
+        item["external_asset_disposition"] = "DEFERRED"
+        self.check(value)
+
+    def test_v11_deferred_rights_alone_does_not_satisfy_reader_purpose(self):
+        value = register_v11(1)
+        item = value["requirements"][0]
+        item["fulfillment_mode"] = "FALLBACK_REPRESENTATION"
+        item["fulfillment_status"] = "SATISFIED"
+        item["external_asset_disposition"] = "DEFERRED"
+        self.reject(encoded(value))
+
+    def test_v11_fallback_cannot_bind_approved_image_asset(self):
+        value = register_v11(1)
+        item = value["requirements"][0]
+        item["fulfillment_mode"] = "FALLBACK_REPRESENTATION"
+        item["fulfillment_status"] = "SATISFIED"
+        item["resulting_asset_reference"] = asset()
+        item["resulting_representation_reference"] = representation()
+        self.reject(encoded(value))
+
+    def test_v11_image_asset_cannot_bind_fallback_representation(self):
+        value = register_v11(1)
+        item = value["requirements"][0]
+        item["fulfillment_status"] = "SATISFIED"
+        item["resulting_asset_reference"] = asset()
+        item["resulting_representation_reference"] = representation()
+        self.reject(encoded(value))
+
+    def test_v11_pending_fulfillment_cannot_have_result(self):
+        for mode in ("IMAGE_ASSET", "FALLBACK_REPRESENTATION"):
+            with self.subTest(mode=mode):
+                value = register_v11(1)
+                item = value["requirements"][0]
+                item["fulfillment_mode"] = mode
+                if mode == "IMAGE_ASSET":
+                    item["resulting_asset_reference"] = asset()
+                else:
+                    item["resulting_representation_reference"] = representation()
+                self.reject(encoded(value))
+
+    def test_v11_missing_successor_fields_rejected(self):
+        for key in ("fulfillment_mode", "fulfillment_status",
+                    "resulting_representation_reference", "external_asset_disposition"):
+            with self.subTest(key=key):
+                value = register_v11(1)
+                del value["requirements"][0][key]
+                self.reject(encoded(value))
+
+    def test_v10_rejects_successor_fields(self):
+        value = register(1)
+        value["requirements"][0]["fulfillment_mode"] = "IMAGE_ASSET"
+        self.reject(encoded(value))
+
+    def test_v11_fallback_reference_is_not_an_asset_registration_record(self):
+        value = register_v11(1)
+        item = value["requirements"][0]
+        item["fulfillment_mode"] = "FALLBACK_REPRESENTATION"
+        item["fulfillment_status"] = "SATISFIED"
+        ref = representation()
+        ref["asset_id"] = "FILE-9876-IMG-0042"
+        item["resulting_representation_reference"] = ref
+        self.reject(encoded(value))
+
+    def test_existing_file0001_v10_register_remains_valid(self):
+        path = ROOT / "cases/FILE-0001/image-requirements.json"
+        if not path.exists():
+            self.skipTest("production register not present in fixture")
+        module.validate_bytes(path.read_bytes(), self.schema, self.validator, ROOT)
 
     def test_unicode_is_preserved_without_normalization(self):
         for text in ("é", "e\u0301", "日本語", "\U0001f30f"):
