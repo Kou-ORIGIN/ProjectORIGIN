@@ -1,5 +1,5 @@
 {
-  "register_format_version": "v1.0",
+  "register_format_version": "v1.1",
   "artifact_type": "IMAGE_REQUIREMENT_REGISTER",
   "case_id": "FILE-0001",
   "requirements": [
@@ -9,7 +9,7 @@
       "requirement_status": "REQUIRED",
       "reader_purpose": "1947-07-09 Roswell Daily RecordのBrazel報道をreaderが直接確認できるようにし、\n当時のreported chronology、debris description、contemporary public narrativeを\n後年証言と区別できるようにする。",
       "classification_candidate": "Document Scan",
-      "production_route": "Institutional archival newspaper reproduction\n→ source/provenance verification\n→ rights clarification\n→ Document Scan candidate preparation\n→ applicable Image Audit\n→ Approved Image Asset registration",
+      "production_route": "Fallback representation preparation\n→ source/provenance boundary capture\n→ Reader Purpose validation\n→ validated fallback representation reference recording\n→ external third-party image rights activity remains a separate DEFERRED enhancement lane",
       "dependency_references": [
         "SRC-007",
         "RIGHTS-REQ-001"
@@ -23,14 +23,16 @@
       "intended_placement_references": [
         "FILE-0001_CLASSIFIED_v1.2.md — [NEWSPAPER INSERT] / Roswell Daily Record・Brazel reporting (2 locations)"
       ],
-      "current_orchestration_state": "Rights clarification is in progress.\nRIGHTS-REQ-001 is prepared but was not sent because an available official AFHRA intake route had not been confirmed.",
+      "current_orchestration_state": "Image Requirement Register v1.1 migration state.\n\nSelected Fulfillment Mode:\nFALLBACK_REPRESENTATION\n\nFulfillment Status:\nPENDING\n\nValidated Fallback Representation:\nNOT ESTABLISHED\n\nExternal Asset Disposition:\nDEFERRED\n\nExternal third-party image rights activity is retained as a separate enhancement / upgrade lane and does not by itself satisfy the Reader Purpose.\n\nHistorical pre-v1.1 rights/orchestration note preserved from the v1.0 register; this migration does not re-adjudicate that historical send / response state:\n\nRights clarification is in progress.\nRIGHTS-REQ-001 is prepared but was not sent because an available official AFHRA intake route had not been confirmed.",
       "blocking_reasons": [
-        "Roswell Daily Record reproduction rights remain CLARIFICATION REQUIRED; intended-use permission is UNDETERMINED.",
-        "RIGHTS-REQ-001 has not been sent because an available official AFHRA intake route had not been confirmed.",
-        "Stable institutional newspaper-archive provenance remains incomplete."
+        "Reader Purpose fulfillment remains PENDING because no VALIDATED_FALLBACK_REPRESENTATION and validation reference are established."
       ],
+      "fulfillment_mode": "FALLBACK_REPRESENTATION",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
-      "completion_condition": "Source provenance and intended-use rights must be sufficiently verified,\nthe selected Document Scan must satisfy the applicable Image Audit and Approved Image Asset registration requirements,\nand the resulting Approved Image Asset reference must be recorded.\n\nPlacement remains a separate CPW-026 concern and is not created by completion of this Requirement."
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "DEFERRED",
+      "completion_condition": "A fallback representation must be created and validated against this Requirement's Reader Purpose.\nThe resulting representation record must identify the representation type and reference, Reader Purpose validation reference, source/provenance references, institutional locator when applicable, and Evidence Boundary.\n\nIf the fallback does not preserve the original visual content, it must not be used to claim a proposition that requires direct visual inspection of that content.\n\nExternal third-party image rights activity may remain DEFERRED and does not by itself prevent fallback fulfillment.\nPlacement, Final Human Approval, Repository Integration, and Publication remain separate concerns."
     },
     {
       "requirement_id": "IMGREQ-002",
@@ -38,7 +40,7 @@
       "requirement_status": "REQUIRED",
       "reader_purpose": "1947-07-08 Roswell Daily Recordに記録されたRAAFの\n“flying disc” announcementをreaderが同時代記録として確認し、\nその後のmilitary explanation changeの起点を視覚的に確認できるようにする。\n\nThe newspaper record must not be treated as proof that an extraterrestrial or actual disc-shaped craft was recovered.",
       "classification_candidate": "Document Scan",
-      "production_route": "Institutional reproduction of the contemporary newspaper record\n→ source/provenance verification\n→ rights clarification\n→ Document Scan candidate preparation\n→ applicable Image Audit\n→ Approved Image Asset registration",
+      "production_route": "Fallback representation preparation\n→ source/provenance boundary capture\n→ Reader Purpose validation\n→ validated fallback representation reference recording\n→ external third-party image rights activity remains a separate DEFERRED enhancement lane",
       "dependency_references": [
         "SRC-007",
         "RIGHTS-REQ-002"
@@ -55,15 +57,16 @@
         "FILE-0001_CLASSIFIED_v1.2.md — [DOCUMENT / NEWSPAPER INSERT] / RAAF announcement",
         "FILE-0001_CLASSIFIED_v1.2.md — [DOCUMENT INSERT] / RAAF announcement"
       ],
-      "current_orchestration_state": "Rights clarification remains unresolved.\n\nRIGHTS-REQ-002 was prepared on 2026-09-07.\n\nThe historical record contains conflicting later descriptions of the send state:\none exact tracking record states NOT SENT,\nwhile later assistant-generated workflow summaries state SENT / response pending.\n\nNo exact send evidence, send timestamp, transmitted message record, or NARA response\nhas been recovered in the current reconstruction.\n\nCanonical reconstructed send state:\nUNDETERMINED\n\nNARA response:\nNOT ESTABLISHED\n\nRights Verification:\nNOT COMPLETE",
+      "current_orchestration_state": "Image Requirement Register v1.1 migration state.\n\nSelected Fulfillment Mode:\nFALLBACK_REPRESENTATION\n\nFulfillment Status:\nPENDING\n\nValidated Fallback Representation:\nNOT ESTABLISHED\n\nExternal Asset Disposition:\nDEFERRED\n\nExternal third-party image rights activity is retained as a separate enhancement / upgrade lane and does not by itself satisfy the Reader Purpose.\n\nHistorical pre-v1.1 rights/orchestration note preserved from the v1.0 register; this migration does not re-adjudicate that historical send / response state:\n\nRights clarification remains unresolved.\n\nRIGHTS-REQ-002 was prepared on 2026-09-07.\n\nThe historical record contains conflicting later descriptions of the send state:\none exact tracking record states NOT SENT,\nwhile later assistant-generated workflow summaries state SENT / response pending.\n\nNo exact send evidence, send timestamp, transmitted message record, or NARA response\nhas been recovered in the current reconstruction.\n\nCanonical reconstructed send state:\nUNDETERMINED\n\nNARA response:\nNOT ESTABLISHED\n\nRights Verification:\nNOT COMPLETE",
       "blocking_reasons": [
-        "Roswell Daily Record reproduction rights remain CLARIFICATION REQUIRED; intended-use permission remains UNDETERMINED.",
-        "The exact transmission state of RIGHTS-REQ-002 is historically conflicting and has not been independently resolved.",
-        "No NARA response or permission record is established.",
-        "Stable original/institutional newspaper provenance remains incomplete."
+        "Reader Purpose fulfillment remains PENDING because no VALIDATED_FALLBACK_REPRESENTATION and validation reference are established."
       ],
+      "fulfillment_mode": "FALLBACK_REPRESENTATION",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
-      "completion_condition": "Source provenance and intended-use rights must be sufficiently verified,\nthe selected Document Scan must satisfy the applicable Image Audit and Approved Image Asset registration requirements,\nand the resulting Approved Image Asset reference must be recorded.\n\nIf the historical RIGHTS-REQ-002 send state becomes relevant to future work,\nit must be resolved from direct transmission evidence or a new Human action;\nit must not be inferred from conflicting assistant summaries.\n\nPlacement remains a separate CPW-026 concern."
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "DEFERRED",
+      "completion_condition": "A fallback representation must be created and validated against this Requirement's Reader Purpose.\nThe resulting representation record must identify the representation type and reference, Reader Purpose validation reference, source/provenance references, institutional locator when applicable, and Evidence Boundary.\n\nIf the fallback does not preserve the original visual content, it must not be used to claim a proposition that requires direct visual inspection of that content.\n\nExternal third-party image rights activity may remain DEFERRED and does not by itself prevent fallback fulfillment.\nPlacement, Final Human Approval, Repository Integration, and Publication remain separate concerns."
     },
     {
       "requirement_id": "IMGREQ-003",
@@ -90,12 +93,16 @@
       ],
       "current_orchestration_state": "Approved Image Asset registered.\n\nAsset:\nFILE-0001-IMG-0001\n\nVersion:\nv1.0\n\nManagement Status:\nAPPROVED\n\nSource Provenance:\nVERIFIED\n\nRights Verification:\nCOMPLETE\n\nRights Status:\nCLEAR FOR INTENDED USE\n\nFormal Image Audit:\nPASS\n\nPlacement:\nNOT ESTABLISHED by this reconstruction\n\nPlacement remains governed separately under CPW-026.",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "SATISFIED",
       "resulting_asset_reference": {
         "asset_id": "FILE-0001-IMG-0001",
         "asset_version": "v1.0",
         "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0001_v1.0.pdf",
         "sha256": "3af49303bf8aae790d0b916979851e256dfaf9308d05c9a3e1f327176fabb12d"
       },
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "Source provenance is VERIFIED,\nRights Verification is COMPLETE,\nclassification / metadata / caption requirements are satisfied,\nthe exact candidate passes the applicable Formal Image Audit,\nand an Approved Image Asset is registered and bound by exact SHA-256.\n\nFor IMGREQ-003, the available canonical evidence demonstrates that this Requirement-level\ncompletion condition is satisfied by:\n\nFILE-0001-IMG-0001 v1.0\n\nSHA-256:\n3af49303bf8aae790d0b916979851e256dfaf9308d05c9a3e1f327176fabb12d\n\nPlacement is a separate CPW-026 concern and is not created or completed by this Requirement-level determination."
     },
     {
@@ -120,12 +127,16 @@
       "intended_placement_references": [],
       "current_orchestration_state": "Approved Image Asset registered.\n\nAsset:\nFILE-0001-IMG-0004\n\nVersion:\nv1.0\n\nManagement Status:\nAPPROVED\n\nSource Provenance:\nVERIFIED\n\nRights Verification:\nCOMPLETE\n\nRights Status:\nCLEAR FOR INTENDED USE\n\nHuman Rights Interpretation:\nAPPROVED\n\nFormal Image Audit:\nPASS\n\nRequirement-level Approved Asset binding:\nESTABLISHED\n\nPlacement:\nNOT ESTABLISHED\n\nCPW-025 Registration Verification migration state:\nUNDETERMINED\n\nPlacement remains governed separately under CPW-026.",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "SATISFIED",
       "resulting_asset_reference": {
         "asset_id": "FILE-0001-IMG-0004",
         "asset_version": "v1.0",
         "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0004_v1.0.png",
         "sha256": "d30ce7e2470c6c32d2ad8b1c0b1bf8e76a9d9f6326c4583e2a6e999cdfddbc48"
       },
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "Source provenance is VERIFIED,\nRights Verification is COMPLETE,\nclassification / metadata / caption requirements are satisfied,\nthe exact candidate satisfies applicable Human Visual Review requirements,\npasses the applicable Formal Image Audit,\nand an Approved Image Asset is registered and bound by exact SHA-256.\n\nFor IMGREQ-004, the available canonical evidence demonstrates that this Requirement-level\ncompletion condition is satisfied by:\n\nFILE-0001-IMG-0004 v1.0\n\nSHA-256:\nd30ce7e2470c6c32d2ad8b1c0b1bf8e76a9d9f6326c4583e2a6e999cdfddbc48\n\nPlacement and CPW-025 migration verification remain separate workflow concerns."
     },
     {
@@ -149,7 +160,11 @@
       "intended_placement_references": [],
       "current_orchestration_state": "OPTIONAL requirement.\n\nSource documents are identified and their evidentiary use is established at the Approved Research / Approved Master level.\n\nNo current selection of IMGREQ-005 for image production is established by this reconstruction.\n\nNo IMGREQ-005 Approved Image Asset is established in the current supplied repository evidence.\n\nImage-specific Rights Verification:\nNOT ESTABLISHED\n\nImage Audit:\nNOT PERFORMED / NOT ESTABLISHED\n\nApproved Image Asset Registration:\nNOT ESTABLISHED\n\nPlacement:\nNOT ESTABLISHED",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-005 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- exact source/provenance confirmation for the selected document image,\n- applicable Rights Verification,\n- Document Scan classification / metadata / caption completion,\n- applicable Image Audit PASS,\n- Approved Image Asset registration,\n- and recording of the exact resulting asset reference.\n\nIf IMGREQ-005 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     },
     {
@@ -174,7 +189,11 @@
       "intended_placement_references": [],
       "current_orchestration_state": "OPTIONAL requirement.\n\nThe two testimony versions are identified at the Approved Research / Approved Master level.\n\nSRC-009D1 provenance:\nPARTIAL\nPreferred original / institutional-custody copy not established.\n\nSRC-009D2 provenance:\nPARTIAL\nIndependent institutional custody of the original notarized document\nand exact drafting history remain unresolved.\n\nCurrent selection for image production:\nNOT ESTABLISHED\n\nImage-specific Rights Verification:\nNOT ESTABLISHED\n\nImage Audit:\nNOT PERFORMED / NOT ESTABLISHED\n\nApproved Image Asset Registration:\nNOT ESTABLISHED\n\nPlacement:\nNOT ESTABLISHED",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-006 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- exact identity and provenance confirmation for the selected document version,\n- applicable Rights Verification,\n- Document Scan classification / metadata / caption completion,\n- preservation of the 1993 / 2002 version distinction,\n- applicable Image Audit PASS,\n- Approved Image Asset registration,\n- and recording of the exact resulting asset reference.\n\nIf IMGREQ-006 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     },
     {
@@ -200,7 +219,11 @@
       "intended_placement_references": [],
       "current_orchestration_state": "OPTIONAL requirement.\n\nThe primary interview identity and archival preservation route are established at the Approved Research / Approved Master level.\n\nPrimary source:\nW. Glenn Dennis Interview\n\nDate:\n1990-11-19\n\nArchival Custodian:\nU.S. National Archives and Records Administration\n\nNARA Identifier:\n2788762\n\nLocal Identifier:\n341-ROSWELL-14\n\nArchival provenance:\nESTABLISHED / STRONG\n\nUnderlying extraordinary claims:\nUNVERIFIED\n\nCurrent selection for image production:\nNOT ESTABLISHED\n\nImage-specific Rights Verification:\nNOT ESTABLISHED\n\nImage Audit:\nNOT PERFORMED / NOT ESTABLISHED\n\nApproved Image Asset Registration:\nNOT ESTABLISHED\n\nPlacement:\nNOT ESTABLISHED",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-007 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- exact NARA record identity and provenance confirmation,\n- exact identification of the static reader-facing visual representation,\n- applicable Rights Verification,\n- Document Scan classification / metadata / caption completion,\n- preservation of the direct-experience / hearsay distinction,\n- no representation of later testimony as contemporaneous 1947 evidence,\n- applicable Image Audit PASS,\n- Approved Image Asset registration,\n- and recording of the exact resulting asset reference.\n\nIf IMGREQ-007 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     },
     {
@@ -226,7 +249,11 @@
       "intended_placement_references": [],
       "current_orchestration_state": "OPTIONAL requirement.\n\nRelevant source identities and their evidentiary use are established at the Approved Research / Approved Master level.\n\nSRC-005:\nOfficial Government Investigation / Retrospective Reconstruction.\n\nSRC-013:\nRetrospective Participant / Technical Analysis.\n\nExact image / page candidate for IMGREQ-008:\nNOT SELECTED / NOT ESTABLISHED\n\nCurrent selection for image production:\nNOT ESTABLISHED\n\nImage-specific Rights Verification:\nNOT ESTABLISHED\n\nImage Audit:\nNOT PERFORMED / NOT ESTABLISHED\n\nApproved Image Asset Registration:\nNOT ESTABLISHED\n\nPlacement:\nNOT ESTABLISHED",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-008 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- selection and exact identification of the document / page / record to be represented,\n- source and provenance confirmation,\n- applicable Rights Verification,\n- Document Scan classification / metadata / caption completion,\n- explicit preservation of the distinction between contemporary evidence and later reconstruction,\n- explicit preservation of the distinction between MOGUL compatibility and specific Flight 4 identity,\n- applicable Image Audit PASS,\n- Approved Image Asset registration,\n- and recording of the exact resulting asset reference.\n\nIf IMGREQ-008 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     },
     {
@@ -248,7 +275,11 @@
       "intended_placement_references": [],
       "current_orchestration_state": "OPTIONAL requirement.\n\nThe official report identity and its evidentiary use are established at the Approved Research / Approved Master level.\n\nSource:\nSRC-001\n\nReport:\nGAO NSIAD-95-187\n\nPublication Date:\n1995-07-28\n\nSource Type:\nOfficial Document / Government Investigation\n\nSource-level reliability:\nA\n\nHistorical Image Requirement classification:\nDocument Scan / Optional Visual / Conditional Image Audit\n\nExact page / image candidate:\nNOT SELECTED / NOT ESTABLISHED\n\nCurrent selection for image production:\nNOT ESTABLISHED\n\nImage-specific Rights Verification:\nNOT ESTABLISHED\n\nImage Audit:\nNOT PERFORMED / NOT ESTABLISHED\n\nApproved Image Asset Registration:\nNOT ESTABLISHED\n\nPlacement:\nNOT ESTABLISHED",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-009 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- exact GAO report page / section selection,\n- exact source and provenance confirmation,\n- applicable Rights Verification,\n- Document Scan classification / metadata / caption completion,\n- preservation of the distinction between KNOWN DESTROYED and NOT LOCATED records,\n- preservation of the distinction between documented record loss and inferred concealment motive,\n- applicable Image Audit PASS,\n- Approved Image Asset registration,\n- and recording of the exact resulting asset reference.\n\nIf IMGREQ-009 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     },
     {
@@ -279,12 +310,16 @@
       "intended_placement_references": [],
       "current_orchestration_state": "Approved Image Asset registered.\n\nAsset:\nFILE-0001-IMG-0003\n\nVersion:\nv1.0\n\nClassification:\nHistorical Photo\n\nManagement Status:\nAPPROVED\n\nSource Provenance:\nVERIFIED WITH EXPLICIT LINEAGE LIMITATION\n\nVerified scope:\nadopted local candidate\n→ identified Wikimedia Commons digital-file identity\n→ documented source attribution chain.\n\nNot independently established:\noriginal negative\n→ intermediate scan\n→ Commons derivative complete lineage.\n\nRights Verification:\nCOMPLETE\n\nRights Status:\nCLEAR FOR INTENDED USE\n\nHuman Rights Interpretation:\nAPPROVED\n\nHuman Visual Review:\nPASS\nfor the same exact candidate SHA-256.\n\nFormal Image Audit:\nPASS\n\nRegistration Eligibility:\nELIGIBLE at pre-registration audit, followed by Approved Image Asset registration.\n\nRequirement-level Approved Asset binding:\nESTABLISHED\n\nExternal working Formal Registration Verification evidence:\nPOSITIVE / COMPLETE\n\nCanonical CPW-025 migration binding / closure:\nNOT ESTABLISHED BY THIS RECONSTRUCTION\n\nPlacement:\nNOT ESTABLISHED\n\nPlacement remains governed separately under CPW-026.",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "SATISFIED",
       "resulting_asset_reference": {
         "asset_id": "FILE-0001-IMG-0003",
         "asset_version": "v1.0",
         "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0003_v1.0.png",
         "sha256": "24ffbf62f33e358e180a3c942157259b87b2595f967464c4f522ba7ef7558926"
       },
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "Source provenance is verified within its explicitly recorded scope,\nRights Verification is COMPLETE,\nclassification / metadata / caption requirements are satisfied,\nthe exact candidate satisfies applicable Human Visual Review requirements,\npasses the applicable Formal Image Audit,\nand an Approved Image Asset is registered and bound by exact SHA-256.\n\nThe reader-facing evidence boundary must continue to state that\nthe visible document has not yielded a reproducible definitive\ntranscription of its disputed critical wording.\n\nFor IMGREQ-010, the available canonical repository evidence demonstrates\nthat this Requirement-level completion condition is satisfied by:\n\nFILE-0001-IMG-0003 v1.0\n\nSHA-256:\n24ffbf62f33e358e180a3c942157259b87b2595f967464c4f522ba7ef7558926\n\nCPW-025 migration verification and CPW-026 Placement remain separate workflow concerns."
     },
     {
@@ -315,12 +350,16 @@
       ],
       "current_orchestration_state": "Approved Image Asset registered.\n\nAsset:\nFILE-0001-IMG-0002\n\nVersion:\nv1.0\n\nClassification:\nDiagram\n\nManagement Status:\nAPPROVED\n\nAsset Origin:\nProjectORIGIN-produced diagram\n\nProduction Method:\nHand-authored deterministic standalone SVG using native vector shapes and inspectable text\n\nSource Provenance:\nVERIFIED\n\nRights Verification:\nCOMPLETE\n\nRights Status:\nCLEAR FOR INTENDED USE\n\nThird-party visual material:\nNONE\n\nFormal Image Audit:\nPASS\n\nHuman Visual Review:\nPASS\n\nApproved Image Asset Eligibility:\nELIGIBLE at Formal Image Audit, followed by Approved Image Asset registration.\n\nRequirement-level Approved Asset binding:\nESTABLISHED\n\nFormal Registration Verification evidence:\nNOT RECOVERED in the supplied evidence set\n\nCPW-025 Registration Verification / mechanical-validation migration state:\nUNDETERMINED\n\nIntended Placement:\nFILE-0001_CLASSIFIED_v1.2.md\nEVIDENCE 04｜残骸の特徴\n[ COMPARISON VISUAL ]\n\nPlacement Status:\nNOT PERFORMED\n\nPlacement remains governed separately under CPW-026.",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "SATISFIED",
       "resulting_asset_reference": {
         "asset_id": "FILE-0001-IMG-0002",
         "asset_version": "v1.0",
         "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.svg",
         "sha256": "9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905"
       },
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "Source-bound comparison content is established,\nthe Diagram preserves the required evidence boundary,\nRights Verification is COMPLETE,\nclassification / metadata / caption requirements are satisfied,\nthe exact candidate satisfies applicable Human Visual Review requirements,\npasses the applicable Formal Image Audit,\nand an Approved Image Asset is registered and bound by exact SHA-256.\n\nThe Diagram must continue to preserve:\n- material compatibility does not establish direct identification\n- similarity does not prove provenance\n- Brazel's description does not establish confirmed specific Project MOGUL Flight 4 debris\n- Project MOGUL existence does not directly prove that the Foster Ranch debris was MOGUL\n- the Diagram is analytical explanatory material, not a Historical Evidence Asset\n\nFor IMGREQ-011, the available canonical repository evidence demonstrates\nthat this Requirement-level completion condition is satisfied by:\n\nFILE-0001-IMG-0002 v1.0\n\nSHA-256:\n9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905\n\nCPW-025 migration verification and CPW-026 Placement remain separate workflow concerns."
     },
     {
@@ -349,7 +388,11 @@
         "Final Composite Production is not authorized.",
         "IMGREQ-002 is not an Approved Image Asset and its source / rights state remains unresolved."
       ],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-012 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- IMGREQ-002 to be represented by an eligible Approved Image Asset\n- IMGREQ-004 to remain represented by an eligible Approved Image Asset\n- exact traceability for every embedded historical source asset\n- deterministic non-generative comparison composition\n- preservation of the approved neutral comparison framing\n- explicit disclosure that the comparison layout itself is not Historical Evidence\n- classification / metadata / caption completion\n- applicable Human Visual Review\n- applicable Formal Image Audit PASS\n- Approved Image Asset registration\n- recording of the exact resulting asset reference\n\nMandatory evidentiary boundaries must remain:\n- RAAF announcement ≠ proof that an extraterrestrial craft was recovered\n- Newspaper report ≠ physical evidence of the recovered object\n- Fort Worth photograph ≠ independent proof of exact debris provenance\n- Visual difference ≠ proof of substitution\n- Chronological sequence ≠ proof of cover-up\n- Fort Worth displayed material ≠ automatically confirmed Foster Ranch debris\n- Comparison layout ≠ Historical Evidence\n\nIf IMGREQ-012 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     },
     {
@@ -370,7 +413,11 @@
       "intended_placement_references": [],
       "current_orchestration_state": "OPTIONAL requirement.\n\nRelevant authentication-status analysis is established\nat the Approved Research / Approved Master level.\n\nSource:\nSRC-011\n\nSource Type:\nGovernment Investigation / Archival Review\n\nCurrent Documentary Classification:\nDISPUTED / UNSUPPORTED\n\nAuthentication as actual Executive Branch documentation:\nNOT ESTABLISHED\n\nRelated “MJ Twelve” message:\nAir Force forgery determination is recorded in the approved research chain.\n\nIndependently authenticated original documentary provenance:\nNOT ESTABLISHED\n\nHistorical Image Requirement classification:\nDocument Scan / Optional Visual / Conditional Image Audit\n\nExact document / image candidate:\nNOT SELECTED / NOT ESTABLISHED\n\nCurrent selection for image production:\nNOT ESTABLISHED\n\nImage-specific Rights Verification:\nNOT ESTABLISHED\n\nImage Audit:\nNOT PERFORMED / NOT ESTABLISHED\n\nApproved Image Asset Registration:\nNOT ESTABLISHED\n\nPlacement:\nNOT ESTABLISHED",
       "blocking_reasons": [],
+      "fulfillment_mode": "IMAGE_ASSET",
+      "fulfillment_status": "PENDING",
       "resulting_asset_reference": null,
+      "resulting_representation_reference": null,
+      "external_asset_disposition": "NOT_APPLICABLE",
       "completion_condition": "If IMGREQ-014 is selected for production or becomes required by a separately established dependency, completion requires:\n\n- exact identification of the selected MJ-12 document / version / reproduction candidate\n- exact source and reproduction provenance confirmation\n- explicit preservation of its disputed authentication status\n- applicable Rights Verification\n- Document Scan classification / metadata / caption completion\n- no presentation that implies authenticated government provenance where none is established\n- applicable Image Audit PASS\n- Approved Image Asset registration\n- recording of the exact resulting asset reference\n\nThe reader-facing evidence boundary must continue to state that:\n\n- disputed MJ-12 documents exist as claim-history material\n- their existence does not authenticate their contents\n- government / archival review has not established them as genuine Executive Branch records\n- independently authenticated original provenance remains absent\n- and they are not confirmed evidence of a Roswell extraterrestrial recovery program\n\nIf IMGREQ-014 remains unselected as an OPTIONAL visual,\nits non-completion alone SHALL NOT block CPW-019 exit,\nFinal Flow, or Publication unless a separate applicable authority creates a dependency on it."
     }
   ]
