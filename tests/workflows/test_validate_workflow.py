@@ -540,15 +540,18 @@ class WorkflowValidatorTests(unittest.TestCase):
         self.assert_finding(definition, "SOURCE-REVIEW-PACKAGE-BOUNDARY")
 
 
-    def test_69_successor_v13_candidate_passes_semantics(self):
+    def test_69_successor_v13_adopted_passes_semantics(self):
         definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
         self.assertEqual("v1.3", definition["workflow_version"])
-        self.assertEqual("PROPOSED", definition["status"])
+        self.assertEqual("ADOPTED", definition["status"])
         self.assertEqual([], VALIDATOR.validate_semantics(definition))
 
-    def test_70_successor_v13_candidate_passes_governance(self):
+    def test_70_successor_v13_current_passes_governance_with_v14_candidate_present(self):
         definition = json.loads(SUCCESSOR.read_text(encoding="utf-8"))
-        errors, _ = VALIDATOR.validate_governance(definition, ROOT)
+        self.assertEqual("ADOPTED", definition["status"])
+        errors, _ = VALIDATOR.validate_governance(
+            definition, ROOT, context="current"
+        )
         self.assertEqual([], errors)
 
     def test_71_successor_v13_binds_register_v11(self):

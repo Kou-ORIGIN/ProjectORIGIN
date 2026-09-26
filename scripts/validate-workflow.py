@@ -905,12 +905,13 @@ def repository_rule_declared_versions(text: str) -> tuple[str, str]:
 
 
 def observe_repository_rule(text: str, expected: str, context: str):
+    # Keep document candidate identity distinct from explicit Current Official selection.
     entries = repository_rule_entries(text)
     _require(expected in entries, "expected Repository Rule version entry absent")
     document_version, current_version = repository_rule_declared_versions(text)
     _require(
-        document_version == expected,
-        "Repository Rule document Version does not match expected Workflow-era version",
+        document_version in entries,
+        "Repository Rule document Version entry absent",
     )
 
     block = entries[expected]
@@ -943,22 +944,48 @@ def observe_repository_rule(text: str, expected: str, context: str):
             approved and not candidate and current_version == expected,
             "Repository Rule is not the explicitly adopted Current Official version",
         )
-        if expected == "v1.3":
+
+        if document_version != expected:
+            document_block = entries[document_version]
+            document_candidate = (
+                "CANDIDATE / NOT FORMALLY ADOPTED" in document_block
+            )
+            document_approved = (
+                "Human Formal Adoption Decision = `APPROVED`" in document_block
+            )
+            document_not_performed = "NOT PERFORMED" in document_block
+            _require(
+                document_candidate
+                and not document_approved
+                and document_not_performed
+                and current_version != document_version,
+                "Repository Rule document Version may differ from current only for an explicit non-adopted candidate successor",
+            )
+
+        predecessor = {
+            "v1.3": "v1.2",
+            "v1.4": "v1.3",
+        }.get(expected)
+        if predecessor is not None:
             _require(
                 re.search(
-                    r"^Historical Official Version:\s*v1\.2\s*$",
+                    rf"^Historical Official Version:\s*{re.escape(predecessor)}\s*$",
                     block,
                     re.MULTILINE,
                 ) is not None,
-                "Repository Rule v1.3 must explicitly retain v1.2 as Historical Official Version",
+                f"Repository Rule {expected} must explicitly retain {predecessor} as Historical Official Version",
             )
             _require(
-                "v1.2" in entries,
-                "Repository Rule v1.3 historical predecessor entry absent",
+                predecessor in entries,
+                f"Repository Rule {expected} historical predecessor entry absent",
             )
         return expected
 
     if context in {"candidate", "historical"}:
+        _require(
+            document_version == expected,
+            "Repository Rule document Version does not match expected Workflow-era version",
+        )
         _require(
             candidate or approved,
             "expected Repository Rule entry has no explicit candidate/adoption state",
@@ -966,8 +993,6 @@ def observe_repository_rule(text: str, expected: str, context: str):
         return expected
 
     raise ValueError("unknown Repository Rule observation context")
-
-
 
 def validate_governance(
     definition: dict[str, Any],
