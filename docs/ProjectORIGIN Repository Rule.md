@@ -1,7 +1,7 @@
 **ProjectORIGIN Repository Rule**
 Version: v1.4
 **Status:** Official
-**Current Official Version:** v1.3
+**Current Official Version:** v1.4
 **Project:** ProjectORIGIN
 
 ---
@@ -4840,10 +4840,10 @@ Fallback Representation Persistence Contract
 - Added the narrow pre-Final-Human-Approval write boundary for the CPW-020 candidate and CPW-022 validation artifacts.
 - Preserved separation from Approved Image Asset Registration, Image Audit PASS, Final Human Approval, Repository Integration, Database Integration, Publication Status, and Publication.
 
-**Status:** CANDIDATE / NOT FORMALLY ADOPTED
-Human Formal Adoption Decision = `NOT PERFORMED`.
-Formal Adoption Date: NOT PERFORMED
-
+**Status:** OFFICIAL. Current Official Version is v1.4. Formally adopted by Human Formal Adoption Decision = `APPROVED`.
+Historical Official Version: v1.3
+Human Formal Adoption Decision = `APPROVED`.
+Formal Adoption Date: 2026-09-26
 v1.3
 Date: 2026-09-20
 CPW-026 Placement Transaction Persistence Contract

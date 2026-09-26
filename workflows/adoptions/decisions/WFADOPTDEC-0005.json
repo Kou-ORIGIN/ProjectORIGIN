@@ -1,0 +1,142 @@
+{
+  "record_format_version": "v1.0",
+  "decision_id": "WFADOPTDEC-0005",
+  "decision_type": "WORKFLOW_FORMAL_ADOPTION",
+  "decision_value": "AUTHORIZE_ADOPTION",
+  "target": {
+    "workflow_path": "workflows/case-production-workflow_v1.4.json",
+    "workflow_version": "v1.4",
+    "definition_format_version": "v1.0",
+    "candidate_definition_sha256": "fb3ba04d5f386da423994235a9999e9b608a94cff95699c65ee0004f56341474",
+    "candidate_git_commit_sha": "8f7f3beb0703771bdfd4beb9a0a73a04af5fc246"
+  },
+  "human_authority": {
+    "authority_type": "EXPLICIT_HUMAN_DECISION",
+    "human_actor_id": "HUMAN-0001"
+  },
+  "validation_evidence": {
+    "definition_sha256": "fb3ba04d5f386da423994235a9999e9b608a94cff95699c65ee0004f56341474",
+    "result": "PASS_WITH_WARNINGS",
+    "json_integrity": "PASS",
+    "schema_validation": "PASS",
+    "semantic_validation": "PASS",
+    "governance_compatibility": "PASS",
+    "tests": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0,
+      "expected_failures": 0
+    },
+    "validator_exit_code": 0,
+    "controlled_artifact_integrity": "PASS",
+    "controlled_artifacts": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "2e949c83e8f665b1c7d5e34c27e38b3f28a4ebf00006c3fc6909d13afcea4f4d"
+      },
+      {
+        "path": "docs/Audit Rule.md",
+        "sha256": "8f92e7a80aca02b660a83419299d35f516edd67daa6033157bb8be7376f59252"
+      },
+      {
+        "path": "docs/Case File Template.md",
+        "sha256": "70ed9d7dbd790f7984b4067bf48c32bfac079ef91513ba54d4433e3d3bb28e5e"
+      },
+      {
+        "path": "docs/Database Rule.md",
+        "sha256": "5d53d6dab7709be520ef41098b39722a3e56c879b2b3a25aade917cf9f62eb6b"
+      },
+      {
+        "path": "docs/Database Schema.md",
+        "sha256": "5084dc8929b43b33d87aab28bee9d1fa9c22adf3c96e7a6dafe4cd5ac707082e"
+      },
+      {
+        "path": "docs/Image Rule.md",
+        "sha256": "33a0439ace520a597e9fe643f8062c2f64990b1dff9c5e7a90dc5cd3e8bba862"
+      },
+      {
+        "path": "docs/Operating Manual.md",
+        "sha256": "dede99b81428c822784eca606270c07f1fed55aaf8e44b95e527fba4e3184a27"
+      },
+      {
+        "path": "docs/ProjectORIGIN Publication Bible.md",
+        "sha256": "fda7d02011825c11734bad0616d3989cf9faebb15f2a019df77de53ea0a75cdc"
+      },
+      {
+        "path": "docs/ProjectORIGIN Repository Rule.md",
+        "sha256": "132fef30b4cd62c8775abcf817002c4040ea8d46f1d880351653ed4669fca185"
+      },
+      {
+        "path": "schemas/cases/fallback-representation-validation.schema.json",
+        "sha256": "ae044115d294cadf9c90518067f76d9e30e17f0fd314e82be1599e01a31fa234"
+      },
+      {
+        "path": "schemas/workflows/case-production-workflow-definition.schema.json",
+        "sha256": "6d147f041dec4e0325d78b2aba299c22ba7e82424087c5b8ca2749a6b0ed1ba3"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-decision.schema.json",
+        "sha256": "f999c5429ceb57eb08d21d7291318b5d19069756ae3cfcd5166f84bc3c5d3af4"
+      },
+      {
+        "path": "schemas/workflows/workflow-adoption-record.schema.json",
+        "sha256": "9d366d4b11418b00c1f01f709fb85f8f690c14b0bb14aee5a167f4c366c70081"
+      },
+      {
+        "path": "schemas/workflows/workflow-deprecation-record.schema.json",
+        "sha256": "54ca50cc50fffb10e7488c8d65ad09edf2d977b779e2ce377fb571d0fa1b437f"
+      },
+      {
+        "path": "scripts/validate-fallback-representation.py",
+        "sha256": "c47f9492f9e398be6543b27ac802dbfcb8e366d8ee61a327f567f662d5096728"
+      },
+      {
+        "path": "scripts/validate-workflow.py",
+        "sha256": "54cca0d40d8fc85d4fd8ed060633e5aa60d5511d0ee51d58954363ca48a41312"
+      },
+      {
+        "path": "tests/cases/test_validate_fallback_representation.py",
+        "sha256": "dba521a09fe8d6fe4de436d7e523833bb25575500c55b2c26da204cd8ac49d08"
+      },
+      {
+        "path": "tests/workflows/test_validate_workflow.py",
+        "sha256": "51ca5b08aab34ac339add109d03eb909ce0659fda201cfd46bdc3b8edca3a872"
+      }
+    ],
+    "warnings": [
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Operating Manual.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Rule.md",
+        "blocking": false
+      },
+      {
+        "id": "GOVERNANCE-VERSION-UNDETERMINED",
+        "message": "VERSION OBSERVATION UNDETERMINED for docs/Database Schema.md",
+        "blocking": false
+      },
+      {
+        "id": "KNOWN-BASELINE-WORKFLOW-MODULE-REGRESSION",
+        "message": "Workflow unittest module remains FAIL with 52 parsed failures; Human-approved baseline-aware classification found no new failure class, no historical class-count increase, no new WorkflowValidatorTests identity, and no remediation/v1.4/current-era targeted failure.",
+        "blocking": false
+      },
+      {
+        "id": "EXACT-HISTORICAL-TEST-NAME-EQUIVALENCE-NOT-PROVEN",
+        "message": "Historical evidence retains class counts and root-cause classification, not the complete exact historical test-name set.",
+        "blocking": false
+      },
+      {
+        "id": "APPLICABLE-TEST-COUNT-SCOPE",
+        "message": "The tests field records the 15 applicable passing targeted checks (8 remediation/Workflow-v1.4/current-era plus 7 fallback-representation validator tests); the separate 317-test workflow module remains FAIL with 52 documented baseline-pattern failures and is retained above as nonblocking evidence.",
+        "blocking": false
+      }
+    ]
+  },
+  "decided_at": "2026-09-26T13:49:55Z",
+  "rationale": "Human approval explicitly authorized the coordinated Fallback Representation Governance Reconciliation Formal Adoption for Workflow v1.4 candidate commit 8f7f3beb0703771bdfd4beb9a0a73a04af5fc246, coordinated with Image Rule v1.5.1 and Repository Rule v1.4 formal cutover. Baseline-aware candidate revalidation completed PASS_WITH_WARNINGS. The workflow unittest module remains FAIL with 52 documented baseline-pattern failures and is retained as non-candidate-specific evidence under the Human-approved clarification. This record does not authorize Git add/commit/push, FILE-0001 fallback artifact creation, IMGREQ-001/002 SATISFIED transition, Final Human Approval, or Publication."
+}

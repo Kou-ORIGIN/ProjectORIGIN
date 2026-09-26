@@ -1013,7 +1013,7 @@ Actual Image Asset laneでは、従来どおりApplicableなRights、Human Visua
 
 ### Formal Adoption Date
 
-NOT PERFORMED
+2026-09-26
 
 ### Changes
 
@@ -1023,9 +1023,10 @@ NOT PERFORMED
 
 ### Status
 
-CANDIDATE / NOT FORMALLY ADOPTED
-Human Formal Adoption Decision = `NOT PERFORMED`.
-
+OFFICIAL。Current Official Versionはv1.5.1とする。Human Formal Adoption Decision = `APPROVED`により正式採用された。
+Historical Official Version: v1.5
+以下のv1.5以前のVersion Historyは変更しない。
+Human Formal Adoption Decision = `APPROVED`.
 ## v1.5
 
 ### Image Throughput Simplification / External Rights Non-Blocking Model
