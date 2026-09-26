@@ -42,7 +42,7 @@ EXPECTED_GOVERNANCE = {
     "docs/Database Rule.md": "v3.0",
     "docs/Database Schema.md": "v1.3",
 }
-SUPPORTED_CURRENT_WORKFLOW_VERSIONS = {"v1.0", "v1.1", "v1.2", "v1.3"}
+SUPPORTED_CURRENT_WORKFLOW_VERSIONS = {"v1.0", "v1.1", "v1.2", "v1.3", "v1.4"}
 
 
 EXPECTED_GATE_DECISIONS = {

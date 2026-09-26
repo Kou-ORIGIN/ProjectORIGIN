@@ -1611,11 +1611,11 @@ class WorkflowV12EraCompatibilityTests(unittest.TestCase):
 
     def test_supported_current_workflow_eras_are_explicit(self):
         self.assertEqual(
-            {"v1.0", "v1.1", "v1.2", "v1.3"},
+            {"v1.0", "v1.1", "v1.2", "v1.3", "v1.4"},
             VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
         )
         self.assertNotIn(
-            "v1.4",
+            "v1.5",
             VALIDATOR.SUPPORTED_CURRENT_WORKFLOW_VERSIONS,
         )
 
