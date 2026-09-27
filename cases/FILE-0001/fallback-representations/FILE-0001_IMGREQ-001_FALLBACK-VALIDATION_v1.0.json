@@ -1,0 +1,21 @@
+{
+  "validation_format_version": "v1.0",
+  "artifact_type": "FALLBACK_REPRESENTATION_VALIDATION",
+  "case_id": "FILE-0001",
+  "requirement_id": "IMGREQ-001",
+  "representation_type": "DOCUMENT_SOURCE_CARD",
+  "representation_version": "v1.0",
+  "representation_reference": "cases/FILE-0001/fallback-representations/FILE-0001_IMGREQ-001_FALLBACK_v1.0.md",
+  "representation_sha256": "33e874e59f0a19a8d6121c0f4a27fd1a7bf2d2995408c9e138a24b63d481f841",
+  "reader_purpose_reference": "cases/FILE-0001/image-requirements.json#IMGREQ-001",
+  "reader_purpose_result": "SATISFIED",
+  "validation_basis": "The Document Source Card identifies the 1947-07-09 Roswell Daily Record Brazel reporting, binds SRC-007 and the Approved Research reproduction/transcription access route, and preserves the reproduction-level provenance limitation and Evidence Boundary. Reader Purpose coverage is limited to traceable access to the contemporary published record and does not convert reported statements into independently verified event facts or assert unsupported original visual details.",
+  "source_references": [
+    "SRC-007",
+    "FILE-0001_RESEARCH_v1.0.md — SRC-007",
+    "https://www.ufologie.patrickgross.org/rw/p/roswelldailyrecord9jul1947.htm"
+  ],
+  "institutional_locator": null,
+  "evidence_boundary": "The newspaper identity and article text are substantially traceable, but the current digital route is reproduction-level rather than established institutional custody. This fallback does not authenticate every original visual feature, independently prove every reported statement, establish specific Project MOGUL identity or extraterrestrial origin, resolve third-party Rights, create an Approved Image Asset, establish Image Audit PASS, placement, Final Human Approval, Repository Integration, or Publication.",
+  "validation_result": "VALIDATED_FALLBACK_REPRESENTATION"
+}

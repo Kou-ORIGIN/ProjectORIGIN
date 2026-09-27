@@ -1,0 +1,21 @@
+{
+  "validation_format_version": "v1.0",
+  "artifact_type": "FALLBACK_REPRESENTATION_VALIDATION",
+  "case_id": "FILE-0001",
+  "requirement_id": "IMGREQ-002",
+  "representation_type": "DOCUMENT_SOURCE_CARD",
+  "representation_version": "v1.0",
+  "representation_reference": "cases/FILE-0001/fallback-representations/FILE-0001_IMGREQ-002_FALLBACK_v1.0.md",
+  "representation_sha256": "f51354c9ebf0b7251e3c1be23d0be54e1be13735dc8cb594d319b0c45be8cd4f",
+  "reader_purpose_reference": "cases/FILE-0001/image-requirements.json#IMGREQ-002",
+  "reader_purpose_result": "SATISFIED",
+  "validation_basis": "The Document Source Card identifies the 1947-07-08 Roswell Daily Record RAAF announcement and supplies the Approved Research direct image-reproduction locator so the reader can inspect the contemporary record. Validation is limited to traceability and inspection access: the card does not itself preserve the original newspaper image, does not claim original-layout or institutional-custody provenance, and does not treat the newspaper record as proof that an extraterrestrial or actual disc-shaped craft was recovered.",
+  "source_references": [
+    "SRC-007",
+    "FILE-0001_RESEARCH_v1.0.md — SRC-007",
+    "https://commons.wikimedia.org/wiki/File:RoswellDailyRecordJuly8,1947.jpg"
+  ],
+  "institutional_locator": null,
+  "evidence_boundary": "This is a locator-and-context fallback. Visual confirmation depends on reader inspection of the identified reproduction route, not on embedded Approved Image Asset bytes. The newspaper record does not prove extraterrestrial or actual disc-shaped craft recovery or independently establish every statement in the announcement. Stable original/institutional newspaper provenance remains incomplete; no exact specific NARA locator, NARA response, permission, or resolved RIGHTS-REQ-002 send state is inferred. This fallback does not establish Rights Verification, Approved Image Asset status, Image Audit PASS, placement, Final Human Approval, Repository Integration, or Publication.",
+  "validation_result": "VALIDATED_FALLBACK_REPRESENTATION"
+}
