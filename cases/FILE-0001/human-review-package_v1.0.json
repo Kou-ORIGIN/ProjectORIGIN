@@ -1,0 +1,331 @@
+{
+  "artifact_type": "HUMAN_REVIEW_PACKAGE",
+  "case_id": "FILE-0001",
+  "package_version": "v1.0",
+  "source_step": "CPW-027",
+  "package_status": "CREATED_NOT_HUMAN_APPROVED",
+  "workflow_context": {
+    "workflow_id": "PROJECTORIGIN-CASE-PRODUCTION-WORKFLOW",
+    "workflow_version": "v1.4",
+    "final_flow_result": "PASS"
+  },
+  "snapshot_contract": {
+    "reference_only": true,
+    "version_bound": true,
+    "immutable": true,
+    "material_change_requires_new_version": true
+  },
+  "validation_context": {
+    "validated_at": "2026-09-30T14:52:43Z",
+    "repository_branch": "main",
+    "git_commit": "959b686bc16507f541074bbb003c02af112229ac",
+    "git_parent": "d81fe076a00d907d2d6c8d08cb8b05d1e2a09b2f",
+    "live_origin_main": "959b686bc16507f541074bbb003c02af112229ac",
+    "pre_write_working_tree_and_index": "CLEAN",
+    "repository_wide_full_test_suite_pass_claim": false
+  },
+  "publication_artifact_references": {
+    "approved_master": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_MASTER_v1.0.md",
+      "sha256": "a9c0aaa40cc7d7657b6467894b04e6998b59ddc69f772f1cb3b0e803dc689cce",
+      "artifact_type": "MASTER",
+      "artifact_version": "v1.0"
+    },
+    "free": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_FREE_v1.1.md",
+      "sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0",
+      "artifact_type": "FREE",
+      "artifact_version": "v1.1"
+    },
+    "classified": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_CLASSIFIED_v1.2.md",
+      "sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994",
+      "artifact_type": "CLASSIFIED",
+      "artifact_version": "v1.2"
+    }
+  },
+  "applicable_audit_references": {
+    "master_audit": {
+      "location_kind": "LOCAL_EXTERNAL_EVIDENCE",
+      "absolute_path_at_validation": "/Users/uchikurakou/Downloads/FILE-0001_MASTER_AUDIT-003.md",
+      "sha256": "4e06ecb23c1ffb70465b2b9c418f82ae35a91db6af182353a0188e9ec31faa25",
+      "reference_id": "FILE-0001-MASTER-AUDIT-003",
+      "audit_target": "FILE-0001_MASTER_v1.0_DRAFT.md",
+      "target_state": "v1.0-draft-revision02",
+      "result": "PASS",
+      "re_audit_required": false,
+      "production_side_adoption_bridge_to_current_approved_master": "ESTABLISHED",
+      "direct_current_approved_master_sha_audit_binding": "NOT_ESTABLISHED",
+      "direct_current_approved_master_sha_audit_binding_inferred": false
+    },
+    "free_audit": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_FREE_v1.1_AUDIT_RESULT_RECORD.md",
+      "sha256": "e103624a4b77dee2f4349b56427017f2edf3ee4b2ff317a360b25dfd4c1da0dd",
+      "result": "PASS",
+      "target_artifact_sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0"
+    },
+    "classified_re_audit": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_CLASSIFIED_v1.2_RE-AUDIT_RESULT_RECORD.md",
+      "sha256": "ae3e5c640f8e0289f1aeb02be46747806d4c66fbef432ad89eb461be10b005d2",
+      "result": "PASS",
+      "target_artifact_sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994"
+    },
+    "final_flow_audit": {
+      "repository_path": "cases/FILE-0001/audit/FILE-0001_FINAL-FLOW-AUDIT_v1.0.md",
+      "sha256": "a26bb415f079aa96971c122afeb1ff10e1dce0a0846e3ac0d2cfb32291354d43",
+      "artifact_type": "FINAL_FLOW_AUDIT",
+      "artifact_version": "v1.0",
+      "result": "PASS"
+    }
+  },
+  "human_read_review_references": {
+    "free": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_FREE_v1.1_HUMAN_READ_REVIEW_RECORD.md",
+      "sha256": "ea67da6edd1dedf283ddaedfb4580107fef129ca49e9e96f8d0dcd03aa3d934e",
+      "result": "PASS",
+      "target_artifact_sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0"
+    },
+    "classified": {
+      "location_kind": "AUDIT_WORKSPACE",
+      "workspace_relative_path": "FILE-0001_CLASSIFIED_v1.2_HUMAN_READ_REVIEW_RECORD.md",
+      "sha256": "a1a1767dcdc136994f6af819aff346a403c3bd327c05265a61fd8d9f85507b1b",
+      "result": "PASS",
+      "target_artifact_sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994"
+    }
+  },
+  "image_fulfillment_references": {
+    "image_requirement_register": {
+      "repository_path": "cases/FILE-0001/image-requirements.json",
+      "sha256": "38b7d18c46915fbd6bb62c1a8b0bf7efc497216e4a8a3a14af6721fe686f01c5",
+      "required_satisfied_count": 6,
+      "required_total": 6,
+      "canonical_validator_result": "PASS"
+    },
+    "validated_fallback_representations": [
+      {
+        "requirement_id": "IMGREQ-001",
+        "representation_reference": {
+          "repository_path": "cases/FILE-0001/fallback-representations/FILE-0001_IMGREQ-001_FALLBACK_v1.0.md",
+          "sha256": "33e874e59f0a19a8d6121c0f4a27fd1a7bf2d2995408c9e138a24b63d481f841"
+        },
+        "validation_reference": {
+          "repository_path": "cases/FILE-0001/fallback-representations/FILE-0001_IMGREQ-001_FALLBACK-VALIDATION_v1.0.json",
+          "sha256": "89a8cccd082c4ae267de2c930a146341314a338558c0d96eb2085f97b17c16b3"
+        },
+        "reader_purpose_result": "SATISFIED",
+        "validation_result": "VALIDATED_FALLBACK_REPRESENTATION",
+        "external_asset_disposition": "DEFERRED"
+      },
+      {
+        "requirement_id": "IMGREQ-002",
+        "representation_reference": {
+          "repository_path": "cases/FILE-0001/fallback-representations/FILE-0001_IMGREQ-002_FALLBACK_v1.0.md",
+          "sha256": "f51354c9ebf0b7251e3c1be23d0be54e1be13735dc8cb594d319b0c45be8cd4f"
+        },
+        "validation_reference": {
+          "repository_path": "cases/FILE-0001/fallback-representations/FILE-0001_IMGREQ-002_FALLBACK-VALIDATION_v1.0.json",
+          "sha256": "3d748f59aeee64ec10bce1f3e0e9dd9178e89d88c6b56404a4224723a53a7183"
+        },
+        "reader_purpose_result": "SATISFIED",
+        "validation_result": "VALIDATED_FALLBACK_REPRESENTATION",
+        "external_asset_disposition": "DEFERRED"
+      }
+    ],
+    "approved_image_assets": [
+      {
+        "requirement_id": "IMGREQ-003",
+        "asset_id": "FILE-0001-IMG-0001",
+        "asset_version": "v1.0",
+        "asset_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0001_v1.0.pdf",
+          "sha256": "3af49303bf8aae790d0b916979851e256dfaf9308d05c9a3e1f327176fabb12d"
+        },
+        "metadata_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0001_v1.0.metadata.json",
+          "sha256": "0521289695fbadd63826344a59f33728bd9b61ee647c9e1a06ce51255279edb8"
+        },
+        "image_audit_reference": {
+          "repository_path": "cases/FILE-0001/audit/FILE-0001-IMG-0001_IMAGE-AUDIT_v1.0.md",
+          "sha256": "7af3cfc338d3d312aff5f5497b34b465a1f1391725b55c49c460387fa4c96402"
+        },
+        "management_status": "APPROVED",
+        "image_audit_result": "PASS"
+      },
+      {
+        "requirement_id": "IMGREQ-004",
+        "asset_id": "FILE-0001-IMG-0004",
+        "asset_version": "v1.0",
+        "asset_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0004_v1.0.png",
+          "sha256": "d30ce7e2470c6c32d2ad8b1c0b1bf8e76a9d9f6326c4583e2a6e999cdfddbc48"
+        },
+        "metadata_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0004_v1.0.metadata.json",
+          "sha256": "e5896538a9fcf7323245d2cbda3141a8ced355e68c2adf4ab33ef9216f7d7e07"
+        },
+        "image_audit_reference": {
+          "repository_path": "cases/FILE-0001/audit/FILE-0001-IMG-0004_IMAGE-AUDIT_v1.0.md",
+          "sha256": "37945246b84f95891b41129e7923b7af5e44129d4cc500a9539afa052173989a"
+        },
+        "management_status": "APPROVED",
+        "image_audit_result": "PASS"
+      },
+      {
+        "requirement_id": "IMGREQ-010",
+        "asset_id": "FILE-0001-IMG-0003",
+        "asset_version": "v1.0",
+        "asset_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0003_v1.0.png",
+          "sha256": "24ffbf62f33e358e180a3c942157259b87b2595f967464c4f522ba7ef7558926"
+        },
+        "metadata_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0003_v1.0.metadata.json",
+          "sha256": "81153893af2ab76af5e137eeb52a79f98fae780eeff4a177dbfb3307694ba671"
+        },
+        "image_audit_reference": {
+          "repository_path": "cases/FILE-0001/audit/FILE-0001-IMG-0003_IMAGE-AUDIT_v1.0.md",
+          "sha256": "c9be5fd8ac85bd9fc81278c1a22b68dbdbf3ae670d0a0c7860361253747a9d07"
+        },
+        "management_status": "APPROVED",
+        "image_audit_result": "PASS"
+      },
+      {
+        "requirement_id": "IMGREQ-011",
+        "asset_id": "FILE-0001-IMG-0002",
+        "asset_version": "v1.0",
+        "asset_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.svg",
+          "sha256": "9fc2080fcf5c9678e5fb64de11c4c02c76c32290f6acda716cec9a063aae4905"
+        },
+        "metadata_reference": {
+          "repository_path": "cases/FILE-0001/assets/FILE-0001-IMG-0002_v1.0.metadata.json",
+          "sha256": "91d74db22630bb05ed2c9ab7a1335d74d5541e61f57b88684ac1e4ebc49656ee"
+        },
+        "image_audit_reference": {
+          "repository_path": "cases/FILE-0001/audit/FILE-0001-IMG-0002_IMAGE-AUDIT_v1.0.md",
+          "sha256": "a7cec98c0a4ced32cc548083a7774bfbed8b63b433c0d9f212fc3a5f616d5aac"
+        },
+        "management_status": "APPROVED",
+        "image_audit_result": "PASS"
+      }
+    ],
+    "placement_transactions": [
+      {
+        "repository_path": "cases/FILE-0001/placement-transactions/FILE-0001-TXN-0006/placement-record.json",
+        "sha256": "f6a467fcdc957760f49bc0ffd4d2744a93ad904b9daf229afb18a883b900581f",
+        "transaction_id": "FILE-0001-TXN-0006",
+        "placement_result": "PLACED"
+      }
+    ]
+  },
+  "open_issue_or_hold_references": [
+    {
+      "issue_kind": "DEFERRED_EXTERNAL_RIGHTS_ENHANCEMENT",
+      "requirement_id": "IMGREQ-001",
+      "blocking": false,
+      "basis": "Validated fallback representation satisfies Reader Purpose; external asset disposition remains DEFERRED."
+    },
+    {
+      "issue_kind": "UNRESOLVED_EXTERNAL_RIGHTS_LANE",
+      "requirement_id": "IMGREQ-002",
+      "blocking": false,
+      "send_state": "UNDETERMINED",
+      "nara_response": "NOT_ESTABLISHED",
+      "rights_verification": "NOT_COMPLETE",
+      "basis": "Validated fallback representation satisfies Reader Purpose; external asset disposition remains DEFERRED."
+    }
+  ],
+  "non_blocking_observations": [
+    {
+      "kind": "OPTIONAL_IMAGE_REQUIREMENTS_PENDING",
+      "requirement_ids": [
+        "IMGREQ-005",
+        "IMGREQ-006",
+        "IMGREQ-007",
+        "IMGREQ-008",
+        "IMGREQ-009",
+        "IMGREQ-012",
+        "IMGREQ-014"
+      ],
+      "blocking": false
+    },
+    {
+      "kind": "REPOSITORY_WIDE_TEST_SUITE_BOUNDARY",
+      "statement": "This package does not assert a repository-wide full overall test-suite PASS.",
+      "blocking_determination": "NOT_CREATED_BY_THIS_PACKAGE"
+    }
+  ],
+  "applicable_formal_versions": [
+    {
+      "authority_id": "AGENTS",
+      "document": "AGENTS.md",
+      "version": "v1.2"
+    },
+    {
+      "authority_id": "IMAGE-RULE",
+      "document": "docs/Image Rule.md",
+      "version": "v1.5.1"
+    },
+    {
+      "authority_id": "REPOSITORY-RULE",
+      "document": "docs/ProjectORIGIN Repository Rule.md",
+      "version": "v1.4"
+    },
+    {
+      "authority_id": "AUDIT-RULE",
+      "document": "docs/Audit Rule.md",
+      "version": "v1.4.1"
+    },
+    {
+      "authority_id": "PUBLICATION-BIBLE",
+      "document": "docs/ProjectORIGIN Publication Bible.md",
+      "version": "v1.1"
+    },
+    {
+      "authority_id": "OPERATING-MANUAL",
+      "document": "docs/Operating Manual.md",
+      "version": "v1.2"
+    },
+    {
+      "authority_id": "CASE-FILE-TEMPLATE",
+      "document": "docs/Case File Template.md",
+      "version": "v1.0.1"
+    },
+    {
+      "authority_id": "DATABASE-RULE",
+      "document": "docs/Database Rule.md",
+      "version": "v3.0"
+    },
+    {
+      "authority_id": "DATABASE-SCHEMA",
+      "document": "docs/Database Schema.md",
+      "version": "v1.3"
+    }
+  ],
+  "cpw028_handoff": {
+    "eligible_input_state": true,
+    "final_flow_result_required": "PASS",
+    "final_flow_audit_reference": {
+      "repository_path": "cases/FILE-0001/audit/FILE-0001_FINAL-FLOW-AUDIT_v1.0.md",
+      "sha256": "a26bb415f079aa96971c122afeb1ff10e1dce0a0846e3ac0d2cfb32291354d43"
+    },
+    "human_review_package_reference": {
+      "repository_path": "cases/FILE-0001/human-review-package_v1.0.json",
+      "sha256_self_reference": "OMITTED_BY_DESIGN_TO_AVOID_SELF_REFERENTIAL_HASH"
+    },
+    "final_human_approval_performed": false
+  },
+  "responsibility_boundary": {
+    "establishes_ready_state_by_existence_alone": false,
+    "establishes_human_approval": false,
+    "establishes_repository_integration": false,
+    "establishes_publication": false,
+    "resolves_deferred_external_rights_enhancements": false
+  }
+}
