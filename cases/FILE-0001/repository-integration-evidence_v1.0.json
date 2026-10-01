@@ -1,0 +1,115 @@
+{
+  "artifact_type": "REPOSITORY_INTEGRATION_EVIDENCE",
+  "case_id": "FILE-0001",
+  "record_version": "v1.0",
+  "source_step": "CPW-029",
+  "delivery_substate": "DELIVERY-01",
+  "contract_scope": "CASE_SPECIFIC_ONLY",
+  "global_schema_or_path_convention_claimed": false,
+  "record_created_at": "2026-10-01T10:54:05Z",
+  "repository_integration_established": true,
+  "repository_integration": {
+    "branch": "main",
+    "commit": "8eee5d53d4c0cde300a667581883393e61c645de",
+    "parent_commit": "bbc605291d5b771a66f44f73598cfe4693e5b7c6",
+    "commit_subject": "Integrate FILE-0001 approved publication artifacts",
+    "remote_ref": "origin/main",
+    "local_remote_exact_commit_match_at_creation": true
+  },
+  "integrated_artifacts": [
+    {
+      "artifact_role": "APPROVED_MASTER",
+      "version": "v1.0",
+      "repository_path": "cases/FILE-0001/master/FILE-0001_MASTER_v1.0.md",
+      "sha256": "a9c0aaa40cc7d7657b6467894b04e6998b59ddc69f772f1cb3b0e803dc689cce"
+    },
+    {
+      "artifact_role": "FREE_PUBLICATION_ARTIFACT",
+      "version": "v1.1",
+      "repository_path": "cases/FILE-0001/publication/free/FILE-0001_FREE_v1.1.md",
+      "sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0"
+    },
+    {
+      "artifact_role": "CLASSIFIED_PUBLICATION_ARTIFACT",
+      "version": "v1.2",
+      "repository_path": "cases/FILE-0001/publication/classified/FILE-0001_CLASSIFIED_v1.2.md",
+      "sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994"
+    }
+  ],
+  "authoritative_approval_binding": {
+    "path": "cases/FILE-0001/final-human-approval-decision_v1.0.json",
+    "sha256": "9b8a4bb0a87837ccc68038cda81649e088fd0519fb13f2c484d82e1797eb52e9"
+  },
+  "final_flow_audit_binding": {
+    "path": "cases/FILE-0001/audit/FILE-0001_FINAL-FLOW-AUDIT_v1.0.md",
+    "sha256": "a26bb415f079aa96971c122afeb1ff10e1dce0a0846e3ac0d2cfb32291354d43"
+  },
+  "human_review_package_binding": {
+    "path": "cases/FILE-0001/human-review-package_v1.0.json",
+    "sha256": "fff31070e7d962fc26f1568cda8010ab8cbdf248ee2b0880911ffa000fbe9839"
+  },
+  "applicable_audit_and_review_bindings": {
+    "free_v1_1": [
+      {
+        "record_type": "AUDIT_RESULT_RECORD",
+        "locator": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001_FREE_v1.1_AUDIT_RESULT_RECORD.md",
+        "sha256": "e103624a4b77dee2f4349b56427017f2edf3ee4b2ff317a360b25dfd4c1da0dd",
+        "bound_artifact_sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0",
+        "sha_binding": "PASS"
+      },
+      {
+        "record_type": "HUMAN_READ_REVIEW_RECORD",
+        "locator": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001_FREE_v1.1_HUMAN_READ_REVIEW_RECORD.md",
+        "sha256": "ea67da6edd1dedf283ddaedfb4580107fef129ca49e9e96f8d0dcd03aa3d934e",
+        "bound_artifact_sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0",
+        "sha_binding": "PASS",
+        "human_read_review": "PASS"
+      }
+    ],
+    "classified_v1_2": [
+      {
+        "record_type": "RE_AUDIT_RESULT_RECORD",
+        "locator": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001_CLASSIFIED_v1.2_RE-AUDIT_RESULT_RECORD.md",
+        "sha256": "ae3e5c640f8e0289f1aeb02be46747806d4c66fbef432ad89eb461be10b005d2",
+        "bound_artifact_sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994",
+        "sha_binding": "PASS",
+        "overall_status": "PASS",
+        "re_audit_required": "NO"
+      },
+      {
+        "record_type": "HUMAN_READ_REVIEW_RECORD",
+        "locator": "/Users/uchikurakou/ProjectORIGIN_AUDIT_WORK/FILE-0001_CLASSIFIED_v1.2_HUMAN_READ_REVIEW_RECORD.md",
+        "sha256": "a1a1767dcdc136994f6af819aff346a403c3bd327c05265a61fd8d9f85507b1b",
+        "bound_artifact_sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994",
+        "sha_binding": "PASS",
+        "human_read_review": "PASS"
+      }
+    ]
+  },
+  "master_audit_applicability_boundary": {
+    "locator": "/Users/uchikurakou/Downloads/FILE-0001_MASTER_AUDIT-003.md",
+    "sha256": "4e06ecb23c1ffb70465b2b9c418f82ae35a91db6af182353a0188e9ec31faa25",
+    "audit_target": "FILE-0001_MASTER_v1.0_DRAFT.md",
+    "target_state": "v1.0-draft-revision02",
+    "audit_result": "PASS",
+    "re_audit_required": "NO",
+    "production_side_adoption_bridge_to_current_approved_master": "ESTABLISHED",
+    "direct_audit_binding_to_current_approved_master_sha": "NOT_ESTABLISHED",
+    "direct_binding_inference_prohibited": true
+  },
+  "material_change_rule": {
+    "new_version_required": true,
+    "silent_overwrite_prohibited": true
+  },
+  "non_establishment_boundary": {
+    "publication_execution_established": false,
+    "publication_completion_established": false,
+    "publication_status_established": false,
+    "published_status_established": false,
+    "publication_tracking_completion_or_status_established": false,
+    "database_integration_established": false,
+    "ui_implementation_established": false,
+    "external_rights_resolved": false,
+    "whole_repository_test_suite_pass_established": false
+  }
+}
