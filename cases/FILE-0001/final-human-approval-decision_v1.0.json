@@ -1,0 +1,117 @@
+{
+  "artifact_type": "HUMAN_APPROVAL_DECISION_RECORD",
+  "case_id": "FILE-0001",
+  "record_version": "v1.0",
+  "source_step": "CPW-028",
+  "workflow_context": {
+    "workflow_id": "PROJECTORIGIN-CASE-PRODUCTION-WORKFLOW",
+    "workflow_version": "v1.4",
+    "gate_type": "FINAL_HUMAN_APPROVAL",
+    "case_specific_candidate_contract": true,
+    "global_schema_claim": false,
+    "global_repository_path_convention_claim": false,
+    "global_decision_id_namespace_claim": false
+  },
+  "decision": {
+    "value": "APPROVED",
+    "approval_statement": "FILE-0001 CPW-028 Final Human Approvalを承認",
+    "human_decision_timestamp": null,
+    "human_decision_timestamp_status": "NOT_RECORDED",
+    "record_created_at": "2026-10-01T05:55:27Z",
+    "record_created_at_is_human_decision_time": false
+  },
+  "human_authority": {
+    "authority_type": "EXPLICIT_HUMAN_DECISION",
+    "human_actor_id": "HUMAN-0001"
+  },
+  "decision_target": {
+    "final_flow_audit": {
+      "repository_path": "cases/FILE-0001/audit/FILE-0001_FINAL-FLOW-AUDIT_v1.0.md",
+      "sha256": "a26bb415f079aa96971c122afeb1ff10e1dce0a0846e3ac0d2cfb32291354d43",
+      "artifact_type": "FINAL_FLOW_AUDIT",
+      "artifact_version": "v1.0",
+      "result": "PASS"
+    },
+    "human_review_package": {
+      "repository_path": "cases/FILE-0001/human-review-package_v1.0.json",
+      "sha256": "fff31070e7d962fc26f1568cda8010ab8cbdf248ee2b0880911ffa000fbe9839",
+      "artifact_type": "HUMAN_REVIEW_PACKAGE",
+      "artifact_version": "v1.0"
+    },
+    "publication_artifacts": {
+      "approved_master": {
+        "location_kind": "AUDIT_WORKSPACE",
+        "workspace_relative_path": "FILE-0001_MASTER_v1.0.md",
+        "artifact_type": "MASTER",
+        "artifact_version": "v1.0",
+        "sha256": "a9c0aaa40cc7d7657b6467894b04e6998b59ddc69f772f1cb3b0e803dc689cce"
+      },
+      "free": {
+        "location_kind": "AUDIT_WORKSPACE",
+        "workspace_relative_path": "FILE-0001_FREE_v1.1.md",
+        "artifact_type": "FREE",
+        "artifact_version": "v1.1",
+        "sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0"
+      },
+      "classified": {
+        "location_kind": "AUDIT_WORKSPACE",
+        "workspace_relative_path": "FILE-0001_CLASSIFIED_v1.2.md",
+        "artifact_type": "CLASSIFIED",
+        "artifact_version": "v1.2",
+        "sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994"
+      }
+    }
+  },
+  "repository_snapshot": {
+    "repository_branch": "main",
+    "git_commit_at_record_creation": "25551eae22c54f30dd5f47a2a93bb5645dd05443",
+    "live_origin_main_at_record_creation": "25551eae22c54f30dd5f47a2a93bb5645dd05443",
+    "pre_write_working_tree_and_index": "CLEAN"
+  },
+  "non_blocking_conditions": {
+    "deferred_external_rights": [
+      {
+        "requirement_id": "IMGREQ-001",
+        "state": "DEFERRED_EXTERNAL_RIGHTS_ENHANCEMENT",
+        "blocking": false
+      },
+      {
+        "requirement_id": "IMGREQ-002",
+        "state": "UNRESOLVED_EXTERNAL_RIGHTS_LANE",
+        "send_state": "UNDETERMINED",
+        "nara_response": "NOT_ESTABLISHED",
+        "rights_verification": "NOT_COMPLETE",
+        "blocking": false
+      }
+    ],
+    "optional_image_requirements_pending": [
+      "IMGREQ-005",
+      "IMGREQ-006",
+      "IMGREQ-007",
+      "IMGREQ-008",
+      "IMGREQ-009",
+      "IMGREQ-012",
+      "IMGREQ-014"
+    ],
+    "repository_wide_full_test_suite_pass_claim": false
+  },
+  "routing_boundary": {
+    "authoritative_human_decision_established": true,
+    "cpw029_resume_condition": "applicable-authoritative-decision-is-approved",
+    "cpw029_entry_decision_value": "APPROVED",
+    "cpw029_executed_by_this_record_creation": false,
+    "automatic_resume_performed": false
+  },
+  "responsibility_boundary": {
+    "records_cpw028_approved_decision": true,
+    "establishes_publication": false,
+    "establishes_published_status": false,
+    "establishes_database_integration": false,
+    "establishes_ui_implementation": false,
+    "resolves_deferred_external_rights": false,
+    "claims_repository_wide_full_test_suite_pass": false,
+    "performs_git_add": false,
+    "performs_git_commit": false,
+    "performs_git_push": false
+  }
+}
