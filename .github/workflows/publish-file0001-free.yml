@@ -1,0 +1,387 @@
+name: Publish FILE-0001 FREE
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: projectorigin-file0001-free-pages
+  cancel-in-progress: false
+
+env:
+  CHECKOUT_ROOT: projectorigin-file0001-repo
+  STAGING_ROOT: projectorigin-file0001-pages-source
+  BUILD_ROOT: projectorigin-file0001-pages-built
+  FREE_SOURCE_REL: cases/FILE-0001/publication/free/FILE-0001_FREE_v1.1.md
+  FREE_SOURCE_SHA256: a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0
+  BOUND_LOCATOR: https://kou-origin.github.io/ProjectORIGIN/cases/FILE-0001/
+
+jobs:
+  build:
+    name: Build verified FILE-0001 FREE Pages artifact
+    runs-on: ubuntu-latest
+    outputs:
+      built_case_sha256: ${{ steps.verify_built.outputs.case_sha256 }}
+
+    steps:
+      - name: Checkout exact repository state
+        uses: actions/checkout@v7.0.1
+        with:
+          path: projectorigin-file0001-repo
+          persist-credentials: false
+
+      - name: Verify checkout and exact FREE source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          repo="$GITHUB_WORKSPACE/$CHECKOUT_ROOT"
+          test -d "$repo/.git"
+          test "$(git -C "$repo" rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git -C "$repo" status --porcelain --untracked-files=all)"
+
+          free="$repo/$FREE_SOURCE_REL"
+          test -f "$free"
+          actual="$(sha256sum "$free" | awk '{print $1}')"
+          test "$actual" = "$FREE_SOURCE_SHA256"
+
+      - name: Assemble approved transient staging source
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          repo="$GITHUB_WORKSPACE/$CHECKOUT_ROOT"
+          staging="$GITHUB_WORKSPACE/$STAGING_ROOT"
+          built="$GITHUB_WORKSPACE/$BUILD_ROOT"
+
+          case "$staging" in "$repo"/*) echo "staging inside checkout tree" >&2; exit 1;; esac
+          case "$built" in "$repo"/*) echo "build inside checkout tree" >&2; exit 1;; esac
+
+          rm -rf "$staging" "$built"
+          mkdir -p "$staging/cases/FILE-0001" "$staging/_layouts"
+
+          cp "$repo/index.html" "$staging/index.html"
+          cp "$repo/style.css" "$staging/style.css"
+          cp "$repo/script.js" "$staging/script.js"
+          cp -R "$repo/data" "$staging/data"
+          cp -R "$repo/images" "$staging/images"
+
+          cat > "$staging/_layouts/file0001-free.html" <<'FILE0001_LAYOUT'
+          <!DOCTYPE html>
+          <html lang="ja">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{{ page.title | escape }} | ProjectORIGIN</title>
+            <style>
+              :root { color-scheme: dark; }
+              * { box-sizing: border-box; }
+              body {
+                margin: 0;
+                background: #0a0e1f;
+                color: #e8ecf6;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                line-height: 1.8;
+              }
+              .case-shell {
+                width: min(880px, calc(100% - 32px));
+                margin: 0 auto;
+                padding: 32px 0 72px;
+              }
+              .case-nav {
+                margin-bottom: 32px;
+                font-size: 0.95rem;
+              }
+              .case-nav a { color: #a9c7ff; text-decoration: none; }
+              .case-nav a:hover, .case-nav a:focus { text-decoration: underline; }
+              article {
+                background: rgba(13, 19, 40, 0.92);
+                border: 1px solid rgba(169, 199, 255, 0.22);
+                border-radius: 18px;
+                padding: clamp(24px, 5vw, 52px);
+                overflow-wrap: anywhere;
+              }
+              h1, h2, h3 { line-height: 1.35; }
+              h1 { margin-top: 0; }
+              h2 { margin-top: 2.2em; }
+              h3 { margin-top: 1.8em; }
+              hr { border: 0; border-top: 1px solid rgba(169, 199, 255, 0.18); margin: 2.5rem 0; }
+              a { color: #a9c7ff; }
+              code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+              pre { overflow-x: auto; }
+            </style>
+          </head>
+          <body>
+            <main class="case-shell">
+              <nav class="case-nav" aria-label="ProjectORIGIN">
+                <a href="/ProjectORIGIN/">← ProjectORIGIN</a>
+              </nav>
+              <article>
+                {{ content }}
+              </article>
+            </main>
+          </body>
+          </html>
+          FILE0001_LAYOUT
+
+          cat > "$GITHUB_WORKSPACE/file0001-front-matter.txt" <<'FILE0001_FRONT_MATTER'
+          ---
+          layout: file0001-free
+          title: "FILE-0001 — ロズウェル事件"
+          permalink: /cases/FILE-0001/
+          ---
+          FILE0001_FRONT_MATTER
+
+          test "$(sha256sum "$GITHUB_WORKSPACE/file0001-front-matter.txt" | awk '{print $1}')" = "64a0fd0a803ad75a3af460d070f5cef443702b24cb31e4312a431a89bb82e684"
+          test "$(sha256sum "$staging/_layouts/file0001-free.html" | awk '{print $1}')" = "3bf2cd8e985b3ec40ce18a56396a3244f14897c503574051d5101c5e4662be29"
+
+          cat "$GITHUB_WORKSPACE/file0001-front-matter.txt" "$repo/$FREE_SOURCE_REL" > "$staging/cases/FILE-0001/index.md"
+          rm -f "$GITHUB_WORKSPACE/file0001-front-matter.txt"
+
+          test -z "$(git -C "$repo" status --porcelain --untracked-files=all)"
+
+      - name: Verify staging source allowlist and exclusion boundary
+        shell: python
+        run: |
+          import os
+          from pathlib import Path
+
+          workspace = Path(os.environ["GITHUB_WORKSPACE"])
+          repo = workspace / os.environ["CHECKOUT_ROOT"]
+          staging = workspace / os.environ["STAGING_ROOT"]
+
+          if not staging.is_dir():
+              raise SystemExit("staging source missing")
+
+          if repo in staging.parents:
+              raise SystemExit("staging source must be a sibling of checkout tree")
+
+          for p in staging.rglob("*"):
+              if p.is_symlink():
+                  raise SystemExit(f"symlink prohibited in staging source: {p.relative_to(staging)}")
+
+          expected = {
+              Path("index.html"),
+              Path("style.css"),
+              Path("script.js"),
+              Path("_layouts/file0001-free.html"),
+              Path("cases/FILE-0001/index.md"),
+          }
+
+          for source_dir in ("data", "images"):
+              source_root = repo / source_dir
+              for p in source_root.rglob("*"):
+                  if p.is_symlink():
+                      raise SystemExit(f"symlink prohibited in public-shell source: {p.relative_to(repo)}")
+                  if p.is_file():
+                      expected.add(p.relative_to(repo))
+
+          actual = {p.relative_to(staging) for p in staging.rglob("*") if p.is_file()}
+
+          if actual != expected:
+              extra = sorted(str(x) for x in actual - expected)
+              missing = sorted(str(x) for x in expected - actual)
+              raise SystemExit(f"staging allowlist mismatch; extra={extra}; missing={missing}")
+
+          forbidden_tokens = (
+              "classified",
+              "/master/",
+              "/audit/",
+              "fallback-representations",
+              "placement-transactions",
+              "registration-validations",
+              "semantic-events",
+              "publication-execution-binding",
+              "human-review",
+              "repository-integration-evidence",
+          )
+
+          for rel in actual:
+              normalized = f"/{rel.as_posix().lower()}/"
+              if any(token in normalized for token in forbidden_tokens):
+                  raise SystemExit(f"forbidden staging path detected: {rel}")
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6.0.0
+
+      - name: Build approved Jekyll representation
+        uses: actions/jekyll-build-pages@v1.0.13
+        with:
+          source: ./projectorigin-file0001-pages-source
+          destination: ./projectorigin-file0001-pages-built
+
+      - name: Verify built Pages artifact and repository immutability
+        id: verify_built
+        shell: python
+        run: |
+          import hashlib
+          import os
+          import subprocess
+          from pathlib import Path
+
+          workspace = Path(os.environ["GITHUB_WORKSPACE"])
+          repo = workspace / os.environ["CHECKOUT_ROOT"]
+          staging = workspace / os.environ["STAGING_ROOT"]
+          built = workspace / os.environ["BUILD_ROOT"]
+
+          if not built.is_dir():
+              raise SystemExit("build destination missing")
+          if repo in built.parents:
+              raise SystemExit("build output must be a sibling of checkout tree")
+
+          for p in built.rglob("*"):
+              if p.is_symlink():
+                  raise SystemExit(f"symlink prohibited in built output: {p.relative_to(built)}")
+
+          required_files = {
+              Path("index.html"),
+              Path("style.css"),
+              Path("script.js"),
+              Path("cases/FILE-0001/index.html"),
+          }
+          actual_files = {p.relative_to(built) for p in built.rglob("*") if p.is_file()}
+
+          expected_static = {
+              Path("index.html"),
+              Path("style.css"),
+              Path("script.js"),
+          }
+          for source_dir in ("data", "images"):
+              for p in (staging / source_dir).rglob("*"):
+                  if p.is_file():
+                      expected_static.add(p.relative_to(staging))
+
+          allowed_files = expected_static | {Path("cases/FILE-0001/index.html")}
+
+          if actual_files != allowed_files:
+              extra = sorted(str(x) for x in actual_files - allowed_files)
+              missing = sorted(str(x) for x in allowed_files - actual_files)
+              raise SystemExit(f"built output allowlist mismatch; extra={extra}; missing={missing}")
+
+          forbidden_tokens = (
+              "classified",
+              "/master/",
+              "/audit/",
+              "fallback-representations",
+              "placement-transactions",
+              "registration-validations",
+              "semantic-events",
+              "publication-execution-binding",
+              "human-review",
+              "repository-integration-evidence",
+              "_layouts",
+          )
+
+          for rel in actual_files:
+              normalized = f"/{rel.as_posix().lower()}/"
+              if any(token in normalized for token in forbidden_tokens):
+                  raise SystemExit(f"forbidden built path detected: {rel}")
+
+          case_path = built / "cases/FILE-0001/index.html"
+          case_bytes = case_path.read_bytes()
+          case_text = case_bytes.decode("utf-8")
+
+          for heading in ("事件概要", "何が確認されている？", "主な説", "次の調査へ"):
+              if heading not in case_text:
+                  raise SystemExit(f"required FREE heading missing from built case page: {heading}")
+
+          status = subprocess.run(
+              ["git", "-C", str(repo), "status", "--porcelain", "--untracked-files=all"],
+              check=True,
+              capture_output=True,
+              text=True,
+          ).stdout.strip()
+          if status:
+              raise SystemExit(f"checkout repository tree became dirty: {status}")
+
+          head = subprocess.run(
+              ["git", "-C", str(repo), "rev-parse", "HEAD"],
+              check=True,
+              capture_output=True,
+              text=True,
+          ).stdout.strip()
+          if head != os.environ["GITHUB_SHA"]:
+              raise SystemExit(f"checkout HEAD changed: {head}")
+
+          case_sha = hashlib.sha256(case_bytes).hexdigest()
+          print(f"Built FILE-0001 case SHA256: {case_sha}")
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as fh:
+              fh.write(f"case_sha256={case_sha}\n")
+
+      - name: Upload verified GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: ./projectorigin-file0001-pages-built
+
+  deploy:
+    name: Deploy verified FILE-0001 FREE Pages artifact
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5.0.1
+
+  receipt:
+    name: Emit FILE-0001 Publication Execution runtime receipt
+    needs:
+      - build
+      - deploy
+    if: ${{ needs.build.result == 'success' && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Capture exact execution timestamp
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "FILE0001_EXECUTED_AT=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_ENV"
+
+      - name: Emit case-specific execution receipt
+        shell: python
+        env:
+          BUILT_CASE_SHA256: ${{ needs.build.outputs.built_case_sha256 }}
+          DEPLOYMENT_OUTPUT_URL: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          import json
+          import os
+
+          receipt = {
+              "case_id": "FILE-0001",
+              "source_step": "CPW-029",
+              "delivery_substate": "DELIVERY-02",
+              "receipt_type": "PUBLICATION_EXECUTION_RUNTIME_RECEIPT",
+              "workflow_run_id": os.environ["GITHUB_RUN_ID"],
+              "workflow_run_url": f"https://github.com/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}",
+              "execution_timestamp": os.environ["FILE0001_EXECUTED_AT"],
+              "result": "SUCCESS",
+              "source_free_sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0",
+              "built_case_index_sha256": os.environ["BUILT_CASE_SHA256"],
+              "destination_locator": "https://kou-origin.github.io/ProjectORIGIN/cases/FILE-0001/",
+              "workflow_identity": os.environ["GITHUB_WORKFLOW_REF"],
+              "deployment_output_url": os.environ["DEPLOYMENT_OUTPUT_URL"],
+              "publication_status_established": False,
+              "publication_tracking_updated": False,
+              "delivery_03_completion_evidence_established": False,
+          }
+
+          payload = json.dumps(receipt, ensure_ascii=False, indent=2, sort_keys=True)
+          print("=== FILE-0001 PUBLICATION EXECUTION RUNTIME RECEIPT ===")
+          print(payload)
+
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
+              fh.write("## FILE-0001 Publication Execution Runtime Receipt\n\n")
+              fh.write("```json\n")
+              fh.write(payload)
+              fh.write("\n```\n")
