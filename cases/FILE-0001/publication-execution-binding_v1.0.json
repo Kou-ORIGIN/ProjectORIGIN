@@ -1,0 +1,90 @@
+{
+  "scope": {
+    "case_id": "FILE-0001",
+    "source_step": "CPW-029",
+    "delivery_substate": "DELIVERY-02",
+    "record_version": "v1.0",
+    "contract_scope": "CASE_SPECIFIC_ONLY"
+  },
+  "authority_bindings": {
+    "final_human_approval_decision": {
+      "path": "cases/FILE-0001/final-human-approval-decision_v1.0.json",
+      "sha256": "9b8a4bb0a87837ccc68038cda81649e088fd0519fb13f2c484d82e1797eb52e9"
+    },
+    "repository_integration_evidence": {
+      "path": "cases/FILE-0001/repository-integration-evidence_v1.0.json",
+      "sha256": "8b253de4cd376f69b7c6c67969277691ed652de8dcd9e7ae926ce6f8e1f44aaa"
+    },
+    "final_flow_audit": {
+      "path": "cases/FILE-0001/audit/FILE-0001_FINAL-FLOW-AUDIT_v1.0.md",
+      "sha256": "a26bb415f079aa96971c122afeb1ff10e1dce0a0846e3ac0d2cfb32291354d43"
+    },
+    "human_review_package": {
+      "path": "cases/FILE-0001/human-review-package_v1.0.json",
+      "sha256": "fff31070e7d962fc26f1568cda8010ab8cbdf248ee2b0880911ffa000fbe9839"
+    }
+  },
+  "publication_basis": {
+    "master": {
+      "path": "cases/FILE-0001/master/FILE-0001_MASTER_v1.0.md",
+      "sha256": "a9c0aaa40cc7d7657b6467894b04e6998b59ddc69f772f1cb3b0e803dc689cce"
+    }
+  },
+  "publication_units": {
+    "FREE": {
+      "artifact_path": "cases/FILE-0001/publication/free/FILE-0001_FREE_v1.1.md",
+      "sha256": "a486101935415ad5bc8f01def7286b3f1ae6d8f9e5694dc1a7766b08821a99d0",
+      "reader_role": "FREE reader-facing publication layer",
+      "disposition": "PUBLISH",
+      "destination_or_route": "/ProjectORIGIN/cases/FILE-0001/",
+      "published_locator": "https://kou-origin.github.io/ProjectORIGIN/cases/FILE-0001/"
+    },
+    "CLASSIFIED": {
+      "artifact_path": "cases/FILE-0001/publication/classified/FILE-0001_CLASSIFIED_v1.2.md",
+      "sha256": "d13b54e1ec6817b3b04472f55deee277e9a1c6670e53f83285056877604e3994",
+      "reader_role": "CLASSIFIED deep-investigation publication layer",
+      "disposition": "DEFER",
+      "destination_or_route": "N/A",
+      "published_locator": "N/A",
+      "access_behavior": "DEFERRED",
+      "membership_or_access_control": "N/A",
+      "real_world_security_classification": "MUST_NOT_BE_INFERRED"
+    }
+  },
+  "execution_binding": {
+    "provider_or_channel": "GitHub Pages",
+    "environment": "GitHub Pages Production",
+    "base_locator": "https://kou-origin.github.io/ProjectORIGIN/",
+    "execution_mechanism_or_command": "GitHub Actions manual workflow_dispatch via .github/workflows/publish-file0001-free.yml, targeting github-pages environment; no automatic push-triggered publication",
+    "operator_authority": "HUMAN-0001",
+    "execution_receipt_contract": "GitHub Actions workflow run ID/URL + case-specific captured execution record containing exact execution timestamp, result, target FREE artifact SHA256, destination locator, workflow identity, and deployment output URL"
+  },
+  "failure_boundary": {
+    "on_mapping_mismatch": "STOP",
+    "on_access_mismatch": "STOP",
+    "on_partial_execution": "STOP_AND_DO_NOT_INFER_COMPLETION",
+    "retry_rollback_authority": "STOP on failure; retry requires new explicit Human authorization. STOP on partial execution; rollback requires new explicit Human authorization."
+  },
+  "delivery03_handoff": {
+    "requires": [
+      "execution result captured independently from Publication Completion Evidence",
+      "FREE exact artifact-to-published-representation mapping verified",
+      "configured FREE publication locator verified",
+      "CLASSIFIED remains explicitly DEFERRED and unexposed",
+      "GitHub Actions workflow run ID/URL captured",
+      "case-specific execution record captured",
+      "deployment output URL captured",
+      "no Publication Status/PUBLISHED inference"
+    ]
+  },
+  "non_establishment": {
+    "publication_execution_performed_by_this_record": false,
+    "publication_completion_established": false,
+    "publication_status_established": false,
+    "published_state_established": false,
+    "publication_tracking_updated": false,
+    "database_integration_established": false,
+    "ui_implementation_established": false,
+    "classified_publication_established": false
+  }
+}
